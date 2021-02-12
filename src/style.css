@@ -16,9 +16,10 @@ body {
     width: 100%;
     display: flex;
     font-weight: bolder;
-    font-size: 14px;
+    font-size: 13px;
     font-family: monospace;
     border-radius: 1px;
+    overflow: hidden;
 }
 
 .more {
@@ -31,6 +32,11 @@ body {
     font-size: 20px;
     font-family: monospace;
     order: 1000;
+}
+
+.more:hover{
+    cursor: pointer;
+    filter: invert(0.3)
 }
 
 .tab .close-button{
@@ -53,6 +59,7 @@ body {
     width: 100%;
     max-width: 14rem;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }

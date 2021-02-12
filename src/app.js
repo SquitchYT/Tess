@@ -22,7 +22,9 @@ let colors = {
         background : '#000'
     },
     app : {
-        tab_background : '#000'
+        tab_background : '#000',
+        tab_foreground : '#aabbcc',
+        text_color : '#fff'
     }
 }
 
@@ -96,8 +98,6 @@ function CreateNewTerminal() {
     close_button.addEventListener('click', () => {
         o = close_button.getAttribute('close-button-number')
 
-        console.log(o)
-
         ipc.send('close-terminal', o)
 
         let te = document.querySelector('.terminal-' + o)
@@ -117,8 +117,7 @@ function CreateNewTerminal() {
 
         if (terminalsList.length === 0) {
             ipc.send('close')
-        } else {
-
+        } else if (n == o){
             i = {
                 index : 0,
                 dif : Infinity
