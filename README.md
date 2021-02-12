@@ -26,4 +26,4 @@ electron .
 
 ## License
 
-**[Tess](https://github.com/Asthowen/Tess) | [Mozilla Public License 2.0](https://github.com/Asthowen/Tess/blob/main/LICENSE)**
+**[Tess](https://github.com/SquitchYT/tess) | [Mozilla Public License 2.0](https://github.com/SquitchYT/Tess/blob/main/LICENSE)**
