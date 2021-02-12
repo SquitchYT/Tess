@@ -1,10 +1,11 @@
 # Tess
 A simple terminal.
-For download : https://squitch.fr/tess-1.0.0.AppImage or clone this Repo :
+For download : https://squitch.fr/tess-1.0.0.AppImage or clone this Repo; Then :
 
 `
 npm install
 `
+\n
 `
 npm run rebuild
 `
