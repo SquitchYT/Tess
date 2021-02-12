@@ -14,7 +14,7 @@ function openWindow() {
             nodeIntegration: true
         }
     });
-    mainWindow.removeMenu()
+    //mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;

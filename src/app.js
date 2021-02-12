@@ -83,8 +83,6 @@ function CreateNewTerminal() {
         let terms = document.getElementsByClassName('terms')
         let tabs = document.getElementsByClassName('tab')
 
-        console.log(terms)
-
         let i = 0
         while (i < terms.length) {
             let a = terms.item(i)
@@ -172,10 +170,13 @@ function CreateNewTerminal() {
     })
 
     let terms = document.getElementsByClassName('terms')
+    let yy = document.getElementsByClassName('tab')
 
     let i = 0
     while (i < terms.length) {
         let a = terms.item(i)
+        let e = yy.item(i)
+        e.style.background = colors.app.tab_background
         a.classList.add('hidden')
         i++
     }
