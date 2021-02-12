@@ -9,6 +9,7 @@ npm install
 `
 npm run rebuild
 `
+<br>
 `
 electron .
 `
