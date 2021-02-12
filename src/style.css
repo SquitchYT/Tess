@@ -21,6 +21,18 @@ body {
     border-radius: 1px;
 }
 
+.more {
+    height: 3vh;
+    width: 3vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 20px;
+    font-family: monospace;
+    order: 1000;
+}
+
 .tab .close-button{
     height: 100%;
     width: 100%;
@@ -31,16 +43,18 @@ body {
     right: 0;
 }
 
+.tabs .tabs-panel{
+    height: 100%;
+    width: 100%;
+    display: flex;
+}
+
 .tab .tab-link{
     width: 100%;
     max-width: 14rem;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.tab.inactive{
-    background-color: #24283b;
 }
 
 .terminals {

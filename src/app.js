@@ -4,10 +4,11 @@ const fs = require('fs')
 const os = require('os')
 
 const homedir = os.homedir()
-const tabs = document.querySelector('.tabs')
+const tabs = document.querySelector('.tabs-panel')
 const terminals = document.querySelector('.terminals')
 const viewport = document.getElementById("terminals")
 const body = document.getElementById('body')
+const new_tab = document.getElementById('new-tab')
 
 let terminalsList = []
 let n = 0
@@ -24,6 +25,7 @@ let colors = {
         tab_background : '#000'
     }
 }
+
 
 getTheme('tokyo-night')
 
@@ -222,7 +224,10 @@ function focusTerm(index, tab) {
             el.term.focus()
         } 
     })
-
-
-
 }
+
+
+new_tab.addEventListener('click', () => {
+    console.log('clicked')
+    CreateNewTerminal()
+})
