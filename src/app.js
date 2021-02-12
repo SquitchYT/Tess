@@ -75,41 +75,15 @@ ipc.on('pty-data', (e, data) => {
 
 function CreateNewTerminal() {
     let tab = document.createElement('div')
-
     tab.style.background = colors.app.tab_foreground
+    tab.classList.add('tab', 'tab-all-' + index)
 
     let tab_link = document.createElement('div')
+
     tab_link.addEventListener('click', () => {
-        let terms = document.getElementsByClassName('terms')
-        let tabs = document.getElementsByClassName('tab')
-
-        let i = 0
-        while (i < terms.length) {
-            let a = terms.item(i)
-            let r = tabs.item(i)
-            a.classList.add('hidden')
-            a.classList.remove('visible')
-            r.style.background = colors.app.tab_background
-            i++        
-        }
-
-
-        tab.style.background = colors.app.tab_foreground
-
-        let termtoview = document.querySelector('.terminal-' + tab_link.classList[2])
-        termtoview.classList.remove('hidden')
-        termtoview.classList.add('visible')
-
-        n = termtoview.getAttribute('number')
-
-        terminalsList.forEach((el) => {
-            if (el.index == n) {
-                el.term.focus()
-            } 
-        })
+        focusTerm(tab_link.classList[2], tab)
     })
     tab_link.innerHTML = "Bash ~ $"
-    tab.classList.add('tab', 'tab-all-' + index)
     tab_link.classList.add('tab-link', 'tab-' + index, index)
 
     let close_button = document.createElement('div')
@@ -119,6 +93,8 @@ function CreateNewTerminal() {
 
     close_button.addEventListener('click', () => {
         o = close_button.getAttribute('close-button-number')
+
+        console.log(o)
 
         ipc.send('close-terminal', o)
 
@@ -139,6 +115,21 @@ function CreateNewTerminal() {
 
         if (terminalsList.length === 0) {
             ipc.send('close')
+        } else {
+
+            i = {
+                index : 0,
+                dif : Infinity
+            }
+            terminalsList.forEach((el) => {
+                if (Math.abs(o - el.index) < i.dif) {
+                    i.index = el.index
+                    i.dif = Math.abs(o - el.index)
+                }
+            })
+
+            let tab = document.querySelector('.tab-all-' + i.index)
+            focusTerm(i.index, tab)
         }
     })
 
@@ -198,4 +189,40 @@ function CreateNewTerminal() {
     
     terminals.appendChild(termDiv)
     terminalsList.push(t)
+}
+
+
+function focusTerm(index, tab) {
+
+
+    let terms = document.getElementsByClassName('terms')
+    let tabs = document.getElementsByClassName('tab')
+
+    let i = 0
+    while (i < terms.length) {
+        let a = terms.item(i)
+        let r = tabs.item(i)
+        a.classList.add('hidden')
+        a.classList.remove('visible')
+        r.style.background = colors.app.tab_background
+        i++        
+    }
+
+
+    tab.style.background = colors.app.tab_foreground
+
+    let termtoview = document.querySelector('.terminal-' + index)
+    termtoview.classList.remove('hidden')
+    termtoview.classList.add('visible')
+
+    n = termtoview.getAttribute('number')
+
+    terminalsList.forEach((el) => {
+        if (el.index == n) {
+            el.term.focus()
+        } 
+    })
+
+
+
 }
