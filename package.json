@@ -1,0 +1,29 @@
+{
+  "name": "tess",
+  "version": "1.0.0",
+  "description": "a simple terminal emulator",
+  "main": "main.js",
+  "scripts": {
+    "test": "electron .",
+    "rebuild": "electron-rebuild",
+    "dist": "electron-builder --linux appimage"
+  },
+  "keywords": [
+    "terminal",
+    "nodejs",
+    "bash",
+    "shell"
+  ],
+  "author": "squitch",
+  "license": "ISC",
+  "dependencies": {
+    "glib": "^1.0.2",
+    "node-pty": "^0.10.0",
+    "xterm": "^4.10.0",
+    "xterm-addon-fit": "^0.5.0"
+  },
+  "devDependencies": {
+    "electron": "^11.2.3",
+    "electron-builder": "^22.9.1"
+  }
+}
