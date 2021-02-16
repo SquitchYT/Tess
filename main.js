@@ -1,6 +1,6 @@
 const time1 = new Date().getTime()
 
-const { app, BrowserWindow, ipcMain : ipc, shell} = require('electron')
+const { app, BrowserWindow, ipcMain : ipc} = require('electron')
 
 const pty = require("node-pty");
 const RPC = require('discord-rpc')
@@ -11,12 +11,11 @@ const rpc = new RPC.Client({
 
 rpc.on('ready',() => {
     rpc.setActivity({
-        details : "Writting command htop",
+        details : "Writting command...",
         largeImageKey : "icon",
         startTimestamp : new Date()
     })
 })
-
 rpc.login({
     clientId : "811294906517422130"
 })
@@ -99,6 +98,7 @@ ipc.on("close-terminal", (e, data) => {
     let y = 0
     shells.forEach((el) => {
         if (el.index == data) {
+            el.shell.write('exit\r')
             el.shell.kill()
             shells.splice(y, 1)
         }
