@@ -28,7 +28,6 @@ let colors = {
     }
 }
 
-
 getTheme('tokyo-night')
 
 function getTheme(theme) {
@@ -56,6 +55,7 @@ function getTheme(theme) {
 
 tabs.style.background = colors.app.tab_background
 body.style.color = colors.app.text_color
+body.style.background = colors.terminal.background
 
 CreateNewTerminal()
 
@@ -93,7 +93,7 @@ function CreateNewTerminal() {
     let close_button = document.createElement('div')
     close_button.classList.add('close-button')
     close_button.setAttribute('close-button-number', index)
-    close_button.innerHTML = "X"
+    close_button.innerHTML = "x"
 
     close_button.addEventListener('click', () => {
         o = close_button.getAttribute('close-button-number')

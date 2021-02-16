@@ -18,7 +18,7 @@ body {
     font-weight: bolder;
     font-size: 13px;
     font-family: monospace;
-    border-radius: 1px;
+    border-radius: 5.5px 5.5px 0 0;
     overflow: hidden;
 }
 
@@ -49,10 +49,16 @@ body {
     right: 0;
 }
 
+.tab .close-button:hover{
+    cursor: pointer;
+    filter: invert(0.3)
+}
+
 .tabs .tabs-panel{
     height: 100%;
     width: 100%;
     display: flex;
+    padding-left: 8px;
 }
 
 .tab .tab-link{

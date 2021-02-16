@@ -17,6 +17,7 @@
   "author": "squitch",
   "license": "ISC",
   "dependencies": {
+    "discord-rpc": "^3.2.0",
     "glib": "^1.0.2",
     "node-pty": "^0.10.0",
     "xterm": "^4.10.0",

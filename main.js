@@ -1,9 +1,26 @@
 const time1 = new Date().getTime()
 
-const { app, BrowserWindow, ipcMain : ipc} = require('electron')
+const { app, BrowserWindow, ipcMain : ipc, shell} = require('electron')
 
-const electron = require("electron")
 const pty = require("node-pty");
+const RPC = require('discord-rpc')
+
+const rpc = new RPC.Client({
+    transport : "ipc"
+});
+
+rpc.on('ready',() => {
+    rpc.setActivity({
+        details : "Writting command htop",
+        largeImageKey : "icon",
+        startTimestamp : new Date()
+    })
+})
+
+rpc.login({
+    clientId : "811294906517422130"
+})
+
 
 let mainWindow;
 let shells = []
@@ -14,7 +31,7 @@ function openWindow() {
             nodeIntegration: true
         }
     });
-    //mainWindow.removeMenu()
+    mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;
@@ -78,15 +95,11 @@ app.on("activate", function() {
 });
 
 
-ipc.on("log", (e, data) => {
-    console.log(data)
-})
-
-
 ipc.on("close-terminal", (e, data) => {
     let y = 0
     shells.forEach((el) => {
         if (el.index == data) {
+            el.shell.kill()
             shells.splice(y, 1)
         }
         y++;
