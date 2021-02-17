@@ -18,13 +18,13 @@ body {
     font-weight: bolder;
     font-size: 13px;
     font-family: monospace;
-    border-radius: 5.5px 5.5px 0 0;
+    border-radius: 5.7px 5.7px 0 0;
     overflow: hidden;
 }
 
 .more {
     height: 3vh;
-    width: 3vh;
+    width: 2.8vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,6 +68,8 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    white-space: nowrap;
+    overflow : hidden;
 }
 
 .terminals {

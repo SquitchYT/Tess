@@ -110,6 +110,7 @@ function CreateNewTerminal() {
 
         terminalsList.forEach((el) => {
             if (el.index == o) {
+                el.term.dispose()
                 terminalsList.splice(y, 1)
             }
             y++
@@ -230,3 +231,25 @@ new_tab.addEventListener('click', () => {
     console.log('clicked')
     CreateNewTerminal()
 })
+
+ipc.on('resize', (e, data) => {
+    Resize()
+})
+
+function Resize() {
+    let height = viewport.clientHeight
+    let width = viewport.clientWidth;
+    let rows = parseInt(height/16.95, 10);
+    let cols = parseInt(width/9, 10);
+
+    terminalsList.forEach((el) => {
+        el.term.resize(cols, rows)
+    })
+
+    console.log('terminal div resized')
+
+    ipc.send('resize', {
+        rows : rows,
+        cols : cols
+    })
+}

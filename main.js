@@ -16,6 +16,7 @@ rpc.on('ready',() => {
         startTimestamp : new Date()
     })
 })
+
 rpc.login({
     clientId : "811294906517422130"
 })
@@ -35,6 +36,13 @@ function openWindow() {
     mainWindow.on("closed", function() {
         mainWindow = null;
     });
+    mainWindow.on('resize',() =>{
+        try {
+            mainWindow.webContents.send('resize')
+        } catch (err) {
+            console.log(err)
+        }
+    })
 
 
     ipc.on("load-end", (e, ea) => {
@@ -55,10 +63,14 @@ ipc.on('new-term', (e, data) => {
     })
 
     shell.on('data', (datas) => {
-        mainWindow.webContents.send('pty-data', {
-            index : data.index,
-            data : datas
-        })
+        try {
+            mainWindow.webContents.send('pty-data', {
+                index : data.index,
+                data : datas
+            })
+        } catch (err) {
+            console.log(err)
+        }
     })
 
     let s = {
@@ -98,7 +110,6 @@ ipc.on("close-terminal", (e, data) => {
     let y = 0
     shells.forEach((el) => {
         if (el.index == data) {
-            el.shell.write('exit\r')
             el.shell.kill()
             shells.splice(y, 1)
         }
@@ -108,4 +119,10 @@ ipc.on("close-terminal", (e, data) => {
 
 ipc.on('close', (e,data) => {
     app.quit()
+})
+
+ipc.on('resize', (e, data) => {
+    shells.forEach((el) => {
+        el.shell.resize(data.cols, data.rows)
+    })
 })
