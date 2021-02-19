@@ -1,7 +1,7 @@
 # Tess - A Simple Terminal
-Tess is a hackable, simple, rapid and beautoiful terminal for the new era of technologie
+Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology
 
-Tess is currently in development and we have tons of bugs, so if you find it, please make an issue
+Tess is currently in development and it have tons of bugs, so if you find one, please make an issue
 
 
 ## Download
