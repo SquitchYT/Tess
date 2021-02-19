@@ -65,6 +65,8 @@ ipc.send('load-end')
 window.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey && e.key === 'T'){
         CreateNewTerminal()
+    } else if (e.ctrlKey && e.shiftKey && e.key === 'W'){
+        CloseTerm(n)
     }
 })
 
@@ -96,45 +98,15 @@ function CreateNewTerminal() {
     close_button.innerHTML = "x"
 
     close_button.addEventListener('click', () => {
-        o = close_button.getAttribute('close-button-number')
-
-        ipc.send('close-terminal', o)
-
-        let te = document.querySelector('.terminal-' + o)
-        let ta = document.querySelector('.tab-all-' + o)
-
-        ta.remove()
-        te.remove()
-
-        let y = 0
-
-        terminalsList.forEach((el) => {
-            if (el.index == o) {
-                el.term.dispose()
-                terminalsList.splice(y, 1)
-            }
-            y++
-        })
-
-        if (terminalsList.length === 0) {
-            ipc.send('close')
-        } else if (n == o){
-            i = {
-                index : 0,
-                dif : Infinity
-            }
-            terminalsList.forEach((el) => {
-                if (Math.abs(o - el.index) < i.dif) {
-                    i.index = el.index
-                    i.dif = Math.abs(o - el.index)
-                }
-            })
-
-            let tab = document.querySelector('.tab-all-' + i.index)
-            focusTerm(i.index, tab)
-        }
+        CloseTerm(close_button.getAttribute('close-button-number'))
     })
 
+    let logo = document.createElement('img')
+    logo.src = "img/shell.png"
+    logo.classList.add('logo')
+
+
+    tab.appendChild(logo)
     tab.appendChild(tab_link)
     tab.appendChild(close_button)
     tabs.appendChild(tab)
@@ -248,4 +220,44 @@ function Resize() {
         rows : rows,
         cols : cols
     })
+}
+
+function CloseTerm(index) {
+    o = index
+
+    ipc.send('close-terminal', o)
+
+    let te = document.querySelector('.terminal-' + o)
+    let ta = document.querySelector('.tab-all-' + o)
+
+    ta.remove()
+    te.remove()
+
+    let y = 0
+
+    terminalsList.forEach((el) => {
+        if (el.index == o) {
+            el.term.dispose()
+            terminalsList.splice(y, 1)
+        }
+        y++
+    })
+
+    if (terminalsList.length === 0) {
+        ipc.send('close')
+    } else if (n == o){
+        i = {
+            index : 0,
+            dif : Infinity
+        }
+        terminalsList.forEach((el) => {
+            if (Math.abs(o - el.index) < i.dif) {
+                i.index = el.index
+                i.dif = Math.abs(o - el.index)
+            }
+        })
+
+        let tab = document.querySelector('.tab-all-' + i.index)
+        focusTerm(i.index, tab)
+    }
 }

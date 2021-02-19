@@ -96,3 +96,10 @@ body {
 .visible {
     z-index: 10000;
 }
+
+.logo {
+    height: 2.1vh;
+    width: 2.1vh;
+    margin-left: 10px;
+    margin-top: 0.45vh;
+}

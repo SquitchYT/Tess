@@ -6,7 +6,7 @@
   "scripts": {
     "test": "electron .",
     "rebuild": "electron-rebuild",
-    "dist": "electron-builder --linux snap"
+    "dist": "electron-builder --linux appimage"
   },
   "keywords": [
     "terminal",
