@@ -31,7 +31,7 @@ function openWindow() {
             nodeIntegration: true
         }
     });
-    mainWindow.removeMenu()
+    //mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;
@@ -110,6 +110,7 @@ ipc.on("close-terminal", (e, data) => {
     let y = 0
     shells.forEach((el) => {
         if (el.index == data) {
+            el.shell.write('exit\r')
             el.shell.kill()
             shells.splice(y, 1)
         }

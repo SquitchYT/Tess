@@ -195,8 +195,6 @@ function CreateNewTerminal() {
 
 
 function focusTerm(index, tab) {
-
-
     let terms = document.getElementsByClassName('terms')
     let tabs = document.getElementsByClassName('tab')
 
@@ -209,7 +207,6 @@ function focusTerm(index, tab) {
         r.style.background = colors.app.tab_background
         i++        
     }
-
 
     tab.style.background = colors.app.tab_foreground
 
@@ -228,7 +225,6 @@ function focusTerm(index, tab) {
 
 
 new_tab.addEventListener('click', () => {
-    console.log('clicked')
     CreateNewTerminal()
 })
 
