@@ -1,9 +1,23 @@
-# Tess
-A simple terminal.
-For download : https://squitch.fr/tess-1.0.0.AppImage or clone this Repo; Then :
+# Tess - A Simple Terminal
+Tess is a hackable, simple, rapid and beautoiful terminal for the new era of technologie
 
+Tess is currently in development and we have tons of bugs, so if you find it, please make an issue
+
+
+## Download
+
+#### App Image : https://squitch.fr/tess-1.0.0.AppImage
+#### Manual Build :
 `
-npm install
+git clone https://github.com/SquitchYT/Tess
+`
+<br>
+`
+cd Tess
+`
+<br>
+`
+npm i
 `
 <br>
 `
@@ -13,6 +27,8 @@ npm run rebuild
 `
 electron .
 `
+
+**Enjoy ;)**
 
 ## Versions
 
