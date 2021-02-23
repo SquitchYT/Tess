@@ -5,7 +5,7 @@ body {
 }
 
 .tabs {
-    height : calc(3vh + 7px);
+    height : calc(3vh + 4.5px);
     width : 100vw;
     display: flex;
 }
@@ -75,7 +75,7 @@ body {
 }
 
 .terminals {
-    height: calc(97vh - 7px);
+    height: calc(97vh - 4.5px);
     width: 100vw;
     position: relative;
 }
@@ -113,7 +113,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-    height: 7px;
+    height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -121,6 +121,6 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background:rgba(207, 207, 207, 0.192);
+    background:rgba(207, 207, 207, 0.151);
     border-radius: 10px;
 }
