@@ -5,7 +5,7 @@ body {
 }
 
 .tabs {
-    height : calc(3vh + 4.5px);
+    height : 34.5px;
     width : 100vw;
     display: flex;
 }
@@ -14,7 +14,7 @@ body {
     max-width: 16rem;
     min-width: 11rem;
     width: 100%;
-    height: 3vh;
+    height: 30px;
     display: flex;
     font-weight: bolder;
     font-size: 13px;
@@ -25,8 +25,8 @@ body {
 }
 
 .more {
-    height: 3vh;
-    width: 2.8vh;
+    height: 30px;
+    width: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,7 +75,7 @@ body {
 }
 
 .terminals {
-    height: calc(97vh - 4.5px);
+    height: calc(100vh - 34.5px);
     width: 100vw;
     position: relative;
 }
@@ -96,10 +96,10 @@ body {
 }
 
 .logo {
-    height: 2.1vh;
-    max-width: 2.1vh;
-    margin-left: 6px;
-    margin-top: 0.45vh;
+    height: 21px;
+    max-width: 21px;
+    margin-left: 6.5px;
+    margin-top: 4.5px;
     border-radius: 5.7px;
     width: 100%;
 }

@@ -1,19 +1,22 @@
-const { Terminal } = require('xterm')
-const { ipcRenderer : ipc } = require('electron')
-const fs = require('fs')
+const { Terminal } = require('xterm');
+const { ipcRenderer : ipc } = require('electron');
+const fs = require('fs');
 
-const tabs = document.querySelector('.tabs-tab')
-const terminals = document.querySelector('.terminals')
-const viewport = document.getElementById("terminals")
-const body = document.getElementById('body')
-const new_tab = document.getElementById('new-tab')
+const tabs = document.querySelector('.tabs-tab');
+const terminals = document.querySelector('.terminals');
+const viewport = document.getElementById("terminals");
+const body = document.getElementById('body');
+const new_tab = document.getElementById('new-tab');
 
-let terminalsList = []
-let n = 0
-let index = 0
-let colors
+let cols;
+let rows;
 
-getTheme()
+let terminalsList = [];
+let n = 0;
+let index = 0;
+let colors;
+
+getTheme();
 
 function getTheme() {
     try {
@@ -103,10 +106,7 @@ function CreateNewTerminal() {
     termDiv.classList.add('terms', 'terminal-' + index, 'visible')
     termDiv.setAttribute('number', index)
 
-    let height = viewport.clientHeight
-    let width = viewport.clientWidth;
-    let rows = parseInt(height/16.95, 10);
-    let cols = parseInt(width/9, 10);
+    if (!cols) resize()
 
     let term = new Terminal({
         cols : cols,
@@ -189,24 +189,21 @@ new_tab.addEventListener('click', () => {
 })
 
 ipc.on('resize', () => {
-    Resize()
+    resize()
 })
 
-function Resize() {
-    let height = viewport.clientHeight
-    let width = viewport.clientWidth;
-    let rows = parseInt(height/16.95, 10);
-    let cols = parseInt(width/9, 10);
+function resize() {
+    console.log('rezised...')
+    rows = parseInt(terminals.clientHeight/16.95, 10)
+    cols = parseInt(terminals.clientWidth/9, 10)
 
     terminalsList.forEach((el) => {
         el.term.resize(cols, rows)
     })
 
-    console.log('terminal div resized')
-
     ipc.send('resize', {
-        rows : rows,
-        cols : cols
+        cols : cols,
+        rows : rows
     })
 }
 
