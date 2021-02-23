@@ -1,0 +1,11 @@
+{
+    "terminal" : {
+        "foreground" : "#9195c9",
+        "background" : "#282d42"
+    },
+    "app" : {
+        "tab_background" : "#24283b",
+        "tab_foreground" : "#2f344d",
+        "text_color" : "#fff"
+    }
+}

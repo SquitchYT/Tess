@@ -1,10 +1,8 @@
 const { Terminal } = require('xterm')
-const ipc = require('electron').ipcRenderer
+const { ipcRenderer : ipc } = require('electron')
 const fs = require('fs')
-const os = require('os')
 
-const homedir = os.homedir()
-const tabs = document.querySelector('.tabs-panel')
+const tabs = document.querySelector('.tabs-tab')
 const terminals = document.querySelector('.terminals')
 const viewport = document.getElementById("terminals")
 const body = document.getElementById('body')
@@ -12,45 +10,31 @@ const new_tab = document.getElementById('new-tab')
 
 let terminalsList = []
 let n = 0
-
 let index = 0
+let colors
 
+getTheme()
 
-let colors = {
-    terminal : {
-        foreground : '#fff',
-        background : '#000'
-    },
-    app : {
-        tab_background : '#000',
-        tab_foreground : '#aabbcc',
-        text_color : '#fff'
-    }
-}
-
-getTheme('tokyo-night')
-
-function getTheme(theme) {
-    let file =  fs.readFileSync(homedir + '/.config/tess/theme/' + theme + '.theme', 'utf-8').split('\n').filter(Boolean)
-
-    file.forEach((line) => {
-        if (line.startsWith('foreground')) {
-            let prop = line.split(': ')
-            colors.terminal.foreground = prop[1]
-        } else if (line.startsWith('background')) {
-            let prop = line.split(': ')
-            colors.terminal.background = prop[1]
-        } else if (line.startsWith('app-background')) {
-            let prop = line.split(': ')
-            colors.app.tab_background = prop[1]
-        } else if (line.startsWith('app-foreground')) {
-            let prop = line.split(': ')
-            colors.app.tab_foreground = prop[1]
-        } else if (line.startsWith('app-color')) {
-            let prop = line.split(': ')
-            colors.app.text_color = prop[1]
+function getTheme() {
+    try {
+        file =  fs.readFileSync('config/theme/tokyo-night.json', 'utf-8')
+    } catch (error) {
+        console.log(error)
+        colors = {
+            terminal : {
+                foreground : "#fff",
+                background : "#000"
+            },
+            app : {
+                tab_background : "#000",
+                tab_foreground : "#aabbcc",
+                text_color : "#fff"
+            }
         }
-    })
+        return
+    }
+    
+    colors = JSON.parse(file)
 }
 
 tabs.style.background = colors.app.tab_background
@@ -104,6 +88,10 @@ function CreateNewTerminal() {
     let logo = document.createElement('img')
     logo.src = "img/shell.png"
     logo.classList.add('logo')
+
+    logo.addEventListener('click', () => {
+        focusTerm(tab_link.classList[2], tab)
+    })
 
 
     tab.appendChild(logo)
@@ -200,7 +188,7 @@ new_tab.addEventListener('click', () => {
     CreateNewTerminal()
 })
 
-ipc.on('resize', (e, data) => {
+ipc.on('resize', () => {
     Resize()
 })
 

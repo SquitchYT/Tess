@@ -5,20 +5,22 @@ body {
 }
 
 .tabs {
-    height : calc(3vh - 3px);
+    height : calc(3vh + 7px);
     width : 100vw;
     display: flex;
 }
 
 .tab {
     max-width: 16rem;
-    height: 100%;
+    min-width: 11rem;
     width: 100%;
+    height: 3vh;
     display: flex;
     font-weight: bolder;
     font-size: 13px;
     font-family: monospace;
     border-radius: 5.7px 5.7px 0 0;
+    cursor: pointer;
     overflow: hidden;
 }
 
@@ -58,7 +60,7 @@ body {
     height: 100%;
     width: 100%;
     display: flex;
-    padding-left: 8px;
+    overflow: hidden;
 }
 
 .tab .tab-link{
@@ -73,7 +75,7 @@ body {
 }
 
 .terminals {
-    height: calc(97vh + 3px);
+    height: calc(97vh - 7px);
     width: 100vw;
     position: relative;
 }
@@ -83,10 +85,6 @@ body {
     height: 100%;
     width: 100vw;
 }
-
-::-webkit-scrollbar {
-    width: 0px;
-  }
 
 .hidden {
     scale: 0;
@@ -99,7 +97,30 @@ body {
 
 .logo {
     height: 2.1vh;
-    width: 2.1vh;
-    margin-left: 10px;
+    max-width: 2.1vh;
+    margin-left: 6px;
     margin-top: 0.45vh;
+    border-radius: 5.7px;
+    width: 100%;
+}
+
+.tabs-tab{
+    display: flex;
+    height: 100%;
+    width: 100%;
+    overflow-y: hidden;
+    overflow-x: scroll;
+}
+
+::-webkit-scrollbar {
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #282d42;
+}
+
+::-webkit-scrollbar-thumb {
+    background:rgba(207, 207, 207, 0.192);
+    border-radius: 10px;
 }
