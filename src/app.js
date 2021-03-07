@@ -4,9 +4,10 @@ const fs = require('fs');
 
 const tabs = document.querySelector('.tabs-tab');
 const terminals = document.querySelector('.terminals');
-const viewport = document.getElementById("terminals");
-const body = document.getElementById('body');
+const body = document.body;
 const new_tab = document.getElementById('new-tab');
+const root = document.documentElement;
+
 
 let cols;
 let rows;
@@ -14,35 +15,47 @@ let rows;
 let terminalsList = [];
 let n = 0;
 let index = 0;
-let colors;
 
-getTheme();
+let config;
+let colors = {
+    terminal : {
+        theme : {
+            foreground : "#fff",
+            background : "#000"
+        }
+    },
+    app : {
+        tab_background : "#000",
+        tab_foreground : "#aabbcc",
+        text_color : "#fff"
+    }
+}
 
-function getTheme() {
+! function getTheme() {
     try {
-        file =  fs.readFileSync('config/theme/tokyo-night.json', 'utf-8')
+        file = fs.readFileSync('config/.config', 'utf-8')
+    } catch (error) {
+        console.log(error);
+        return;
+    }
+
+    config = JSON.parse(file)
+
+    try {
+        file = fs.readFileSync('config/theme/' + config.theme + '.json', 'utf-8')
     } catch (error) {
         console.log(error)
-        colors = {
-            terminal : {
-                foreground : "#fff",
-                background : "#000"
-            },
-            app : {
-                tab_background : "#000",
-                tab_foreground : "#aabbcc",
-                text_color : "#fff"
-            }
-        }
         return
     }
     
     colors = JSON.parse(file)
-}
+}();
 
 tabs.style.background = colors.app.tab_background
 body.style.color = colors.app.text_color
-body.style.background = colors.terminal.background
+body.style.background = colors.terminal.theme.background
+
+root.style.setProperty('--background-scrollbar', colors.terminal.theme.background)
 
 CreateNewTerminal()
 
@@ -96,7 +109,6 @@ function CreateNewTerminal() {
         focusTerm(tab_link.classList[2], tab)
     })
 
-
     tab.appendChild(logo)
     tab.appendChild(tab_link)
     tab.appendChild(close_button)
@@ -111,8 +123,9 @@ function CreateNewTerminal() {
     let term = new Terminal({
         cols : cols,
         rows : rows,
-        theme : colors.terminal
+        theme : colors.terminal.theme,
     })
+
     term.open(termDiv)
 
     term.onData((e) => {
@@ -193,9 +206,8 @@ ipc.on('resize', () => {
 })
 
 function resize() {
-    console.log('rezised...')
-    rows = parseInt(terminals.clientHeight/16.95, 10)
-    cols = parseInt(terminals.clientWidth/9, 10)
+    rows = parseInt(terminals.clientHeight/ 16.95, 10)
+    cols = parseInt(terminals.clientWidth/ 9, 10)
 
     terminalsList.forEach((el) => {
         el.term.resize(cols, rows)

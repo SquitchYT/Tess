@@ -1,7 +1,9 @@
 {
     "terminal" : {
-        "foreground" : "#9195c9",
-        "background" : "#282d42"
+        "theme" : {
+            "foreground" : "#9195c9",
+            "background" : "#282d42"
+        }
     },
     "app" : {
         "tab_background" : "#24283b",

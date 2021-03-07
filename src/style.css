@@ -1,3 +1,7 @@
+:root {
+    --background-scrollbar : #000;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -117,11 +121,11 @@ body {
     width: 4px;
 }
 
-::-webkit-scrollbar-track {
-    background-color: #282d42;
+::-webkit-scrollbar-track{
+    background-color: var(--background-scrollbar);
 }
 
 ::-webkit-scrollbar-thumb {
-    background:rgba(207, 207, 207, 0.151);
+    background:rgba(200, 200, 200, 0.151);
     border-radius: 10px;
 }

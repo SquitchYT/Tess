@@ -6,7 +6,8 @@
   "scripts": {
     "test": "electron .",
     "rebuild": "electron-rebuild",
-    "dist": "electron-builder --linux appimage"
+    "dist": "electron-builder --linux appimage",
+    "aa" : "electron-builder install-app-deps"
   },
   "keywords": [
     "terminal",
