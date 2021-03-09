@@ -26,6 +26,8 @@ body {
     border-radius: 5.7px 5.7px 0 0;
     cursor: pointer;
     overflow: hidden;
+    animation-duration: 0.22s;
+    animation-name: nodeInserted;
 }
 
 .more {
@@ -128,4 +130,15 @@ body {
 ::-webkit-scrollbar-thumb {
     background:rgba(200, 200, 200, 0.151);
     border-radius: 10px;
+}
+
+@keyframes nodeInserted { 
+    from { 
+            opacity: 0.4;
+            transform: translateY(9px);
+         }
+    to   { 
+            opacity: 1;
+            transform: translateY(0);
+         } 
 }

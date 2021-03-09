@@ -6,14 +6,15 @@
   "scripts": {
     "test": "electron .",
     "rebuild": "electron-rebuild",
-    "dist": "electron-builder --linux appimage",
-    "aa" : "electron-builder install-app-deps"
+    "dist": "electron-builder --linux appimage"
   },
   "keywords": [
     "terminal",
     "nodejs",
     "bash",
-    "shell"
+    "shell",
+    "xtermjs",
+    "node-pty"
   ],
   "author": "squitch",
   "license": "ISC",

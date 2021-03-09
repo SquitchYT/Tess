@@ -11,7 +11,6 @@ const root = document.documentElement;
 
 let cols;
 let rows;
-
 let terminalsList = [];
 let n = 0;
 let index = 0;
@@ -21,7 +20,7 @@ let colors = {
     terminal : {
         theme : {
             foreground : "#fff",
-            background : "#000"
+            background : "#000",
         }
     },
     app : {
@@ -105,11 +104,6 @@ function CreateNewTerminal() {
     logo.src = "img/shell.png"
     logo.classList.add('logo')
 
-    logo.addEventListener('click', () => {
-        console.log('aa')
-        focusTerm(tab_link.classList[2], tab)
-    })
-
     tab.appendChild(logo)
     tab.appendChild(tab_link)
     tab.appendChild(close_button)
@@ -118,8 +112,14 @@ function CreateNewTerminal() {
     let termDiv = document.createElement('div')
     termDiv.classList.add('terms', 'terminal-' + index, 'visible')
     termDiv.setAttribute('number', index)
-    termDiv.addEventListener('click', () => {
-        termDiv.focus()
+
+
+    logo.addEventListener('click', () => {
+        focusTerm(tab_link.classList[2], tab)
+    })
+
+    tab.addEventListener('animationstart', () => {
+        focusTerm(tab_link.classList[2], tab)
     })
 
     if (!cols) resize()
@@ -162,11 +162,7 @@ function CreateNewTerminal() {
         index : index,
         term : term
     }
-
-    logo.click()
-
     n = index
-
     index++;
     
     terminals.appendChild(termDiv)
