@@ -106,6 +106,7 @@ function CreateNewTerminal() {
     logo.classList.add('logo')
 
     logo.addEventListener('click', () => {
+        console.log('aa')
         focusTerm(tab_link.classList[2], tab)
     })
 
@@ -117,6 +118,9 @@ function CreateNewTerminal() {
     let termDiv = document.createElement('div')
     termDiv.classList.add('terms', 'terminal-' + index, 'visible')
     termDiv.setAttribute('number', index)
+    termDiv.addEventListener('click', () => {
+        termDiv.focus()
+    })
 
     if (!cols) resize()
 
@@ -124,6 +128,7 @@ function CreateNewTerminal() {
         cols : cols,
         rows : rows,
         theme : colors.terminal.theme,
+        cursorStyle : config.terminal.cursor
     })
 
     term.open(termDiv)
@@ -153,12 +158,14 @@ function CreateNewTerminal() {
         cols : cols
     })
 
-    n = index
-
     let t = {
         index : index,
         term : term
     }
+
+    logo.click()
+
+    n = index
 
     index++;
     
@@ -186,6 +193,7 @@ function focusTerm(index, tab) {
     let termtoview = document.querySelector('.terminal-' + index)
     termtoview.classList.remove('hidden')
     termtoview.classList.add('visible')
+    termtoview.click()
 
     n = termtoview.getAttribute('number')
 
@@ -258,7 +266,6 @@ function CloseTerm(index) {
         focusTerm(i.index, tab)
     }
 }
-
 
 
 const target = document.getElementById('test')

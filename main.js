@@ -1,6 +1,6 @@
 const time1 = new Date().getTime()
 
-const { app, BrowserWindow, ipcMain : ipc} = require('electron')
+const { app, BrowserWindow, ipcMain : ipc, screen} = require('electron')
 
 const pty = require("node-pty");
 const RPC = require('discord-rpc')
@@ -26,11 +26,24 @@ let mainWindow;
 let shells = []
 
 function openWindow() {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize
+
+    const appwidth = width - (width >> 2)
+    const appheight = height - (height >> 2)
+    const minwidth = Math.floor( (width - (width >> 1)) / 1.47 )
+    const minheight = Math.floor( (height - (height >> 1)) / 1.4 )
+
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
-        }
+        },
+        width : appwidth,
+        height : appheight,
+        minHeight : minheight,
+        minWidth : minwidth,
+        title : "Tess - Terminal"
     });
+
     mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
