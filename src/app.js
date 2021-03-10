@@ -50,11 +50,11 @@ let colors = {
     colors = JSON.parse(file)
 }();
 
-tabs.style.background = colors.app.tab_background
-body.style.color = colors.app.text_color
-body.style.background = colors.terminal.theme.background
+tabs.style.background = colors?.app?.tab_background
+body.style.color = colors?.app?.text_color
+body.style.background = colors?.terminal?.theme?.background
 
-root.style.setProperty('--background-scrollbar', colors.terminal.theme.background)
+root.style.setProperty('--background-scrollbar', colors?.terminal?.theme?.background)
 
 CreateNewTerminal()
 
@@ -127,8 +127,8 @@ function CreateNewTerminal() {
     let term = new Terminal({
         cols : cols,
         rows : rows,
-        theme : colors.terminal.theme,
-        cursorStyle : config.terminal.cursor
+        theme : colors?.terminal?.theme,
+        cursorStyle : config?.terminal?.cursor
     })
 
     term.open(termDiv)
@@ -147,7 +147,7 @@ function CreateNewTerminal() {
     while (i < terms.length) {
         let a = terms.item(i)
         let e = yy.item(i)
-        e.style.background = colors.app.tab_background
+        e.style.background = colors?.app?.tab_background
         a.classList.add('hidden')
         i++
     }
@@ -180,11 +180,11 @@ function focusTerm(index, tab) {
         let r = tabs.item(i)
         a.classList.add('hidden')
         a.classList.remove('visible')
-        r.style.background = colors.app.tab_background
+        r.style.background = colors?.app?.tab_background
         i++        
     }
 
-    tab.style.background = colors.app.tab_foreground
+    tab.style.background = colors?.app?.tab_foreground
 
     let termtoview = document.querySelector('.terminal-' + index)
     termtoview.classList.remove('hidden')

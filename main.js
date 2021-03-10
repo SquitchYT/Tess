@@ -5,7 +5,7 @@ const { app, BrowserWindow, ipcMain : ipc, screen} = require('electron')
 const pty = require("node-pty");
 const RPC = require('discord-rpc')
 
-const sh = process.platform == "win32" ? "cmd.exe" : "bash"
+const sh = process.platform == "win32" ? "powershell.exe" : "bash"
 
 const rpc = new RPC.Client({
     transport : "ipc"
@@ -46,7 +46,7 @@ function openWindow() {
         title : "Tess - Terminal"
     });
 
-    //mainWindow.removeMenu()
+    mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;
