@@ -9,7 +9,7 @@ body {
 }
 
 .tabs {
-    height : 34.5px;
+    height : 34px;
     width : 100vw;
     display: flex;
 }
@@ -18,20 +18,19 @@ body {
     max-width: 16rem;
     min-width: 11rem;
     width: 100%;
-    height: 30px;
+    height: 34px;
     display: flex;
     font-weight: bolder;
     font-size: 13px;
     font-family: monospace;
-    border-radius: 5.7px 5.7px 0 0;
+    border-radius: 5.4px 5.4px 0 0;
     cursor: pointer;
     overflow: hidden;
-    animation-duration: 0.22s;
-    animation-name: nodeInserted;
+    animation: 0.25s nodeInserted;
 }
 
 .more {
-    height: 30px;
+    height: 34px;
     width: 28px;
     display: flex;
     align-items: center;
@@ -44,7 +43,7 @@ body {
 
 .more:hover{
     cursor: pointer;
-    filter: invert(0.3)
+    filter: invert(0.32)
 }
 
 .tab .close-button{
@@ -59,7 +58,7 @@ body {
 
 .tab .close-button:hover{
     cursor: pointer;
-    filter: invert(0.3)
+    filter: invert(0.32)
 }
 
 .tabs .tabs-panel{
@@ -81,8 +80,8 @@ body {
 }
 
 .terminals {
-    height: calc(100vh - 34.5px);
-    width: 100vw;
+    height: calc(100vh - 34px);
+    width: calc(100vw - 3.6px);
     position: relative;
 }
 
@@ -93,7 +92,6 @@ body {
 }
 
 .hidden {
-    scale: 0;
     z-index: 50;
 }
 
@@ -102,11 +100,11 @@ body {
 }
 
 .logo {
-    height: 21px;
+    height: 20px;
     max-width: 21px;
     margin-left: 6.5px;
-    margin-top: 4.5px;
-    border-radius: 5.7px;
+    margin-top: 7px;
+    border-radius: 3.5px;
     width: 100%;
 }
 
@@ -119,8 +117,8 @@ body {
 }
 
 ::-webkit-scrollbar {
-    height: 4px;
-    width: 4px;
+    height: 3.5px;
+    width: 3.5px;
 }
 
 ::-webkit-scrollbar-track{
@@ -128,14 +126,14 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background:rgba(200, 200, 200, 0.151);
-    border-radius: 10px;
+    background:rgba(210, 210, 210, 0.12);
+    border-radius: 9px;
 }
 
 @keyframes nodeInserted { 
     from { 
-            opacity: 0.4;
-            transform: translateY(9px);
+            opacity: 0.35;
+            transform: translateY(10px);
          }
     to   { 
             opacity: 1;
