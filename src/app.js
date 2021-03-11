@@ -56,16 +56,21 @@ body.style.background = colors?.terminal?.theme?.background
 
 root.style.setProperty('--background-scrollbar', colors?.terminal?.theme?.background)
 
-CreateNewTerminal()
+CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
+
 
 ipc.send('load-end')
 
 
 window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'T'){
-        CreateNewTerminal()
-    } else if (e.ctrlKey && e.shiftKey && e.key === 'W'){
+    if (e.ctrlKey && e.shiftKey && e.key === 'W'){
         CloseTerm(n)
+    } else if (e.ctrlKey && e.shiftKey) {
+        for (const [key, value] of Object.entries(config.shortcut)) {
+            if (e.key == key) {
+                CreateNewTerminal(value)
+            }
+        }
     }
 })
 
@@ -78,7 +83,7 @@ ipc.on('pty-data', (e, data) => {
 })
 
 
-function CreateNewTerminal() {
+function CreateNewTerminal(toStart) {
     let tab = document.createElement('div')
     tab.style.background = colors.app.tab_foreground
     tab.classList.add('tab', 'tab-all-' + index)
@@ -88,7 +93,7 @@ function CreateNewTerminal() {
     tab_link.addEventListener('click', () => {
         focusTerm(tab_link.classList[2], tab)
     })
-    tab_link.innerHTML = "Bash ~ $"
+    tab_link.innerHTML = toStart + " ~ $"
     tab_link.classList.add('tab-link', 'tab-' + index, index)
 
     let close_button = document.createElement('div')
@@ -155,7 +160,8 @@ function CreateNewTerminal() {
     ipc.send('new-term', {
         index : index,
         rows : rows,
-        cols : cols
+        cols : cols,
+        shell : toStart
     })
 
     let t = {
@@ -202,7 +208,7 @@ function focusTerm(index, tab) {
 
 
 new_tab.addEventListener('click', () => {
-    CreateNewTerminal()
+    CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
 })
 
 ipc.on('resize', () => {

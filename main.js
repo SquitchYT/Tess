@@ -46,7 +46,7 @@ function openWindow() {
         title : "Tess - Terminal"
     });
 
-    mainWindow.removeMenu()
+    //mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;
@@ -69,7 +69,7 @@ function openWindow() {
 
 
 ipc.on('new-term', (e, data) => {
-    let shell = pty.spawn(sh, [], {
+    let shell = pty.spawn(data?.shell, [], {
         name: "xterm-color",
         cols : data.cols,
         rows : data.rows,
