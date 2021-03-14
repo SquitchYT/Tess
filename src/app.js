@@ -8,6 +8,7 @@ const body = document.body;
 const new_tab = document.getElementById('new-tab');
 const root = document.documentElement;
 
+const test = ["Close"]
 
 let cols;
 let rows;
@@ -63,12 +64,14 @@ ipc.send('load-end')
 
 
 window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && e.key === 'W'){
-        CloseTerm(n)
-    } else if (e.ctrlKey && e.shiftKey) {
+    if (e.ctrlKey && e.shiftKey) {
         for (const [key, value] of Object.entries(config.shortcut)) {
             if (e.key == key) {
-                CreateNewTerminal(value)
+                if (test.includes(value)) {
+                    window[value + "Term"](n)
+                } else {
+                    CreateNewTerminal(value)
+                }
             }
         }
     }
