@@ -4,8 +4,9 @@ const { app, BrowserWindow, ipcMain : ipc, screen} = require('electron')
 
 const pty = require("node-pty");
 const RPC = require('discord-rpc')
+const Child_Proc = require('child_process');
 
-const sh = process.platform == "win32" ? "powershell.exe" : "bash"
+const sh = process.platform == "win32" ? "powershell.exe" : "fish"
 
 const rpc = new RPC.Client({
     transport : "ipc"
@@ -69,7 +70,16 @@ function openWindow() {
 
 
 ipc.on('new-term', (e, data) => {
-    let shell = pty.spawn(data?.shell, [], {
+
+    let Command = data.shell
+
+    try {
+        Child_Proc.execSync(data.shell)
+    } catch (error) {
+        Command = sh
+    }
+
+    let shell = pty.spawn(Command, [], {
         name: "xterm-color",
         cols : data.cols,
         rows : data.rows,
@@ -77,7 +87,7 @@ ipc.on('new-term', (e, data) => {
         env: process.env,
     })
 
-    shell.on('data', (datas) => {
+    shell.onData((datas) => {
         try {
             mainWindow.webContents.send('pty-data', {
                 index : data.index,

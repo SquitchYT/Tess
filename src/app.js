@@ -59,9 +59,7 @@ root.style.setProperty('--background-scrollbar', colors?.terminal?.theme?.backgr
 
 CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
 
-
 ipc.send('load-end')
-
 
 window.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.shiftKey) {
@@ -209,10 +207,6 @@ function focusTerm(index, tab) {
     })
 }
 
-
-new_tab.addEventListener('click', () => {
-    CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
-})
 
 ipc.on('resize', () => {
     resize()
