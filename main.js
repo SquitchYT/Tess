@@ -3,26 +3,27 @@ const time1 = new Date().getTime()
 const { app, BrowserWindow, ipcMain : ipc, screen} = require('electron')
 
 const pty = require("node-pty");
-const RPC = require('discord-rpc')
 const Child_Proc = require('child_process');
+const { Worker } = require('worker_threads');
 
 const sh = process.platform == "win32" ? "powershell.exe" : "fish"
 
-const rpc = new RPC.Client({
-    transport : "ipc"
-});
 
-rpc.on('ready',() => {
-    rpc.setActivity({
-        details : "Writting command...",
-        largeImageKey : "icon",
-        startTimestamp : new Date()
+console.log('script main loaded')
+
+! function LoadModules(){
+    const DiscordWorker = new Worker('./worker/discord-rpc.js')
+    
+    DiscordWorker.on('online', () => {
+        console.log('Discord Module is Loaded !!')
     })
-})
 
-rpc.login({
-    clientId : "811294906517422130"
-})
+    DiscordWorker.on('message', (message) => {
+        console.log(message)
+    })
+
+    // Add error and exit statement
+}();
 
 
 let mainWindow;
