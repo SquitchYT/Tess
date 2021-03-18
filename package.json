@@ -16,7 +16,8 @@
     "bash",
     "shell",
     "xtermjs",
-    "node-pty"
+    "node-pty",
+    "powershell"
   ],
   "author": "squitch",
   "license": "ISC",

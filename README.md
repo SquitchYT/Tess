@@ -26,7 +26,7 @@ npm run rebuild
 `
 <br>
 `
-electron .
+npm run test
 `
 
 **Enjoy ;)**

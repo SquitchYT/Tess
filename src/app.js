@@ -5,7 +5,6 @@ const fs = require('fs');
 const tabs = document.querySelector('.tabs-tab');
 const terminals = document.querySelector('.terminals');
 const body = document.body;
-const new_tab = document.getElementById('new-tab');
 const root = document.documentElement;
 
 const test = ["Close"]
