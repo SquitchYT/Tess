@@ -9,8 +9,6 @@ const { Worker } = require('worker_threads');
 const sh = process.platform == "win32" ? "powershell.exe" : "fish"
 
 
-console.log('script main loaded')
-
 ! function LoadModules(){
     const DiscordWorker = new Worker('./worker/discord-rpc.js')
     

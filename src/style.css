@@ -83,6 +83,7 @@ body {
     height: calc(100vh - 34px);
     width: calc(100vw - 3.6px);
     position: relative;
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .terms {
