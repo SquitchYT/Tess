@@ -41,13 +41,13 @@ function openWindow() {
         webPreferences: {
             nodeIntegration: true
         },
-        width : appwidth,
-        height : appheight,
-        minHeight : minheight,
-        minWidth : minwidth,
-        title : "Tess - Terminal",
-        transparent : true,
-        frame : true
+        width: appwidth,
+        height: appheight,
+        minHeight: minheight,
+        minWidth: minwidth,
+        title: "Tess - Terminal",
+        transparent: true,
+        frame: true
     });
 
     //mainWindow.removeMenu()
@@ -84,8 +84,8 @@ ipc.on('new-term', (e, data) => {
 
     let shell = pty.spawn(Command, [], {
         name: "xterm-color",
-        cols : data.cols,
-        rows : data.rows,
+        cols: data.cols,
+        rows: data.rows,
         cwd: process.env.HOME,
         env: process.env,
     })
@@ -93,8 +93,8 @@ ipc.on('new-term', (e, data) => {
     shell.onData((datas) => {
         try {
             mainWindow.webContents.send('pty-data', {
-                index : data.index,
-                data : datas
+                index: data.index,
+                data: datas
             })
         } catch (err) {
             console.log(err)
@@ -102,8 +102,8 @@ ipc.on('new-term', (e, data) => {
     })
 
     let s = {
-        index : data.index,
-        shell : shell
+        index: data.index,
+        shell: shell
     }
 
     shells.push(s)

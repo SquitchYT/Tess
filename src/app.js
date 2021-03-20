@@ -19,16 +19,16 @@ let index = 0;
 
 let config;
 let colors = {
-    terminal : {
-        theme : {
-            foreground : "#fff",
-            background : "#000",
+    terminal: {
+        theme: {
+            foreground: "#fff",
+            background: "#000",
         }
     },
-    app : {
-        tab_background : "#000",
-        tab_foreground : "#aabbcc",
-        text_color : "#fff"
+    app: {
+        tab_background: "#000",
+        tab_foreground: "#aabbcc",
+        text_color: "#fff"
     }
 }
 
@@ -148,10 +148,10 @@ function CreateNewTerminal(toStart) {
     if (!cols) resize()
 
     let term = new Terminal({
-        cols : cols,
-        rows : rows,
-        theme : colors?.terminal?.theme,
-        cursorStyle : config?.terminal?.cursor,
+        cols: cols,
+        rows: rows,
+        theme: colors?.terminal?.theme,
+        cursorStyle: config?.terminal?.cursor,
         allowTransparency: config.transparency
     })
 
@@ -159,8 +159,8 @@ function CreateNewTerminal(toStart) {
 
     term.onData((e) => {
         ipc.send('terminal-data', {
-            index : n,
-            data : e
+            index: n,
+            data: e
         })
     })
 
@@ -177,15 +177,15 @@ function CreateNewTerminal(toStart) {
     }
 
     ipc.send('new-term', {
-        index : index,
-        rows : rows,
-        cols : cols,
-        shell : toStart
+        index: index,
+        rows: rows,
+        cols: cols,
+        shell: toStart
     })
 
     let t = {
-        index : index,
-        term : term
+        index: index,
+        term: term
     }
     n = index
     index++;
@@ -239,8 +239,8 @@ function resize() {
     })
 
     ipc.send('resize', {
-        cols : cols,
-        rows : rows
+        cols: cols,
+        rows: rows
     })
 }
 
@@ -269,8 +269,8 @@ function CloseTerm(index) {
         ipc.send('close')
     } else if (n == o){
         i = {
-            index : 0,
-            dif : Infinity
+            index: 0,
+            dif: Infinity
         }
         terminalsList.forEach((el) => {
             if (Math.abs(o - el.index) < i.dif) {
