@@ -2,6 +2,8 @@ const { Terminal } = require('xterm');
 const { ipcRenderer : ipc } = require('electron');
 const fs = require('fs');
 
+const Color = require('../class/color')
+
 const tabs = document.querySelector('.tabs-tab');
 const terminals = document.querySelector('.terminals');
 const body = document.body;
@@ -50,11 +52,20 @@ let colors = {
     colors = JSON.parse(file)
 }();
 
+const bgColor = new Color(colors.terminal.theme.background, config.transparency_value);
+colors.terminal.theme.background = bgColor.rgba
+
+console.log(colors.terminal.theme.background)
+
+if (config.transparency == true) {
+    root.style.setProperty('--opacity', config.transparency_value + 0.15)
+    root.style.setProperty('--background', colors.terminal.theme.background)
+    colors.terminal.theme.background = 'transparent'
+}
+
+
 tabs.style.background = colors?.app?.tab_background
 body.style.color = colors?.app?.text_color
-body.style.background = colors?.terminal?.theme?.background
-
-root.style.setProperty('--background-scrollbar', colors?.terminal?.theme?.background)
 
 CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
 
@@ -137,7 +148,8 @@ function CreateNewTerminal(toStart) {
         cols : cols,
         rows : rows,
         theme : colors?.terminal?.theme,
-        cursorStyle : config?.terminal?.cursor
+        cursorStyle : config?.terminal?.cursor,
+        allowTransparency: config.transparency
     })
 
     term.open(termDiv)

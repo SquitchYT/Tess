@@ -1,17 +1,21 @@
 :root {
-    --background-scrollbar : #000;
+    --opacity : 1;
+    --background : #FFF;
 }
 
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    background: var(--background);
 }
 
 .tabs {
     height : 34px;
     width : 100vw;
     display: flex;
+    opacity: var(--opacity);
+    -webkit-app-region: drag;
 }
 
 .tab {
@@ -23,10 +27,11 @@ body {
     font-weight: bolder;
     font-size: 13px;
     font-family: monospace;
-    border-radius: 5.4px 5.4px 0 0;
+    border-radius: 5px 5px 0 0;
     cursor: pointer;
     overflow: hidden;
     animation: 0.25s nodeInserted;
+    -webkit-app-region: no-drag;
 }
 
 .more {
@@ -39,6 +44,7 @@ body {
     font-size: 20px;
     font-family: monospace;
     order: 1000;
+    -webkit-app-region: no-drag;
 }
 
 .more:hover{
@@ -83,7 +89,6 @@ body {
     height: calc(100vh - 34px);
     width: calc(100vw - 3.6px);
     position: relative;
-    background-color: rgba(0, 0, 0, 0);
 }
 
 .terms {
@@ -94,6 +99,7 @@ body {
 
 .hidden {
     z-index: 50;
+    visibility: hidden;
 }
 
 .visible {
@@ -123,11 +129,11 @@ body {
 }
 
 ::-webkit-scrollbar-track{
-    background-color: var(--background-scrollbar);
+    background-color: var(--background);
 }
 
 ::-webkit-scrollbar-thumb {
-    background:rgba(210, 210, 210, 0.12);
+    background:rgba(212, 212, 212, 0.12);
     border-radius: 9px;
 }
 

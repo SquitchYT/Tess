@@ -8,6 +8,8 @@ const { Worker } = require('worker_threads');
 
 const sh = process.platform == "win32" ? "powershell.exe" : "fish"
 
+app.commandLine.appendSwitch('disable-gpu');
+
 
 ! function LoadModules(){
     const DiscordWorker = new Worker('./worker/discord-rpc.js')
@@ -43,10 +45,12 @@ function openWindow() {
         height : appheight,
         minHeight : minheight,
         minWidth : minwidth,
-        title : "Tess - Terminal"
+        title : "Tess - Terminal",
+        transparent : true,
+        frame : false
     });
 
-    //mainWindow.removeMenu()
+    mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;
@@ -115,7 +119,11 @@ ipc.on('terminal-data', (e, data) => {
 
 
 // App events
-app.on("ready", openWindow);
+app.on("ready", () => {
+    setTimeout(() => {
+        openWindow()
+    }, 30);
+});
 
 app.on("window-all-closed", function() {
     if (process.platform !== "darwin") {
