@@ -129,7 +129,7 @@ body {
 }
 
 ::-webkit-scrollbar-track{
-    background-color: var(--background);
+    background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {

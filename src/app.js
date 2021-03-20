@@ -53,14 +53,17 @@ let colors = {
 }();
 
 const bgColor = new Color(colors.terminal.theme.background, config.transparency_value);
-colors.terminal.theme.background = bgColor.rgba
-
-console.log(colors.terminal.theme.background)
 
 if (config.transparency == true) {
+    colors.terminal.theme.background = bgColor.rgba
     root.style.setProperty('--opacity', config.transparency_value + 0.15)
     root.style.setProperty('--background', colors.terminal.theme.background)
     colors.terminal.theme.background = 'transparent'
+
+} else {
+    colors.terminal.theme.background = bgColor.rgb
+    root.style.setProperty('--opacity', config.transparency_value + 0.15)
+    root.style.setProperty('--background', colors.terminal.theme.background)
 }
 
 
