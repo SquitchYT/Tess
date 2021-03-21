@@ -1,6 +1,5 @@
 const { Terminal } = require('xterm');
 const { ipcRenderer : ipc } = require('electron');
-const fs = require('fs');
 
 const Color = require('../class/color')
 
@@ -8,8 +7,9 @@ const tabs = document.querySelector('.tabs-tab');
 const terminals = document.querySelector('.terminals');
 const body = document.body;
 const root = document.documentElement;
+const target = document.getElementById('test')
 
-const test = ["Close"]
+const shortcutAction = ["Close"]
 
 let cols;
 let rows;
@@ -18,79 +18,8 @@ let n = 0;
 let index = 0;
 
 let config;
-let colors = {
-    terminal: {
-        theme: {
-            foreground: "#fff",
-            background: "#000",
-        }
-    },
-    app: {
-        tab_background: "#000",
-        tab_foreground: "#aabbcc",
-        text_color: "#fff"
-    }
-}
+let colors;
 
-! function getTheme() {
-    try {
-        file = fs.readFileSync('config/.config', 'utf-8')
-    } catch (error) {
-        console.log(error);
-        return;
-    }
-
-    config = JSON.parse(file)
-
-    try {
-        file = fs.readFileSync('config/theme/' + config.theme + '.json', 'utf-8')
-    } catch (error) {
-        console.log(error)
-        return
-    }
-    
-    colors = JSON.parse(file)
-}();
-
-const bgColor = new Color(colors.terminal.theme.background, config.transparency_value);
-
-if (config.transparency == true) {
-    colors.terminal.theme.background = bgColor.rgba
-    root.style.setProperty('--opacity', config.transparency_value + 0.15)
-    root.style.setProperty('--background', colors.terminal.theme.background)
-    colors.terminal.theme.background = 'transparent'
-
-} else {
-    colors.terminal.theme.background = bgColor.rgb
-    root.style.setProperty('--opacity', config.transparency_value + 0.15)
-    root.style.setProperty('--background', colors.terminal.theme.background)
-}
-
-
-tabs.style.background = colors?.app?.tab_background
-body.style.color = colors?.app?.text_color
-
-CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
-
-document.getElementById('new-tab').addEventListener('click', () => {
-    CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
-})
-
-ipc.send('load-end')
-
-window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey) {
-        for (const [key, value] of Object.entries(config.shortcut)) {
-            if (e.key == key) {
-                if (test.includes(value)) {
-                    window[value + "Term"](n)
-                } else {
-                    CreateNewTerminal(value)
-                }
-            }
-        }
-    }
-})
 
 ipc.on('pty-data', (e, data) => {
     terminalsList.forEach((el) => {
@@ -99,6 +28,41 @@ ipc.on('pty-data', (e, data) => {
         } 
     })
 })
+
+ipc.on('loaded', (e, data) => {
+    config = data.config;
+    colors = data.colors;
+
+    const bgColor = new Color(colors.terminal.theme.background, config.transparency_value);
+
+    if (config.transparency) {
+        colors.terminal.theme.background = bgColor.rgba
+        root.style.setProperty('--opacity', config.transparency_value + 0.13)
+        root.style.setProperty('--background', colors.terminal.theme.background)
+        colors.terminal.theme.background = 'transparent'
+
+    } else {
+        colors.terminal.theme.background = bgColor.rgb
+        root.style.setProperty('--background', colors.terminal.theme.background)
+    }
+
+    tabs.style.background = colors?.app?.tab_background
+    body.style.color = colors?.app?.text_color
+
+    CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
+
+    document.getElementById('new-tab').addEventListener('click', () => {
+        CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
+    })
+
+    ipc.send('load-end')
+})
+
+ipc.on('resize', () => {
+    resize()
+    console.log('aaaa')
+})
+
 
 
 function CreateNewTerminal(toStart) {
@@ -225,11 +189,6 @@ function focusTerm(index, tab) {
     })
 }
 
-
-ipc.on('resize', () => {
-    resize()
-})
-
 function resize() {
     rows = parseInt(terminals.clientHeight/ 16.95, 10)
     cols = parseInt(terminals.clientWidth/ 9, 10)
@@ -284,15 +243,26 @@ function CloseTerm(index) {
     }
 }
 
-
-const target = document.getElementById('test')
-
 target.addEventListener('wheel', event => {
-  const toLeft  = event.deltaY < 0 && target.scrollLeft > 0
-  const toRight = event.deltaY > 0 && target.scrollLeft < target.scrollWidth - target.clientWidth
+    const toLeft  = event.deltaY < 0 && target.scrollLeft > 0
+    const toRight = event.deltaY > 0 && target.scrollLeft < target.scrollWidth - target.clientWidth
 
-  if (toLeft || toRight) {
-    event.preventDefault()
-    target.scrollLeft += event.deltaY
-  }
+    if (toLeft || toRight) {
+        event.preventDefault()
+        target.scrollLeft += event.deltaY
+    }
+})
+
+window.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey) {
+        for (const [key, value] of Object.entries(config.shortcut)) {
+            if (e.key == key) {
+                if (shortcutAction.includes(value)) {
+                    window[value + "Term"](n)
+                } else {
+                    CreateNewTerminal(value)
+                }
+            }
+        }
+    }
 })

@@ -74,6 +74,29 @@ body {
     overflow: hidden;
 }
 
+.app-buttons{
+    height: 100%;
+    width: auto;
+    display: flex;
+    overflow: hidden;
+    flex-direction: row-reverse;
+    -webkit-app-region: no-drag;
+}
+
+.app-buttons .app-button{
+    height: 100%;
+    width: 34px;
+    background-color: black;
+    -webkit-app-region: no-drag;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-buttons .app-button:hover{
+    background-color: red;
+}
+
 .tab .tab-link{
     width: 100%;
     max-width: 14rem;
@@ -126,10 +149,6 @@ body {
 ::-webkit-scrollbar {
     height: 3.5px;
     width: 3.5px;
-}
-
-::-webkit-scrollbar-track{
-    background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
