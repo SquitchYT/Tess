@@ -47,7 +47,7 @@ function openWindow() {
         minWidth: minwidth,
         title: "Tess - Terminal",
         transparent: true,
-        frame: true
+        frame: false
     });
 
     //mainWindow.removeMenu()
