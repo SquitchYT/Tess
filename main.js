@@ -78,8 +78,10 @@ ipc.on('new-term', (e, data) => {
 
     try {
         Child_Proc.execSync(data.shell)
+        console.log('aaa')
     } catch (error) {
         Command = sh
+        console.log('bbb')
     }
 
     let shell = pty.spawn(Command, [], {
