@@ -156,7 +156,7 @@ app.on("ready", () => {
     }
 
     try {
-        file = fs.readFileSync("config/.config", 'utf-8')
+        file = fs.readFileSync("config/tess.config", 'utf-8')
     } catch (error) {
         console.log(error);
         return;
