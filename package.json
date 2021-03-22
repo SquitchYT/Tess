@@ -1,6 +1,6 @@
 {
   "name": "tess",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "a simple terminal emulator",
   "main": "main.js",
   "scripts": {
@@ -8,6 +8,7 @@
     "rebuild": "electron-rebuild",
     "dist": "electron-builder --linux appimage",
     "build-win": "electron-builder --win",
+    "build-pacman": "electron-builder --linux pacman",
     "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [
@@ -19,7 +20,10 @@
     "node-pty",
     "powershell"
   ],
-  "author": "squitch",
+  "author": {
+    "name" : "squitch",
+    "email": "contact.squitch@gmail.com"
+  },
   "license": "ISC",
   "dependencies": {
     "discord-rpc": "^3.2.0",
