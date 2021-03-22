@@ -6,7 +6,7 @@ Tess is currently in development and it have tons of bugs, so if you find one, p
 
 ## Download
 
-#### App Image : https://squitch.fr/tess-1.0.0.AppImage
+#### App Image : https://squitch.fr/tess%201.1.tar.xz
 #### Windows : https://squitch.fr/tess%20Setup%201.0.0.exe
 #### Manual Build :
 `
