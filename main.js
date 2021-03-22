@@ -1,14 +1,17 @@
 const time1 = new Date().getTime()
 
-const { app, BrowserWindow, ipcMain : ipc, screen} = require('electron')
+const { app, BrowserWindow, ipcMain : ipc, screen, remote } = require('electron')
 
 const pty = require("node-pty");
 const Child_Proc = require('child_process');
 const { Worker } = require('worker_threads');
 
-const sh = process.platform == "win32" ? "powershell.exe" : "bash"
-
 const fs = require('fs')
+
+const OsInfomations = require('./class/osinfo');
+const osData = new OsInfomations()
+
+const sh = osData.os == "win32" ? "powershell.exe" : "bash"
 
 app.commandLine.appendSwitch('disable-gpu');
 
@@ -32,7 +35,8 @@ let mainWindow;
 let shells = []
 
 function openWindow(config, colors) {
-    console.log('rrr')
+    let needFrame = osData.wm == "win" || osData == "macos" ? false : true;
+
     const { width, height } = screen.getPrimaryDisplay().workAreaSize
 
     const appwidth = width - (width >> 2)
@@ -50,7 +54,7 @@ function openWindow(config, colors) {
         minWidth: minwidth,
         title: "Tess - Terminal",
         transparent: config.transparency,
-        frame: true
+        frame: needFrame
     });
 
     mainWindow.removeMenu()
@@ -87,12 +91,7 @@ function openWindow(config, colors) {
 
 
 ipc.on('new-term', (e, data) => {
-
     let Command = data.shell
-
-    Child_Proc.exec('echo $XDG_CURRENT_DESKTOP', function(error, stdout, stderr) {
-        console.dir(stdout);
-      });
 
     try {
         Child_Proc.execSync(data.shell)
@@ -176,7 +175,7 @@ app.on("ready", () => {
 
     setTimeout(() => {
         openWindow(config, colors)
-    }, 25);
+    }, 50);
 
 });
 
@@ -207,6 +206,14 @@ ipc.on("close-terminal", (e, data) => {
 
 ipc.on('close', (e,data) => {
     app.quit()
+})
+
+ipc.on('reduce', (e, data) => {
+    BrowserWindow.getFocusedWindow().minimize()
+})
+
+ipc.on('to-define-name', () => {
+    BrowserWindow.getFocusedWindow().isMaximized() ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
 })
 
 ipc.on('resize', (e, data) => {

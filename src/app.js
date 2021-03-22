@@ -8,6 +8,26 @@ const terminals = document.querySelector('.terminals');
 const body = document.body;
 const root = document.documentElement;
 const target = document.getElementById('test')
+const osInformatons = require('../class/osinfo')
+
+const osData = new osInformatons();
+
+if (osData.wm != "win" && osData != "macos") {
+    let titleBarButton = document.querySelectorAll('.app-button')
+    titleBarButton.forEach(element => {
+        element.remove()
+    });
+} else {
+    document.getElementById('close').addEventListener('click', () => {
+        ipc.send('close')
+    });
+    document.getElementById('reduce').addEventListener('click', () => {
+        ipc.send('reduce')
+    })
+    document.getElementById('screen-size').addEventListener('click', () => {
+        ipc.send('to-define-name')
+    })
+}
 
 const shortcutAction = ["Close"]
 

@@ -11,7 +11,7 @@ body {
 }
 
 .tabs {
-    height : 34px;
+    height : 32px;
     width : 100vw;
     display: flex;
     opacity: var(--opacity);
@@ -22,7 +22,7 @@ body {
     max-width: 16rem;
     min-width: 11rem;
     width: 100%;
-    height: 34px;
+    height: 32px;
     display: flex;
     font-weight: bolder;
     font-size: 13px;
@@ -35,7 +35,7 @@ body {
 }
 
 .more {
-    height: 34px;
+    height: 32px;
     width: 28px;
     display: flex;
     align-items: center;
@@ -47,12 +47,12 @@ body {
     -webkit-app-region: no-drag;
 }
 
-.more:hover{
+.more:hover {
     cursor: pointer;
     filter: invert(0.32)
 }
 
-.tab .close-button{
+.tab .close-button {
     height: 100%;
     width: 100%;
     max-width: 2rem;
@@ -62,19 +62,19 @@ body {
     right: 0;
 }
 
-.tab .close-button:hover{
+.tab .close-button:hover {
     cursor: pointer;
     filter: invert(0.32)
 }
 
-.tabs .tabs-panel{
+.tabs .tabs-panel {
     height: 100%;
     width: 100%;
     display: flex;
     overflow: hidden;
 }
 
-.app-buttons{
+.app-buttons {
     height: 100%;
     width: auto;
     display: flex;
@@ -83,21 +83,21 @@ body {
     -webkit-app-region: no-drag;
 }
 
-.app-buttons .app-button{
+.app-buttons .app-button {
     height: 100%;
-    width: 34px;
-    background-color: black;
+    width: 50px;
+    background-color: var(--background);
     -webkit-app-region: no-drag;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.app-buttons .app-button:hover{
+.app-buttons .app-button:hover {
     background-color: red;
 }
 
-.tab .tab-link{
+.tab .tab-link {
     width: 100%;
     max-width: 14rem;
     display: flex;
@@ -109,7 +109,7 @@ body {
 }
 
 .terminals {
-    height: calc(100vh - 34px);
+    height: calc(100vh - 32px);
     width: calc(100vw - 3.6px);
     position: relative;
 }
@@ -133,12 +133,12 @@ body {
     height: 20px;
     max-width: 21px;
     margin-left: 6.5px;
-    margin-top: 7px;
+    margin-top: 6px;
     border-radius: 3.5px;
     width: 100%;
 }
 
-.tabs-tab{
+.tabs-tab {
     display: flex;
     height: 100%;
     width: 100%;
@@ -165,4 +165,8 @@ body {
             opacity: 1;
             transform: translateY(0);
          } 
+}
+
+.invisible {
+    scale: 0;
 }
