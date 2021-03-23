@@ -59,7 +59,7 @@ function openWindow(config, colors) {
         frame: needFrame
     });
 
-    //mainWindow.removeMenu()
+    mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;
@@ -212,9 +212,6 @@ ipc.on('close', (e,data) => {
 
 ipc.on('reduce', (e, data) => {
     BrowserWindow.getFocusedWindow().minimize();
-    setTimeout(() => {
-        BrowserWindow.getFocusedWindow().webContents.send('resize');
-    }, 500);
 })
 
 ipc.on('to-define-name', () => {

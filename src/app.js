@@ -9,6 +9,7 @@ const body = document.body;
 const root = document.documentElement;
 const target = document.getElementById('test')
 const osInformatons = require('../class/osinfo')
+const clipboard = require('clipboardy')
 
 const osData = new osInformatons();
 
@@ -29,7 +30,7 @@ if (osData.wm != "win" && osData != "macos") {
     })
 }
 
-const shortcutAction = ["Close"]
+const shortcutAction = ["Close", "Copy"]
 
 let cols;
 let rows;
@@ -173,6 +174,8 @@ function CreateNewTerminal(toStart) {
     }
     n = index
     index++;
+
+    term.getSelection
     
     terminals.appendChild(termDiv)
     terminalsList.push(t)
@@ -288,3 +291,12 @@ window.addEventListener('keydown', (e) => {
         }
     }
 })
+
+function CopyTerm() {
+    terminalsList.forEach((el) => {
+        if (el.index == n) {
+            clipboard.write(el.term.getSelection());
+            return;
+        };
+    });
+};
