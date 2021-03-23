@@ -20,12 +20,15 @@ if (osData.wm != "win" && osData != "macos") {
 } else {
     document.getElementById('close').addEventListener('click', () => {
         ipc.send('close')
+        resize()
     });
     document.getElementById('reduce').addEventListener('click', () => {
         ipc.send('reduce')
+        resize()
     })
     document.getElementById('screen-size').addEventListener('click', () => {
         ipc.send('to-define-name')
+        resize()
     })
 }
 
@@ -80,7 +83,6 @@ ipc.on('loaded', (e, data) => {
 
 ipc.on('resize', () => {
     resize()
-    console.log('aaaa')
 })
 
 
