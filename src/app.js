@@ -20,15 +20,12 @@ if (osData.wm != "win" && osData != "macos") {
 } else {
     document.getElementById('close').addEventListener('click', () => {
         ipc.send('close')
-        resize()
     });
     document.getElementById('reduce').addEventListener('click', () => {
         ipc.send('reduce')
-        resize()
     })
     document.getElementById('screen-size').addEventListener('click', () => {
         ipc.send('to-define-name')
-        resize()
     })
 }
 
@@ -83,6 +80,7 @@ ipc.on('loaded', (e, data) => {
 
 ipc.on('resize', () => {
     resize()
+    console.log('aaaaa')
 })
 
 
@@ -212,6 +210,8 @@ function focusTerm(index, tab) {
 }
 
 function resize() {
+    console.log(terminals.clientHeight, terminals.clientWidth)
+
     rows = parseInt(terminals.clientHeight/ 16.95, 10)
     cols = parseInt(terminals.clientWidth/ 9, 10)
 

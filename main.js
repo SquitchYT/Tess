@@ -59,17 +59,19 @@ function openWindow(config, colors) {
         frame: needFrame
     });
 
-    mainWindow.removeMenu()
+    //mainWindow.removeMenu()
     mainWindow.loadFile("src/index.html")
     mainWindow.on("closed", function() {
         mainWindow = null;
     });
     mainWindow.on('resize',() =>{
-        try {
-            mainWindow.webContents.send('resize')
-        } catch (err) {
-            console.log(err)
-        }
+        setTimeout(() => {
+            try {
+                mainWindow.webContents.send('resize')
+            } catch (err) {
+                console.log(err)
+            }
+        }, 500);
     })
 
     mainWindow.on("ready-to-show", () => {
@@ -205,15 +207,21 @@ ipc.on("close-terminal", (e, data) => {
 })
 
 ipc.on('close', (e,data) => {
-    app.quit()
+    app.quit();
 })
 
 ipc.on('reduce', (e, data) => {
-    BrowserWindow.getFocusedWindow().minimize()
+    BrowserWindow.getFocusedWindow().minimize();
+    setTimeout(() => {
+        BrowserWindow.getFocusedWindow().webContents.send('resize');
+    }, 500);
 })
 
 ipc.on('to-define-name', () => {
     BrowserWindow.getFocusedWindow().isMaximized() ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
+    setTimeout(() => {
+        BrowserWindow.getFocusedWindow().webContents.send('resize');
+    }, 500);
 })
 
 ipc.on('resize', (e, data) => {
