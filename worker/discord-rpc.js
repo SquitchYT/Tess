@@ -5,10 +5,10 @@ const rpc = new RPC.Client({
     transport : "ipc"
 });
 
-
 /*
     Fix, crash at load, add error management
 */
+
 rpc.on('ready',() => {
     rpc.setActivity({
         details : "Writting command...",
@@ -22,4 +22,3 @@ rpc.on('ready',() => {
 rpc.login({
     clientId : "811294906517422130"
 })
-

@@ -44,6 +44,8 @@ function openWindow(config, colors) {
     const minwidth = Math.floor( (width - (width >> 1)) / 1.47 )
     const minheight = Math.floor( (height - (height >> 1)) / 1.4 )
 
+    console.log(osData.wm)
+
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
@@ -159,7 +161,6 @@ app.on("ready", () => {
         file = fs.readFileSync("config/tess.config", 'utf-8')
     } catch (error) {
         console.log(error);
-        return;
     }
 
     config = JSON.parse(file)
@@ -168,7 +169,6 @@ app.on("ready", () => {
         file = fs.readFileSync('config/theme/' + config.theme + '.json', 'utf-8')
     } catch (error) {
         console.log(error)
-        return
     }
     
     colors = JSON.parse(file)
