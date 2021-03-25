@@ -5,10 +5,14 @@ Tess is currently in development and it have tons of bugs, so if you find one, p
 
 
 ## Download
+##### Arch Linux : https://aur.archlinux.org/packages/tess-git/
+#### Other source are not up to date every time:
+#####  Other Linux : https://squitch.fr/tess%201.1.tar.xz
+##### Windows : https://squitch.fr/tess%20Setup%201.0.0.exe
+<br>
 
-#### App Image : https://squitch.fr/tess%201.1.tar.xz
-#### Windows : https://squitch.fr/tess%20Setup%201.0.0.exe
-#### Manual Build :
+#### Not Recommanded :
+##### Manual Build :
 `
 git clone https://github.com/SquitchYT/Tess
 `
@@ -33,8 +37,8 @@ npm run test
 
 ## Versions
 
-* Actual version : 1.0.0
-* Last release : nothing
+* Actual version : 1.0-4
+* Last release : 25/03/21
 
 ## Authors
 
