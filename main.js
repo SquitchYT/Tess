@@ -102,7 +102,7 @@ function openWindow(config, colors) {
         frame: needFrame
     });
 
-    mainWindow.removeMenu();
+    //mainWindow.removeMenu();
     mainWindow.loadFile("src/index.html");
     mainWindow.on("closed", function() {
         mainWindow = null;
