@@ -1,6 +1,6 @@
 const time1 = new Date().getTime();
 
-const { app, BrowserWindow, ipcMain : ipc, screen, clipboard } = require('electron');
+const { app, BrowserWindow, ipcMain : ipc, screen } = require('electron');
 
 const pty = require("node-pty");
 const Child_Proc = require('child_process');
@@ -234,8 +234,4 @@ ipc.on('resize', (e, data) => {
     shells.forEach((el) => {
         el.shell.resize(data.cols, data.rows);
     });
-});
-
-ipc.on('copy', (e, data) => {
-    clipboard.writeText(data.text);
 });

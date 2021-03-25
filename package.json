@@ -26,7 +26,6 @@
   },
   "license": "ISC",
   "dependencies": {
-    "clipboardy": "^2.3.0",
     "discord-rpc": "^3.2.0",
     "glib": "^1.0.2",
     "node-pty": "^0.10.0",

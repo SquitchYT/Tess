@@ -1,5 +1,5 @@
 const { Terminal } = require('xterm');
-const { ipcRenderer : ipc } = require('electron');
+const { ipcRenderer : ipc, clipboard } = require('electron');
 
 const Color = require('../class/color');
 
@@ -292,10 +292,7 @@ window.addEventListener('keydown', (e) => {
 function CopyTerm() {
     terminalsList.forEach((el) => {
         if (el.index == n) {
-            let text = el.term.getSelection();
-            ipc.send("copy", {
-                text: text
-            })
+            clipboard.writeText(el.term.getSelection());
             return;
         }
     })
