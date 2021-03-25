@@ -12,14 +12,14 @@ const mkdir = require('mkdirp')
 const OsInfomations = require('./class/osinfo');
 const osData = new OsInfomations();
 
-
 const sh = osData.os == "win32" ? "powershell.exe" : "bash";
 
 app.commandLine.appendSwitch('disable-gpu');
 
 let config, colors;
-
 let workers = [];
+let mainWindow;
+let shells = [];
 
 !function LoadConfig() {
     try {
@@ -42,10 +42,10 @@ let workers = [];
             ]
         }
 
-        let toWrite = JSON.stringify(config)
+        let toWrite = JSON.stringify(config);
 
-        mkdir.sync(osData.homeDir + "/Applications/tess/config")
-        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite)
+        mkdir.sync(osData.homeDir + "/Applications/tess/config");
+        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite);
     }
 
     try {
@@ -66,14 +66,12 @@ let workers = [];
             }
         }
 
-        let toWrite = JSON.stringify(colors)
+        let toWrite = JSON.stringify(colors);
 
-        mkdir.sync(osData.homeDir + "/Applications/tess/config/theme")
-        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", toWrite)
+        mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
+        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", toWrite);
     }
 }();
-
-
 
 
 ! function LoadModules(){
@@ -93,10 +91,6 @@ let workers = [];
         });
     })
 }();
-
-
-let mainWindow;
-let shells = [];
 
 function openWindow(config, colors) {
     let needFrame = osData.wm == "win" || osData.wm == "macos" ? false : true;
@@ -123,7 +117,7 @@ function openWindow(config, colors) {
         frame: needFrame
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("src/index.html");
     mainWindow.on("closed", function() {
         mainWindow = null;
