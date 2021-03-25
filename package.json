@@ -9,7 +9,7 @@
     "dist": "electron-builder --linux appimage",
     "build-win": "electron-builder --win",
     "postinstall": "electron-builder install-app-deps",
-    "test-build": "electron-builder --linux dir"
+    "build": "electron-builder --linux dir"
   },
   "keywords": [
     "terminal",
@@ -30,8 +30,7 @@
     "glib": "^1.0.2",
     "mkdirp": "^0.5.5",
     "node-pty": "^0.10.0",
-    "xterm": "^4.10.0",
-    "xterm-addon-fit": "^0.5.0"
+    "xterm": "^4.10.0"
   },
   "devDependencies": {
     "electron": "^11.2.3",
