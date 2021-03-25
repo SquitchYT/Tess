@@ -7,6 +7,7 @@ const Child_Proc = require('child_process');
 const { Worker } = require('worker_threads');
 
 const fs = require('fs');
+const mkdir = require('mkdirp')
 
 const OsInfomations = require('./class/osinfo');
 const osData = new OsInfomations();
@@ -21,35 +22,55 @@ let config, colors;
 let workers = [];
 
 !function LoadConfig() {
-    colors = {
-        terminal: {
-            theme: {
-                foreground: "#fff",
-                background: "#000",
-            }
-        },
-        app: {
-            tab_background: "#000",
-            tab_foreground: "#aabbcc",
-            text_color: "#fff"
-        }
-    };
-
     try {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
-    } catch (error) {
-        console.log(error);
-    }
 
-    config = JSON.parse(file);
+        config = JSON.parse(file);
+    } catch (error) {
+        config = {
+            "theme": "tokyo-night",
+            "terminal" : {
+                "cursor" : "block"
+            },
+            "shortcut" : {
+                "T" : "bash",
+                "W" : "Close",
+                "C" : "Copy"
+            },
+            "transparency" : false,
+            "plugin" : [
+            ]
+        }
+
+        let toWrite = JSON.stringify(config)
+
+        mkdir.sync(osData.homeDir + "/Applications/tess/config")
+        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite)
+    }
 
     try {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
+        colors = JSON.parse(file);
     } catch (error) {
-        console.log(error);
+        colors ={
+            "terminal" : {
+                "theme" : {
+                    "foreground" : "#9195c9",
+                    "background" : "#282d42"
+                }
+            },
+            "app" : {
+                "tab_background" : "#24283b",
+                "tab_foreground" : "#2f344d",
+                "text_color" : "#fff"
+            }
+        }
+
+        let toWrite = JSON.stringify(colors)
+
+        mkdir.sync(osData.homeDir + "/Applications/tess/config/theme")
+        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", toWrite)
     }
-    
-    colors = JSON.parse(file);
 }();
 
 
