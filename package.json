@@ -8,8 +8,8 @@
     "rebuild": "electron-rebuild",
     "dist": "electron-builder --linux appimage",
     "build-win": "electron-builder --win",
-    "build-pacman": "electron-builder --linux pacman",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "test-build": "electron-builder --linux dir"
   },
   "keywords": [
     "terminal",

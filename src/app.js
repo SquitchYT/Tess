@@ -1,36 +1,35 @@
 const { Terminal } = require('xterm');
 const { ipcRenderer : ipc } = require('electron');
 
-const Color = require('../class/color')
+const Color = require('../class/color');
 
 const tabs = document.querySelector('.tabs-tab');
 const terminals = document.querySelector('.terminals');
 const body = document.body;
 const root = document.documentElement;
-const target = document.getElementById('test')
-const osInformatons = require('../class/osinfo')
-const clipboard = require('clipboardy')
+const target = document.getElementById('test');
+const osInformatons = require('../class/osinfo');
 
 const osData = new osInformatons();
 
 if (osData.wm != "win" && osData != "macos") {
-    let titleBarButton = document.querySelectorAll('.app-button')
+    let titleBarButton = document.querySelectorAll('.app-button');
     titleBarButton.forEach(element => {
-        element.remove()
+        element.remove();
     });
 } else {
     document.getElementById('close').addEventListener('click', () => {
-        ipc.send('close')
+        ipc.send('close');
     });
     document.getElementById('reduce').addEventListener('click', () => {
-        ipc.send('reduce')
+        ipc.send('reduce');
     })
     document.getElementById('screen-size').addEventListener('click', () => {
-        ipc.send('to-define-name')
+        ipc.send('to-define-name');
     })
 }
 
-const shortcutAction = ["Close", "Copy"]
+const shortcutAction = ["Close", "Copy"];
 
 let cols;
 let rows;
@@ -45,7 +44,7 @@ let colors;
 ipc.on('pty-data', (e, data) => {
     terminalsList.forEach((el) => {
         if (el.index === data.index) {
-            el.term.write(data.data)
+            el.term.write(data.data);
         } 
     })
 })
@@ -57,80 +56,80 @@ ipc.on('loaded', (e, data) => {
     const bgColor = new Color(colors.terminal.theme.background, config.transparency_value);
 
     if (config.transparency) {
-        colors.terminal.theme.background = bgColor.rgba
-        root.style.setProperty('--opacity', config.transparency_value + 0.13)
-        root.style.setProperty('--background', colors.terminal.theme.background)
-        colors.terminal.theme.background = 'transparent'
+        colors.terminal.theme.background = bgColor.rgba;
+        root.style.setProperty('--opacity', config.transparency_value + 0.13);
+        root.style.setProperty('--background', colors.terminal.theme.background);
+        colors.terminal.theme.background = 'transparent';
 
     } else {
-        colors.terminal.theme.background = bgColor.rgb
-        root.style.setProperty('--background', colors.terminal.theme.background)
+        colors.terminal.theme.background = bgColor.rgb;
+        root.style.setProperty('--background', colors.terminal.theme.background);
     }
 
-    tabs.style.background = colors?.app?.tab_background
-    body.style.color = colors?.app?.text_color
+    tabs.style.background = colors?.app?.tab_background;
+    body.style.color = colors?.app?.text_color;
 
-    CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
+    CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]]);
 
     document.getElementById('new-tab').addEventListener('click', () => {
-        CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]])
+        CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]]);
     })
 
-    ipc.send('load-end')
+    ipc.send('load-end');
 })
 
 ipc.on('resize', () => {
-    resize()
-    console.log('aaaaa')
+    resize();
+    console.log('aaaaa');
 })
 
 
 
 function CreateNewTerminal(toStart) {
-    let tab = document.createElement('div')
-    tab.style.background = colors.app.tab_foreground
-    tab.classList.add('tab', 'tab-all-' + index)
+    let tab = document.createElement('div');
+    tab.style.background = colors.app.tab_foreground;
+    tab.classList.add('tab', 'tab-all-' + index);
 
-    let tab_link = document.createElement('div')
+    let tab_link = document.createElement('div');
 
     tab_link.addEventListener('click', () => {
-        focusTerm(tab_link.classList[2], tab)
+        focusTerm(tab_link.classList[2], tab);
     })
-    tab_link.innerHTML = toStart + " ~ $"
-    tab_link.classList.add('tab-link', 'tab-' + index, index)
+    tab_link.innerHTML = toStart + " ~ $";
+    tab_link.classList.add('tab-link', 'tab-' + index, index);
 
-    let close_button = document.createElement('div')
-    close_button.classList.add('close-button')
-    close_button.setAttribute('close-button-number', index)
-    close_button.innerHTML = "x"
+    let close_button = document.createElement('div');
+    close_button.classList.add('close-button');
+    close_button.setAttribute('close-button-number', index);
+    close_button.innerHTML = "x";
 
     close_button.addEventListener('click', () => {
-        CloseTerm(close_button.getAttribute('close-button-number'))
+        CloseTerm(close_button.getAttribute('close-button-number'));
     })
 
-    let logo = document.createElement('img')
-    logo.src = "img/shell.png"
-    logo.classList.add('logo')
+    let logo = document.createElement('img');
+    logo.src = "img/shell.png";
+    logo.classList.add('logo');
 
-    tab.appendChild(logo)
-    tab.appendChild(tab_link)
-    tab.appendChild(close_button)
-    tabs.appendChild(tab)
+    tab.appendChild(logo);
+    tab.appendChild(tab_link);
+    tab.appendChild(close_button);
+    tabs.appendChild(tab);
 
-    let termDiv = document.createElement('div')
-    termDiv.classList.add('terms', 'terminal-' + index, 'visible')
-    termDiv.setAttribute('number', index)
+    let termDiv = document.createElement('div');
+    termDiv.classList.add('terms', 'terminal-' + index, 'visible');
+    termDiv.setAttribute('number', index);
 
 
     logo.addEventListener('click', () => {
-        focusTerm(tab_link.classList[2], tab)
+        focusTerm(tab_link.classList[2], tab);
     })
 
     tab.addEventListener('animationstart', () => {
-        focusTerm(tab_link.classList[2], tab)
+        focusTerm(tab_link.classList[2], tab);
     })
 
-    if (!cols) resize()
+    if (!cols) resize();
 
     let term = new Terminal({
         cols: cols,
@@ -138,27 +137,27 @@ function CreateNewTerminal(toStart) {
         theme: colors?.terminal?.theme,
         cursorStyle: config?.terminal?.cursor,
         allowTransparency: config.transparency
-    })
+    });
 
-    term.open(termDiv)
+    term.open(termDiv);
 
     term.onData((e) => {
         ipc.send('terminal-data', {
             index: n,
             data: e
-        })
+        });
     })
 
-    let terms = document.getElementsByClassName('terms')
-    let yy = document.getElementsByClassName('tab')
+    let terms = document.getElementsByClassName('terms');
+    let yy = document.getElementsByClassName('tab');
 
     let i = 0
     while (i < terms.length) {
-        let a = terms.item(i)
-        let e = yy.item(i)
-        e.style.background = colors?.app?.tab_background
-        a.classList.add('hidden')
-        i++
+        let a = terms.item(i);
+        let e = yy.item(i);
+        e.style.background = colors?.app?.tab_background;
+        a.classList.add('hidden');
+        i++;
     }
 
     ipc.send('new-term', {
@@ -166,115 +165,113 @@ function CreateNewTerminal(toStart) {
         rows: rows,
         cols: cols,
         shell: toStart
-    })
+    });
 
     let t = {
         index: index,
         term: term
-    }
-    n = index
+    };
+    n = index;
     index++;
 
-    term.getSelection
+    term.getSelection;
     
-    terminals.appendChild(termDiv)
-    terminalsList.push(t)
+    terminals.appendChild(termDiv);
+    terminalsList.push(t);
 }
 
 
 function focusTerm(index, tab) {
-    let terms = document.getElementsByClassName('terms')
-    let tabs = document.getElementsByClassName('tab')
+    let terms = document.getElementsByClassName('terms');
+    let tabs = document.getElementsByClassName('tab');
 
-    let i = 0
+    let i = 0;
     while (i < terms.length) {
-        let a = terms.item(i)
-        let r = tabs.item(i)
-        a.classList.add('hidden')
-        a.classList.remove('visible')
-        r.style.background = colors?.app?.tab_background
-        i++        
+        let a = terms.item(i);
+        let r = tabs.item(i);
+        a.classList.add('hidden');
+        a.classList.remove('visible');
+        r.style.background = colors?.app?.tab_background;
+        i++;  
     }
 
-    tab.style.background = colors?.app?.tab_foreground
+    tab.style.background = colors?.app?.tab_foreground;
 
-    let termtoview = document.querySelector('.terminal-' + index)
-    termtoview.classList.remove('hidden')
-    termtoview.classList.add('visible')
-    termtoview.click()
+    let termtoview = document.querySelector('.terminal-' + index);
+    termtoview.classList.remove('hidden');
+    termtoview.classList.add('visible');
+    termtoview.click();
 
-    n = termtoview.getAttribute('number')
+    n = termtoview.getAttribute('number');
 
     terminalsList.forEach((el) => {
         if (el.index == n) {
-            el.term.focus()
+            el.term.focus();
         } 
     })
 }
 
 function resize() {
-    console.log(terminals.clientHeight, terminals.clientWidth)
+    console.log(terminals.clientHeight, terminals.clientWidth);
 
-    rows = parseInt(terminals.clientHeight/ 16.95, 10)
-    cols = parseInt(terminals.clientWidth/ 9, 10)
+    rows = parseInt(terminals.clientHeight/ 16.95, 10);
+    cols = parseInt(terminals.clientWidth/ 9, 10);
 
     terminalsList.forEach((el) => {
-        el.term.resize(cols, rows)
+        el.term.resize(cols, rows);
     })
 
     ipc.send('resize', {
         cols: cols,
         rows: rows
-    })
+    });
 }
 
 function CloseTerm(index) {
-    o = index
+    ipc.send('close-terminal', index);
 
-    ipc.send('close-terminal', o)
+    let te = document.querySelector('.terminal-' + index);
+    let ta = document.querySelector('.tab-all-' + index);
 
-    let te = document.querySelector('.terminal-' + o)
-    let ta = document.querySelector('.tab-all-' + o)
+    ta.remove();
+    te.remove();
 
-    ta.remove()
-    te.remove()
-
-    let y = 0
+    let y = 0;
 
     terminalsList.forEach((el) => {
-        if (el.index == o) {
-            el.term.dispose()
-            terminalsList.splice(y, 1)
+        if (el.index == index) {
+            el.term.dispose();
+            terminalsList.splice(y, 1);
         }
         y++
     })
 
     if (terminalsList.length === 0) {
-        ipc.send('close')
-    } else if (n == o){
+        ipc.send('close');
+    } else if (n == index){
         i = {
             index: 0,
             dif: Infinity
         }
         terminalsList.forEach((el) => {
-            if (Math.abs(o - el.index) < i.dif) {
-                i.index = el.index
-                i.dif = Math.abs(o - el.index)
+            if (Math.abs(index - el.index) < i.dif) {
+                i.index = el.index;
+                i.dif = Math.abs(index - el.index);
             }
         })
 
-        let tab = document.querySelector('.tab-all-' + i.index)
-        focusTerm(i.index, tab)
+        let tab = document.querySelector('.tab-all-' + i.index);
+        focusTerm(i.index, tab);
     }
 }
 
 target.addEventListener('wheel', event => {
-    const toLeft  = event.deltaY < 0 && target.scrollLeft > 0
-    const toRight = event.deltaY > 0 && target.scrollLeft < target.scrollWidth - target.clientWidth
+    const toLeft  = event.deltaY < 0 && target.scrollLeft > 0;
+    const toRight = event.deltaY > 0 && target.scrollLeft < target.scrollWidth - target.clientWidth;
 
     if (toLeft || toRight) {
-        event.preventDefault()
-        target.scrollLeft += event.deltaY
+        event.preventDefault();
+        target.scrollLeft += event.deltaY;
     }
 })
 
@@ -283,9 +280,9 @@ window.addEventListener('keydown', (e) => {
         for (const [key, value] of Object.entries(config.shortcut)) {
             if (e.key == key) {
                 if (shortcutAction.includes(value)) {
-                    window[value + "Term"](n)
+                    window[value + "Term"](n);
                 } else {
-                    CreateNewTerminal(value)
+                    CreateNewTerminal(value);
                 }
             }
         }
@@ -295,8 +292,12 @@ window.addEventListener('keydown', (e) => {
 function CopyTerm() {
     terminalsList.forEach((el) => {
         if (el.index == n) {
-            clipboard.write(el.term.getSelection());
+            let text = el.term.getSelection();
+            ipc.send("copy", {
+                text: text
+            })
             return;
-        };
-    });
+        }
+    })
+    
 };

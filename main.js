@@ -1,48 +1,91 @@
-const time1 = new Date().getTime()
+const time1 = new Date().getTime();
 
-const { app, BrowserWindow, ipcMain : ipc, screen, remote } = require('electron')
+const { app, BrowserWindow, ipcMain : ipc, screen, clipboard } = require('electron');
 
 const pty = require("node-pty");
 const Child_Proc = require('child_process');
 const { Worker } = require('worker_threads');
 
-const fs = require('fs')
+const fs = require('fs');
 
 const OsInfomations = require('./class/osinfo');
-const osData = new OsInfomations()
+const osData = new OsInfomations();
 
-const sh = osData.os == "win32" ? "powershell.exe" : "bash"
+
+const sh = osData.os == "win32" ? "powershell.exe" : "bash";
 
 app.commandLine.appendSwitch('disable-gpu');
 
+let config, colors;
+
+let workers = [];
+
+!function LoadConfig() {
+    colors = {
+        terminal: {
+            theme: {
+                foreground: "#fff",
+                background: "#000",
+            }
+        },
+        app: {
+            tab_background: "#000",
+            tab_foreground: "#aabbcc",
+            text_color: "#fff"
+        }
+    };
+
+    try {
+        file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
+    } catch (error) {
+        console.log(error);
+    }
+
+    config = JSON.parse(file);
+
+    try {
+        file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
+    } catch (error) {
+        console.log(error);
+    }
+    
+    colors = JSON.parse(file);
+}();
+
+
+
 
 ! function LoadModules(){
-    const DiscordWorker = new Worker('./worker/discord-rpc.js')
+    config.plugin.forEach((el) => {
+        let worker = new Worker(osData.homeDir + "/Applications/tess/worker/" + el + ".js");
+        workers.push(worker);
+    });
+
+    workers.forEach((el) => {
+        el.on('online', () => {
+            console.log('Module is Loaded !!'); // add name to the log
+        });
     
-    DiscordWorker.on('online', () => {
-        console.log('Discord Module is Loaded !!')
+        el.on('message', (message) => {
+            console.log(message);
+            // Add error and exit statement
+        });
     })
-
-    DiscordWorker.on('message', (message) => {
-        console.log(message)
-    })
-
-    // Add error and exit statement
 }();
 
 
 let mainWindow;
-let shells = []
+let shells = [];
 
 function openWindow(config, colors) {
-    let needFrame = osData.wm == "win" || osData == "macos" ? false : true;
+    let needFrame = osData.wm == "win" || osData.wm == "macos" ? false : true;
 
-    const { width, height } = screen.getPrimaryDisplay().workAreaSize
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
-    const appwidth = width - (width >> 2)
-    const appheight = height - (height >> 2)
-    const minwidth = Math.floor( (width - (width >> 1)) / 1.47 )
-    const minheight = Math.floor( (height - (height >> 1)) / 1.4 )
+    const appwidth = width - (width >> 2);
+    const appheight = height - (height >> 2);
+    const minwidth = Math.floor( (width - (width >> 1)) / 1.47 );
+    const minheight = Math.floor( (height - (height >> 1)) / 1.4 );
 
     console.log(osData.wm)
 
@@ -59,8 +102,8 @@ function openWindow(config, colors) {
         frame: needFrame
     });
 
-    mainWindow.removeMenu()
-    mainWindow.loadFile("src/index.html")
+    mainWindow.removeMenu();
+    mainWindow.loadFile("src/index.html");
     mainWindow.on("closed", function() {
         mainWindow = null;
     });
@@ -69,9 +112,9 @@ function openWindow(config, colors) {
             try {
                 mainWindow.webContents.send('resize')
             } catch (err) {
-                console.log(err)
+                console.log(err);
             }
-        }, 500);
+        }, 400);
     })
 
     mainWindow.on("ready-to-show", () => {
@@ -81,26 +124,26 @@ function openWindow(config, colors) {
                 colors: colors
             })
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     })
 
 
-    ipc.on("load-end", (e, ea) => {
-        time2 = new Date().getTime()
-        time = time2 - time1
-        console.log("launch in :" + time + "ms")
+    ipc.on("load-end", () => {
+        time2 = new Date().getTime();
+        time = time2 - time1;
+        console.log("launch in :" + time + "ms");
     })
 }
 
 
 ipc.on('new-term', (e, data) => {
-    let Command = data.shell
+    let Command = data.shell;
 
     try {
         Child_Proc.execSync(data.shell)
     } catch (error) {
-        Command = sh
+        Command = sh;
     }
 
     let shell = pty.spawn(Command, [], {
@@ -116,24 +159,24 @@ ipc.on('new-term', (e, data) => {
             mainWindow.webContents.send('pty-data', {
                 index: data.index,
                 data: datas
-            })
+            });
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     })
 
     let s = {
         index: data.index,
         shell: shell
-    }
+    };
 
-    shells.push(s)
+    shells.push(s);
 })
 
 ipc.on('terminal-data', (e, data) => {
     shells.forEach((el) => {
         if (el.index == data.index) {
-            el.shell.write(data.data)
+            el.shell.write(data.data);
         } 
     })
 })
@@ -141,43 +184,9 @@ ipc.on('terminal-data', (e, data) => {
 
 // App events
 app.on("ready", () => {
-
-    let config;
-    let colors;
-
-    colors = {
-        terminal: {
-            theme: {
-                foreground: "#fff",
-                background: "#000",
-            }
-        },
-        app: {
-            tab_background: "#000",
-            tab_foreground: "#aabbcc",
-            text_color: "#fff"
-        }
-    }
-
-    try {
-        file = fs.readFileSync("config/tess.config", 'utf-8')
-    } catch (error) {
-        console.log(error);
-    }
-
-    config = JSON.parse(file)
-
-    try {
-        file = fs.readFileSync('config/theme/' + config.theme + '.json', 'utf-8')
-    } catch (error) {
-        console.log(error)
-    }
-    
-    colors = JSON.parse(file)
-
     setTimeout(() => {
-        openWindow(config, colors)
-    }, 50);
+        openWindow(config, colors);
+    }, 45);
 
 });
 
@@ -198,19 +207,19 @@ ipc.on("close-terminal", (e, data) => {
     let y = 0
     shells.forEach((el) => {
         if (el.index == data) {
-            el.shell.write('exit\r')
-            el.shell.kill()
-            shells.splice(y, 1)
+            el.shell.write('exit\r');
+            el.shell.kill();
+            shells.splice(y, 1);
         }
         y++;
     })
 })
 
-ipc.on('close', (e,data) => {
+ipc.on('close', () => {
     app.quit();
 })
 
-ipc.on('reduce', (e, data) => {
+ipc.on('reduce', () => {
     BrowserWindow.getFocusedWindow().minimize();
 })
 
@@ -218,11 +227,15 @@ ipc.on('to-define-name', () => {
     BrowserWindow.getFocusedWindow().isMaximized() ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
         BrowserWindow.getFocusedWindow().webContents.send('resize');
-    }, 500);
+    }, 400);
 })
 
 ipc.on('resize', (e, data) => {
     shells.forEach((el) => {
-        el.shell.resize(data.cols, data.rows)
-    })
-})
+        el.shell.resize(data.cols, data.rows);
+    });
+});
+
+ipc.on('copy', (e, data) => {
+    clipboard.writeText(data.text);
+});
