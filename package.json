@@ -1,7 +1,7 @@
 {
   "name": "tess",
   "version": "1.1.0",
-  "description": "a simple terminal emulator",
+  "description": "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology",
   "main": "main.js",
   "scripts": {
     "test": "electron .",

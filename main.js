@@ -24,22 +24,23 @@ let shells = [];
 !function LoadConfig() {
     try {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
-
         config = JSON.parse(file);
     } catch (error) {
         config = {
             "theme": "tokyo-night",
-            "terminal" : {
-                "cursor" : "block"
+            "terminal": {
+                "cursor": "block"
             },
-            "shortcut" : {
-                "T" : "bash",
-                "W" : "Close",
-                "C" : "Copy"
+            "shortcut": {
+                "T": "bash",
+                "W": "Close",
+                "C": "Copy"
             },
-            "transparency" : false,
-            "plugin" : [
-            ]
+            "transparency": false,
+            "transparency_value": 0.74,
+            "image": false,
+            "image_blur": 100,
+            "plugin" : []
         }
 
         let toWrite = JSON.stringify(config);
@@ -48,21 +49,25 @@ let shells = [];
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite);
     }
 
+    if (config.image && config.image.startsWith('./')) {
+        config.image = osData.homeDir + "/Applications/tess/config" + config.image.substring(config.image.indexOf('.') + 1)
+    }
+
     try {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
         colors = JSON.parse(file);
     } catch (error) {
-        colors ={
-            "terminal" : {
-                "theme" : {
-                    "foreground" : "#9195c9",
-                    "background" : "#282d42"
+        colors = {
+            "terminal": {
+                "theme": {
+                    "foreground": "#9195c9",
+                    "background": "#282d42"
                 }
             },
-            "app" : {
-                "tab_background" : "#24283b",
-                "tab_foreground" : "#2f344d",
-                "text_color" : "#fff"
+            "app": {
+                "tab_background": "#24283b",
+                "tab_foreground": "#2f344d",
+                "text_color": "#fff"
             }
         }
 
@@ -74,7 +79,7 @@ let shells = [];
 }();
 
 
-! function LoadModules(){
+!function LoadModules(){
     config.plugin.forEach((el) => {
         let worker = new Worker(osData.homeDir + "/Applications/tess/worker/" + el + ".js");
         workers.push(worker);
@@ -82,12 +87,11 @@ let shells = [];
 
     workers.forEach((el) => {
         el.on('online', () => {
-            console.log('Module is Loaded !!'); // add name to the log
+            console.log('Module is Loaded !!');
         });
     
         el.on('message', (message) => {
             console.log(message);
-            // Add error and exit statement
         });
     })
 }();
@@ -102,7 +106,6 @@ function openWindow(config, colors) {
     const minwidth = Math.floor( (width - (width >> 1)) / 1.47 );
     const minheight = Math.floor( (height - (height >> 1)) / 1.4 );
 
-    console.log(osData.wm)
 
     mainWindow = new BrowserWindow({
         webPreferences: {
@@ -129,7 +132,7 @@ function openWindow(config, colors) {
             } catch (err) {
                 console.log(err);
             }
-        }, 400);
+        }, 200);
     })
 
     mainWindow.on("ready-to-show", () => {
@@ -141,13 +144,6 @@ function openWindow(config, colors) {
         } catch (err) {
             console.log(err);
         }
-    })
-
-
-    ipc.on("load-end", () => {
-        time2 = new Date().getTime();
-        time = time2 - time1;
-        console.log("launch in :" + time + "ms");
     })
 }
 
@@ -199,10 +195,13 @@ ipc.on('terminal-data', (e, data) => {
 
 // App events
 app.on("ready", () => {
-    setTimeout(() => {
+    if (config.transparency) {
+        setTimeout(() => {
+            openWindow(config, colors);
+        }, 55);
+    } else {
         openWindow(config, colors);
-    }, 45);
-
+    }
 });
 
 app.on("window-all-closed", function() {
@@ -249,4 +248,10 @@ ipc.on('resize', (e, data) => {
     shells.forEach((el) => {
         el.shell.resize(data.cols, data.rows);
     });
-});
+})
+
+ipc.on("load-end", () => {
+    time2 = new Date().getTime();
+    time = time2 - time1;
+    console.log("launch in :" + time + "ms");
+})

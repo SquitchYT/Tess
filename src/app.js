@@ -8,11 +8,11 @@ const terminals = document.querySelector('.terminals');
 const body = document.body;
 const root = document.documentElement;
 const target = document.getElementById('test');
-const osInformatons = require('../class/osinfo');
+const osInformations = require('../class/osinfo');
 
-const osData = new osInformatons();
+const osData = new osInformations();
 
-if (osData.wm != "win" && osData != "macos") {
+if (osData.wm != "win" && osData.wm != "macos") {
     let titleBarButton = document.querySelectorAll('.app-button');
     titleBarButton.forEach(element => {
         element.remove();
@@ -57,16 +57,22 @@ ipc.on('loaded', (e, data) => {
 
     if (config.transparency) {
         colors.terminal.theme.background = bgColor.rgba;
-        root.style.setProperty('--opacity', config.transparency_value + 0.13);
-        root.style.setProperty('--background', colors.terminal.theme.background);
+        root.style.setProperty('--opacity', config.transparency_value + 0.21);
+        root.style.setProperty('--background-image', colors.terminal.theme.background);
         colors.terminal.theme.background = 'transparent';
-
+        root.style.setProperty('--background', colors.terminal.theme.background);
+    } else if (config.image) {
+        colors.terminal.theme.background = bgColor.rgba;
+        root.style.setProperty('--opacity', config.transparency_value + 0.21);
+        root.style.setProperty('--background-image', 'url(' + config.image + ')');
+        root.style.setProperty('--background', colors.terminal.theme.background);
+        root.style.setProperty('--blur', 'blur(' + config.image_blur +'px)');
+        colors.terminal.theme.background = 'transparent';
     } else {
-        colors.terminal.theme.background = bgColor.rgb;
         root.style.setProperty('--background', colors.terminal.theme.background);
     }
 
-    tabs.style.background = colors?.app?.tab_background;
+    root.style.setProperty('--background-no-opacity', colors.app.tab_background);
     body.style.color = colors?.app?.text_color;
 
     CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]]);
@@ -82,7 +88,6 @@ ipc.on('resize', () => {
     resize();
     console.log('aaaaa');
 })
-
 
 
 function CreateNewTerminal(toStart) {
@@ -136,7 +141,7 @@ function CreateNewTerminal(toStart) {
         rows: rows,
         theme: colors?.terminal?.theme,
         cursorStyle: config?.terminal?.cursor,
-        allowTransparency: config.transparency
+        allowTransparency: true
     });
 
     term.open(termDiv);
