@@ -28,10 +28,8 @@
   "dependencies": {
     "discord-rpc": "^3.2.0",
     "glib": "^1.0.2",
-    "istextorbinary": "^5.12.0",
     "mkdirp": "^0.5.5",
     "node-pty": "^0.10.0",
-    "normalize-package-data": "^3.0.2",
     "xterm": "^4.10.0"
   },
   "devDependencies": {
