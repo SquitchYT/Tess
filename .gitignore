@@ -1,2 +1,8 @@
 node_modules
 dist
+cli/main
+.vscode/settings.json
+.vscode/c_cpp_properties.json
+cli/test.manifest
+cli/background.jpg
+cli/Lib/external/cpr/README.md
