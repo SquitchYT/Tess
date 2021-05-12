@@ -32,14 +32,15 @@ let shells = [];
                 "cursor": "block"
             },
             "shortcut": {
-                "T": "bash",
-                "W": "Close",
-                "C": "Copy"
+                "CTRL + T": "bash",
+                "CTRL + W": "Close",
+                "CTRL + C": "Copy",
+                "CTRL + V": "Paste"
             },
             "transparency": false,
-            "transparency_value": 0.74,
+            "transparency_value": 0.64,
             "image": false,
-            "image_blur": 100,
+            "image_blur": 2,
             "plugin" : []
         }
 
@@ -81,7 +82,7 @@ let shells = [];
 
 !function LoadModules(){
     config.plugin.forEach((el) => {
-        let worker = new Worker(osData.homeDir + "/Applications/tess/worker/" + el + ".js");
+        let worker = new Worker(osData.homeDir + "/Applications/tess/plugins/" + el + "/" + el + ".js");
         workers.push(worker);
     });
 

@@ -29,7 +29,7 @@ if (osData.wm != "win" && osData.wm != "macos") {
     })
 }
 
-const shortcutAction = ["Close", "Copy"];
+const shortcutAction = ["Close", "Copy", "Paste"];
 
 let cols;
 let rows;
@@ -39,6 +39,10 @@ let index = 0;
 
 let config;
 let colors;
+
+let shortcut = [];
+
+let underAction = false;
 
 
 ipc.on('pty-data', (e, data) => {
@@ -52,6 +56,8 @@ ipc.on('pty-data', (e, data) => {
 ipc.on('loaded', (e, data) => {
     config = data.config;
     colors = data.colors;
+
+    HandleShortcut();
 
     const bgColor = new Color(colors.terminal.theme.background, config.transparency_value);
 
@@ -84,9 +90,30 @@ ipc.on('loaded', (e, data) => {
     ipc.send('load-end');
 })
 
+function HandleShortcut() {
+    for (const [key, value] of Object.entries(config.shortcut)) {
+        let newShortcut= {
+            ctrl : false,
+            shift : false,
+            key : key.slice(-1).toUpperCase(),
+            action : value
+        }
+
+        if (key.includes("CTRL")) {
+            newShortcut.ctrl = true;
+        }
+        if (key.includes("MAJ")) {
+            newShortcut.shift = true;
+        }
+
+        shortcut.push(newShortcut);
+    }
+
+    console.log(shortcut);
+}
+
 ipc.on('resize', () => {
     resize();
-    console.log('aaaaa');
 })
 
 
@@ -145,6 +172,15 @@ function CreateNewTerminal(toStart) {
     });
 
     term.open(termDiv);
+
+    term.attachCustomKeyEventHandler((e) => {
+        let o = ExecuteShortcut(e);
+        console.log("return", o)
+        if (o == undefined) {
+            return false;
+        }
+        return o;
+    })
 
     term.onData((e) => {
         ipc.send('terminal-data', {
@@ -217,8 +253,6 @@ function focusTerm(index, tab) {
 }
 
 function resize() {
-    console.log(terminals.clientHeight, terminals.clientWidth);
-
     rows = parseInt(terminals.clientHeight/ 16.95, 10);
     cols = parseInt(terminals.clientWidth/ 9, 10);
 
@@ -268,6 +302,8 @@ function CloseTerm(index) {
         let tab = document.querySelector('.tab-all-' + i.index);
         focusTerm(i.index, tab);
     }
+
+    return false;
 }
 
 target.addEventListener('wheel', event => {
@@ -280,26 +316,45 @@ target.addEventListener('wheel', event => {
     }
 })
 
-window.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey) {
-        for (const [key, value] of Object.entries(config.shortcut)) {
-            if (e.key == key) {
-                if (shortcutAction.includes(value)) {
-                    window[value + "Term"](n);
-                } else {
-                    CreateNewTerminal(value);
-                }
+function ExecuteShortcut(e) {
+    let result = true;
+    let dos = false;
+    shortcut.forEach((el) => {
+        if (e.ctrlKey == el.ctrl && e.shiftKey == el.shift && e.key.toUpperCase() == el.key && e.type == "keydown" && !dos) {
+            dos = true;
+            if (shortcutAction.includes(el.action)) {
+                result = window[el.action + "Term"](n);
+            } else {
+                CreateNewTerminal(el.action);
+                result = false;
             }
         }
-    }
-})
+    })
 
-function CopyTerm() {
+    return result;
+}
+
+function PasteTerm() {
     terminalsList.forEach((el) => {
         if (el.index == n) {
-            clipboard.writeText(el.term.getSelection());
-            return;
+            console.log(n);
+            ipc.send('terminal-data', {
+                index: n,
+                data: clipboard.readFindText()
+            });
         }
     })
-    
-};
+
+    return false;
+}
+
+function CopyTerm() {
+    let result = true;
+    terminalsList.forEach((el) => {
+        if (el.index == n && el.term.getSelection() != "") {
+            clipboard.writeText(el.term.getSelection());
+            result = false;
+        }
+    })
+    return result;
+}
