@@ -7,7 +7,7 @@
 #include <fstream>
 #include <iostream>
 
-#include <cpr/cpr.h>
+#include "../Lib/external/cpr/include/cpr/cpr.h"
 
 #include "../Lib/Manager.hpp"
 #include "../Utils/cross.hpp"
