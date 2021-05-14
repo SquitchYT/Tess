@@ -5,7 +5,6 @@
 #include <string>
 #include <iostream>
 
-
 #include "../Utils/Constant.hpp"
 
 template<typename T>
@@ -24,7 +23,6 @@ class Error
     public:
         template<typename... ARGS>
         inline Error(std::pair<int, std::string> err_code, ARGS... more) {
-            std::cout << "Error constrcutor 1" << std::endl;
             _code = err_code.first;
             _message = err_code.second;
             _isNull = (_code == ERR_NONE.first);

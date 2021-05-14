@@ -5,15 +5,10 @@
 #include "Constant.hpp"
 
 #include <string>
-#include <vector>
 #include <tuple>
 #include <list>
 
-/*
- ###################
- #NEED IMPROVEMENT#
- ##################
-*/
+
 std::tuple<Error, std::list<Extention>, std::string> handleArgs(int count, char **args) {
     std::list<Extention> extentions;
 
@@ -21,7 +16,7 @@ std::tuple<Error, std::list<Extention>, std::string> handleArgs(int count, char 
     std::string action = "";
 
     if (count == 1) {
-        Error err(ERR_ARGS);
+        Error err(ERR_NO_ARGS);
         return {err, extentions, action};
     }
 
@@ -42,12 +37,10 @@ std::tuple<Error, std::list<Extention>, std::string> handleArgs(int count, char 
             }
 
             if (!isEquals) {
-                Error err(ERR_ARGS, s);
-
+                Error err(ERR_UNKNOW_ARG, s);
                 return {err, extentions, action};
             }
         }
-
 
         if (s == "--save" || s == "-S") {
             action = "install";
@@ -62,18 +55,12 @@ std::tuple<Error, std::list<Extention>, std::string> handleArgs(int count, char 
         } else if (s == "--plugin" || s == "-P") {
             current_type = "plugin";
         } else if(current_type != "") {
-             Extention ext(s, current_type);
+            Extention ext(s, current_type);
 
             extentions.push_back(ext);
         }
     }
 
-    if (extentions.size() == 0) {
-        Error err(ERR_NO_EXTENTION);
-        return {err, extentions, action};
-    }
-
-    Error err(action == "" ? ERR_ARGS : ERR_NONE);
-
+    Error err( (action == "") ? ERR_NO_ARGS : (extentions.size() == 0 ) ? ERR_NO_EXTENTION : ERR_NONE, action );
     return {err, extentions, action};
 }

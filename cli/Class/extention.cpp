@@ -6,6 +6,7 @@
 #include <functional>
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 #include "../Lib/external/cpr/include/cpr/cpr.h"
 
@@ -133,23 +134,11 @@ void Extention::install(std::function<void (std::string, int)> callback) {
 
         callback("Installing Node.js dependencies", -1);
 
-
-        // Fix so long time for that !!!!!!!!!!!!!
-        /*
-            /!\/!\/!\/!\/!\
-            /!\/!\/!\/!\/!\
-        */
-
         // Fix print savd into nul file
         Utils::Cross::change_dir((std::string)std::getenv("HOME") + "/Applications/tess/plugins/" + _name);
         system("npm install >nul 2>nul");
 
         callback("Finishing ...", -1);
-
-        //Add _name location variable
-        std::ofstream file((std::string)getenv("HOME") + "/Applications/tess/plugins/test/test.manifest");
-        file << _content;
-        file.close();
 
         /*
             Return no err if all donwload and install or error if one or more doiwnlaod is failed

@@ -1,7 +1,6 @@
 #include "ProgressBar.hpp"
 
 #include <iostream>
-#include <ostream>
 #include <string>
 
 #include "Constant.hpp"

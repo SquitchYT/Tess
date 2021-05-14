@@ -1,7 +1,6 @@
 #include "Loader.hpp"
 
-#include <ostream>
-#include <string>
+#include <iostream>
 
 #include "../Utils/Constant.hpp"
 

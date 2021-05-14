@@ -1,8 +1,7 @@
 #ifndef LOADER
 #define LOADER
 
-#include <ostream>
-#include <string>
+#include <iostream>
 
 class Loader
 {

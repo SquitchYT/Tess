@@ -3,20 +3,14 @@
 
 #include <string>
 #include <vector>
-#include <tuple>
-#include <map>
-#include <iostream>
-#include <typeinfo>
-
-#include <filesystem>
 
 
-extern std::pair<int, std::string> ERR_ARGS;
+extern std::pair<int, std::string> ERR_NO_ARGS;
+extern std::pair<int, std::string> ERR_UNKNOW_ARG;
 extern std::pair<int, std::string> ERR_NONE;
 extern std::pair<int, std::string> ERR_DISK;
 extern std::pair<int, std::string> ERR_DEFAULT;
 extern std::pair<int, std::string> ERR_CONNECTION;
-
 extern std::pair<int, std::string> ERR_NO_EXTENTION;
 
 extern std::string COLOR_ERR;
@@ -27,8 +21,6 @@ extern std::string COLOR_GREEN;
 extern std::string SERVER_URL;
 
 extern std::vector<std::string> LOADERS;
-
-extern std::vector<std::string> STATUS;
 
 extern std::string STATUS_DOWNLOADING;
 extern std::string STATUS_INSTALLING;

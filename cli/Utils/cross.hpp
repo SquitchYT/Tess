@@ -4,8 +4,6 @@
 #include <tuple>
 #include <string>
 
-#include <iostream>
-
 namespace Utils {
     namespace Cross{
         extern void sleepMs(int ms);
@@ -44,17 +42,6 @@ namespace Utils {
             in = tolower(in);
         }
     }
-}
-
-template<typename T>
-inline void testArgs(T arg) {
-    std::cout << arg << " ";
-}
-
-template<typename FIRST, typename... REST>
-inline void testArgs(const FIRST& err_type, const REST&... rest) {
-        testArgs(err_type);
-        testArgs(rest...);
 }
 
 #endif
