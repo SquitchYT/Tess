@@ -21,15 +21,10 @@ Manager::Manager(std::list<Extention> extentions, std::string action){
     _extention = extentions;
     _action = action;
     _status = STATUS_WAITING;
-
-    _to_install = 0;
-    _installed = 0;
-
-    _install_details = "";
 }
 
 Error Manager::start(){
-    std::future<std::pair<int, std::string>> download;
+    std::future<Error> download;
 
     // Try to switch !!! to switch
     if (_action == "install") {
@@ -49,64 +44,67 @@ Error Manager::start(){
         int progressBarLenght = cols * 2 / 5;
 
         if (_status == STATUS_DOWNLOADING) {
-            cols -= progressBarLenght + _item_name.length() + 2;
+            ProgressBar bar(progressBarLenght, _progress);
 
-            //switch to a move cursor !
-            std::string space;
-            for (cols; cols != 0; cols--)
-            {
-                space += " ";
+            std::string out = " " + _item_name;
+            for (int i = out.size(); i != cols - 1 - progressBarLenght; i++) {
+                out += " ";
             }
+            out += bar.str();
 
-            ProgressBar bar(progressBarLenght, _download_progress);
-            std::cout << "\r" << _loader << " " <<  _item_name << space << bar << std::flush;
+            std::cout << "\r" << _loader << out << std::flush;
 
-            if (_download_progress == 100) {
-                std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << " " <<  _item_name << space << bar << std::endl;
+            if (_progress == 100) {
+                std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << out << std::endl;
                 _status = STATUS_WAITING;
-            } else if (_download_progress == -1) {
-                std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << " " <<  _item_name << space << bar << std::endl;
+            } else if (_progress == -1) {
+                std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << out << std::endl;
                 _status = STATUS_WAITING;
             }
-        } else if(_status == STATUS_INSTALLING || _status == STATUS_INSTALLING_WAITING_NEXT) {
-            if (_install_progress != -1) {
-                ProgressBar bar(progressBarLenght, _install_progress);
+        }
+        // Installing section
+        else if (_status == STATUS_INSTALLING) {
+            ProgressBar bar(progressBarLenght, _progress);
 
-                std::string output = " (" + std::to_string(int(_installed + 1)) + "/" + std::to_string(_to_install) + ") " + _install_details;
-                for (int i = cols - output.size() - progressBarLenght - 1; i != 0; i--) {
-                    output += " ";
-                }
-
-                std::cout << "\r" << _loader << output << bar << std::flush;
-            } else {
-                std::string output = " (" + std::to_string(int(_installed + 1)) + "/" + std::to_string(_to_install) + ") " + _install_details;
-
-                for (int i = cols - output.size() - 1; i != 0; i--) {
-                    output += " ";
-                }
-
-                std::cout << "\r" << _loader << output << std::flush;
+            std::string out = " (" + std::to_string(int(_do + 1)) + "/" + std::to_string(_todo) + ") " + _details;
+            for (int i = out.size(); i != cols - 1 - progressBarLenght; i++) {
+                out += " ";
             }
-            if (_status == STATUS_INSTALLING_WAITING_NEXT) {
-                std::string output = " (" + std::to_string(_installed) + "/" + std::to_string(_to_install) + ") Installed !";
+            out += (_progress >= 0) ? bar.str() : "";
+            for (int i = out.size(); i < cols - 1; i++) {
+                out += " ";
+            }
 
-                for (int i = cols - output.size() - 1; i != 0; i--) {
+            std::cout << "\r" << _loader << out << std::flush;
+
+            if (_details == "Finish") {
+                std::string output = " (" + std::to_string(_do) + "/" + std::to_string(_todo) + ") " + _item_name + " Installed !";
+                for (int i = output.size(); i != cols - 1; i++) {
                     output += " ";
                 }
-                
                 std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << output << std::endl;
+                
+                _status = STATUS_WAITING;            
+            } else if (_details == "Error") {
+                std::string output = " (" + std::to_string(_do) + "/" + std::to_string(_todo) + ") name to add here";
+                for (int i = output.size() - 1; i != 0; i--) {
+                    output += " ";
+                }
+                std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << output << std::endl;
 
-                _status = (_installed == _to_install) ? STATUS_FINISHED : STATUS_INSTALLING;
+                _status = STATUS_FINISHED;
             }
-        } else if(_status == STATUS_UNINSTALL) {
-            std::cout << "\r" << _loader << " (" << _removed << "/" << _to_remove << ") " << _remove_details << std::flush;
+        }
+        // Remove Section
+        else if(_status == STATUS_UNINSTALL) {
+            std::cout << "\r" << _loader << " (" << _do << "/" << _todo << ") " << "Unisntalling " << _item_name << std::flush;
 
-            if (_remove_details == "failed") {
-                std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << " (" << _removed << "/" << _to_remove << ")                                                 " << std::endl;
-                _remove_details = "";
-            } else if (_remove_details == "succes") {
-                std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << "(" << _removed << "/" << _to_remove << ")                                            " << std::endl;
-                _remove_details = "";
+            if (_details == "Error") {
+                std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << " (" << _do << "/" << _todo << ") " << _item_name << " Unable to remove         " << std::endl;
+                _status = STATUS_FINISHED;
+            } else if (_details == "Finish") {
+                std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << "(" << _do << "/" << _todo << ") " << _item_name << " Removed                  " << std::endl;
+                _status = STATUS_WAITING;
             }
         }
 
@@ -115,100 +113,102 @@ Error Manager::start(){
 
     std::cout << "download completed" << std::endl;
 
-    /*
-    // Return 0 if not finish and 1 if finished
-    cout << (donwload.wait_for(chrono::milliseconds(0)) == future_status::ready) << endl;
-    */
-
-    Error err(download.get());
-
+    auto err = download.get();
     return err;
 }
 
-std::pair<int, std::string> Manager::Install() {
+Error Manager::Install() {
     std::cout << "donwloading files..." << std::endl;
 
-    int todo = _extention.size();
-    int Do = 0;
+    _do = 0;
 
     for (std::list<Extention>::iterator it = _extention.begin(); it != _extention.end();) {
-        _download_progress = 0;
+        _progress = 0;
         _item_name = it->getName();
         _status = STATUS_DOWNLOADING;
 
         auto downloadCallback = [&](int pourcent) {
-            this->_download_progress = pourcent;
+            this->_progress = pourcent;
         };
 
         cpr::Response r = it->download(downloadCallback);
 
         if (r.status_code == 200) {
-            _download_progress = 100;
+            _progress = 100;
 
-            Do++;
+            _do++;
             it++;
         } else {
-            _download_progress = -1;
+            _progress = -1;
             it = _extention.erase(it);
         }
 
-        Utils::Cross::sleepMs(70);
+        while (_status != STATUS_WAITING);
+        
     }
     
     // optimize this !!!
-    if (Do == 0) {
+    if (_do == 0) {
         _status = STATUS_FINISHED;
         return ERR_CONNECTION;
     }
 
-    _to_install = _extention.size();
+    std::cout << "Installing your extentions !" << std::endl;
 
+    _todo = _extention.size();
+    _do = 0;
+    
     for (auto &extention : _extention) {
         _status = STATUS_INSTALLING;
+        _progress = -1;
+        _item_name = extention.getName();
 
         auto updateDetails = [&](std::string new_details, int progress_details) {
-            this->_install_details = new_details;
-            this->_install_progress = progress_details;
+            this->_details = new_details;
+            this->_progress = progress_details;
         };
 
-        extention.install(updateDetails);
+        auto err = extention.install(updateDetails);
 
-        _installed++;
+        _do++;
 
-        _status = STATUS_INSTALLING_WAITING_NEXT;
+        _details = (err.isNull()) ? "Finish" : "Error";
+        if (_details == "Error") { return err; }
 
-        // check if more conventianal way for wait until var is equals to (MUTEX ???!!!)
-        while (_status != STATUS_INSTALLING && _status != STATUS_FINISHED);
+        while (_status != STATUS_WAITING);
+        _details = "";
     }
 
-    return ERR_NONE;
+    _status = STATUS_FINISHED;
+    Error err(ERR_NONE);
+    return err;
 }
 
-std::pair<int, std::string> Manager::Remove() {
+Error Manager::Remove() {
     std::cout << "Removing..." << std::endl;
 
-    _status = STATUS_UNINSTALL;
-    _to_remove = _extention.size();
+    _todo = _extention.size();
 
-    auto removeCallback = [&](std::string status) {
-        _remove_details = status;
-    };
+    for (auto &extention : _extention) {
+        _status = STATUS_UNINSTALL;
+        _item_name = extention.getName();
+        _do++;
 
-    for (std::list<Extention>::iterator it = _extention.begin(); it != _extention.end(); it++) {
-        _removed++;
+        Error err = extention.uninstall();
+        _details = (err.isNull()) ? "Finish" : "Error";
+        if (_details == "Error") { return err; }
 
-        Error err = it->uninstall(removeCallback);
-        _remove_details = (err.isNull()) ? "succes" : "failed";
-
-        while (_remove_details != "");
+        while (_status != STATUS_WAITING);
+        _details = "";
     }
 
     _status = STATUS_FINISHED;
 
-    return ERR_NONE;
+    Error err(ERR_NONE);
+    return err;
 }
 
-std::pair<int, std::string> Manager::Update() {
+Error Manager::Update() {
     std::cout << "Not yet implemented" << std::endl;
     _status = STATUS_FINISHED;
     return ERR_NONE;

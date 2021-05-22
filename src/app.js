@@ -175,7 +175,6 @@ function CreateNewTerminal(toStart) {
 
     term.attachCustomKeyEventHandler((e) => {
         let o = ExecuteShortcut(e);
-        console.log("return", o)
         if (o == undefined) {
             return false;
         }
@@ -205,7 +204,7 @@ function CreateNewTerminal(toStart) {
         index: index,
         rows: rows,
         cols: cols,
-        shell: toStart
+        shell: toStart /// here !!!!!!!!!
     });
 
     let t = {

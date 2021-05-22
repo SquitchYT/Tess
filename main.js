@@ -150,13 +150,8 @@ function openWindow(config, colors) {
 
 
 ipc.on('new-term', (e, data) => {
+    // Add check if command exist (in the path)
     let Command = data.shell;
-
-    try {
-        Child_Proc.execSync(data.shell)
-    } catch (error) {
-        Command = sh;
-    }
 
     let shell = pty.spawn(Command, [], {
         name: "xterm-color",

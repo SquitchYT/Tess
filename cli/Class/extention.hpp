@@ -27,9 +27,9 @@ public:
     cpr::Response download(std::function<void (int)> callback);
 
     // Add a return value
-    void install(std::function<void (std::string, int)> callback);
+    Error install(std::function<void (std::string, int)> callback);
 
-    Error uninstall(std::function<void (std::string)> callback);
+    Error uninstall();
 
     // TODO
     // update

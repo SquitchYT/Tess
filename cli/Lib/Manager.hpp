@@ -25,26 +25,21 @@ private:
     std::string _status;
     std::string _item_name;
 
-    int _download_progress;
-    int _install_progress;
+    // NEXT REPlACEMENT
+    int _progress;
+    std::string _details;
 
-    int _installed;
-    int _to_install;
+    int _do;
+    int _todo;
 
     Loader _loader;
-    
-    std::string _install_details;
-    std::string _remove_details;
-
-    int _to_remove;
-    int _removed;
 
 private:
-    std::pair<int, std::string> Install();
+    Error Install();
 
     // TODO
-    std::pair<int, std::string> Remove();
-    std::pair<int, std::string> Update();
+    Error Remove();
+    Error Update();
 };
 
 

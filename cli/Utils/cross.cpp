@@ -37,3 +37,13 @@ void Utils::Cross::change_dir(std::string path) {
         std::filesystem::current_path(path);
     }
 }
+
+std::string Utils::Cross::getNodeJSPackageManager() {
+    if (!system("which yarn > /dev/null 2>&1")) {
+        return "yarn";
+    } else if (!system("which pnpm > /dev/null 2>&1")) {
+        return "pnpm";
+    } else if (!system("which npm > /dev/null 2>&1")) {
+        return "npm";
+    } else { return "NO"; }
+}

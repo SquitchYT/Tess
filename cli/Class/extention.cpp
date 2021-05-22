@@ -3,6 +3,7 @@
 #include "../Utils/Constant.hpp"
 
 #include <string>
+#include <string.h>
 #include <functional>
 #include <fstream>
 #include <iostream>
@@ -56,11 +57,10 @@ cpr::Response Extention::download(std::function<void (int)> callback) {
     return r;
 }
 
-void Extention::install(std::function<void (std::string, int)> callback) {
+Error Extention::install(std::function<void (std::string, int)> callback) {
     Utils::Cross::toLower(_name);
 
     if (_type == "theme") {
-
         callback("Installing theme ...", -1);
 
         std::ofstream file((std::string)std::getenv("HOME") + "/Applications/tess/config/theme/" + _name + ".json");
@@ -68,8 +68,10 @@ void Extention::install(std::function<void (std::string, int)> callback) {
         file.close();
 
         Utils::Cross::toUpper(_name[0]);
+
+        Error err(ERR_NONE);
+        return err;
     } else {
-        
         callback("Preparing installation...", -1);
 
         std::stringstream content;
@@ -129,37 +131,38 @@ void Extention::install(std::function<void (std::string, int)> callback) {
         }
 
         callback("Installing dependencies", 100);
-
         Utils::Cross::sleepMs(100);
-
         callback("Installing Node.js dependencies", -1);
 
         // Fix print savd into nul file
         Utils::Cross::change_dir((std::string)std::getenv("HOME") + "/Applications/tess/plugins/" + _name);
-        system("npm install >nul 2>nul");
 
-        callback("Finishing ...", -1);
+        std::string packageManager = Utils::Cross::getNodeJSPackageManager();
+        if (packageManager != "NO") {
+            packageManager += " install >/dev/null 2>&1";
+            system(packageManager.c_str());
+            callback("Finishing ...", -1);
 
-        /*
-            Return no err if all donwload and install or error if one or more doiwnlaod is failed
-        */
+            Error err(ERR_NONE);
+            return err;
+        } else {
+            callback("Unable to find a NodeJS package manager. Please intall it before.", ERR_INSTALLING);
+
+            Error err(ERR_NO_PKG_MANAGER);
+            return err;
+        }
     }   
 }
 
-Error Extention::uninstall(std::function<void (std::string)> callback) {
-    callback("Uninstalling " + _name);
-
+Error Extention::uninstall() {
     if (_type == "theme") {
         Utils::Cross::change_dir((std::string)getenv("HOME") + "/Applications/tess/config/theme/");
         Utils::Cross::toLower(_name);
-        
         
         if (!std::filesystem::remove("./" + _name + ".json")) {
             Error err(ERR_DISK);
             return err;
         }
-
-
     } else {
         Utils::Cross::change_dir((std::string)getenv("HOME") + "/Applications/tess/plugins");
         Utils::Cross::toLower(_name);
@@ -169,7 +172,8 @@ Error Extention::uninstall(std::function<void (std::string)> callback) {
             return err;
         }
     }
-    Error err(ERR_NONE);
 
+    Error err(ERR_NONE);
     return err;
+
 }

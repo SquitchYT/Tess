@@ -13,6 +13,8 @@ namespace Utils {
 
         extern bool create_dir(std::string path);
 
+        extern std::string getNodeJSPackageManager();
+
 
         // CHANGE THIS ???
 

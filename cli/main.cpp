@@ -6,6 +6,7 @@
 #include "Lib/Manager.hpp"
 #include "Utils/Constant.hpp"
 #include "Class/Error.hpp"
+#include "Utils/cross.hpp"
 
 
 int main(int argc, char **argv){

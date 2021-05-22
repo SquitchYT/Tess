@@ -41,3 +41,7 @@ std::ostream &operator<<(std::ostream &os, ProgressBar &bar) {
 
     return os;
 }
+
+std::string ProgressBar::str() {
+    return _progressBar;
+}
