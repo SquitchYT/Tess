@@ -24,10 +24,5 @@ jobs:
         with:
           target: 'pkgbuild'
           pkgname: 'tess-git'
-
-      - uses: 2m/arch-pkgbuild-builder@v1.16
-        with:
-          target: 'srcinfo'
-          pkgname: 'tess-git'
       
       
