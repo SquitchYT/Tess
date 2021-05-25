@@ -21,6 +21,7 @@ let workers = [];
 let mainWindow;
 let shells = [];
 
+
 !function LoadConfig() {
     try {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
@@ -47,6 +48,21 @@ let shells = [];
         let toWrite = JSON.stringify(config);
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
+        mkdir.sync(osData.homeDir + "/.config/")
+
+        console.log("[WARNING] Tess is currently under development. You use an development release. You can have damage deal to your system")
+
+        let currentKDEConfig
+
+        try {
+            currentKDEConfig = fs.readFileSync(osData.homeDir + "/.config/kdeglobals");
+            console.log("Set Tess to Default Terminal Emulator")
+            fs.writeFileSync(osData.homeDir + "/.config/kdeglobals", currentKDEConfig.toString() + "\n[General]\nTerminalApplication=tess");           
+        } catch (error) {
+            console.log("Your are not on KDE");
+            fs.writeFileSync(osData.homeDir + "/.config/kdeglobals", "[General]\nTerminalApplication=tess");
+        }
+
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite);
     }
 
