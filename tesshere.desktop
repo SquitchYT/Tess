@@ -2,6 +2,7 @@
 Type=Service
 ServiceTypes=KonqPopupMenu/Plugin
 Actions=test;
+MimeType=inode/directory;
 AuthorizeAction=shell_access
 [Desktop Action test]
 Name=test
