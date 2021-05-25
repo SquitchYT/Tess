@@ -37,6 +37,44 @@ jobs:
           pkgbuild: ./tess-git/PKGBUILD
           commit_username: ${{ secrets.AUR_USERNAME }}
           commit_email: ${{ secrets.AUR_EMAIL }}
-          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          ssh_private_key: >-
+            -----BEGIN OPENSSH PRIVATE KEY-----
+            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
+            -----END OPENSSH PRIVATE KEY-----
           commit_message: Update AUR package
           ssh_keyscan_types: rsa,dsa,ecdsa,ed25519
