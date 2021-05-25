@@ -6,7 +6,7 @@ cli/main
 cli/test.manifest
 cli/background.jpg
 cli/Lib/external/cpr/README.md
-tess-git/tess-git-1.2r*
+tess-git/tess-git-*
 tess-git/Tess
 tess-git/src
 tess-git/pkg
