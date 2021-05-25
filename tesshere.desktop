@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Service
-ServiceTypes=KonqPopupMenu/Plugin
-Actions=test;
-MimeType=inode/directory;
-AuthorizeAction=shell_access
-[Desktop Action test]
-Name=test
-Exec=/usr/bin/tess
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+MimeType=all/all;
+Actions=opentesshere;
+X-KDE-AuthorizeAction=shell_access
+[Desktop Action opentesshere]
+Name=Execute Tess Here
+Exec=tess
