@@ -141,8 +141,14 @@ body {
 .terms {
     position: absolute;
     height: 100%;
-    width: calc(100vw - 6.6px);
+    width: 100vw;
     margin-left: 3px;
+}
+
+.iFrame-Test {
+    position: absolute;
+    height: 100%;
+    width: calc(100vw - 6.6px);
 }
 
 .hidden {

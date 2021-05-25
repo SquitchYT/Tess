@@ -1,0 +1,24 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: azure;
+}
+
+.a {
+    display: flex;
+    flex: auto;
+    height: 100vh;
+    width: 100vw;
+    background-color: lawngreen;
+}
+
+.test-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: aqua;
+    height: 100%;
+    width: 100%;
+    border: red;
+    border-right: 10px solid;
+}

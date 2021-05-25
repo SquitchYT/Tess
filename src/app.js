@@ -30,6 +30,7 @@ if (osData.wm != "win" && osData.wm != "macos") {
 }
 
 const shortcutAction = ["Close", "Copy", "Paste"];
+const CustomPage = ["Config"]
 
 let cols;
 let rows;
@@ -88,6 +89,8 @@ ipc.on('loaded', (e, data) => {
     })
 
     ipc.send('load-end');
+
+    CreateNewTerminal("Config");
 })
 
 function HandleShortcut() {
@@ -108,8 +111,6 @@ function HandleShortcut() {
 
         shortcut.push(newShortcut);
     }
-
-    console.log(shortcut);
 }
 
 ipc.on('resize', () => {
@@ -161,60 +162,90 @@ function CreateNewTerminal(toStart) {
         focusTerm(tab_link.classList[2], tab);
     })
 
-    if (!cols) resize();
+    let t;
 
-    let term = new Terminal({
-        cols: cols,
-        rows: rows,
-        theme: colors?.terminal?.theme,
-        cursorStyle: config?.terminal?.cursor,
-        allowTransparency: true
-    });
+    if (CustomPage.includes(toStart)) {
+        let page = document.createElement("iframe");
+        page.setAttribute("src", "./ConfigForm/index.html")
+        termDiv.appendChild(page)
 
-    term.open(termDiv);
+        page.classList.add("iFrame-Test");
 
-    term.attachCustomKeyEventHandler((e) => {
-        let o = ExecuteShortcut(e);
-        if (o == undefined) {
-            return false;
-        }
-        return o;
-    })
+        page.addEventListener("load", () => {
+            let iFrameWindow = page.contentWindow;
 
-    term.onData((e) => {
-        ipc.send('terminal-data', {
-            index: n,
-            data: e
+            
+            iFrameWindow.addEventListener("keydown", (e) => {
+                console.log("aaaaaaaaaaaaaaaaa")
+                ExecuteShortcut(e);
+            })
+        })
+
+        page.focus();
+
+        t = {
+            index: index,
+            term: page,
+            type: "Page"
+        };
+
+    } else {
+        if (!cols) resize();
+
+        let term = new Terminal({
+            cols: cols,
+            rows: rows,
+            theme: colors?.terminal?.theme,
+            cursorStyle: config?.terminal?.cursor,
+            allowTransparency: true
         });
-    })
 
-    let terms = document.getElementsByClassName('terms');
-    let yy = document.getElementsByClassName('tab');
+        term.open(termDiv);
 
-    let i = 0
-    while (i < terms.length) {
-        let a = terms.item(i);
-        let e = yy.item(i);
-        e.style.background = colors?.app?.tab_background;
-        a.classList.add('hidden');
-        i++;
+        term.attachCustomKeyEventHandler((e) => {
+            let o = ExecuteShortcut(e);
+            if (o == undefined) {
+                return false;
+            }
+            return o;
+        })
+
+        term.onData((e) => {
+            ipc.send('terminal-data', {
+                index: n,
+                data: e
+            });
+        })
+
+        let terms = document.getElementsByClassName('terms');
+        let yy = document.getElementsByClassName('tab');
+
+        let i = 0
+        while (i < terms.length) {
+            let a = terms.item(i);
+            let e = yy.item(i);
+            e.style.background = colors?.app?.tab_background;
+            a.classList.add('hidden');
+            i++;
+        }
+
+        ipc.send('new-term', {
+            index: index,
+            rows: rows,
+            cols: cols,
+            shell: toStart
+        });
+
+        t = {
+            index: index,
+            term: term,
+            type: "Terminal"
+        };
     }
 
-    ipc.send('new-term', {
-        index: index,
-        rows: rows,
-        cols: cols,
-        shell: toStart /// here !!!!!!!!!
-    });
-
-    let t = {
-        index: index,
-        term: term
-    };
+    
     n = index;
     index++;
-
-    term.getSelection;
     
     terminals.appendChild(termDiv);
     terminalsList.push(t);
@@ -278,7 +309,9 @@ function CloseTerm(index) {
 
     terminalsList.forEach((el) => {
         if (el.index == index) {
-            el.term.dispose();
+            if (el.type == "Terminal") {
+                el.term.dispose();
+            }
             terminalsList.splice(y, 1);
         }
         y++
