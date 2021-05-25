@@ -19,7 +19,7 @@ jobs:
       - uses: 2m/arch-pkgbuild-builder@v1.16
         with:
           target: 'pkgbuild'
-          pkgname: ''
+          pkgname: './'
           
       - name: Publish AUR package
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
