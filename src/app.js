@@ -90,7 +90,7 @@ ipc.on('loaded', (e, data) => {
 
     ipc.send('load-end');
 
-    CreateNewTerminal("Config");
+    //CreateNewTerminal("Config");
 })
 
 function HandleShortcut() {

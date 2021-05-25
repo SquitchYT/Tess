@@ -1,8 +1,8 @@
 [Desktop Entry]
 Type=Service
-X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+ServiceTypes=KonqPopupMenu/Plugin
 Actions=test;
-X-KDE-AuthorizeAction=shell_access
+AuthorizeAction=shell_access
 [Desktop Action test]
 Name=test
 Exec=/usr/bin/tess
