@@ -4,7 +4,7 @@
   "description": "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology",
   "main": "main.js",
   "scripts": {
-    "test": "electron .",
+    "test": "electron . --workdir /usr/bin",
     "build": "electron-builder --linux dir"
   },
   "keywords": [
@@ -25,7 +25,8 @@
     "glib": "^1.0.2",
     "mkdirp": "^0.5.5",
     "node-pty": "^0.10.0",
-    "xterm": "^4.10.0"
+    "xterm": "^4.10.0",
+    "yargs": "^17.0.1"
   },
   "devDependencies": {
     "electron": "^11.2.3",
@@ -33,7 +34,7 @@
   },
   "build": {
     "linux": {
-      "icon" : "src/img/Tess.png"
+      "icon": "src/img/Tess.png"
     }
   }
 }

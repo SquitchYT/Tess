@@ -1,9 +1,10 @@
 const time1 = new Date().getTime();
 
 const { app, BrowserWindow, ipcMain : ipc, screen } = require('electron');
+const argv = require("yargs").argv
 
 const pty = require("node-pty");
-const Child_Proc = require('child_process');
+//const Child_Proc = require('child_process');
 const { Worker } = require('worker_threads');
 
 const fs = require('fs');
@@ -12,7 +13,7 @@ const mkdir = require('mkdirp')
 const OsInfomations = require('./class/osinfo');
 const osData = new OsInfomations();
 
-const sh = osData.os == "win32" ? "powershell.exe" : "bash";
+//const sh = osData.os == "win32" ? "powershell.exe" : "bash";
 
 app.commandLine.appendSwitch('disable-gpu');
 
@@ -20,6 +21,14 @@ let config, colors;
 let workers = [];
 let mainWindow;
 let shells = [];
+
+
+//Detect if workdir specified
+let customWorkdir;
+if (argv.workdir) {
+    customWorkdir = argv.workdir
+}
+
 
 console.log("[WARNING] Tess is currently under development. You use an development release. You can have damage deal to your system")
 
@@ -122,7 +131,8 @@ function openWindow(config, colors) {
         minWidth: minwidth,
         title: "Tess - Terminal",
         transparent: config.transparency,
-        frame: needFrame
+        frame: needFrame,
+        icon: "/usr/bin/Tess.png"
     });
 
     mainWindow.removeMenu();
@@ -161,9 +171,14 @@ ipc.on('new-term', (e, data) => {
         name: "xterm-color",
         cols: data.cols,
         rows: data.rows,
-        cwd: process.env.HOME,
+        cwd:  (customWorkdir) ? customWorkdir : process.env.HOME,
         env: process.env,
     })
+    
+    // Reset workdir
+    customWorkdir = "";
+
+
 
     shell.onData((datas) => {
         try {
