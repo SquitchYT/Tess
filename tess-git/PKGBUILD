@@ -24,7 +24,7 @@ package() {
 	mkdir -p "${pkgdir}/usr/share/kservices5/ServiceMenus/"
 	cp -r -f tesshere.desktop "${pkgdir}/usr/share/kservices5/ServiceMenus/tesshere.desktop"
 
-	if ! type "$kbuildsycoca5" > /dev/null; then
+	if ! type "kbuildsycoca5" > /dev/null; then
 		kbuildsycoca5
 	fi
 
