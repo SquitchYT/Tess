@@ -23,7 +23,12 @@ package() {
 
 	mkdir -p "${pkgdir}/usr/share/kservices5/ServiceMenus/"
 	cp -r -f tesshere.desktop "${pkgdir}/usr/share/kservices5/ServiceMenus/tesshere.desktop"
-	kbuildsycoca5
+
+	if ! type "$kbuildsycoca5" > /dev/null; then
+		kbuildsycoca5
+	fi
+
+	
 
 	mkdir -p "${pkgdir}/opt/tess-cli"
 	mkdir -p "${pkgdir}/usr/bin"
