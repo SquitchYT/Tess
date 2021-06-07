@@ -1,0 +1,63 @@
+:host {
+    --text-color: #fff;
+    --background: #000;
+    --progress-color: green;
+}
+
+* {
+    color: var(--text-color);
+}
+
+.bar {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--background);
+}
+
+.progress {
+    background: var(--progress-color);
+    height: 100%;
+    max-width: 100% !important;
+    transition: all;
+}
+
+.value {
+    position: absolute;
+    height: 26px;
+    width: 37px;
+    background: var(--background);
+    border-radius: 4px;
+    transition: opacity;
+    transition-timing-function: ease;
+    transition-duration: 450ms;
+    opacity: 0;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 80;
+}
+
+.indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    width: 38px;
+    position: absolute;
+    font-size: 13px;
+    font-weight: 500;
+    user-select: none;
+}
+
+.min-indicator {
+    transform: translate(calc(-38px / 2), -32px);
+    font-size: 11px !important;
+}
+
+.visible {
+    opacity: 1;
+}

@@ -1,0 +1,280 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
+:root {
+    --opacity: 1;
+    --background: #000;
+    --app-background: #000;
+
+    --item-background: #000;
+    --item-foreground: #00ff00;
+    --item-textcolor: #fff;
+    --item-red: red;
+    --item-green: green;
+    --item-radius: 20px;
+
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--background);
+    overflow-x: hidden;
+    font-family: 'Roboto', sans-serif;
+    width: calc(100vw + 3px);
+}
+
+.config-list {
+    width: calc(100vw - 250px);
+    margin-left: 250px;
+    margin-bottom: 100px;
+}
+
+section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    margin-top: 25px;
+}
+
+.left-side-menu {
+    height: 100%;
+    background: var(--item-background);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    z-index: 101;
+}
+
+switch-button {
+    height: 28px;
+    width: 58px;
+    display: flex;
+    flex-shrink: 0;
+
+    --green: var(--item-green);
+    --red: var(--item-red);
+    --background: var(--item-background);
+    --radius: var(--item-radius);
+}
+
+drop-down-menu {
+    height: 35px;
+    width: 33vw;
+    max-width: 425px;
+    min-width: 250px;
+    display: flex;
+    flex-shrink: 0;
+    box-shadow: -8px 0px 7px var(--app-background);
+    --background: var(--item-background);
+    --foreground: var(--item-foreground);
+    --text-color : var(--item-textcolor);
+    /*ADD radius*/
+}
+
+scroller-picker {
+    height: 25px;
+    width: 33vw;
+    max-width: 425px;
+    min-width: 250px;
+    display: flex;
+    flex-shrink: 0;
+    margin-top: 12px;
+    --background: var(--item-background);
+    --text-color: var(--item-textcolor);
+    --progress-color: var(--item-green);
+}
+
+::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background:rgba(212, 212, 212, 0.14);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+h3 {
+    width: 95%;
+    margin-bottom: 0;
+    font-size: 18px;
+    color: var(--item-textcolor);
+}
+
+.config-props{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 91%;
+    height: 80px;
+    border-bottom: solid 1px rgba(255, 255, 255, 0.39);
+    padding-left: 11px;
+    padding-right: 11px;
+}
+
+.plugin-props {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 91%;
+    height: 80px;
+}
+
+.description {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: 6px;
+    width: 100%;
+    overflow: hidden;
+    user-select: none;
+}
+
+.description span {
+    color: var(--item-textcolor);
+    white-space: nowrap;
+    margin-bottom: 2px;
+}
+
+.title {
+    font-size: 17px;
+}
+
+.details {
+    font-size: 14px;
+    filter: opacity(0.59);
+    z-index: -1;
+}
+
+@media screen and (max-width: 950px) {
+    .left-side-menu {
+        width: 0;
+        height: 0;
+    }
+
+    .config-list {
+        width: 100vw;
+        margin-left: 0;
+    }
+
+    .save-alert {
+        position: fixed;
+        bottom: 0;
+        width: calc(100vw) !important;
+        background: #00ff00;
+        height: 100px;
+        transform: translateX(100vw);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+input {
+    height: 35px;
+    width: 33vw;
+    max-width: 425px;
+    min-width: 250px;
+    background: var(--item-background);
+    border: 0;
+    border-radius: 5px;
+    outline: none;
+    color: var(--item-textcolor);
+    font-size: 16px;
+    flex-shrink: 0;
+    box-shadow: -8px 0px 7px var(--app-background);
+}
+
+.save-alert {
+    position: fixed;
+    bottom: 0;
+    width: calc(100vw - 250px + 2px);
+    background: var(--item-background);
+    height: 85px;
+    transform: translateX(100%);
+    opacity: 0.55;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    z-index: 100;
+    box-shadow: 0px -14px 12px var(--app-background);
+}
+
+.save-alert span {
+    white-space: nowrap;
+    font-size: 17px;
+    overflow: hidden;
+    max-width: 35vw;
+    color: var(--item-textcolor);
+    font-weight: 500;
+}
+
+.btn {
+    height: 33px;
+    width: 100px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn:hover {
+    filter: invert(0.18);
+    cursor: pointer;
+}
+
+.popup-btn-text {
+    margin: 1px;
+    text-align: center;
+    width: 86px;
+    font-size: 11px;
+    color: var(--item-background) !important;
+    font-weight: 500;
+}
+
+.popup-btn-icon {
+    margin: 1px;
+    height: 25px;
+    width: 25px;
+    color: var(--app-background);
+}
+
+.saveButton {
+    background: var(--item-green);
+}
+
+.saveReloadButton{
+    background: var(--item-green);
+}
+
+.cancelButton {
+    background: var(--item-red);
+}
+
+.visible {
+    transform: translateX(-2px);
+    opacity: 1;
+}
+
+.transition {
+    transition: all;
+    transition-duration: 600ms;
+    transition-timing-function: ease;
+}

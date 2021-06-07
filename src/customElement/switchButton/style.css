@@ -1,0 +1,35 @@
+:host {
+    --green: green;
+    --red: red;
+    --background: #000;
+    --radius: 6px;
+}
+
+.button {
+    border-radius: var(--radius);
+    height: 100%;
+    width: 100%;
+    transition-duration: 350ms;
+    transition-timing-function: ease;
+    background: var(--green);
+}
+
+.button-off {
+    background: var(--red);
+}
+
+.selector {
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    border-radius: var(--radius);
+    transition-duration: 350ms;
+    transition-timing-function: ease;
+    background: var(--background);
+    z-index: 5;
+    transform: translate(calc(58px - 100% - 4px), 4px);
+}
+
+.selector-off {
+    transform: translate(4px, 4px);
+}

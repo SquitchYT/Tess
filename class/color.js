@@ -1,18 +1,18 @@
 class Color{
-    constructor(color, alpha){
+    constructor(color, alpha) {
         this.color = color;
         this.alpha = alpha;
     };
 
-    get rgb(){
+    get rgb() {
         return this.ToRgb();
     };
 
-    get rgba(){
+    get rgba() {
         return this.ToRgba();
     };
 
-    ToRgb(){
+    ToRgb() {
         let r,g,b = 0
         if (this.color.length == 4) {
             r = "0x" + this.color[1] + this.color[1];
@@ -26,7 +26,7 @@ class Color{
         return "rgb(" + +r + "," + +g + "," + +b + ")";
     };
 
-    ToRgba(){
+    ToRgba() {
         let r,g,b = 0;
         let a = this.alpha;
         if (this.color.length == 4) {
@@ -47,4 +47,4 @@ class Color{
     };
 };
 
-module.exports = Color
+module.exports = Color;

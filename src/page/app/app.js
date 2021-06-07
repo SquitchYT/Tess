@@ -1,14 +1,14 @@
 const { Terminal } = require('xterm');
 const { ipcRenderer : ipc, clipboard } = require('electron');
 
-const Color = require('../class/color');
+const Color = require('../../../class/color');
 
 const tabs = document.querySelector('.tabs-tab');
 const terminals = document.querySelector('.terminals');
 const body = document.body;
 const root = document.documentElement;
 const target = document.getElementById('test');
-const osInformations = require('../class/osinfo');
+const osInformations = require('../../../class/osinfo');
 
 const osData = new osInformations();
 
@@ -60,26 +60,39 @@ ipc.on('loaded', (e, data) => {
 
     HandleShortcut();
 
-    const bgColor = new Color(colors.terminal.theme.background, config.transparency_value);
+    const bgColor = new Color(colors?.terminal?.theme?.background, config?.transparency_value);
 
-    if (config.transparency) {
-        colors.terminal.theme.background = bgColor.rgba;
-        root.style.setProperty('--opacity', config.transparency_value + 0.21);
-        root.style.setProperty('--background-image', colors.terminal.theme.background);
+    if (config.background == "transparent") {
+        colors.terminal.theme.background = bgColor?.rgba;
+        root.style.setProperty('--opacity', config?.transparency_value + 0.21);
+        root.style.setProperty('--background', colors?.terminal?.theme?.background);
         colors.terminal.theme.background = 'transparent';
-        root.style.setProperty('--background', colors.terminal.theme.background);
-    } else if (config.image) {
-        colors.terminal.theme.background = bgColor.rgba;
-        root.style.setProperty('--opacity', config.transparency_value + 0.21);
-        root.style.setProperty('--background-image', 'url(' + config.image + ')');
-        root.style.setProperty('--background', colors.terminal.theme.background);
-        root.style.setProperty('--blur', 'blur(' + config.image_blur +'px)');
+    } else if (config.background == "image") {
+        colors.terminal.theme.background = bgColor?.rgba;
+        root.style.setProperty('--opacity', config?.transparency_value + 0.21);
+        root.style.setProperty('--background-image', 'url(' + config?.imageLink + ')');
+        root.style.setProperty('--background', colors?.terminal?.theme?.background);
+        root.style.setProperty('--blur', 'blur(' + config?.image_blur +'px)');
         colors.terminal.theme.background = 'transparent';
     } else {
-        root.style.setProperty('--background', colors.terminal.theme.background);
+        root.style.setProperty('--background', colors?.terminal?.theme?.background);
     }
 
-    root.style.setProperty('--background-no-opacity', colors.app.tab_background);
+    /***  NEW THEME OPTIONS SETUPER ***/
+
+    colors.terminal.theme.background = "transparent"
+
+    root.style.setProperty("--tab-panel-background", colors?.app?.tab?.panel?.background);
+    root.style.setProperty("--tab-active-background", colors?.app?.tab?.active?.background);
+    root.style.setProperty("--tab-inactive-background", colors?.app?.tab?.inactive?.background)
+    root.style.setProperty("--tab-text-color", colors?.app?.tab?.text?.color)
+    root.style.setProperty("--tab-text-size", colors?.app?.tab?.text?.size + "px")
+
+    root.style.setProperty("--general-text-color", colors?.app?.general?.text_color)
+
+    /***  END THEME OPTIONS SETUPER NEW ***/
+
+    root.style.setProperty('--background-no-opacity', colors?.app?.tab_background);
     body.style.color = colors?.app?.text_color;
 
     CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]]);
@@ -120,8 +133,7 @@ ipc.on('resize', () => {
 
 function CreateNewTerminal(toStart) {
     let tab = document.createElement('div');
-    tab.style.background = colors.app.tab_foreground;
-    tab.classList.add('tab', 'tab-all-' + index);
+    tab.classList.add('tab', 'tab-all-' + index, "tab-active");
 
     let tab_link = document.createElement('div');
 
@@ -141,7 +153,7 @@ function CreateNewTerminal(toStart) {
     })
 
     let logo = document.createElement('img');
-    logo.src = "img/shell.png";
+    logo.src = "../../img/shell.png";
     logo.classList.add('logo');
 
     tab.appendChild(logo);
@@ -153,7 +165,6 @@ function CreateNewTerminal(toStart) {
     termDiv.classList.add('terms', 'terminal-' + index, 'visible');
     termDiv.setAttribute('number', index);
 
-
     logo.addEventListener('click', () => {
         focusTerm(tab_link.classList[2], tab);
     })
@@ -163,25 +174,22 @@ function CreateNewTerminal(toStart) {
     })
 
     let t;
-
     if (CustomPage.includes(toStart)) {
         let page = document.createElement("iframe");
-        page.setAttribute("src", "./ConfigForm/index.html")
+        page.setAttribute("src", "../config/config.html")
+        page.setAttribute("nodeintegration", "")
         termDiv.appendChild(page)
 
-        page.classList.add("iFrame-Test");
+        page.classList.add("iframe");
 
         page.addEventListener("load", () => {
             let iFrameWindow = page.contentWindow;
-
-            
             iFrameWindow.addEventListener("keydown", (e) => {
-                console.log("aaaaaaaaaaaaaaaaa")
                 ExecuteShortcut(e);
             })
         })
 
-        page.focus();
+        page.focus()
 
         t = {
             index: index,
@@ -196,7 +204,7 @@ function CreateNewTerminal(toStart) {
             cols: cols,
             rows: rows,
             theme: colors?.terminal?.theme,
-            cursorStyle: config?.terminal?.cursor,
+            cursorStyle: config.cursorStyle,
             allowTransparency: true
         });
 
@@ -262,11 +270,14 @@ function focusTerm(index, tab) {
         let r = tabs.item(i);
         a.classList.add('hidden');
         a.classList.remove('visible');
-        r.style.background = colors?.app?.tab_background;
+
+        r.classList.remove("tab-active")
+        r.classList.add("tab-inactive")
         i++;  
     }
 
-    tab.style.background = colors?.app?.tab_foreground;
+    tab.classList.remove("tab-inactive")
+    tab.classList.add("tab-active")
 
     let termtoview = document.querySelector('.terminal-' + index);
     termtoview.classList.remove('hidden');
@@ -287,7 +298,11 @@ function resize() {
     cols = parseInt(terminals.clientWidth/ 9, 10);
 
     terminalsList.forEach((el) => {
-        el.term.resize(cols, rows);
+        try {
+            el.term.resize(cols, rows);
+        } catch (err) {
+            console.log(err)
+        }
     })
 
     ipc.send('resize', {
@@ -362,21 +377,18 @@ function ExecuteShortcut(e) {
             }
         }
     })
-
     return result;
 }
 
 function PasteTerm() {
     terminalsList.forEach((el) => {
         if (el.index == n) {
-            console.log(n);
             ipc.send('terminal-data', {
                 index: n,
                 data: clipboard.readFindText()
             });
         }
     })
-
     return false;
 }
 

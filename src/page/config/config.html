@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Document</title>
+        <script src="../../customElement/switchButton/switchButton.js"></script>
+        <script src="../../customElement//dropDown/dropDown.js"></script>
+        <script src="../../customElement/scroller-picker/scrollerPicker.js"></script>
+        <script src="./config.js" defer></script>
+        <link rel="stylesheet" href="./config.css">
+    </head>
+    <body>
+        <div class="left-side-menu"></div>
+        <div class="config-list">
+            <section name="general">
+                <h3>General</h3>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title"> Theme :</span>
+                        <span class="details">Theme du terminal</span>
+                    </div>
+                    <drop-down-menu input-list="default" selected-value="default" parameters="theme"></drop-down-menu>
+                </div>
+
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title"> Cursor :</span>
+                        <span class="details">Curseur du terminal</span>
+                    </div>
+                    <drop-down-menu input-list="bar;block;underline" selected-value="block", parameters="cursorStyle"></drop-down-menu>
+                </div>
+
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title"> Background type :</span>
+                        <span class="details">Style du fond de l'application</span>
+                    </div>
+                    <drop-down-menu input-list="full;transparent;image" selected-value="full" parameters="background" name="background-type"></drop-down-menu>
+                </div>
+            </section>
+
+            <section>
+                <h3>Background</h3>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Transparence du terminal</span>
+                        <span class="details">Change la transparence du terminal quand le type de fond est défini sur transparent</span>
+                    </div>
+                    <scroller-picker min-value=0 max-value=100 suffix="%"></scroller-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Lien de l'image</span>
+                        <span class="details">Change l'image de fond quand le type de fond est défini sur image</span>
+                    </div>
+                    <input type="text" placeholder="TODO : change that to file picker">
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Flou de l'image</span>
+                        <span class="details">Change le flou de l'image quand le type de fond est défini sur image</span>
+                    </div>
+                    <scroller-picker min-value=0 max-value=20 suffix="px"></scroller-picker>
+                </div>
+            </section>
+
+
+            <section class="plugin" name="plugin">
+                <h3>Plugins</h3>
+            </section>
+
+            <div class="save-alert no-transition">
+                <span>Modification non sauvegardée : </span>
+                <div class="btn saveButton">
+                    <span class="popup-btn-text">Save</span>
+                    <svg class="popup-btn-icon" fill="none" viewBox="0 0 25 25" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <div class="btn saveReloadButton">
+                    <span class="popup-btn-text">Reload</span>
+                    <svg class="popup-btn-icon" fill="none" viewBox="0 0 27 27" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </div>
+                <div class="btn cancelButton">
+                    <span class="popup-btn-text">Cancel</span>
+                    <svg class="popup-btn-icon" fill="none" viewBox="0 0 25 25" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

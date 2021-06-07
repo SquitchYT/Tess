@@ -1,9 +1,19 @@
 :root {
     --opacity: 1;
-    --background: #FFF;
+    --background: rgba(0,0,0,0);
     --background-image: var(--background);
-    --background-no-opacity: var(--background)
     --blur: blur(0px);
+
+
+    --general-text-color: #fff;
+
+
+    --tab-panel-background: #000;
+    --tab-active-background: #fff;
+    --tab-inactive-background : #000;
+
+    --tab-text-color: #000;
+    --tab-text-size: 13px;
 }
 
 body {
@@ -12,6 +22,7 @@ body {
     overflow: hidden;
     background: var(--background-image);
     background-size: cover;
+    color: var(--general-text-color);
     backdrop-filter: var(--blur);
 }
 
@@ -20,6 +31,7 @@ body {
     width : 100vw;
     display: flex;
     -webkit-app-region: drag;
+    transition: all 0.3s; 
 }
 
 .tab {
@@ -29,13 +41,13 @@ body {
     height: 30px;
     display: flex;
     font-weight: bolder;
-    font-size: 13px;
     font-family: monospace;
-    border-radius: 4.5px 4.5px 0 0;
+    border-radius: 4.3px 4.3px 0 0;
     cursor: pointer;
     overflow: hidden;
     animation: 0.3s nodeInserted;
     -webkit-app-region: no-drag;
+    color: var(--tab-text-color);
 }
 
 .tabs * {
@@ -53,6 +65,8 @@ body {
     font-family: monospace;
     order: 1000;
     -webkit-app-region: no-drag;
+    color: var(--general-text-color);
+    transition: flex 1000ms linear;
 }
 
 .more:hover {
@@ -81,8 +95,7 @@ body {
     display: flex;
     overflow: hidden;
     padding-left: 7px;
-    background: var(--background-no-opacity);
-    opacity: var(--opacity);
+    background: var(--tab-panel-background);
 }
 
 .app-buttons {
@@ -102,7 +115,6 @@ body {
     justify-content: center;
     align-items: center;
     background: var(--background-no-opacity);
-    opacity: calc(var(--opacity) + 0.06);
 }
 
 .app-button:hover {
@@ -130,6 +142,7 @@ body {
     align-items: center;
     white-space: nowrap;
     overflow : hidden;
+    font-size: var(--tab-text-size);
 }
 
 .terminals {
@@ -141,14 +154,15 @@ body {
 .terms {
     position: absolute;
     height: 100%;
-    width: 100vw;
+    width: calc(100vw - 3px);
     margin-left: 3px;
 }
 
-.iFrame-Test {
+.iframe {
     position: absolute;
     height: 100%;
-    width: calc(100vw - 6.6px);
+    width: 100vw;
+    transform: translateX(-3px);
 }
 
 .hidden {
@@ -178,12 +192,13 @@ body {
 }
 
 ::-webkit-scrollbar {
-    height: 3.6px;
-    width: 3.6px;
+    height: 4px;
+    width: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
     background:rgba(212, 212, 212, 0.14);
+    border-radius: 6px;
 }
 
 @keyframes nodeInserted { 
@@ -206,4 +221,16 @@ body {
     width: 100vw;
     position: relative;
     background: var(--background);
+}
+
+.tab-active {
+    background-color: var(--tab-active-background);
+}
+
+.tab-inactive {
+    background-color: var(--tab-inactive-background);
+}
+
+iframe {
+    border: none;
 }

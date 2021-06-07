@@ -15,8 +15,6 @@ const osData = new OsInfomations();
 
 //const sh = osData.os == "win32" ? "powershell.exe" : "bash";
 
-app.commandLine.appendSwitch('disable-gpu');
-
 let config, colors;
 let workers = [];
 let mainWindow;
@@ -37,61 +35,35 @@ console.log("[WARNING] Tess is currently under development. You use an developme
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
         config = JSON.parse(file);
     } catch (error) {
-        config = {
-            "theme": "tokyo-night",
-            "terminal": {
-                "cursor": "block"
-            },
-            "shortcut": {
-                "CTRL + T": "bash",
-                "CTRL + W": "Close",
-                "CTRL + C": "Copy",
-                "CTRL + V": "Paste"
-            },
-            "transparency": false,
-            "transparency_value": 0.64,
-            "image": false,
-            "image_blur": 2,
-            "plugin" : []
-        }
-
-        let toWrite = JSON.stringify(config);
+        let toWrite= '{"theme": "tokyo-night","background": "full","cursorStyle": "block","transparency_value": 0.65,"image_blur": 1,"imageLink": "","plugin": ["discord-rpc"],"shortcut": {"CTRL + T": "bash","CTRL + W": "Close","CTRL + C": "Copy","CTRL + V": "Paste","CTRL + P": "Config"}}'
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/")
 
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite);
+        config = JSON.parse(toWrite)
     }
 
-    if (config.image && config.image.startsWith('./')) {
-        config.image = osData.homeDir + "/Applications/tess/config" + config.image.substring(config.image.indexOf('.') + 1)
+    if (config.background == "image" && config.imageLink.startsWith('./')) {
+        config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf('.') + 1)
     }
 
     try {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
         colors = JSON.parse(file);
     } catch (error) {
-        colors = {
-            "terminal": {
-                "theme": {
-                    "foreground": "#9195c9",
-                    "background": "#282d42"
-                }
-            },
-            "app": {
-                "tab_background": "#24283b",
-                "tab_foreground": "#2f344d",
-                "text_color": "#fff"
-            }
-        }
-
-        let toWrite = JSON.stringify(colors);
-
+        let toWrite = '{"terminal" : {"theme" : {"foreground" : "#979FAD","background" : "#282C34","black" : "#59626f","red" : "#ff5370","green" : "#97f553","yellow" : "#d19a66","blue" : "#61aeef","magenta" : "#c679dd","cyan" : "#57b6c2","white" : "#abb2bf","brightBlack" : " #ABB2BF","brightRed" : "#e06c75","brightGreen" : "#c3e88d","brightYellow" : "#e5c17c","brightBlue" : "#61AEEF","brightMagenta" : "#C679DD","brightCyan" : "#56B6C2","brightWhite" : "#abb2bf"}},"app": {"tab": {"panel": {"background": "#21252B"},"active" : {"background": "#2F333D"},"inactive" : {"background": "#21252B"},"text" : {"color": "#979FAD","size": 11.5}},"general" : {"text_color" : "#979FAD","foreground" : "#2F333D","background" : "#21252B","button_radius": 20}}}'
+        colors = JSON.parse(toWrite)
+        
         mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", toWrite);
     }
 }();
 
+
+if (config.background == "transparent") {
+    app.commandLine.appendSwitch('disable-gpu');
+}
 
 !function LoadModules(){
     config.plugin.forEach((el) => {
@@ -130,13 +102,13 @@ function openWindow(config, colors) {
         minHeight: minheight,
         minWidth: minwidth,
         title: "Tess - Terminal",
-        transparent: config.transparency,
+        transparent: config.background == "transparent",
         frame: needFrame,
         icon: "/usr/bin/Tess.png"
     });
 
-    mainWindow.removeMenu();
-    mainWindow.loadFile("src/index.html");
+    //mainWindow.removeMenu();
+    mainWindow.loadFile("src/page/app/index.html");
     mainWindow.on("closed", function() {
         mainWindow = null;
     });
@@ -147,7 +119,7 @@ function openWindow(config, colors) {
             } catch (err) {
                 console.log(err);
             }
-        }, 200);
+        }, 175);
     })
 
     mainWindow.on("ready-to-show", () => {
@@ -174,11 +146,7 @@ ipc.on('new-term', (e, data) => {
         cwd:  (customWorkdir) ? customWorkdir : process.env.HOME,
         env: process.env,
     })
-    
-    // Reset workdir
-    customWorkdir = "";
-
-
+    customWorkdir = ""; //Reset Workdir
 
     shell.onData((datas) => {
         try {
@@ -210,7 +178,7 @@ ipc.on('terminal-data', (e, data) => {
 
 // App events
 app.on("ready", () => {
-    if (config.transparency) {
+    if (config.background == "transparent") {
         setTimeout(() => {
             openWindow(config, colors);
         }, 55);
@@ -269,4 +237,17 @@ ipc.on("load-end", () => {
     time2 = new Date().getTime();
     time = time2 - time1;
     console.log("launch in :" + time + "ms");
+})
+
+ipc.on("get-theme", (event) => {
+    event.returnValue = colors;
+})
+
+ipc.on("get-config", (event) => {
+    event.returnValue = config;
+})
+
+ipc.on("reload", () => {
+    app.quit()
+    app.relaunch();
 })
