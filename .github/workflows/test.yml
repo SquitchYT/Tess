@@ -11,3 +11,6 @@ jobs:
     steps:
       - name: Get Last Commit
       - uses: actions/checkout@v2
+      - run: |
+          mkdir -r .test/aa/bb
+          echo "aa" > ./test/aa/b//cc.txt
