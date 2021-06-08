@@ -14,6 +14,8 @@ const OsInfomations = require('../../../class/osinfo');
 const osData = new OsInfomations();
 
 const themeDropDownMenu = document.querySelector("drop-down-menu[parameters='theme']");
+const dropDownMenu = document.querySelectorAll("drop-down-menu");
+const progressPicker = document.querySelectorAll("scroller-picker")
 
 const pluginSection = document.querySelector(".plugin")
 
@@ -56,9 +58,16 @@ function loadConfig() {
         }
     })
 
+    progressPicker.forEach((el) => {
+        el.setAttribute("selected-value", newConfig[el.getAttribute("parameters")]);
+        el.addEventListener("update", () => {
+            newConfig[el.getAttribute("parameters")] = el.getAttribute("selected-value");
+            checkUpdate();
+        })
+    })
+
     // Set default value for drop down menu
     setTimeout(() => {
-        const dropDownMenu = document.querySelectorAll("drop-down-menu");
         dropDownMenu.forEach((el) => {
             el.setAttribute("selected-value", newConfig[el.getAttribute("parameters")])
             el.addEventListener("update", () => {
@@ -67,6 +76,8 @@ function loadConfig() {
             })
         })
     }, 50);
+
+
 
     // Load Plugin Section
     fs.readdir(osData.homeDir + "/Applications/tess/plugins", (err, plugins) => {

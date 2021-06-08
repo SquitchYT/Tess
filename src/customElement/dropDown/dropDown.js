@@ -94,7 +94,6 @@ class DropDownMenu extends HTMLElement {
                 this.listElement.appendChild(el)
             });
         } else if (name == "selected-value") {
-            console.log("rtrtrtr", newValue)
             this.dropDownValues.forEach((el) => {
                 el.classList.remove("drop-down-value-selected");
                 if (el.innerHTML == newValue) {

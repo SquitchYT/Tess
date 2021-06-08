@@ -4,9 +4,7 @@
     --background-image: var(--background);
     --blur: blur(0px);
 
-
     --general-text-color: #fff;
-
 
     --tab-panel-background: #000;
     --tab-active-background: #fff;
@@ -188,7 +186,7 @@ body {
     height: 100%;
     width: 100%;
     overflow-y: hidden;
-    overflow-x: scroll;
+    overflow-x: overlay;
 }
 
 ::-webkit-scrollbar {

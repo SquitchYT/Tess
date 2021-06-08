@@ -275,6 +275,6 @@ input {
 
 .transition {
     transition: all;
-    transition-duration: 600ms;
-    transition-timing-function: ease;
+    transition-duration: 750ms;
+    transition-timing-function: cubic-bezier(0.68, -0.6, 0.32, 1.6);;
 }

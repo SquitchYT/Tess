@@ -32,6 +32,8 @@ class ScrollerPicker extends HTMLElement {
         let progress = document.createElement("div");
         progress.classList.add("progress")
 
+        this.progress = progress;
+
         bar.addEventListener("mousedown", (e) => {
             progress.style.transition = "none";
             this.mouseDown = true;
@@ -41,6 +43,12 @@ class ScrollerPicker extends HTMLElement {
             value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20 ) + "px, -32px)"
             let pourcent = progress.getBoundingClientRect().width / (bar.getBoundingClientRect().width - 2)
             value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min)
+            this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min))
+
+            this.dispatchEvent(new CustomEvent("update"), {
+                composed: true,
+                bubbles: true,
+            });
         })
 
         document.addEventListener("mousemove", (e) => {
@@ -51,6 +59,12 @@ class ScrollerPicker extends HTMLElement {
                 let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width
                 this.pourcent = pourcent;
                 value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min)
+                this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min))
+
+                this.dispatchEvent(new CustomEvent("update"), {
+                    composed: true,
+                    bubbles: true,
+                });
             }
         })
 
@@ -70,24 +84,32 @@ class ScrollerPicker extends HTMLElement {
         })
 
         window.addEventListener("resize", () => {
-            progress.style.width = this.pourcent * (this.getBoundingClientRect().width - 2) + "px"
-            maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)"
+            progress.style.width = this.pourcent * (this.getBoundingClientRect().width) + "px";
+            maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
         })
     }
 
     static get observedAttributes() {
-        return ["min-value", "max-value", "suffix"];
+        return ["min-value", "max-value", "suffix", "selected-value", "parameters"];
     }
       
     attributeChangedCallback(name, oldValue, newValue) {
         if (name == "min-value" && newValue != null) {
             this.min = newValue;
         } else if (name == "max-value" && newValue != null) {
-            this.max = newValue
+            this.max = newValue;
         } else if (name == "suffix" && newValue != null) {
             this.suffix = newValue;
             this.maxIndicator.innerHTML = String(this.max + this.suffix);
             this.minIndicator.innerHTML = String(this.min + this.suffix);
+        } else if (name == "selected-value"/* && oldValue == null && newValue != null*/) {
+            let pourcent = parseInt(newValue - this.min) / (this.max - this.min) * 100;
+            this.progress.style.width = pourcent + "%"
+        } else if (name == "parameters"/* && newValue != null*/) {
+            this.dispatchEvent(new CustomEvent("abcdef"), {
+                composed: true,
+                bubbles: true,
+            });
         }
     }
 }

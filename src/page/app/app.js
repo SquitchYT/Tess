@@ -60,16 +60,16 @@ ipc.on('loaded', (e, data) => {
 
     HandleShortcut();
 
-    const bgColor = new Color(colors?.terminal?.theme?.background, config?.transparency_value);
+    const bgColor = new Color(colors?.terminal?.theme?.background, config?.transparency_value / 100);
 
     if (config.background == "transparent") {
         colors.terminal.theme.background = bgColor?.rgba;
-        root.style.setProperty('--opacity', config?.transparency_value + 0.21);
+        root.style.setProperty('--opacity', (config?.transparency_value / 100) + 0.21);
         root.style.setProperty('--background', colors?.terminal?.theme?.background);
         colors.terminal.theme.background = 'transparent';
     } else if (config.background == "image") {
         colors.terminal.theme.background = bgColor?.rgba;
-        root.style.setProperty('--opacity', config?.transparency_value + 0.21);
+        root.style.setProperty('--opacity', (config?.transparency_value / 100) + 0.21);
         root.style.setProperty('--background-image', 'url(' + config?.imageLink + ')');
         root.style.setProperty('--background', colors?.terminal?.theme?.background);
         root.style.setProperty('--blur', 'blur(' + config?.image_blur +'px)');

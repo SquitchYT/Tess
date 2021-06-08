@@ -35,7 +35,7 @@ console.log("[WARNING] Tess is currently under development. You use an developme
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
         config = JSON.parse(file);
     } catch (error) {
-        let toWrite= '{"theme": "tokyo-night","background": "full","cursorStyle": "block","transparency_value": 0.65,"image_blur": 1,"imageLink": "","plugin": ["discord-rpc"],"shortcut": {"CTRL + T": "bash","CTRL + W": "Close","CTRL + C": "Copy","CTRL + V": "Paste","CTRL + P": "Config"}}'
+        let toWrite= '{"theme":"default","background": "full","cursorStyle": "block","transparency_value": 0.65,"image_blur":1,"imageLink":"","plugin":[],"shortcut":{"CTRL + T": "bash","CTRL + W": "Close","CTRL + C": "Copy","CTRL + V": "Paste","CTRL + P": "Config"}}'
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/")
@@ -52,11 +52,11 @@ console.log("[WARNING] Tess is currently under development. You use an developme
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
         colors = JSON.parse(file);
     } catch (error) {
-        let toWrite = '{"terminal" : {"theme" : {"foreground" : "#979FAD","background" : "#282C34","black" : "#59626f","red" : "#ff5370","green" : "#97f553","yellow" : "#d19a66","blue" : "#61aeef","magenta" : "#c679dd","cyan" : "#57b6c2","white" : "#abb2bf","brightBlack" : " #ABB2BF","brightRed" : "#e06c75","brightGreen" : "#c3e88d","brightYellow" : "#e5c17c","brightBlue" : "#61AEEF","brightMagenta" : "#C679DD","brightCyan" : "#56B6C2","brightWhite" : "#abb2bf"}},"app": {"tab": {"panel": {"background": "#21252B"},"active" : {"background": "#2F333D"},"inactive" : {"background": "#21252B"},"text" : {"color": "#979FAD","size": 11.5}},"general" : {"text_color" : "#979FAD","foreground" : "#2F333D","background" : "#21252B","button_radius": 20}}}'
+        let toWrite = '{"terminal":{"theme":{"foreground":"#979FAD","background":"#282C34","black":"#3c4045","red":"#ff5370","green":"#97f553","yellow":"#d19a66","blue":"#61aeef","magenta":"#c679dd","cyan":"#57b6c2","white":"#ABB2BF","brightBlack":"#59626f","brightRed":"#e06c75","brightGreen":"#c3e88d","brightYellow":"#e5c17c","brightBlue":"#61AEEF","brightMagenta":"#C679DD","brightCyan":"#56B6C2","brightWhite":"#abb2bf"}},"app":{"tab":{"panel":{"background":"#21252B"},"active":{"background":"#2F333D"},"inactive":{"background":"#21252B"},"text":{"color":"#979FAD","size":11.5}},"general":{"text_color":"#979FAD","foreground":"#2F333D","background":"#21252B","button_radius":20}}}'
         colors = JSON.parse(toWrite)
         
         mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
-        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", toWrite);
+        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
     }
 }();
 
@@ -107,7 +107,7 @@ function openWindow(config, colors) {
         icon: "/usr/bin/Tess.png"
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("src/page/app/index.html");
     mainWindow.on("closed", function() {
         mainWindow = null;
