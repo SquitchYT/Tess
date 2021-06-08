@@ -32,7 +32,7 @@ Launch Tess: `npm run test`.
  * When it's installed run: `snap install tess`
 
 ## Preview
-[<img width="520" src="https://github.com/SquitchYT/Tess/tree/main/preview/preview1.png" alt="Preview1">](https://github.com/SquitchYT)
+[<img width="520" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview1.png" alt="Preview1">](https://github.com/SquitchYT/)
 
 
 ## Contributors
