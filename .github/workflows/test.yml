@@ -9,10 +9,5 @@ jobs:
   pkgbuild:
     runs-on: ubuntu-latest
     steps:
-      - name: Get Last Commit
-      - uses: actions/checkout@v2
-      
-      - name: Test
-      - run: |
-          mkdir -r .test/aa/bb
-          echo "aa" > ./test/aa/b//cc.txt
+        - uses: actions/checkout@v2
+        - run: echo "aaa"
