@@ -8,5 +8,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v2
-        - run: mkdir -p .test/aa
-        - run: echo "ert" > .test/aa/bb.txt
+        - run: mkdir -p ~/test/aa
+        - run: echo "ert" > ~/test/aa/bb.txt
