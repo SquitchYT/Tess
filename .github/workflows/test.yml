@@ -1,0 +1,13 @@
+name: CI
+
+on:
+  push:
+
+  workflow_dispatch:
+
+jobs:
+  pkgbuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Last Commit
+      - uses: actions/checkout@v2
