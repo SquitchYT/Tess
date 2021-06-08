@@ -10,4 +10,4 @@ jobs:
         - uses: actions/checkout@v2
         - run: echo "aaa"
         - run: mkdir -p .test/aa
-        - run: echo "ert" > ./test/aa/bb.txt
+        - run: echo "ert" > ./test/aa/bb.txt echo
