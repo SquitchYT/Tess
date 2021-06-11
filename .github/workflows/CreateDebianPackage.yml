@@ -21,8 +21,8 @@ jobs:
       
       - name: Generating DEBIAN Package    
         run: |
-          mkdir ./package/debian/tess/opt/tess/
-          mkdir ./package/debian/tess/opt/tess-cli/
+          mkdir -p ./package/debian/tess/opt/tess/
+          mkdir -p ./package/debian/tess/opt/tess-cli/
           npm install
           npm run build
           cp ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
