@@ -34,6 +34,7 @@ jobs:
           
           printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
           cd ./package/debian
+          sudo chmod 755 ./tess/DEBIAN/postinst 
           dpkg-deb --build tess
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
