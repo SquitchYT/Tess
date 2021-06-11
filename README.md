@@ -1,50 +1,42 @@
-# Tess - A Simple Terminal
-Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology
+# Tess
+Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology.
 
-Tess is currently in development and it have tons of bugs, so if you find one, please make an issue.
-Actually, Tess is only supported on linux, windows and macos version is coming soon.
+## Made with
+* [Cpr](https://isocpp.org/)
+* [C++](https://isocpp.org/)
+* [NodeJS](https://nodejs.org)
+* [XTermJS](https://github.com/xtermjs/xterm.js)
+* [ElectronJS](https://www.electronjs.org)
 
+## Installation
+### Manual Build
 
-## Download
-##### Arch Linux : https://aur.archlinux.org/packages/tess-git/
-#### Other source are not up to date every time:
-#####  Other Linux : https://squitch.fr/tess%201.1.tar.xz
+First, clone the project: `git clone https://github.com/SquitchYT/Tess`
+
+Move to folder: `cd Tess/`.
+
+Install dependencies with [pnpm](https://pnpm.io/) or [npm](https://www.npmjs.com/): `npm i`.
+
+Build package: `npm run build`.
+
+Launch Tess: `npm run test`.
+
+### Install from packages
+**ArchLinux (aur)**: https://aur.archlinux.org/packages/tess-git/
+ * `yay -S tess-git` (replace yay by your aur package manager if you don't use it)
 <br>
 
-#### Not Recommanded :
-##### Manual Build :
-`
-git clone https://github.com/SquitchYT/Tess
-`
-<br>
-`
-cd Tess
-`
-<br>
-`
-npm i
-`
-<br>
-`
-npm run rebuild
-`
-<br>
-`
-npm run test
-`
 
-**Enjoy ;)**
+**Snap package**: https://snapcraft.io/tess
+ * Install snap if you don't have it: https://snapcraft.io/docs/installing-snapd
+ * When it's installed run: `snap install tess`
 
-## Versions
+## Preview
+[<img width="520" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview1.png" alt="Preview1">](https://github.com/SquitchYT/)
 
-* Actual version : 1.2-1
-* Last release : 28/03/21
 
-## Authors
-
-[<img width="64" src="https://avatars.githubusercontent.com/u/63391793?s=400&u=715a3054e5ce60b197271a3a2a188a48adbd405e&v=4" alt="Squitch">](https://github.com/SquitchYT)
-
+## Contributors
+[<img width="45" src="https://avatars.githubusercontent.com/u/63391793?s=400&u=715a3054e5ce60b197271a3a2a188a48adbd405e&v=4" alt="Squitch">](https://github.com/SquitchYT)
 
 ## License
-
 **[Tess](https://github.com/SquitchYT/tess) | [Mozilla Public License 2.0](https://github.com/SquitchYT/Tess/blob/main/LICENSE)**
