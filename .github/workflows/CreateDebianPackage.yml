@@ -18,7 +18,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      
       - name: Generating DEBIAN Package    
         run: |
           sudo apt-get install libcurl4-openssl-dev
@@ -39,12 +38,12 @@ jobs:
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
         
-      #- name: Upload release binary
-      #  uses: actions/upload-release-asset@v1.0.2
-      #  env:
-      #    GITHUB_TOKEN: ${{ github.token }}
-      #  with:
-      #    upload_url: ${{ steps.get_release.outputs.upload_url }}
-      #    asset_path: ./test.txt
-      #    asset_name: test.txt
-      #    asset_content_type: application/octet-stream
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./package/debian/tess.deb
+          asset_name: Tess.deb
+          asset_content_type: application/octet-stream
