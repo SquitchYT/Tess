@@ -29,7 +29,7 @@ jobs:
           cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
           cd cli
           g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
-          cp tess-cli ./package/debian/tess/opt/tess-cli/tess-cli
+          cp tess-cli ./package/debian/tess/opt/tess-cli/
           cd ../
           
         #env:
