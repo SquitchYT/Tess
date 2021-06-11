@@ -32,7 +32,7 @@ jobs:
           cd ../
           cp ./cli/tess-cli ./package/debian/tess/opt/tess-cli/tess.cli
           
-          echo "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
+          printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
           cat ./package/debian/tess/DEBIAN/control
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
