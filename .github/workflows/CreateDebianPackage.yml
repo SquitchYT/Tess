@@ -25,7 +25,7 @@ jobs:
           mkdir -p ./package/debian/tess/opt/tess-cli/
           npm install
           npm run build
-          cp ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
+          cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
           echo "Listing all file inside ./package/debian/tess/opt/tess/'
           ls ./package/debian/tess/opt/tess
           
