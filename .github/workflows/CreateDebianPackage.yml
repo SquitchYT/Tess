@@ -26,8 +26,10 @@ jobs:
           npm install
           npm run build
           cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
-          echo "Listing all file inside ./package/debian/tess/opt/tess/"
-          ls ./package/debian/tess/opt/tess
+          cd tess-cli
+          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
+          cp tess-cli ./package/debian/tess/opt/tess-cli/tess-cli
+          cd ../
           
         #env:
         #  TEST: ${{ steps.get_release.outputs.tag_name }}
