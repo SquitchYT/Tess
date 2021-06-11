@@ -1,0 +1,41 @@
+name: DEBIAN
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      
+      - name: Generating DEBIAN Package    
+        run: |
+          npm install
+          npm run build
+          cp ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
+          echo "Listing all file inside ./package/debian/tess/opt/tess/'
+          ls ./package/debian/tess/opt/tess
+          
+        env:
+          TEST: ${{ steps.get_release.outputs.tag_name }}
+        
+      #- name: Upload release binary
+      #  uses: actions/upload-release-asset@v1.0.2
+      #  env:
+      #    GITHUB_TOKEN: ${{ github.token }}
+      #  with:
+      #    upload_url: ${{ steps.get_release.outputs.upload_url }}
+      #    asset_path: ./test.txt
+      #    asset_name: test.txt
+      #    asset_content_type: application/octet-stream
