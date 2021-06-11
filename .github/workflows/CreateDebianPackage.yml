@@ -12,11 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+      #- name: Get release
+      #  id: get_release
+      #  uses: bruceadams/get-release@v1.2.2
+      #  env:
+      #    GITHUB_TOKEN: ${{ github.token }}
 
       
       - name: Generating DEBIAN Package    
@@ -27,8 +27,8 @@ jobs:
           echo "Listing all file inside ./package/debian/tess/opt/tess/'
           ls ./package/debian/tess/opt/tess
           
-        env:
-          TEST: ${{ steps.get_release.outputs.tag_name }}
+        #env:
+        #  TEST: ${{ steps.get_release.outputs.tag_name }}
         
       #- name: Upload release binary
       #  uses: actions/upload-release-asset@v1.0.2
