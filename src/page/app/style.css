@@ -29,7 +29,6 @@ body {
     width : 100vw;
     display: flex;
     -webkit-app-region: drag;
-    transition: all 0.3s; 
 }
 
 .tab {
@@ -92,7 +91,7 @@ body {
     width: 100%;
     display: flex;
     overflow: hidden;
-    padding-left: 7px;
+    padding-left: 8px;
     background: var(--tab-panel-background);
 }
 
@@ -151,16 +150,17 @@ body {
 
 .terms {
     position: absolute;
-    height: 100%;
+    height: calc(100% - 3px);
     width: calc(100vw - 3px);
     margin-left: 3px;
+    margin-top: 3px
 }
 
 .iframe {
     position: absolute;
     height: 100%;
     width: 100vw;
-    transform: translateX(-3px);
+    transform: translate(-3px, -3px);
 }
 
 .hidden {
@@ -177,7 +177,7 @@ body {
     max-width: 21px;
     margin-left: 6.5px;
     margin-top: 5px;
-    border-radius: 3.5px;
+    border-radius: 4px;
     width: 100%;
 }
 

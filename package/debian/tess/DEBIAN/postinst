@@ -1,0 +1,6 @@
+ln -s "/opt/tess-cli/tess-cli" "${pkgdir}/usr/bin/tess-cli"
+ln -s "/opt/tess/tess" "${pkgdir}/usr/bin/tess"
+
+if type "$kbuildsycoca5" > /dev/null; then
+        kbuildsycoca5
+fi

@@ -4,7 +4,7 @@ const { app, BrowserWindow, ipcMain : ipc, screen } = require('electron');
 const argv = require("yargs").argv
 
 const pty = require("node-pty");
-//const Child_Proc = require('child_process');
+const Child_Proc = require('child_process');
 const { Worker } = require('worker_threads');
 
 const fs = require('fs');
@@ -248,6 +248,7 @@ ipc.on("get-config", (event) => {
 })
 
 ipc.on("reload", () => {
-    app.quit()
     app.relaunch();
+    //Child_Proc.exec("tess");
+    app.exit();
 })

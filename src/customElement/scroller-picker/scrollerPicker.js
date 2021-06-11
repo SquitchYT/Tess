@@ -90,7 +90,7 @@ class ScrollerPicker extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["min-value", "max-value", "suffix", "selected-value", "parameters"];
+        return ["min-value", "max-value", "suffix", "selected-value"];
     }
       
     attributeChangedCallback(name, oldValue, newValue) {
@@ -102,14 +102,9 @@ class ScrollerPicker extends HTMLElement {
             this.suffix = newValue;
             this.maxIndicator.innerHTML = String(this.max + this.suffix);
             this.minIndicator.innerHTML = String(this.min + this.suffix);
-        } else if (name == "selected-value"/* && oldValue == null && newValue != null*/) {
+        } else if (name == "selected-value" && oldValue == null && newValue != null) {
             let pourcent = parseInt(newValue - this.min) / (this.max - this.min) * 100;
             this.progress.style.width = pourcent + "%"
-        } else if (name == "parameters"/* && newValue != null*/) {
-            this.dispatchEvent(new CustomEvent("abcdef"), {
-                composed: true,
-                bubbles: true,
-            });
         }
     }
 }
