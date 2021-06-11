@@ -26,7 +26,7 @@ jobs:
           npm install
           npm run build
           cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
-          echo "Listing all file inside ./package/debian/tess/opt/tess/'
+          echo "Listing all file inside ./package/debian/tess/opt/tess/"
           ls ./package/debian/tess/opt/tess
           
         #env:
