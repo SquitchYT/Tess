@@ -12,11 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      #- name: Get release
-      #  id: get_release
-      #  uses: bruceadams/get-release@v1.2.2
-      #  env:
-      #    GITHUB_TOKEN: ${{ github.token }}
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       
       - name: Generating DEBIAN Package    
@@ -32,8 +32,10 @@ jobs:
           cd ../
           cp ./cli/tess-cli ./package/debian/tess/opt/tess-cli/tess.cli
           
-        #env:
-        #  TEST: ${{ steps.get_release.outputs.tag_name }}
+          echo "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
+          cat ./package/debian/tess/DEBIAN/control
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
         
       #- name: Upload release binary
       #  uses: actions/upload-release-asset@v1.0.2
