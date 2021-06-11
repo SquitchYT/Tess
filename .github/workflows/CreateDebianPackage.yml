@@ -18,7 +18,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      
       - name: Generating DEBIAN Package    
         run: |
           sudo apt-get install libcurl4-openssl-dev
@@ -33,16 +32,18 @@ jobs:
           cp ./cli/tess-cli ./package/debian/tess/opt/tess-cli/tess.cli
           
           printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
-          cat ./package/debian/tess/DEBIAN/control
+          cd ./package/debian
+          sudo chmod 755 ./tess/DEBIAN/postinst 
+          dpkg-deb --build tess
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
         
-      #- name: Upload release binary
-      #  uses: actions/upload-release-asset@v1.0.2
-      #  env:
-      #    GITHUB_TOKEN: ${{ github.token }}
-      #  with:
-      #    upload_url: ${{ steps.get_release.outputs.upload_url }}
-      #    asset_path: ./test.txt
-      #    asset_name: test.txt
-      #    asset_content_type: application/octet-stream
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./package/debian/tess.deb
+          asset_name: Tess.deb
+          asset_content_type: application/octet-stream
