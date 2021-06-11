@@ -18,7 +18,7 @@ jobs:
           pkgname: 'tess-git'
           
       - name: Publish AUR package
-        uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
+        uses: KSXGitHub/github-actions-deploy-aur@v2.2.5
         with:
           pkgname: tess-git
           pkgbuild: tess-git/PKGBUILD
