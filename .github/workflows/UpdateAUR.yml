@@ -18,13 +18,8 @@ jobs:
           target: 'pkgbuild'
           pkgname: 'tess-git'
           
-<<<<<<< HEAD:.github/workflows/UpdateAUR.yml
       - name: Update AUR Package
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
-=======
-      - name: Publish AUR package
-        uses: KSXGitHub/github-actions-deploy-aur@v2.2.5
->>>>>>> 6a1400692ed4f2fc6154db2d4c9f835c6299848a:.github/workflows/main.yml
         with:
           pkgname: tess-git
           pkgbuild: tess-git/PKGBUILD
