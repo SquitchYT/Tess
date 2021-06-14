@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Updating PKGBUILD:
+  Updating_PKGBUILD:
     runs-on: ubuntu-latest
     steps:
       - name: Downloading Files
@@ -28,7 +28,7 @@ jobs:
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: Update AUR package
   
-  Updating TEST:
+  Updating_TEST:
     runs-on: ubuntu-latest
     steps:
       - name: aa
