@@ -2,7 +2,7 @@
 Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology.
 
 ## Made with
-* [Cpr](https://isocpp.org/)
+* [Cpr](https://github.com/whoshuu/cpr)
 * [C++](https://isocpp.org/)
 * [NodeJS](https://nodejs.org)
 * [XTermJS](https://github.com/xtermjs/xterm.js)
