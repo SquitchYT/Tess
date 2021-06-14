@@ -248,7 +248,7 @@ ipc.on("get-config", (event) => {
 })
 
 ipc.on("reload", () => {
-    app.relaunch();
-    //Child_Proc.exec("tess");
+    //app.relaunch();
+    Child_Proc.exec("tess");
     app.exit();
 })
