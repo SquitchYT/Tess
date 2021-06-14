@@ -107,7 +107,7 @@ function openWindow(config, colors) {
         icon: "/usr/bin/Tess.png"
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("src/page/app/index.html");
     mainWindow.on("closed", function() {
         mainWindow = null;
