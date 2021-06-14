@@ -1,4 +1,4 @@
-name: CI
+name: Updating AUR...
 
 on:
   push:
@@ -9,7 +9,8 @@ jobs:
   pkgbuild:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Downloading Files
+        uses: actions/checkout@v2
       
       - name: Update PKGBUILD
         uses: 2m/arch-pkgbuild-builder@v1.16
@@ -17,7 +18,7 @@ jobs:
           target: 'pkgbuild'
           pkgname: 'tess-git'
           
-      - name: Publish AUR package
+      - name: Update AUR Package
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
         with:
           pkgname: tess-git

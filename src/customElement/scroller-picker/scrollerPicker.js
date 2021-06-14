@@ -1,7 +1,7 @@
 class ScrollerPicker extends HTMLElement {
     constructor() {
         super();
-        this.shadow = this.attachShadow({mode: 'open'})
+        this.shadow = this.attachShadow({ mode: 'open' })
 
         let linkElem = document.createElement('link');
         linkElem.setAttribute('rel', 'stylesheet');
@@ -40,8 +40,9 @@ class ScrollerPicker extends HTMLElement {
             value.classList.add("visible")
             let dif = e.pageX - progress.getBoundingClientRect().right
             progress.style.width = progress.getBoundingClientRect().width + dif + "px"
-            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20 ) + "px, -32px)"
-            let pourcent = progress.getBoundingClientRect().width / (bar.getBoundingClientRect().width - 2)
+            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)"
+            let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width
+            this.pourcent = pourcent;
             value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min)
             this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min))
 
@@ -55,7 +56,7 @@ class ScrollerPicker extends HTMLElement {
             if (this.mouseDown == true) {
                 let dif = e.pageX - progress.getBoundingClientRect().right
                 progress.style.width = progress.getBoundingClientRect().width + dif + "px"
-                value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20 ) + "px, -32px)"
+                value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)"
                 let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width
                 this.pourcent = pourcent;
                 value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min)
@@ -78,21 +79,22 @@ class ScrollerPicker extends HTMLElement {
         this.shadow.appendChild(bar)
 
         document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
-                maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)"
-            }, 125);
+            while (!maxIndicator  && !this.getBoundingClientRect());
+            maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)"
         })
 
         window.addEventListener("resize", () => {
+            progress.style.transition = "all 500ms";
             progress.style.width = this.pourcent * (this.getBoundingClientRect().width) + "px";
             maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
+            console.log(this.pourcent)
         })
     }
 
     static get observedAttributes() {
         return ["min-value", "max-value", "suffix", "selected-value"];
     }
-      
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (name == "min-value" && newValue != null) {
             this.min = newValue;
@@ -104,6 +106,8 @@ class ScrollerPicker extends HTMLElement {
             this.minIndicator.innerHTML = String(this.min + this.suffix);
         } else if (name == "selected-value" && oldValue == null && newValue != null) {
             let pourcent = parseInt(newValue - this.min) / (this.max - this.min) * 100;
+            console.log(pourcent);
+            this.pourcent = pourcent / 100;
             this.progress.style.width = pourcent + "%"
         }
     }

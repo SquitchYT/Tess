@@ -42,7 +42,7 @@ body {
     border-radius: 4.3px 4.3px 0 0;
     cursor: pointer;
     overflow: hidden;
-    animation: 0.3s nodeInserted;
+    animation: 0.4s nodeInserted;
     -webkit-app-region: no-drag;
     color: var(--tab-text-color);
 }
@@ -201,8 +201,8 @@ body {
 
 @keyframes nodeInserted { 
     from { 
-            opacity: 0.35;
-            transform: translateY(10px);
+            opacity: 0.25;
+            transform: translateY(22px);
          }
     to   { 
             opacity: 1;

@@ -47,7 +47,7 @@ span {
     background: var(--background);
     border-radius: 0 0 6px 6px;
     z-index: 7;
-    box-shadow: 0px 6px 10px var(--background);
+    box-shadow: 0px 7px 12px -6px var(--background);
 }
 
 
@@ -57,6 +57,10 @@ span {
     display: flex;
     align-items: center;
     padding: 8px;
+}
+
+.drop-down-value:nth-last-child(1) {
+    border-radius: 0 0 6px 6px;
 }
 
 .drop-down-value:hover {
