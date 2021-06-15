@@ -1,9 +1,10 @@
 const { Terminal } = require('xterm');
 const { FitAddon } = require("xterm-addon-fit");
+const { WebLinksAddon } = require("xterm-addon-web-links")
 
 const fitAddon = new FitAddon();
 
-const { ipcRenderer : ipc, clipboard } = require('electron');
+const { ipcRenderer : ipc, clipboard, shell } = require('electron');
 
 const Color = require('../../../class/color');
 
@@ -213,6 +214,9 @@ function CreateNewTerminal(toStart) {
             fontSize: fontSize
         });
         term.loadAddon(fitAddon);
+        term.loadAddon(new WebLinksAddon(("click", (e, url) => {
+            shell.openExternal(url)
+        })));
         term.open(termDiv);
 
         fitAddon.fit();
