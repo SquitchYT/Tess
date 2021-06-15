@@ -1,4 +1,8 @@
 const { Terminal } = require('xterm');
+const { FitAddon } = require("xterm-addon-fit");
+
+const fitAddon = new FitAddon();
+
 const { ipcRenderer : ipc, clipboard } = require('electron');
 
 const Color = require('../../../class/color');
@@ -43,7 +47,7 @@ let colors;
 
 let shortcut = [];
 
-let underAction = false;
+let fontSize;
 
 
 ipc.on('pty-data', (e, data) => {
@@ -57,6 +61,8 @@ ipc.on('pty-data', (e, data) => {
 ipc.on('loaded', (e, data) => {
     config = data.config;
     colors = data.colors;
+
+    fontSize = (config.terminalFontSize != undefined) ? config.terminalFontSize : 14;
 
     HandleShortcut();
 
@@ -102,8 +108,6 @@ ipc.on('loaded', (e, data) => {
     })
 
     ipc.send('load-end');
-
-    //CreateNewTerminal("Config");
 })
 
 function HandleShortcut() {
@@ -201,14 +205,17 @@ function CreateNewTerminal(toStart) {
         if (!cols) resize();
 
         let term = new Terminal({
-            cols: cols,
+            cols: cols + 1,
             rows: rows,
             theme: colors?.terminal?.theme,
             cursorStyle: config.cursorStyle,
-            allowTransparency: true
+            allowTransparency: true,
+            fontSize: fontSize
         });
-
+        term.loadAddon(fitAddon);
         term.open(termDiv);
+
+        fitAddon.fit();
 
         term.attachCustomKeyEventHandler((e) => {
             let o = ExecuteShortcut(e);
@@ -294,19 +301,23 @@ function focusTerm(index, tab) {
 }
 
 function resize() {
-    rows = parseInt(terminals.clientHeight/ 16.95, 10);
-    cols = parseInt(terminals.clientWidth/ 9, 10);
+    rows = 64;
+    cols = 64;
 
     terminalsList.forEach((el) => {
         try {
-            el.term.resize(cols, rows);
+            fitAddon.fit();
+            rows = fitAddon.proposeDimensions().rows
+            cols = fitAddon.proposeDimensions().cols
+
+            el.term.resize(cols + 1, rows)
         } catch (err) {
-            console.log(err)
+            console.log(err);
         }
     })
 
     ipc.send('resize', {
-        cols: cols,
+        cols: cols + 1,
         rows: rows
     });
 }

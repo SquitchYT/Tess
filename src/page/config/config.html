@@ -32,10 +32,18 @@
 
                 <div class="config-props">
                     <div class="description">
-                        <span class="title"> Background type :</span>
+                        <span class="title"> Background type:</span>
                         <span class="details">Style du fond de l'application</span>
                     </div>
                     <drop-down-menu input-list="full;transparent;image" selected-value="full" parameters="background" name="background-type"></drop-down-menu>
+                </div>
+
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Font size</span>
+                        <span class="details">Defini la taille du texte du terminal.</span>
+                    </div>
+                    <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
                 </div>
             </section>
 

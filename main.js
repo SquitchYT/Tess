@@ -119,7 +119,7 @@ function openWindow(config, colors) {
             } catch (err) {
                 console.log(err);
             }
-        }, 175);
+        }, 135);
     })
 
     mainWindow.on("ready-to-show", () => {
@@ -131,6 +131,14 @@ function openWindow(config, colors) {
         } catch (err) {
             console.log(err);
         }
+
+        setTimeout(() => {
+            try {
+                mainWindow.webContents.send('resize')
+            } catch (err) {
+                console.log(err);
+            }
+        }, 135);
     })
 }
 
@@ -181,7 +189,7 @@ app.on("ready", () => {
     if (config.background == "transparent") {
         setTimeout(() => {
             openWindow(config, colors);
-        }, 55);
+        }, 60);
     } else {
         openWindow(config, colors);
     }

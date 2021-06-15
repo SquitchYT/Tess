@@ -48,14 +48,14 @@
     height: 32px;
     width: 38px;
     position: absolute;
-    font-size: 13px;
+    font-size: 13.5px;
     font-weight: 500;
     user-select: none;
 }
 
 .min-indicator {
     transform: translate(calc(-38px / 2), -32px);
-    font-size: 11px !important;
+    font-size: 10.5px !important;
 }
 
 .visible {
