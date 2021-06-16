@@ -211,7 +211,8 @@ function CreateNewTerminal(toStart) {
             theme: colors?.terminal?.theme,
             cursorStyle: config.cursorStyle,
             allowTransparency: true,
-            fontSize: fontSize
+            fontSize: fontSize,
+            cursorBlink: (config.cursorBlink == "true")
         });
         term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon(("click", (e, url) => {

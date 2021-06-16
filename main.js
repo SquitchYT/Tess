@@ -138,7 +138,7 @@ function openWindow(config, colors) {
             } catch (err) {
                 console.log(err);
             }
-        }, 175);
+        }, 225);
     })
 }
 

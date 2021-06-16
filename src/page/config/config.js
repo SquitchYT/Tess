@@ -15,7 +15,8 @@ const osData = new OsInfomations();
 
 const themeDropDownMenu = document.querySelector("drop-down-menu[parameters='theme']");
 const dropDownMenu = document.querySelectorAll("drop-down-menu");
-const progressPicker = document.querySelectorAll("scroller-picker")
+const progressPicker = document.querySelectorAll("scroller-picker");
+const switchButton = document.querySelectorAll("switch-button");
 
 const pluginSection = document.querySelector(".plugin")
 
@@ -77,6 +78,15 @@ function loadConfig() {
             })
         })
     }, 50);
+
+    //Load switchButton
+    switchButton.forEach((el) => {
+        el.setAttribute("state", newConfig[el.getAttribute("parameters")]);
+        el.addEventListener("updatedValue", () => {
+            newConfig[el.getAttribute("parameters")] = el.getAttribute("state")
+            checkUpdate();
+        })
+    })
 
 
     // Load Plugin Section

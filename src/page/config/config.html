@@ -12,7 +12,7 @@
     <body>
         <div class="left-side-menu">
             <h2>Paramètres</h2>
-            <div onclick="location.href='#General'">General</div>
+            <div onclick="location.href='#General'">Terminal</div>
             <div onclick="location.href='#Background'">Background</div>
             <div onclick="location.href='#Plugin'">Plugins</div>
         </div>
@@ -39,6 +39,13 @@
                         <span class="details">Defini la taille du texte du terminal.</span>
                     </div>
                     <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Cursor blink</span>
+                        <span class="details">Defini si le curseur clignote.</span>
+                    </div>
+                    <switch-button parameters="cursorBlink"></switch-button>
                 </div>
             </section>
             <section class="bottom-border" id="Background">
