@@ -44,7 +44,7 @@ class DropDownMenu extends HTMLElement {
                 } else {
                     this.isOpen = true;
                 }
-            }, 90);
+            }, 80);
         })
 
         let listElement = document.createElement("div");

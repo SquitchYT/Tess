@@ -79,15 +79,15 @@ class ScrollerPicker extends HTMLElement {
         this.shadow.appendChild(bar)
 
         document.addEventListener("DOMContentLoaded", () => {
-            while (!maxIndicator  && !this.getBoundingClientRect());
-            maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)"
+            setTimeout(() => {
+                maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)"
+            }, 230);
         })
 
         window.addEventListener("resize", () => {
             progress.style.transition = "all 500ms";
             progress.style.width = this.pourcent * (this.getBoundingClientRect().width) + "px";
             maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
-            console.log(this.pourcent)
         })
     }
 

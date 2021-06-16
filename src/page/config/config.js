@@ -59,6 +59,7 @@ function loadConfig() {
     })
 
     progressPicker.forEach((el) => {
+        el.removeAttribute("selected-value");
         el.setAttribute("selected-value", newConfig[el.getAttribute("parameters")]);
         el.addEventListener("update", () => {
             newConfig[el.getAttribute("parameters")] = el.getAttribute("selected-value");
@@ -78,7 +79,6 @@ function loadConfig() {
     }, 50);
 
 
-
     // Load Plugin Section
     fs.readdir(osData.homeDir + "/Applications/tess/plugins", (err, plugins) => {
         if (err) {
@@ -86,7 +86,7 @@ function loadConfig() {
         } else {
             pluginSection.innerHTML = "";
             let title = document.createElement("h3");
-            title.innerText = "Plugin";
+            title.innerText = "Plugins";
             pluginSection.appendChild(title);
             plugins.forEach((plugin) => {
                 let newPluginSwitchOptions = document.createElement("div");
@@ -98,12 +98,12 @@ function loadConfig() {
                 let title = document.createElement("span");
                 title.classList.add("title")
                 title.innerHTML = plugin;
-                /*let details = document.createElement("span");
+                let details = document.createElement("span");
                 details.classList.add("details")
-                details.innerHTML = "TODO : get plugins description"*/
+                details.innerHTML = "TODO : get plugins description"
     
                 description.appendChild(title);
-                //description.appendChild(details);
+                description.appendChild(details);
     
                 newPluginSwitchOptions.appendChild(description);
     

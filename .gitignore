@@ -1,6 +1,7 @@
 node_modules/
 dist/
 cli/main/
+cli/tess-cli
 .vscode/settings.json
 .vscode/c_cpp_properties.json
 cli/test.manifest

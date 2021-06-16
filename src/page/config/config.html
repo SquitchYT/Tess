@@ -10,34 +10,29 @@
         <link rel="stylesheet" href="./config.css">
     </head>
     <body>
-        <div class="left-side-menu"></div>
+        <div class="left-side-menu">
+            <h2>Paramètres</h2>
+            <div onclick="location.href='#General'">General</div>
+            <div onclick="location.href='#Background'">Background</div>
+            <div onclick="location.href='#Plugin'">Plugins</div>
+        </div>
         <div class="config-list">
-            <section name="general">
+            <section class="bottom-border" id="General">
                 <h3>General</h3>
                 <div class="config-props">
                     <div class="description">
-                        <span class="title"> Theme :</span>
+                        <span class="title"> Theme</span>
                         <span class="details">Theme du terminal</span>
                     </div>
                     <drop-down-menu input-list="default" selected-value="default" parameters="theme"></drop-down-menu>
                 </div>
-
                 <div class="config-props">
                     <div class="description">
-                        <span class="title"> Cursor :</span>
+                        <span class="title"> Cursor</span>
                         <span class="details">Curseur du terminal</span>
                     </div>
                     <drop-down-menu input-list="bar;block;underline" selected-value="block", parameters="cursorStyle"></drop-down-menu>
                 </div>
-
-                <div class="config-props">
-                    <div class="description">
-                        <span class="title"> Background type:</span>
-                        <span class="details">Style du fond de l'application</span>
-                    </div>
-                    <drop-down-menu input-list="full;transparent;image" selected-value="full" parameters="background" name="background-type"></drop-down-menu>
-                </div>
-
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Font size</span>
@@ -46,9 +41,15 @@
                     <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
                 </div>
             </section>
-
-            <section>
+            <section class="bottom-border" id="Background">
                 <h3>Background</h3>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title"> Background type</span>
+                        <span class="details">Style du fond de l'application</span>
+                    </div>
+                    <drop-down-menu input-list="full;transparent;image" selected-value="full" parameters="background" name="background-type"></drop-down-menu>
+                </div>
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Transparence du terminal</span>
@@ -71,14 +72,12 @@
                     <scroller-picker min-value=0 max-value=20 suffix="px" parameters="image_blur"></scroller-picker>
                 </div>
             </section>
-
-
-            <section class="plugin" name="plugin">
+            <section class="plugin" name="plugin" id="Plugin">
                 <h3>Plugins</h3>
             </section>
 
             <div class="save-alert no-transition">
-                <span>Modification non sauvegardée : </span>
+                <span>Modification non sauvegardée :</span>
                 <div class="btn saveButton">
                     <span class="popup-btn-text">Save</span>
                     <svg class="popup-btn-icon" fill="none" viewBox="0 0 25 25" stroke="currentColor">
