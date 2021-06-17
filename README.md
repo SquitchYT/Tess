@@ -13,13 +13,13 @@ Tess is a hackable, simple, rapid and beautiful terminal for the new era of tech
 
 First, clone the project: `git clone https://github.com/SquitchYT/Tess`
 
-Move to folder: `cd Tess/`.
+Move to folder: `cd Tess/`
 
-Install dependencies with [pnpm](https://pnpm.io/) or [npm](https://www.npmjs.com/): `npm i`.
+Install dependencies with [pnpm](https://pnpm.io/) or [npm](https://www.npmjs.com/): `npm i`
 
-Build package: `npm run build`.
+Build package: `npm run build`
 
-Launch Tess: `npm run test`.
+Launch Tess: `npm run test`
 
 ### Install from packages
 **ArchLinux (aur)**: https://aur.archlinux.org/packages/tess-git/
