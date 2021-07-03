@@ -74,7 +74,7 @@ class DropDownMenu extends HTMLElement {
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
-            }, 265);
+            }, 275);
         })
     }
 
@@ -106,6 +106,10 @@ class DropDownMenu extends HTMLElement {
 
                 this.listElement.appendChild(el)
             });
+            
+            setTimeout(() => {
+                this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
+            }, 265);
         } else if (name == "selected-value") {
             this.dropDownValues.forEach((el) => {
                 el.classList.remove("drop-down-value-selected");
