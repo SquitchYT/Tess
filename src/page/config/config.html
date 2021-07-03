@@ -6,19 +6,77 @@
         <script src="../../customElement/switchButton/switchButton.js"></script>
         <script src="../../customElement//dropDown/dropDown.js"></script>
         <script src="../../customElement/scroller-picker/scrollerPicker.js"></script>
+        <script src="../../customElement/shortcutPicker/shortcutPicker.js"></script>
+        <script src="../../customElement/filePicker/filePicker.js"></script>
         <script src="./config.js" defer></script>
         <link rel="stylesheet" href="./config.css">
     </head>
     <body>
-        <div class="left-side-menu">
-            <h2>Paramètres</h2>
-            <div onclick="location.href='#General'">Terminal</div>
-            <div onclick="location.href='#Background'">Background</div>
-            <div onclick="location.href='#Plugin'">Plugins</div>
+        <div class="left-side-menu no-transition" id="left-side-menu">
+            <div class="icon" id="menu-icon">X</div>
+            <div class="left-side-menu-items">
+                <h2 class="left-side-menu-title">Paramètres</h2>
+                <div class="link" link="apparence-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Apparence</span>
+                </div>
+                <div class="link" link="terminal-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Terminal</span>
+                </div>
+                <div class="link" link="plugin-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" />
+                    </svg>
+                    <span class="link-name">Extentions</span>
+                </div>
+                <div class="link" link="shortcut-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Shortcut</span>
+                </div>
+    
+                <br>
+    
+                <div class="profil-create">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                    </svg>
+                    <span class="link-name">Create</span>
+                </div>
+            </div>
+
+            <div class="left-side-menu-bottom">
+                <div class="left-side-menu-link">
+                    <span link="https://discord.gg/e3Dz5gwMfu">Discord</span>
+                    <span link="https://github.com/SquitchYT/Tess">Site</span>
+                </div>
+                <div class="left-side-menu-icon">
+                    <div class="reload-require invisible">
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="config-list">
-            <section class="bottom-border" id="General">
-                <h3>General</h3>
+
+        <section class="page no-transition hidden-page" id="apparence-page">
+            <div class="page-header">
+                <div class="return-button">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="return-arrow">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <span class="page-title">Apparences</span>
+            </div>
+
+            <div class="config-group">
                 <div class="config-props">
                     <div class="description">
                         <span class="title"> Theme</span>
@@ -26,19 +84,79 @@
                     </div>
                     <drop-down-menu input-list="default" selected-value="default" parameters="theme"></drop-down-menu>
                 </div>
+            </div>
+            <div class="config-group">
                 <div class="config-props">
                     <div class="description">
-                        <span class="title"> Cursor</span>
-                        <span class="details">Curseur du terminal</span>
+                        <span class="title"> Background type</span>
+                        <span class="details">Style du fond de l'application</span>
                     </div>
-                    <drop-down-menu input-list="bar;block;underline" selected-value="block", parameters="cursorStyle"></drop-down-menu>
+                    <drop-down-menu input-list="full;transparent;image" selected-value="full" parameters="background" name="background-type" reloadRequire></drop-down-menu>
                 </div>
                 <div class="config-props">
                     <div class="description">
-                        <span class="title">Font size</span>
-                        <span class="details">Defini la taille du texte du terminal.</span>
+                        <span class="title">Transparence du terminal</span>
+                        <span class="details">Change la transparence du terminal quand le type de fond est défini sur transparent</span>
                     </div>
-                    <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
+                    <scroller-picker min-value=0 max-value=100 suffix="%" parameters="transparencyValue" reloadRequire></scroller-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Lien de l'image</span>
+                        <span class="details">Change l'image de fond quand le type de fond est défini sur image</span>
+                    </div>
+                    <file-picker reloadRequire parameters="imageLink"></file-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Flou de l'image</span>
+                        <span class="details">Change le flou de l'image quand le type de fond est défini sur image</span>
+                    </div>
+                    <scroller-picker min-value=0 max-value=20 suffix="px" parameters="imageBlur" reloadRequire></scroller-picker>
+                </div>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title"> Background type</span>
+                        <span class="details">Style du fond de l'application</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="page no-transition hidden-page plugin" id="plugin-page">
+            <div class="page-header">
+                <span class="page-title">Plugins</span>
+                <div class="return-button">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="return-arrow">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+
+
+        <section class="page no-transition hidden-page" id="terminal-page">
+            <div class="page-header">
+                <div class="return-button">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="return-arrow" id='adf'>
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <span class="page-title">Terminal</span>
+            </div>
+
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Cursor</span>
+                        <span class="details">Curseur du terminal</span>
+                    </div>
+                    <drop-down-menu input-list="bar;block;underline" selected-value="block", parameters="cursorStyle"></drop-down-menu>
                 </div>
                 <div class="config-props">
                     <div class="description">
@@ -47,63 +165,79 @@
                     </div>
                     <switch-button parameters="cursorBlink"></switch-button>
                 </div>
-            </section>
-            <section class="bottom-border" id="Background">
-                <h3>Background</h3>
                 <div class="config-props">
                     <div class="description">
-                        <span class="title"> Background type</span>
-                        <span class="details">Style du fond de l'application</span>
+                        <span class="title">Font size</span>
+                        <span class="details">Defini la taille du texte du terminal.</span>
                     </div>
-                    <drop-down-menu input-list="full;transparent;image" selected-value="full" parameters="background" name="background-type"></drop-down-menu>
-                </div>
-                <div class="config-props">
-                    <div class="description">
-                        <span class="title">Transparence du terminal</span>
-                        <span class="details">Change la transparence du terminal quand le type de fond est défini sur transparent</span>
-                    </div>
-                    <scroller-picker min-value=0 max-value=100 suffix="%" parameters="transparency_value"></scroller-picker>
-                </div>
-                <div class="config-props">
-                    <div class="description">
-                        <span class="title">Lien de l'image</span>
-                        <span class="details">Change l'image de fond quand le type de fond est défini sur image</span>
-                    </div>
-                    <input type="text" placeholder="TODO : change that to file picker">
-                </div>
-                <div class="config-props">
-                    <div class="description">
-                        <span class="title">Flou de l'image</span>
-                        <span class="details">Change le flou de l'image quand le type de fond est défini sur image</span>
-                    </div>
-                    <scroller-picker min-value=0 max-value=20 suffix="px" parameters="image_blur"></scroller-picker>
-                </div>
-            </section>
-            <section class="plugin" name="plugin" id="Plugin">
-                <h3>Plugins</h3>
-            </section>
-
-            <div class="save-alert no-transition">
-                <span>Modification non sauvegardée :</span>
-                <div class="btn saveButton">
-                    <span class="popup-btn-text">Save</span>
-                    <svg class="popup-btn-icon" fill="none" viewBox="0 0 25 25" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <div class="btn saveReloadButton">
-                    <span class="popup-btn-text">Reload</span>
-                    <svg class="popup-btn-icon" fill="none" viewBox="0 0 27 27" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                </div>
-                <div class="btn cancelButton">
-                    <span class="popup-btn-text">Cancel</span>
-                    <svg class="popup-btn-icon" fill="none" viewBox="0 0 25 25" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
+                    <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
                 </div>
             </div>
-        </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Default Profil</span>
+                        <span class="details">Profil par default du terminal</span>
+                    </div>
+                    <drop-down-menu input-list="default" selected-value="default" parameters="defaultProfil"></drop-down-menu>
+                </div>
+            </div>
+        </section>
+
+
+        <section class="page no-transition hidden-page shortcut" id="shortcut-page">
+            <div class="page-header">
+                <div class="return-button">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="return-arrow" id='adf'>
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <span class="page-title">Shortcut</span>
+            </div>
+            <div class="shortcutAddDiv">
+                <div class="shortcutAddButton">
+                    Add +
+                </div>
+            </div>
+        </section>
+
+
+
+
+
+        <section class="page no-transition hidden-page" id="profil-page">
+            <div class="page-header">
+                <div class="return-button">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="return-arrow">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <span class="page-title">Apparences</span>
+            </div>
+
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Name</span>
+                        <span class="details">Nom du profil</span>
+                    </div>
+                    <input class="profil-name" type="text">
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Icon</span>
+                        <span class="details">Icone du profil</span>
+                    </div>
+                    <file-picker class="profil-icon" type="profil-input"></file-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Commande</span>
+                        <span class="details">Commande du profil</span>
+                    </div>
+                    <input class="profil-command" type="text">
+                </div>
+            </div>
+        </section>
     </body>
 </html>

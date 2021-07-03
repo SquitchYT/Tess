@@ -10,9 +10,10 @@ class DropDownMenu extends HTMLElement {
 
         let displayArea = document.createElement("div");
         displayArea.classList.add("display-area");
+        this.displayArea = displayArea;
 
         let selectedValue = document.createElement("span");
-        selectedValue.innerHTML = "I'm a short text";
+        selectedValue.innerHTML = "Select a value";
         selectedValue.classList.add("selectedValue");
         this.selectedValue = selectedValue;
 
@@ -63,10 +64,22 @@ class DropDownMenu extends HTMLElement {
         this.listElement = listElement;
         dropdown.appendChild(listElement)
         this.shadow.appendChild(dropdown);
+
+        window.addEventListener("resize", () => {
+            setTimeout(() => {
+                this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
+            }, 220)
+        })
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
+            }, 265);
+        })
     }
 
     static get observedAttributes() {
-        return ["input-list", "selected-value", "parameters", "disabled"];
+        return ["input-list", "selected-value", "parameters", "disable"];
     }
       
     attributeChangedCallback(name, oldValue, newValue) {
@@ -98,14 +111,13 @@ class DropDownMenu extends HTMLElement {
                 el.classList.remove("drop-down-value-selected");
                 if (el.innerHTML == newValue) {
                     el.classList.add("drop-down-value-selected");
-                    this.selectedValue.innerHTML = newValue;
-
                     this.dispatchEvent(new CustomEvent("update"), {
                         composed: true,
                         bubbles: true,
                     });
                 }
             })
+            this.selectedValue.innerText = newValue;
         } else if (name == "parameters") {
             this.parameters = newValue;
 
@@ -113,6 +125,12 @@ class DropDownMenu extends HTMLElement {
                 composed: true,
                 bubbles: true,
             });
+        } else if(name == "disable") {
+            if (newValue == "") {
+                this.displayArea.classList.add("desactivate")
+            } else {
+                this.displayArea.classList.remove("desactivate")
+            }
         }
     }
 }

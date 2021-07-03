@@ -1,6 +1,6 @@
 const time1 = new Date().getTime();
 
-const { app, BrowserWindow, ipcMain : ipc, screen } = require('electron');
+const { app, BrowserWindow, ipcMain : ipc, screen, dialog } = require('electron');
 const argv = require("yargs").argv
 
 const pty = require("node-pty");
@@ -26,16 +26,14 @@ let customWorkdir;
 if (argv.workdir) {
     customWorkdir = argv.workdir
 }
-
-
-console.log("[WARNING] Tess is currently under development. You use an development release. You can have damage deal to your system")
+console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system")
 
 !function LoadConfig() {
     try {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
         config = JSON.parse(file);
     } catch (error) {
-        let toWrite= '{"theme":"default","background": "full","cursorStyle": "block","transparency_value": 0.65,"image_blur":1,"imageLink":"","plugin":[],"shortcut":{"CTRL + T": "bash","CTRL + W": "Close","CTRL + C": "Copy","CTRL + V": "Paste","CTRL + P": "Config"}}'
+        let toWrite= '{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"100","imageBlur":"0","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"Default Shell","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"sh -c $SHELL","name":"Default Shell"}],"defaultProfil":"Default Shell","terminalFontSize":"15"}'
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/")
@@ -52,7 +50,7 @@ console.log("[WARNING] Tess is currently under development. You use an developme
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
         colors = JSON.parse(file);
     } catch (error) {
-        let toWrite = '{"terminal":{"theme":{"foreground":"#979FAD","background":"#282C34","black":"#3c4045","red":"#ff5370","green":"#97f553","yellow":"#d19a66","blue":"#61aeef","magenta":"#c679dd","cyan":"#57b6c2","white":"#ABB2BF","brightBlack":"#59626f","brightRed":"#e06c75","brightGreen":"#c3e88d","brightYellow":"#e5c17c","brightBlue":"#61AEEF","brightMagenta":"#C679DD","brightCyan":"#56B6C2","brightWhite":"#abb2bf"}},"app":{"tab":{"panel":{"background":"#21252B"},"active":{"background":"#2F333D"},"inactive":{"background":"#21252B"},"text":{"color":"#979FAD","size":11.5}},"general":{"text_color":"#979FAD","foreground":"#2F333D","background":"#21252B","button_radius":20}}}'
+        let toWrite = '{ "terminal": { "theme": { "foreground": "#979FAD", "background": "#282C34", "black": "#3c4045", "red": "#ff5370", "green": "#97f553", "yellow": "#d19a66", "blue": "#61aeef", "magenta": "#c679dd", "cyan": "#57b6c2", "white": "#ABB2BF", "brightBlack": "#59626f", "brightRed": "#e06c75", "brightGreen": "#c3e88d", "brightYellow": "#e5c17c", "brightBlue": "#61AEEF", "brightMagenta": "#C679DD", "brightCyan": "#56B6C2", "brightWhite": "#abb2bf" } }, "app": { "textColor": "#979FAD", "tabActive": "#2F333D", "tabInactive": "#21252B" , "topBar": "#21252B", "background":"#21252B", "secondaryBackground": "#2F333D", "backgroundHover": "#2D3339", "buttonRadius": 20 } }'
         colors = JSON.parse(toWrite)
         
         mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
@@ -73,11 +71,11 @@ if (config.background == "transparent") {
 
     workers.forEach((el) => {
         el.on('online', () => {
-            console.log('Module is Loaded !!');
+            console.log("\x1b[32m[SUCCESS]\x1b[0m " + 'Module is Loaded !!');
         });
     
         el.on('message', (message) => {
-            console.log(message);
+            console.log("\x1b[32m[SUCCESS]\x1b[0m " + message);
         });
     })
 }();
@@ -95,7 +93,8 @@ function openWindow(config, colors) {
 
     mainWindow = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false,
         },
         width: appwidth,
         height: appheight,
@@ -104,12 +103,12 @@ function openWindow(config, colors) {
         title: "Tess - Terminal",
         transparent: config.background == "transparent",
         frame: needFrame,
-        icon: "/usr/bin/Tess.png"
+        icon: "/usr/bin/Tess.png",
     });
 
-    mainWindow.removeMenu();
+    //mainWindow.removeMenu();
     mainWindow.loadFile("src/page/app/index.html");
-    mainWindow.on("closed", function() {
+    mainWindow.on("closed", () => {
         mainWindow = null;
     });
     mainWindow.on('resize',() =>{
@@ -131,23 +130,18 @@ function openWindow(config, colors) {
         } catch (err) {
             console.log(err);
         }
-
-        setTimeout(() => {
-            try {
-                mainWindow.webContents.send('resize')
-            } catch (err) {
-                console.log(err);
-            }
-        }, 225);
     })
 }
 
 
 ipc.on('new-term', (e, data) => {
-    // Add check if command exist (in the path)
-    let Command = data.shell;
+    // Check if command exist
+    let Command = data.shell.split(" ");
+    let prog = Command[0];
+    Command.shift();
+    args = Command;
 
-    let shell = pty.spawn(Command, [], {
+    let shell = pty.spawn(prog, args, {
         name: "xterm-color",
         cols: data.cols,
         rows: data.rows,
@@ -155,12 +149,24 @@ ipc.on('new-term', (e, data) => {
         env: process.env,
     })
     customWorkdir = ""; //Reset Workdir
+    
+    shell.onExit(() => {
+        try {
+            mainWindow.webContents.send('close-tab', {
+                index: data.index,
+            });
+            shell.kill();
+        } catch (e) {
+            console.log(e);
+        } 
+    })
 
     shell.onData((datas) => {
         try {
             mainWindow.webContents.send('pty-data', {
                 index: data.index,
-                data: datas
+                data: datas,
+                processName: shell.process
             });
         } catch (err) {
             console.log(err);
@@ -189,7 +195,7 @@ app.on("ready", () => {
     if (config.background == "transparent") {
         setTimeout(() => {
             openWindow(config, colors);
-        }, 60);
+        }, 150);
     } else {
         openWindow(config, colors);
     }
@@ -212,7 +218,6 @@ ipc.on("close-terminal", (e, data) => {
     let y = 0
     shells.forEach((el) => {
         if (el.index == data) {
-            el.shell.write('exit\r');
             el.shell.kill();
             shells.splice(y, 1);
         }
@@ -259,4 +264,61 @@ ipc.on("reload", () => {
     //app.relaunch();
     Child_Proc.exec("tess");
     app.exit();
+})
+
+ipc.on("shortcut", (e, state) => {
+    try {
+        BrowserWindow.getFocusedWindow().webContents.send('shortcutStateUpdate', state);
+    } catch { }
+})
+
+ipc.on("reloadConfig", () => {
+    reloadConfig();
+
+    try {
+        BrowserWindow.getFocusedWindow().webContents.send('newConfig', {config: config, color: colors});
+    } catch { }
+})
+
+function reloadConfig() {
+    try {
+        file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
+        config = JSON.parse(file);
+    } catch (_) {
+        let toWrite = '{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"100","imageBlur":"0","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"Default Shell","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"sh -c $SHELL","name":"Default Shell"}],"defaultProfil":"Default Shell","terminalFontSize":"15"}'
+
+        mkdir.sync(osData.homeDir + "/Applications/tess/config");
+        mkdir.sync(osData.homeDir + "/.config/")
+
+        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite);
+        config = JSON.parse(toWrite)
+    }
+
+    if (config.background == "image" && config.imageLink.startsWith('./')) {
+        config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf('.') + 1)
+    }
+
+    try {
+        file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
+        colors = JSON.parse(file);
+    } catch (_) {
+        let toWrite = '{ "terminal": { "theme": { "foreground": "#979FAD", "background": "#282C34", "black": "#3c4045", "red": "#ff5370", "green": "#97f553", "yellow": "#d19a66", "blue": "#61aeef", "magenta": "#c679dd", "cyan": "#57b6c2", "white": "#ABB2BF", "brightBlack": "#59626f", "brightRed": "#e06c75", "brightGreen": "#c3e88d", "brightYellow": "#e5c17c", "brightBlue": "#61AEEF", "brightMagenta": "#C679DD", "brightCyan": "#56B6C2", "brightWhite": "#abb2bf" } }, "app": { "textColor": "#979FAD", "tabActive": "#2F333D", "tabInactive": "#21252B" , "topBar": "#21252B", "background":"#21252B", "secondaryBackground": "#2F333D", "backgroundHover": "#2D3339", "buttonRadius": 20 } }'
+        colors = JSON.parse(toWrite)
+        
+        mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
+        fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
+    }
+}
+
+ipc.on("debug", (e, data) => {
+    console.log(data);
+})
+
+ipc.on("openFileDialog", (e, data) => {
+    let result = dialog.showOpenDialog(data);
+    result.then((res) => {
+        e.returnValue = res.filePaths[0];
+    }).catch((err) => {
+        console.log(err);
+    })
 })

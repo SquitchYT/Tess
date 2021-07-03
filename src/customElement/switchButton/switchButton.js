@@ -17,7 +17,6 @@ class SwitchButton extends HTMLElement {
         button_div.classList.add("button", "button-on")
 
         button_div.addEventListener("click", () => {
-            console.log(this.getAttribute("state"))
             if (this.getAttribute("state") == "true") {
                 this.setAttribute("state", false);
             } else {

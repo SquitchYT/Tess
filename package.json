@@ -1,6 +1,6 @@
 {
   "name": "tess",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology",
   "main": "main.js",
   "scripts": {

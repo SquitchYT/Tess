@@ -1,0 +1,30 @@
+:host {
+    --text-color: #fff;
+    --background: #000;
+}
+
+* {
+    color: var(--text-color);
+}
+
+.background {
+    background: var(--background);
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+span {
+    margin-left: 9px;
+    font-size: 14px;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.desactivate {
+    pointer-events: none !important;
+}
+

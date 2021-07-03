@@ -34,7 +34,7 @@ if (osData.wm != "win" && osData.wm != "macos") {
     })
 }
 
-const shortcutAction = ["Close", "Copy", "Paste"];
+const shortcutAction = ["Close", "Copy", "Paste", "OpenShell"];
 const CustomPage = ["Config"]
 
 let cols;
@@ -46,15 +46,27 @@ let index = 0;
 let config;
 let colors;
 
-let shortcut = [];
-
 let fontSize;
+let shortcut = [];
+let canShortcut = true;
+
+let tabOrderToAdd = 0;
+
+let maxIndex = 1;
+let minIndex = 1;
+
+ipc.on("shortcutStateUpdate", (e, state) => {
+    canShortcut = state;
+})
 
 
 ipc.on('pty-data', (e, data) => {
     terminalsList.forEach((el) => {
         if (el.index === data.index) {
             el.term.write(data.data);
+            let tab = document.querySelector(".tab-" + data.index);
+            let process = data.processName.split("/");
+            tab.innerHTML = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
         } 
     })
 })
@@ -63,102 +75,150 @@ ipc.on('loaded', (e, data) => {
     config = data.config;
     colors = data.colors;
 
-    fontSize = (config.terminalFontSize != undefined) ? config.terminalFontSize : 14;
-
     HandleShortcut();
 
-    const bgColor = new Color(colors?.terminal?.theme?.background, config?.transparency_value / 100);
+    fontSize = (config.terminalFontSize != undefined) ? config.terminalFontSize : 14;
+    const bgColor = new Color(colors.terminal.theme.background, config.transparencyValue / 100);
 
     if (config.background == "transparent") {
-        colors.terminal.theme.background = bgColor?.rgba;
-        root.style.setProperty('--opacity', (config?.transparency_value / 100) + 0.21);
-        root.style.setProperty('--background', colors?.terminal?.theme?.background);
+        colors.terminal.theme.background = bgColor.rgba;
+        root.style.setProperty('--opacity', (config.transparencyValue / 100) + 0.21);
+        root.style.setProperty('--background', colors.terminal.theme.background);
         colors.terminal.theme.background = 'transparent';
     } else if (config.background == "image") {
-        colors.terminal.theme.background = bgColor?.rgba;
-        root.style.setProperty('--opacity', (config?.transparency_value / 100) + 0.21);
-        root.style.setProperty('--background-image', 'url(' + config?.imageLink + ')');
-        root.style.setProperty('--background', colors?.terminal?.theme?.background);
-        root.style.setProperty('--blur', 'blur(' + config?.image_blur +'px)');
+        colors.terminal.theme.background = bgColor.rgba;
+        root.style.setProperty('--opacity', (config.transparencyValue / 100) + 0.21);
+        root.style.setProperty('--background-image', 'url(' + config.imageLink + ')');
+        root.style.setProperty('--background', colors.terminal.theme.background);
+        root.style.setProperty('--blur', 'blur(' + config.imageBlur +'px)');
         colors.terminal.theme.background = 'transparent';
     } else {
-        root.style.setProperty('--background', colors?.terminal?.theme?.background);
+        root.style.setProperty('--background', colors.terminal.theme.background);
     }
-
-    /***  NEW THEME OPTIONS SETUPER ***/
 
     colors.terminal.theme.background = "transparent"
 
-    root.style.setProperty("--tab-panel-background", colors?.app?.tab?.panel?.background);
-    root.style.setProperty("--tab-active-background", colors?.app?.tab?.active?.background);
-    root.style.setProperty("--tab-inactive-background", colors?.app?.tab?.inactive?.background)
-    root.style.setProperty("--tab-text-color", colors?.app?.tab?.text?.color)
-    root.style.setProperty("--tab-text-size", colors?.app?.tab?.text?.size + "px")
+    root.style.setProperty("--tab-panel-background", colors.app.topBar);
+    root.style.setProperty("--tab-active-background", colors.app.tabActive);
+    root.style.setProperty("--tab-inactive-background", colors.app.tabInactive)
+    root.style.setProperty("--tab-text-color", colors.app.textColor)
+    root.style.setProperty("--tab-text-size", colors?.app?.text?.size ? colors?.app?.tab?.text?.size + "px ": "12px")
+    root.style.setProperty("--general-text-color", colors.app.textColor)
+    root.style.setProperty('--tab-hover', colors.app.backgroundHover);
 
-    root.style.setProperty("--general-text-color", colors?.app?.general?.text_color)
+    body.style.color = colors.app.textColor;
 
-    /***  END THEME OPTIONS SETUPER NEW ***/
-
-    root.style.setProperty('--background-no-opacity', colors?.app?.tab_background);
-    body.style.color = colors?.app?.text_color;
-
-    CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]]);
-
-    document.getElementById('new-tab').addEventListener('click', () => {
-        CreateNewTerminal(config.shortcut[Object.keys(config.shortcut)[0]]);
+    config.profil.forEach((el) => {
+        if (el.name == config.defaultProfil) {
+            CreateNewTerminal(el.programm, el.name, el.icon);
+            document.getElementById('new-tab').addEventListener('click', () => {
+                openDefaultProfil();
+            })
+        }
     })
 
     ipc.send('load-end');
 })
 
 function HandleShortcut() {
-    for (const [key, value] of Object.entries(config.shortcut)) {
+    shortcut = [];
+
+    config.shortcut.forEach((el) => {
         let newShortcut= {
             ctrl : false,
             shift : false,
-            key : key.slice(-1).toUpperCase(),
-            action : value
+            alt: false,
+            key : el.control.slice(-1).toUpperCase(),
+            action : el.action
         }
 
-        if (key.includes("CTRL")) {
+        if (el.control.includes("CTRL")) {
             newShortcut.ctrl = true;
-        }
-        if (key.includes("MAJ")) {
+        } if (el.control.includes("ALT")) {
+            newShortcut.alt = true;
+        } if (el.control.includes("SHIFT")) {
             newShortcut.shift = true;
         }
 
         shortcut.push(newShortcut);
-    }
+    })
 }
 
-ipc.on('resize', () => {
-    resize();
-})
-
-
-function CreateNewTerminal(toStart) {
+function CreateNewTerminal(toStart, name, icon) {
     let tab = document.createElement('div');
     tab.classList.add('tab', 'tab-all-' + index, "tab-active");
+    tab.setAttribute("index", index + 1)
+    tab.style.order = index + 1;
+
+    maxIndex = index;
 
     let tab_link = document.createElement('div');
 
-    tab_link.addEventListener('click', () => {
+    /**********************
+    **** mouseUp event ****
+    **********************/
+    tab_link.addEventListener('mouseup', (e) => {
+        changeTabOrder(tab, tab_link);
+    })
+    tab.addEventListener("mouseup", () => {
+        changeTabOrder(tab, tab_link);
+    })
+    tab_link.addEventListener("click", () => {
+        changeTabOrder(tab, tab_link);
+    })
+    document.addEventListener("mouseup", () => {
+        changeTabOrder(tab, tab_link);
+    })
+
+    tab_link.addEventListener("mousedown", (e) => {
+        tab.setAttribute("mousedown", "true")
+        tab.setAttribute("startDragX", `${e.clientX}`);
+        tab.setAttribute("dragged", "false");
+        tabOrderToAdd = 0;
         focusTerm(tab_link.classList[2], tab);
     })
-    tab_link.innerHTML = toStart + " ~ $";
+    tab.addEventListener("mousedown", (e) => {
+        tab.setAttribute("mousedown", "true")
+        tab.setAttribute("startDragX", `${e.clientX}`);
+        tab.setAttribute("dragged", "false");
+        tabOrderToAdd = 0;
+        focusTerm(tab_link.classList[2], tab);
+    })
+
+    document.addEventListener("mousemove", (e) => {
+        if (tab.getAttribute("mousedown") == "true") {
+            if (tab.getAttribute("dragged") != "true" && Math.abs(e.clientX - Number(tab.getAttribute("startDragX"))) > 15) {
+                tab.setAttribute("dragged", "true");
+            }
+
+            if (tab.getAttribute("dragged") == "true") {
+                tab.classList.add("overAll");
+                tab.style.transform = `translateX(${e.clientX - Number(tab.getAttribute("startDragX"))}px)`;
+
+                let a = e.clientX - Number(tab.getAttribute("startDragX"));
+                let b = tab.getBoundingClientRect().width;
+                tabOrderToAdd = Math.round(a / b);
+
+                tab.setAttribute("orderToAdd", tabOrderToAdd);
+            }
+        }
+    })
+
+    tab_link.innerHTML = name;
     tab_link.classList.add('tab-link', 'tab-' + index, index);
 
     let close_button = document.createElement('div');
     close_button.classList.add('close-button');
     close_button.setAttribute('close-button-number', index);
-    close_button.innerHTML = "x";
 
-    close_button.addEventListener('click', () => {
-        CloseTerm(close_button.getAttribute('close-button-number'));
-    })
+    close_button.innerHTML = `
+        <svg viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+    `
 
     let logo = document.createElement('img');
-    logo.src = "../../img/shell.png";
+    logo.src = (icon) ? icon : "../../img/shell.png";
     logo.classList.add('logo');
 
     tab.appendChild(logo);
@@ -190,7 +250,11 @@ function CreateNewTerminal(toStart) {
         page.addEventListener("load", () => {
             let iFrameWindow = page.contentWindow;
             iFrameWindow.addEventListener("keydown", (e) => {
-                ExecuteShortcut(e);
+                setTimeout(() => {
+                    if (canShortcut) {
+                        ExecuteShortcut(e);
+                    }
+                }, 100)
             })
         })
 
@@ -200,15 +264,14 @@ function CreateNewTerminal(toStart) {
             index: index,
             term: page,
             type: "Page"
-        };
-
+        }
     } else {
         if (!cols) resize();
 
         let term = new Terminal({
             cols: cols + 1,
             rows: rows,
-            theme: colors?.terminal?.theme,
+            theme: colors.terminal.theme,
             cursorStyle: config.cursorStyle,
             allowTransparency: true,
             fontSize: fontSize,
@@ -224,10 +287,7 @@ function CreateNewTerminal(toStart) {
 
         term.attachCustomKeyEventHandler((e) => {
             let o = ExecuteShortcut(e);
-            if (o == undefined) {
-                return false;
-            }
-            return o;
+            return (o == undefined) ? false : o
         })
 
         term.onData((e) => {
@@ -263,6 +323,22 @@ function CreateNewTerminal(toStart) {
         };
     }
 
+    close_button.addEventListener('click', (e) => {
+        if (t.type == "Page") {
+            Close(close_button.getAttribute("close-button-number"));
+        } else {
+            ipc.send('close-terminal', close_button.getAttribute("close-button-number"));
+        }
+
+        let tabs = document.querySelectorAll(".tab");
+        let indexList = [];
+        tabs.forEach((el) => {
+            indexList.push(Number(el.getAttribute("index")));
+        })
+
+        maxIndex = Math.max(...indexList);
+        minIndex = Math.min(...indexList);
+    })
     
     n = index;
     index++;
@@ -291,18 +367,19 @@ function focusTerm(index, tab) {
     tab.classList.remove("tab-inactive")
     tab.classList.add("tab-active")
 
-    let termtoview = document.querySelector('.terminal-' + index);
-    termtoview.classList.remove('hidden');
-    termtoview.classList.add('visible');
-    termtoview.click();
+    let termToView = document.querySelector('.terminal-' + index);
+    termToView.classList.remove('hidden');
+    termToView.classList.add('visible');
 
-    n = termtoview.getAttribute('number');
-
-    terminalsList.forEach((el) => {
-        if (el.index == n) {
-            el.term.focus();
-        } 
-    })
+    n = index;
+    setTimeout(() => {
+        termToView.click();
+        terminalsList.forEach((el) => {
+            if (el.index == index) {
+                el.term.focus();
+            } 
+        })
+    }, 50);
 }
 
 function resize() {
@@ -327,17 +404,17 @@ function resize() {
     });
 }
 
-function CloseTerm(index) {
-    ipc.send('close-terminal', index);
-
+function Close(index) {
     let te = document.querySelector('.terminal-' + index);
     let ta = document.querySelector('.tab-all-' + index);
-
-    ta.remove();
-    te.remove();
+    try {
+        ta.remove();
+        te.remove();   
+    } catch (_) {
+        
+    }
 
     let y = 0;
-
     terminalsList.forEach((el) => {
         if (el.index == index) {
             if (el.type == "Terminal") {
@@ -381,22 +458,31 @@ target.addEventListener('wheel', event => {
 
 function ExecuteShortcut(e) {
     let result = true;
-    let dos = false;
+    let dos = false; // replace that by a 'Do' variable name
     shortcut.forEach((el) => {
-        if (e.ctrlKey == el.ctrl && e.shiftKey == el.shift && e.key.toUpperCase() == el.key && e.type == "keydown" && !dos) {
+        if (e.ctrlKey == el.ctrl && e.shiftKey == el.shift && e.altKey == el.alt && e.key.toUpperCase() == el.key && e.type == "keydown" && !dos) {
             dos = true;
             if (shortcutAction.includes(el.action)) {
-                result = window[el.action + "Term"](n);
+                result = window[el.action](n);
             } else {
-                CreateNewTerminal(el.action);
-                result = false;
+                if (CustomPage.includes(el.action)) {
+                    CreateNewTerminal(el.action, el.action);
+                    result = false;
+                } else {
+                    config.profil.forEach((profil) => {
+                        if (profil.name == el.action) {
+                            CreateNewTerminal(profil.programm, profil.name, profil.icon);
+                            result = false;
+                        }
+                    }) 
+                }
             }
         }
     })
     return result;
 }
 
-function PasteTerm() {
+function Paste() {
     terminalsList.forEach((el) => {
         if (el.index == n) {
             ipc.send('terminal-data', {
@@ -408,7 +494,7 @@ function PasteTerm() {
     return false;
 }
 
-function CopyTerm() {
+function Copy() {
     let result = true;
     terminalsList.forEach((el) => {
         if (el.index == n && el.term.getSelection() != "") {
@@ -417,4 +503,113 @@ function CopyTerm() {
         }
     })
     return result;
+}
+
+setTimeout(() => {
+    resize();
+}, 150);
+
+ipc.on("newConfig", (e, data) => {
+    config = data.config;
+    colors =  JSON.parse(JSON.stringify(data.color));
+    HandleShortcut();
+
+    if (config.background != "transparent" && config.background != "image" && getComputedStyle(document.documentElement).getPropertyValue("--opacity") == 1 && getComputedStyle(document.documentElement).getPropertyValue("--background-image").startsWith("url") == false) {
+        root.style.setProperty('--background', colors.terminal.theme.background);
+    }
+
+    colors.terminal.theme.background = "transparent"
+    root.style.setProperty("--tab-panel-background", colors.app.topBar);
+    root.style.setProperty("--tab-active-background", colors.app.tabActive);
+    root.style.setProperty("--tab-inactive-background", colors.app.tabInactive)
+    root.style.setProperty("--tab-text-color", colors.app.textColor)
+    root.style.setProperty("--tab-text-size", (colors?.app?.text?.size) ? colors?.app?.tab?.text?.size + "px ": "12px")
+    root.style.setProperty("--general-text-colo)r", colors.app.textColor)
+    root.style.setProperty('--tab-hover', colors.app.backgroundHover);
+    
+    body.style.color = colors.app.textColor;
+    fontSize = (config?.terminalFontSize) ? config.terminalFontSize : 14;
+    updateTerminalApparence();
+})
+
+ipc.on('resize', () => {
+    resize();
+})
+
+function changeTabOrder(tab, tab_link) {
+    tab.setAttribute("mousedown", "false")
+    tab_link.setAttribute("mousedown", "false")
+    tab.style.transform = "translateX(0px)";            
+    tab.classList.remove("overAll");
+
+    if (tabOrderToAdd)
+    {
+        tab.setAttribute("dragged", "false");
+
+        if (tabOrderToAdd > 0) {
+            for (let index = tabOrderToAdd; index != 0; index--) {
+                let nextTab = null;
+                let i = 1;
+                while (nextTab == null && i <= maxIndex) {
+                    nextTab = document.querySelector(".tab[index='" + Number(Number(tab.getAttribute("index")) + i) + "']");
+                    i++;
+                }
+
+                let allTab = document.querySelectorAll(".tab");
+    
+                tab.setAttribute("index", nextTab.getAttribute("index"))
+                nextTab.setAttribute("index", Number(tab.getAttribute("index")) - 1);
+    
+                allTab.forEach((el) => {
+                    el.style.order = el.getAttribute("index");
+                })
+            }
+        } else {
+            for (let index = tabOrderToAdd; index != 0; index++) {
+                let nextTab = null;
+                let i = 1;
+
+                while (nextTab == null) {
+                    console.log(i)
+                    nextTab = document.querySelector(".tab[index='" + Number(Number(tab.getAttribute("index")) - i) + "']");
+                    i++;
+                    console.log(nextTab);
+                }
+
+                let allTab = document.querySelectorAll(".tab");
+    
+                tab.setAttribute("index", nextTab.getAttribute("index"))
+                nextTab.setAttribute("index", Number(tab.getAttribute("index")) + 1);
+    
+                allTab.forEach((el) => {
+                    el.style.order = el.getAttribute("index");
+                })
+            }
+        }
+    }
+    tabOrderToAdd = 0;
+}
+
+ipc.on("close-tab", (e, data) => {
+    Close(data.index);
+})
+
+function openDefaultProfil() {
+    config.profil.forEach((el) => {
+        if (el.name == config.defaultProfil) {
+            CreateNewTerminal(el.programm, el.name, el.icon);
+        }
+    })
+}
+function updateTerminalApparence() {
+    terminalsList.forEach((el) => {
+        if (el.type == "Terminal") {
+            el.term.setOption("theme", colors.terminal.theme);
+            el.term.setOption("fontSize", config.terminalFontSize);
+            el.term.setOption("cursorBlink", config.cursorBlink);
+            el.term.setOption("cursorStyle", config.cursorStyle);
+        }
+    })
+
+    resize();
 }

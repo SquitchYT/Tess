@@ -9,6 +9,7 @@
     --tab-panel-background: #000;
     --tab-active-background: #fff;
     --tab-inactive-background : #000;
+    --tab-hover: rgb(36, 36, 36);
 
     --tab-text-color: #000;
     --tab-text-size: 13px;
@@ -31,29 +32,33 @@ body {
     -webkit-app-region: drag;
 }
 
-.tab {
-    max-width: 16rem;
-    min-width: 11.5rem;
-    width: 100%;
-    height: 30px;
-    display: flex;
-    font-weight: bolder;
-    font-family: monospace;
-    border-radius: 4.3px 4.3px 0 0;
-    cursor: pointer;
-    overflow: hidden;
-    animation: 0.4s nodeInserted;
-    -webkit-app-region: no-drag;
-    color: var(--tab-text-color);
-}
-
 .tabs * {
     user-select: none;
 }
 
+.tab {
+    max-width: 16rem;
+    min-width: 11.5rem;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-weight: bolder;
+    font-family: monospace;
+    cursor: pointer;
+    animation: 375ms nodeInserted;
+    -webkit-app-region: no-drag;
+    color: var(--tab-text-color);
+    transition: background 75ms linear;
+}
+
+.tab:hover {
+    background: var(--tab-hover);
+}
+
 .more {
-    height: 30px;
-    width: 29px;
+    height: 100%;
+    width: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -68,22 +73,28 @@ body {
 
 .more:hover {
     cursor: pointer;
-    filter: invert(0.32)
+    filter: brightness(1.15);
 }
 
-.tab .close-button {
-    height: 100%;
-    width: 100%;
-    max-width: 2rem;
+.close-button {
+    height: 21px;
+    min-width: 21px;
     display: flex;
     justify-content: center;
     align-items: center;
-    right: 0;
+    visibility: hidden;
+    margin-right: 7px;
+    border-radius: 4px;
+    transition: all 100ms linear;
 }
 
-.tab .close-button:hover {
+.tab:hover .close-button {
+    visibility: visible;
+}
+
+.close-button:hover {
     cursor: pointer;
-    filter: invert(0.32)
+    background: var(--tab-panel-background);
 }
 
 .tabs .tabs-panel {
@@ -158,7 +169,7 @@ body {
 
 .iframe {
     position: absolute;
-    height: 100%;
+    height: calc(100% + 3px);
     width: 100vw;
     transform: translate(-3px, -3px);
 }
@@ -173,12 +184,11 @@ body {
 }
 
 .logo {
-    height: 20px;
-    max-width: 21px;
-    margin-left: 6.5px;
-    margin-top: 5px;
+    height: auto;
+    max-height: 75%;
     border-radius: 4px;
-    width: 100%;
+    margin-left: 7px;
+    user-select: none !important;
 }
 
 .tabs-tab {
@@ -222,13 +232,32 @@ body {
 }
 
 .tab-active {
-    background-color: var(--tab-active-background);
+    background: var(--tab-active-background) !important;
 }
 
 .tab-inactive {
-    background-color: var(--tab-inactive-background);
+    background: var(--tab-inactive-background);
+}
+
+.tab-active > .close-button{
+    visibility: visible;
 }
 
 iframe {
     border: none;
+    padding: 0;
+    margin: 0;
+}
+
+svg {
+    height: 12px;
+    width: 12px;
+}
+
+.overAll {
+    z-index: 100000;
+}
+
+.end-order {
+    order: 100000;
 }

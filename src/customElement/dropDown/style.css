@@ -4,6 +4,10 @@
     --text-color: #fff;
 }
 
+* {
+    user-select: none;
+}
+
 .display-area {
     border-radius: 6px 6px 0 0;
     height: 100%;
@@ -21,24 +25,24 @@
 }
 
 span {
-    padding-left: 10px;
-    padding-right: 10px;
-    font-size: 16px;
+    padding-left: 9px;
+    padding-right: 9px;
+    font-size: 15px;
     font-weight: 500;
+    white-space: nowrap;
+    overflow-x: hidden;
 }
 
 .icon {
     transition: ease;
     transition-duration: 600ms;
-    font-size: 24px;
+    font-size: 23px;
 }
 
 .drop-down {
-    width: 33vw;
-    max-width: 425px;
-    min-width: 250px;
+    width: max-content;
     position: absolute;
-    margin-top: 35px;
+    margin-top: 33px;
     height: auto;
     max-height: 390px;
     display: flex;
@@ -46,7 +50,7 @@ span {
     flex-wrap: nowrap;
     background: var(--background);
     border-radius: 0 0 6px 6px;
-    z-index: 7;
+    z-index: 7 !important;
     box-shadow: 0px 7px 12px -6px var(--background);
 }
 
@@ -96,4 +100,8 @@ span {
 ::-webkit-scrollbar-thumb {
     background:rgba(212, 212, 212, 0.14);
     border-radius: 6px;
+}
+
+.desactivate {
+    pointer-events: none !important;
 }

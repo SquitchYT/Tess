@@ -25,7 +25,7 @@ class ScrollerPicker extends HTMLElement {
 
         this.maxIndicator = maxIndicator;
         this.minIndicator = minIndicator;
-
+ 
         let bar = document.createElement("div");
         bar.classList.add("bar")
 
@@ -81,7 +81,7 @@ class ScrollerPicker extends HTMLElement {
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)"
-            }, 250);
+            }, 265);
         })
 
         window.addEventListener("resize", () => {
@@ -106,7 +106,6 @@ class ScrollerPicker extends HTMLElement {
             this.minIndicator.innerHTML = String(this.min + this.suffix);
         } else if (name == "selected-value" && oldValue == null && newValue != null) {
             let pourcent = parseInt(newValue - this.min) / (this.max - this.min) * 100;
-            console.log(pourcent);
             this.pourcent = pourcent / 100;
             this.progress.style.width = pourcent + "%"
         }
