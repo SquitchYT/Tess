@@ -72,9 +72,6 @@ jobs:
               
           ' > ./package/rpmbuild/SPECS/tess.spec
           
-
-          cat ./package/rpmbuild/SPECS/tess.spec
-          
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
           
@@ -91,9 +88,10 @@ jobs:
           cd ../
           cp ./cli/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
           
-          ls ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          ls ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
-          ls ./package/rpmbuild/SOURCES/tess-${VERSION}/app
+          tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz *
+          
+          ls ./package/rpmbuild/SOURCES/
+          
         env:
           #VERSION: ${{ steps.get_release.outputs.tag_name }}
           VERSION: 0.4
