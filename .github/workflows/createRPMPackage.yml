@@ -25,8 +25,55 @@ jobs:
           mkdir -p ./package/rpmbuild/SOURCES
           mkdir -p ./package/rpmbuild/SPECS
           
-          printf "Name:           tess\nVersion:        1.4\nRelease:        0\nSummary:        Tess is an terminal emulator\n\nLicense:        GPL\nSource0:        tess.tar.gz\n\n%description\nTo add desc here !\n\n%global debug_package %{nil}\n\n%prep\n%setup -q\n\n%build\n\n%install\nrm -rf $RPM_BUILD_ROOT\nmkdir -p '$RPM_BUILD_ROOT/opt/tess'\nmkdir -p '$RPM_BUILD_ROOT/usr/bin'\nmkdir -p '$RPM_BUILD_ROOT/opt/tess-cli'\nmkdir -p '$RPM_BUILD_ROOT/usr/share/applications'\n\ncp tess.desktop '$RPM_BUILD_ROOT/usr/share/applications/'\ncp Tess.png '$RPM_BUILD_ROOT/usr/bin/Tess.png'\n\n\ncp -r app/* '$RPM_BUILD_ROOT/opt/tess/'\nln -s '/opt/tess/tess' '$RPM_BUILD_ROOT/usr/bin/tess'\n\ncp -r cli/tess-cli '$RPM_BUILD_ROOT/opt/tess-cli/'\nln -s '/opt/tess-cli/tess-cli' '$RPM_BUILD_ROOT/usr/bin/tess-cli'\n\n\n%files\n/usr/bin/*\n/opt/*\n/usr/share/applications/*\n\n\n%changelog\n* Sat Jul 03 2021 clement foure\n- first try" > ./package/rpmbuild/SPECS/tess.spec
+          printf '
+            Name:           tess
+            Version:        1.4
+            Release:        0
+            Summary:        Tess is an terminal emulator
+
+            License:        GPL
+            Source0:        tess.tar.gz
+
+            %description
+            To add desc here !
+
+            %global debug_package %{nil}
+
+            %prep
+            %setup -q
+
+            %build
+
+            %install
+            rm -rf $RPM_BUILD_ROOT
+            mkdir -p "$RPM_BUILD_ROOT/opt/tess"
+            mkdir -p "$RPM_BUILD_ROOT/usr/bin"
+            mkdir -p "$RPM_BUILD_ROOT/opt/tess-cli"
+            mkdir -p "$RPM_BUILD_ROOT/usr/share/applications"
+
+            cp tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
+            cp Tess.png "$RPM_BUILD_ROOT/usr/bin/Tess.png"
+
+            cp -r app/* "$RPM_BUILD_ROOT/opt/tess/"
+            ln -s "/opt/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
+
+            cp -r cli/tess-cli "$RPM_BUILD_ROOT/opt/tess-cli/"
+            ln -s "/opt/tess-cli/tess-cli" "$RPM_BUILD_ROOT/usr/bin/tess-cli"
+
+
+            %files
+            /usr/bin/*
+            /opt/*
+            /usr/share/applications/*
+
+            %changelog
+            * Sat Jul 03 2021 clement foure
+            - first try
+          ' > ./package/rpmbuild/SPECS/tess.spec
+          
+
           cat ./package/rpmbuild/SPECS/tess.spec
+          
           
           mkdir -p ./package/debian/tess/opt/tess/
           mkdir -p ./package/debian/tess/opt/tess-cli/
