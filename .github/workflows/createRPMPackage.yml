@@ -72,6 +72,8 @@ jobs:
               
           ' > ./package/rpmbuild/SPECS/tess.spec
           
+          cat ./package/rpmbuild/SPECS/tess.spec
+          
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
           
