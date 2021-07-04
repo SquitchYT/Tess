@@ -94,13 +94,12 @@ jobs:
           
           ls ./package/rpmbuild/SOURCES/
           
-          cd ./package/
           
-          ls /home/runner/rpmbuild/SOURCES/
+          ls /home/runner/package/rpmbuild/SOURCES/
           
-          rpmbuild -bb ./rpmbuild//SPECS/tess.spec
+          rpmbuild -bb ./package/rpmbuild//SPECS/tess.spec
           
-          ls ./rpmbuild/RPMS/x86_64/
+          ls ./package/rpmbuild/RPMS/x86_64/
           
         env:
           #VERSION: ${{ steps.get_release.outputs.tag_name }}
