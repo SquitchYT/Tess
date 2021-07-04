@@ -34,17 +34,17 @@ jobs:
               License:        GPL
               Source0:        tess.tar.gz
 
-              %description
+              %%description
               To add desc here !
 
-              %global debug_package %\{nil\}
+              %%global debug_package %%{nil}
 
-              %prep
-              %setup -q
+              %%prep
+              %%setup -q
 
-              %build
+              %%build
 
-              %install
+              %%install
               rm -rf $RPM_BUILD_ROOT
               mkdir -p "$RPM_BUILD_ROOT/opt/tess"
               mkdir -p "$RPM_BUILD_ROOT/usr/bin"
@@ -61,12 +61,12 @@ jobs:
               ln -s "/opt/tess-cli/tess-cli" "$RPM_BUILD_ROOT/usr/bin/tess-cli"
 
 
-              %files
+              %%files
               /usr/bin/*
               /opt/*
               /usr/share/applications/*
 
-              %changelog
+              %%changelog
               * Sat Jul 03 2021 clement foure
               - first try
               
