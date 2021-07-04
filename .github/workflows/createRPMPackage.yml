@@ -88,7 +88,7 @@ jobs:
           cd ../
           cp ./cli/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
           
-          tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/
+          tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
           
           ls ./package/rpmbuild/SOURCES/
           
