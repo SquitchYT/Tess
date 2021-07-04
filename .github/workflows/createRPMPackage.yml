@@ -95,6 +95,9 @@ jobs:
           ls ./package/rpmbuild/SOURCES/
           
           cd ./package/
+          
+          ls /home/runner/rpmbuild/SOURCES/
+          
           rpmbuild -bb ./rpmbuild//SPECS/tess.spec
           
           ls ./rpmbuild/RPMS/x86_64/
