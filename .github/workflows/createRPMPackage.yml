@@ -75,23 +75,28 @@ jobs:
 
           cat ./package/rpmbuild/SPECS/tess.spec
           
+          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
+          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
           
-          mkdir -p ./package/debian/tess/opt/tess/
-          mkdir -p ./package/debian/tess/opt/tess-cli/
+          cp ./Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp ./src/img/Tess.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          
+          
           npm install
           npm run build
-          cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
+          cp -r ./dist/linux-unpacked/* ./package/rpmbuild/SOURCES/tess-${VERSION}/app/
+          
           cd cli
           g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
           cd ../
-          cp ./cli/tess-cli ./package/debian/tess/opt/tess-cli/tess-cli
+          cp ./cli/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
           
-          printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
-          cd ./package/debian
-          sudo chmod 755 ./tess/DEBIAN/postinst 
-          dpkg-deb --build tess
+          ls ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          ls ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
+          ls ./package/rpmbuild/SOURCES/tess-${VERSION}/app
         env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
+          #VERSION: ${{ steps.get_release.outputs.tag_name }}
+          VERSION: 0.4
         
       #- name: Upload release binary
        # uses: actions/upload-release-asset@v1.0.2
