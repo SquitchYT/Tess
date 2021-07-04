@@ -92,6 +92,11 @@ jobs:
           
           ls ./package/rpmbuild/SOURCES/
           
+          cd ./package/
+          rpmbuild -bb ./rpmbuild//SPECS/tess.spec
+          
+          ls ./rpmbuild/RPMS/x86_64/
+          
         env:
           #VERSION: ${{ steps.get_release.outputs.tag_name }}
           VERSION: 0.4
