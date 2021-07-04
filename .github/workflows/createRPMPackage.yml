@@ -1,0 +1,56 @@
+name: DEBIAN
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      #- name: Get release
+       # id: get_release
+       # uses: bruceadams/get-release@v1.2.2
+       # env:
+       #   GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Generating DEBIAN Package    
+        run: |
+          sudo apt-get install rpmbuild libcurl4-openssl-dev g++
+          
+          rpmbuild --version
+          
+          ls ~
+          
+          
+          
+          mkdir -p ./package/debian/tess/opt/tess/
+          mkdir -p ./package/debian/tess/opt/tess-cli/
+          npm install
+          npm run build
+          cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
+          cd cli
+          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
+          cd ../
+          cp ./cli/tess-cli ./package/debian/tess/opt/tess-cli/tess-cli
+          
+          printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
+          cd ./package/debian
+          sudo chmod 755 ./tess/DEBIAN/postinst 
+          dpkg-deb --build tess
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
+        
+      #- name: Upload release binary
+       # uses: actions/upload-release-asset@v1.0.2
+       # env:
+       #   GITHUB_TOKEN: ${{ github.token }}
+       # with:
+       #   upload_url: ${{ steps.get_release.outputs.upload_url }}
+        #  asset_path: ./package/debian/tess.deb
+         # asset_name: Tess.deb
+          #asset_content_type: application/octet-stream
