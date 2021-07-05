@@ -44,23 +44,20 @@ jobs:
           %%build
 
           %%install
-          echo "listing before rm"
-          ls
           rm -rf $RPM_BUILD_ROOT
           mkdir -p "$RPM_BUILD_ROOT/opt/tess"
           mkdir -p "$RPM_BUILD_ROOT/usr/bin"
           mkdir -p "$RPM_BUILD_ROOT/opt/tess-cli"
           mkdir -p "$RPM_BUILD_ROOT/usr/share/applications"
-          
-          echo "listing after rm"
-          ls
 
           cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
           cp Tess.png "$RPM_BUILD_ROOT/usr/bin/Tess.png"
 
           cp -r app/* "$RPM_BUILD_ROOT/opt/tess/"
           ln -s "/opt/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
-
+          
+          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
+          
           cp -r cli/tess-cli "$RPM_BUILD_ROOT/opt/tess-cli/"
           ln -s "/opt/tess-cli/tess-cli" "$RPM_BUILD_ROOT/usr/bin/tess-cli"
 
@@ -85,20 +82,11 @@ jobs:
           npm run build
           cp -r ./dist/linux-unpacked/* ./package/rpmbuild/SOURCES/tess-${VERSION}/app/
           
-          cd cli
-          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
-          cd ../
-          cp ./cli/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
-          
-          ls ./package/rpmbuild/SOURCES/
-          
+          cp ./cli/* ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
+                  
           cd ./package/rpmbuild/SOURCES
-          
           tar zcvf tess.tar.gz ./*
-          
           cd ../../../
-          
-          tar -tvf ./package/rpmbuild/SOURCES/tess.tar.gz
           
           cd ./package/rpmbuild
           
