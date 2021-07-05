@@ -56,7 +56,9 @@ jobs:
           cp -r app/* "$RPM_BUILD_ROOT/opt/tess/"
           ln -s "/opt/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
           
+          cd cli
           g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
+          cd ../
           
           cp -r cli/tess-cli "$RPM_BUILD_ROOT/opt/tess-cli/"
           ln -s "/opt/tess-cli/tess-cli" "$RPM_BUILD_ROOT/usr/bin/tess-cli"
