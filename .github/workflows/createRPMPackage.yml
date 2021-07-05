@@ -27,7 +27,7 @@ jobs:
           
           printf '
           Name:           tess
-          Version:        1.4
+          Version:        ${VERSION}
           Release:        0
           Summary:        Tess is an terminal emulator
 
