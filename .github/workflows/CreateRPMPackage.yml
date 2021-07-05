@@ -20,7 +20,7 @@ jobs:
 
       - name: Generating RPM Package    
         run: |
-          sudo apt-get install rpm libcurl4-openssl-dev g++
+          sudo apt-get install rpm libcurl4-gnutls-dev g++
           
           mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
