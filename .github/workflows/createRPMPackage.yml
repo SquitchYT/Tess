@@ -22,8 +22,7 @@ jobs:
         run: |
           sudo apt-get install rpm libcurl4-openssl-dev g++
           
-          mkdir -p ./package/rpmbuild/SOURCES
-          mkdir -p ./package/rpmbuild/SPECS
+          mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
           printf '
           Name:           tess
