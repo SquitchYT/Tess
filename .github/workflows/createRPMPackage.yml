@@ -89,7 +89,7 @@ jobs:
           tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
           
           echo "loisting here"
-          /home/runner/work/Tess/Tess/package/rpmbuild
+          ls /home/runner/work/Tess/Tess/package/rpmbuild
           
           cd ./package
           echo "ls heeeererre"
