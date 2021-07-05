@@ -23,7 +23,7 @@ jobs:
 
       - name: Generating RPM Package    
         run: |
-          dnf install libcurl gcc-c++ rpmdevtools
+          dnf install libcurl gcc-c++ rpmdevtools -y
           
           mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
