@@ -55,7 +55,7 @@ jobs:
           echo "listing after rm"
           ls
 
-          cp tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
+          cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
           cp Tess.png "$RPM_BUILD_ROOT/usr/bin/Tess.png"
 
           cp -r app/* "$RPM_BUILD_ROOT/opt/tess/"
