@@ -88,7 +88,7 @@ jobs:
           
           tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
           
-          cd ./package/
+          cd ./package/rpmbuild
           
           rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
           ls ./rpmbuild/RPMS/x86_64/
