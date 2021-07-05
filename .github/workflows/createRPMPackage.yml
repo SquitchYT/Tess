@@ -92,7 +92,11 @@ jobs:
           
           ls ./package/rpmbuild/SOURCES/
           
-          tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
+          cd ./package/rpmbuild/SOURCES
+          
+          tar zcvf tess.tar.gz ./*
+          
+          cd ../../../
           
           tar -tvf ./package/rpmbuild/SOURCES/tess.tar.gz
           
