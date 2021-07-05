@@ -45,11 +45,16 @@ jobs:
           %%build
 
           %%install
+          echo "listing before rm"
+          ls
           rm -rf $RPM_BUILD_ROOT
           mkdir -p "$RPM_BUILD_ROOT/opt/tess"
           mkdir -p "$RPM_BUILD_ROOT/usr/bin"
           mkdir -p "$RPM_BUILD_ROOT/opt/tess-cli"
           mkdir -p "$RPM_BUILD_ROOT/usr/share/applications"
+          
+          echo "listing after rm"
+          ls
 
           cp tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
           cp Tess.png "$RPM_BUILD_ROOT/usr/bin/Tess.png"
