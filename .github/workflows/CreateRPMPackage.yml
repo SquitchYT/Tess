@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,7 +23,7 @@ jobs:
 
       - name: Generating RPM Package    
         run: |
-          sudo apt-get install rpm libcurl4-nss-dev g++
+          dnf install libcurl gcc-c++ rpmdevtools
           
           mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
