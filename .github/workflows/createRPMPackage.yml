@@ -88,10 +88,10 @@ jobs:
           
           tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
           
-          cd ./package/rpmbuild/
+          cd ./package/
           
           rpmbuild rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
-          ls ./package/rpmbuild/RPMS/x86_64/
+          ls ./rpmbuild/RPMS/x86_64/
           
         env:
           #VERSION: ${{ steps.get_release.outputs.tag_name }}
