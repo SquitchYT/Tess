@@ -88,8 +88,14 @@ jobs:
           
           tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
           
+          echo "loisting here"
+          /home/runner/work/Tess/Tess/package/rpmbuild
+          
           cd ./package
-          rpmbuild rpmbuild --define "_topdir `pwd`" /home/ -bb ./package/rpmbuild//SPECS/tess.spec
+          echo "ls heeeererre"
+          ls
+          
+          rpmbuild rpmbuild --define "_topdir `pwd`" /home/ -bb rpmbuild/SPECS/tess.spec
           ls ./package/rpmbuild/RPMS/x86_64/
           
         env:
