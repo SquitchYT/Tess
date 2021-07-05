@@ -82,7 +82,7 @@ jobs:
           npm run build
           cp -r ./dist/linux-unpacked/* ./package/rpmbuild/SOURCES/tess-${VERSION}/app/
           
-          cp ./cli/* ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
+          cp -r ./cli/* ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
                   
           cd ./package/rpmbuild/SOURCES
           tar zcvf tess.tar.gz ./*
