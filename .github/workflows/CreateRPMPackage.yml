@@ -12,11 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      #- name: Get release
-       # id: get_release
-       # uses: bruceadams/get-release@v1.2.2
-       # env:
-       #   GITHUB_TOKEN: ${{ github.token }}
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Generating RPM Package    
         run: |
@@ -106,15 +106,15 @@ jobs:
           ls ./RPMS/x86_64/
           
         env:
-          #VERSION: ${{ steps.get_release.outputs.tag_name }}
-          VERSION: 1
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
         
-      #- name: Upload release binary
-       # uses: actions/upload-release-asset@v1.0.2
-       # env:
-       #   GITHUB_TOKEN: ${{ github.token }}
-       # with:
-       #   upload_url: ${{ steps.get_release.outputs.upload_url }}
-        #  asset_path: ./package/debian/tess.deb
-         # asset_name: Tess.deb
-          #asset_content_type: application/octet-stream
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${VERSION}-0.x86_64.rpm
+          asset_name: tess-${VERSION}.rpm
+          asset_content_type: application/octet-stream
