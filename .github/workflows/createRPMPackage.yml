@@ -95,7 +95,7 @@ jobs:
           echo "ls heeeererre"
           ls
           
-          rpmbuild rpmbuild --define "_topdir `pwd`" /home/ -bb rpmbuild/SPECS/tess.spec
+          rpmbuild rpmbuild --define "_topdir `pwd`" -bb rpmbuild/SPECS/tess.spec
           ls ./package/rpmbuild/RPMS/x86_64/
           
         env:
