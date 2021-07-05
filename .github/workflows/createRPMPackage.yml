@@ -90,16 +90,18 @@ jobs:
           cd ../
           cp ./cli/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
           
+          ls ./package/rpmbuild/SOURCES/
+          
           tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
           
           cd ./package/rpmbuild
           
           rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
-          ls ./rpmbuild/RPMS/x86_64/
+          ls ./RPMS/x86_64/
           
         env:
           #VERSION: ${{ steps.get_release.outputs.tag_name }}
-          VERSION: 0.4
+          VERSION: 1
         
       #- name: Upload release binary
        # uses: actions/upload-release-asset@v1.0.2
