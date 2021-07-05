@@ -27,7 +27,7 @@ jobs:
           
           printf '
           Name:           tess
-          Version:        "${VERSION}"
+          Version:        %s
           Release:        0
           Summary:        Tess is an terminal emulator
 
@@ -69,7 +69,7 @@ jobs:
           * Sat Jul 03 2021 clement foure
           - first try
               
-          ' > ./package/rpmbuild/SPECS/tess.spec
+          ' "${VERSION}" > ./package/rpmbuild/SPECS/tess.spec
           
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
