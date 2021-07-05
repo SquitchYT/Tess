@@ -112,9 +112,8 @@ jobs:
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${VERSION}-0.x86_64.rpm
-          asset_name: tess-${VERSION}.rpm
+          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          asset_name: tess-${{ steps.get_release.outputs.tag_name }}.rpm
           asset_content_type: application/octet-stream
