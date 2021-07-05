@@ -22,6 +22,9 @@ jobs:
         run: |
           sudo apt-get install rpm libcurl4-openssl-dev g++
           
+          echo "Current working directories :"
+          pwd
+          
           mkdir -p ./package/rpmbuild/SOURCES
           mkdir -p ./package/rpmbuild/SPECS
           
@@ -72,7 +75,6 @@ jobs:
               
           ' > ./package/rpmbuild/SPECS/tess.spec
           
-          cat ./package/rpmbuild/SPECS/tess.spec
           
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
@@ -94,8 +96,8 @@ jobs:
           
           ls ./package/rpmbuild/SOURCES/
           
-          
-          ls /home/runner/
+          echo "ls here"
+          ls
           
           rpmbuild -bb ./package/rpmbuild//SPECS/tess.spec
           
