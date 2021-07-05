@@ -90,7 +90,7 @@ jobs:
           
           cd ./package/
           
-          rpmbuild rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
+          rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
           ls ./rpmbuild/RPMS/x86_64/
           
         env:
