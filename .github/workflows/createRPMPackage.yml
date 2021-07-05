@@ -22,9 +22,6 @@ jobs:
         run: |
           sudo apt-get install rpm libcurl4-openssl-dev g++
           
-          echo "Current working directories :"
-          pwd
-          
           mkdir -p ./package/rpmbuild/SOURCES
           mkdir -p ./package/rpmbuild/SPECS
           
@@ -63,7 +60,6 @@ jobs:
           cp -r cli/tess-cli "$RPM_BUILD_ROOT/opt/tess-cli/"
           ln -s "/opt/tess-cli/tess-cli" "$RPM_BUILD_ROOT/usr/bin/tess-cli"
 
-
           %%files
           /usr/bin/*
           /opt/*
@@ -75,13 +71,11 @@ jobs:
               
           ' > ./package/rpmbuild/SPECS/tess.spec
           
-          
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
           
           cp ./Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
           cp ./src/img/Tess.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          
           
           npm install
           npm run build
@@ -94,13 +88,8 @@ jobs:
           
           tar zcvf ./package/rpmbuild/SOURCES/tess.tar.gz ./package/rpmbuild/SOURCES/*
           
-          ls ./package/rpmbuild/SOURCES/
-          
-          echo "ls here"
-          ls
-          
-          rpmbuild --root /home/runner/work/Tess/Tess/package /home/ -bb ./package/rpmbuild//SPECS/tess.spec
-          
+          cd ./package
+          rpmbuild rpmbuild --define "_topdir `pwd`" /home/ -bb ./package/rpmbuild//SPECS/tess.spec
           ls ./package/rpmbuild/RPMS/x86_64/
           
         env:
