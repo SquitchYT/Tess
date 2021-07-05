@@ -35,7 +35,7 @@ jobs:
           Summary:        Tess is an terminal emulator
 
           License:        GPL
-          Source0:        tess.tar.gz
+          Source0:        /home/runner/work/Tess/Tess/package/rpmbuild/SOURCES/tess.tar.gz
 
           %%description
           To add desc here !
