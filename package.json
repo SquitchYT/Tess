@@ -22,6 +22,7 @@
   },
   "license": "ISC",
   "dependencies": {
+    "glasstron": "^0.0.7",
     "glib": "^1.0.2",
     "mkdirp": "^0.5.5",
     "node-pty": "^0.10.0",
