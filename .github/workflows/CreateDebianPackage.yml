@@ -45,5 +45,5 @@ jobs:
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./package/debian/tess.deb
-          asset_name: Tess.deb
+          asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.deb
           asset_content_type: application/octet-stream
