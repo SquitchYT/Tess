@@ -21,20 +21,9 @@ jobs:
       - name: Update AUR Package
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
         with:
-          pkgname: tess-git
-          pkgbuild: tess-git/PKGBUILD
+          pkgname: tess-nightly
+          pkgbuild: tess-nightly/PKGBUILD
           commit_username: ${{ secrets.AUR_USERNAME }}
           commit_email: ${{ secrets.AUR_EMAIL }}
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: Update AUR package
-  
-  Updating_TEST:
-    runs-on: ubuntu-latest
-    steps:
-      - name: aa
-        uses: actions/checkout@v2
-
-      - name: cmd
-        run: |
-          echo "aa"
-          echo "b"
