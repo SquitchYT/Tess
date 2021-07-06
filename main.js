@@ -1,6 +1,7 @@
 const time1 = new Date().getTime();
 
-const { app, BrowserWindow, ipcMain : ipc, screen, dialog } = require('electron');
+const { app, ipcMain : ipc, screen, dialog } = require('electron');
+const { BrowserWindow } = require("glasstron");
 const argv = require("yargs").argv
 
 const pty = require("node-pty");
@@ -107,6 +108,10 @@ function openWindow(config, colors) {
         transparent: needTransparent,
         frame: needFrame,
         icon: "/usr/bin/Tess.png",
+        blur: needBlur,
+		blurType: config.background,
+		blurGnomeSigma: 100,
+		blurCornerRadius: 20
     });
 
     mainWindow.removeMenu();
