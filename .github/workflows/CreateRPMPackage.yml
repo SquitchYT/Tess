@@ -37,7 +37,7 @@ jobs:
           Source0:        tess.tar.gz
 
           %%description
-          To add desc here !
+          Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology.
 
           %%global debug_package %%{nil}
 
@@ -59,10 +59,6 @@ jobs:
           cp -r app/* "$RPM_BUILD_ROOT/opt/tess/"
           ln -s "/opt/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
           
-          cd cli
-          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
-          cd ../
-          
           cp -r cli/tess-cli "$RPM_BUILD_ROOT/opt/tess-cli/"
           ln -s "/opt/tess-cli/tess-cli" "$RPM_BUILD_ROOT/usr/bin/tess-cli"
 
@@ -70,10 +66,6 @@ jobs:
           /usr/bin/*
           /opt/*
           /usr/share/applications/*
-
-          %%changelog
-          * Sat Jul 03 2021 clement foure
-          - first try
               
           ' "${VERSION}" > ./package/rpmbuild/SPECS/tess.spec
           
@@ -87,16 +79,17 @@ jobs:
           npm run build
           cp -r ./dist/linux-unpacked/* ./package/rpmbuild/SOURCES/tess-${VERSION}/app/
           
-          cp -r ./cli/* ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/
+          cd cli
+          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
+          cd ../
+          
+          cp ./cli/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
                   
           cd ./package/rpmbuild/SOURCES
           tar zcvf tess.tar.gz ./*
-          cd ../../../
-          
-          cd ./package/rpmbuild
+          cd ../
           
           rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
-          ls ./RPMS/x86_64/
           
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
@@ -107,6 +100,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}.x86_64.rpm
           asset_name: tess-${{ steps.get_release.outputs.tag_name }}.rpm
           asset_content_type: application/octet-stream
