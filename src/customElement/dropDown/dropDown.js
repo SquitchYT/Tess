@@ -68,13 +68,13 @@ class DropDownMenu extends HTMLElement {
         window.addEventListener("resize", () => {
             setTimeout(() => {
                 this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
-            }, 220)
+            }, 225)
         })
 
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
-            }, 275);
+            }, 325);
         })
     }
 

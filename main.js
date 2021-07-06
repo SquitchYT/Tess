@@ -34,7 +34,7 @@ console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You u
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
         config = JSON.parse(file);
     } catch (error) {
-        let toWrite= '{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"100","imageBlur":"0","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"Default Shell","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"sh -c $SHELL","name":"Default Shell"}],"defaultProfil":"Default Shell","terminalFontSize":"15"}'
+        let toWrite= '{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"100","imageBlur":"0","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"Default Shell","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"sh -c $SHELL","name":"Default Shell","icon":""}],"defaultProfil":"Default Shell","terminalFontSize":"15"}'
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/")
@@ -84,8 +84,6 @@ function openWindow(config, colors) {
     let needFrame = (osData.wm == "win" || osData.wm) == "macos" ? false : true;
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
     let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
-
-    console.log(needBlur, needTransparent);
 
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
@@ -200,13 +198,11 @@ ipc.on('terminal-data', (e, data) => {
 
 // App events
 app.on("ready", () => {
-    console.log(config.background)
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
-    console.log(needTransparent);
     if (needTransparent) {
         setTimeout(() => {
             openWindow(config, colors);
-        }, 150);
+        }, 200);
     } else {
         openWindow(config, colors);
     }
@@ -296,7 +292,7 @@ function reloadConfig() {
         file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", 'utf-8');
         config = JSON.parse(file);
     } catch (_) {
-        let toWrite = '{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"100","imageBlur":"0","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"Default Shell","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"sh -c $SHELL","name":"Default Shell"}],"defaultProfil":"Default Shell","terminalFontSize":"15"}'
+        let toWrite = '{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"100","imageBlur":"0","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"Default Shell","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"sh -c $SHELL","name":"Default Shell","icon":""}],"defaultProfil":"Default Shell","terminalFontSize":"15"}'
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/")

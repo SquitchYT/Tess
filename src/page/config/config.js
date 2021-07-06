@@ -411,7 +411,8 @@ profilCreateBtn.addEventListener("click", () => {
     let newProfil = {
         id: newProfilId,
         name: "New Profil",
-        programm: "sh -c $SHELL"
+        programm: "sh -c $SHELL",
+        icon: ""
     }
     config.profil.push(newProfil);
     saveUpdate();
