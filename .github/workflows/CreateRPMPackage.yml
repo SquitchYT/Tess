@@ -91,9 +91,6 @@ jobs:
           
           rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
           
-          ls ./SRPM/
-          ls ./SRPM/x86_64/
-          
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
         
@@ -103,6 +100,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}.x86_64.rpm
+          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
           asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
           asset_content_type: application/octet-stream
