@@ -80,7 +80,9 @@ ipc.on('loaded', (e, data) => {
     fontSize = (config.terminalFontSize != undefined) ? config.terminalFontSize : 14;
     const bgColor = new Color(colors.terminal.theme.background, config.transparencyValue / 100);
 
-    if (config.background == "transparent") {
+    let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
+    console.log(needTransparent);
+    if (needTransparent) {
         colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty('--opacity', (config.transparencyValue / 100) + 0.21);
         root.style.setProperty('--background', colors.terminal.theme.background);
@@ -514,7 +516,7 @@ ipc.on("newConfig", (e, data) => {
     colors =  JSON.parse(JSON.stringify(data.color));
     HandleShortcut();
 
-    if (config.background != "transparent" && config.background != "image" && getComputedStyle(document.documentElement).getPropertyValue("--opacity") == 1 && getComputedStyle(document.documentElement).getPropertyValue("--background-image").startsWith("url") == false) {
+    if (config.background == "full" && getComputedStyle(document.documentElement).getPropertyValue("--opacity") == 1 && getComputedStyle(document.documentElement).getPropertyValue("--background-image").startsWith("url") == false) {
         root.style.setProperty('--background', colors.terminal.theme.background);
     }
 

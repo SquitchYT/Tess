@@ -58,8 +58,7 @@ console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You u
     }
 }();
 
-
-if (config.background == "transparent") {
+if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") {
     app.commandLine.appendSwitch('disable-gpu');
 }
 
@@ -81,7 +80,11 @@ if (config.background == "transparent") {
 }();
 
 function openWindow(config, colors) {
-    let needFrame = osData.wm == "win" || osData.wm == "macos" ? false : true;
+    let needFrame = (osData.wm == "win" || osData.wm) == "macos" ? false : true;
+    let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
+    let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
+
+    console.log(needBlur, needTransparent);
 
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 
@@ -101,12 +104,12 @@ function openWindow(config, colors) {
         minHeight: minheight,
         minWidth: minwidth,
         title: "Tess - Terminal",
-        transparent: config.background == "transparent",
+        transparent: needTransparent,
         frame: needFrame,
         icon: "/usr/bin/Tess.png",
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("src/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
@@ -192,7 +195,10 @@ ipc.on('terminal-data', (e, data) => {
 
 // App events
 app.on("ready", () => {
-    if (config.background == "transparent") {
+    console.log(config.background)
+    let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
+    console.log(needTransparent);
+    if (needTransparent) {
         setTimeout(() => {
             openWindow(config, colors);
         }, 150);
