@@ -13,3 +13,4 @@ tess-git/src/
 tess-git/pkg/
 .idea/
 patch Note
+.eslintrc.json

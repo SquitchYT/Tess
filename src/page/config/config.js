@@ -1,8 +1,8 @@
-require = parent.require // for get the good require function
+// eslint-disable-next-line no-global-assign
+require = parent.require; // for get the good require function
 
 const { ipcRenderer, shell } = require("electron");
-const fs = require("fs")
-const childProc = require("child_process")
+const fs = require("fs");
 
 const root = document.documentElement;
 
@@ -11,7 +11,7 @@ let config = ipcRenderer.sendSync("get-config");
 
 let currentProfilPage = 0;
 
-const OsInfomations = require('../../../class/osinfo');
+const OsInfomations = require("../../../class/osinfo");
 const osData = new OsInfomations();
 
 const themeDropDownMenu = document.querySelector("drop-down-menu[parameters='theme']");
@@ -19,7 +19,7 @@ const profilDropDownMenu = document.querySelector("drop-down-menu[parameters='de
 const dropDownMenu = document.querySelectorAll("drop-down-menu");
 const progressPicker = document.querySelectorAll("scroller-picker");
 const switchButton = document.querySelectorAll("switch-button");
-const filePickerEl = document.querySelectorAll('file-picker:not([type="profil-input"])');
+const filePickerEl = document.querySelectorAll("file-picker:not([type=\"profil-input\"])");
 
 const pluginSection = document.querySelector(".plugin");
 const shortcutSection = document.querySelector(".shortcut");
@@ -34,7 +34,7 @@ const leftSideMenuLink = document.querySelectorAll(".left-side-menu-link span");
 /* NEW CONST FOR REWORK OF OPTIONS MENU*/
 const menuIcon = document.getElementById("menu-icon");
 const leftSideMenu = document.querySelector(".left-side-menu-items");
-const pageCloseButton = document.querySelectorAll(".return-button")
+const pageCloseButton = document.querySelectorAll(".return-button");
 const pages = document.querySelectorAll(".page");
 const links = document.querySelectorAll(".link");
 
@@ -46,23 +46,23 @@ const profilCreateBtn = document.querySelector(".profil-create");
 ipcRenderer.on("config", (e, data) => {
     colors = data.color,
     setTheme();
-})
+});
 
 ipcRenderer.on("newConfig", (e, data) => {
     config = data.config;
     colors = data.color;
     setTheme();
-})
+});
 
 reloadRequireIcon.addEventListener("click", () => {
     ipcRenderer.send("reload");
-})
+});
 
 leftSideMenuLink.forEach((el) => {
     el.addEventListener("click", () => {
         shell.openExternal(el.getAttribute("link"));
-    })
-})
+    });
+});
 
 let inputTimerName;
 inputProfilName.addEventListener("input", () => {
@@ -78,26 +78,26 @@ inputProfilName.addEventListener("input", () => {
                 profilDropDownMenu.setAttribute("selected-value", inputProfilName.value);
             }
 
-            let name = document.querySelector('span[profil-id="' + currentProfilPage + '"]');
+            let name = document.querySelector("span[profil-id=\"" + currentProfilPage + "\"]");
             name.innerHTML = inputProfilName.value;
 
             config.shortcut.forEach((el) => {
                 if (el.action == inputProfilName.getAttribute("value")) {
                     el.action = inputProfilName.value;
                 }
-            })
+            });
 
             loadShortcut();
             inputProfilName.setAttribute("value", inputProfilName.value);
         }
         newProfilList += el.name + ";";
-    })
+    });
     profilDropDownMenu.setAttribute("input-list", newProfilList.substring(0, newProfilList.length - 1));
 
     inputTimerName = setTimeout(() => {
         saveUpdate();
-    }, 500)
-})
+    }, 500);
+});
 
 let inputCommandTimer;
 inputProfilCommand.addEventListener("input", () => {
@@ -107,23 +107,23 @@ inputProfilCommand.addEventListener("input", () => {
         if (el.id == currentProfilPage) {
             el.programm = inputProfilCommand.value;
         }
-    })
+    });
 
     inputCommandTimer = setTimeout(() => {
         saveUpdate();
-    }, 500)
-})
+    }, 500);
+});
 inputProfilIcon.addEventListener("update", () => {
     config.profil.forEach((el) => {
         if (el.id == currentProfilPage) {
             el.icon = inputProfilIcon.getAttribute("selected-value");
             saveUpdate();
         }
-    })
-})
+    });
+});
 
 function setTheme() {
-    root.style.setProperty('--background', colors.terminal.theme.background);
+    root.style.setProperty("--background", colors.terminal.theme.background);
     root.style.setProperty("--item-background", colors.app.background);
     root.style.setProperty("--item-background-hover", colors.app.backgroundHover);
     root.style.setProperty("--item-textcolor", colors.app.textColor);
@@ -133,41 +133,43 @@ function setTheme() {
     root.style.setProperty("--item-yellow", colors.terminal.theme.yellow);
     root.style.setProperty("--app-background", colors.terminal.theme.background);
     root.style.setProperty("--app-dark-background", colors.app.secondaryBackground);
-};
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     let elements = document.querySelectorAll(".no-transition");
     setTimeout(() => {
         elements.forEach((el) => {
-            el.classList.remove("no-transition")
-        })
-    }, 240);
-})
+            el.classList.remove("no-transition");
+        });
+    }, 250);
+});
 
 /* NEW FUNCTION REWORK OPTIONS SCREEN*/
 menuIcon.addEventListener("click", () => {
     leftSideMenu.parentNode.classList.toggle("menu-hidden");
-})
+    menuIcon.classList.toggle("menu-icon-close");
+});
 
 pageCloseButton.forEach((el) => {
     el.addEventListener("click", () => {
-        el.parentNode.parentNode.classList.add("hidden-page")
-        leftSideMenu.parentNode.classList.remove("menu-hidden")
-    })
-})
+        el.parentNode.parentNode.classList.add("hidden-page");
+        leftSideMenu.parentNode.classList.remove("menu-hidden");
+        menuIcon.classList.remove("menu-icon-close");
+    });
+});
 
 !function loadProfilOnMenu() {
     config.profil.forEach((el) => {
         let newProfilPage = document.createElement("div");
-        newProfilPage.classList.add("profil-page")
-        newProfilPage.setAttribute("link", "profil-page")
-        newProfilPage.setAttribute("profil-id", el.id)
+        newProfilPage.classList.add("profil-page");
+        newProfilPage.setAttribute("link", "profil-page");
+        newProfilPage.setAttribute("profil-id", el.id);
         newProfilPage.innerHTML = `
             <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
             </svg>
             <span class="link-name profil-link-name" profil-id="${el.id}">${el.name}</span>
-        `
+        `;
 
         let deleteIcon = document.createElement("span");
         let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -184,42 +186,46 @@ pageCloseButton.forEach((el) => {
             svg.appendChild(path);
 
             deleteIcon.classList.add("delete-profil");
-            deleteIcon.appendChild(svg)
+            deleteIcon.appendChild(svg);
     
             deleteIcon.addEventListener("click", () => {
                 deleteProfil(el.id);
-            })
+            });
         }
 
         newProfilPage.addEventListener("click", (e) =>{
-            if (e.target != deleteIcon && e.target != svg && e.target != path) changeProfilPage(newProfilPage);
-        })
+            if (e.target != deleteIcon && e.target != svg && e.target != path) {
+                changeProfilPage(newProfilPage);
+                menuIcon.classList.add("menu-icon-close");
+            }
+        });
 
         newProfilPage.appendChild(deleteIcon);
         leftSideMenu.appendChild(newProfilPage);
-    })
+    });
 }();
 
 links.forEach((el) => {
     el.addEventListener("click", () => {
         links.forEach((el) => {
-            el.classList.remove("selected-page")
-        })
+            el.classList.remove("selected-page");
+        });
         let profilPage = document.querySelectorAll(".profil-page");
         profilPage.forEach((el) => {
-            el.classList.remove("selected-page")
-        })
+            el.classList.remove("selected-page");
+        });
         pages.forEach((el) => {
-            el.classList.add("hidden-page")
-            el.classList.add("page-animation")
-        })
+            el.classList.add("hidden-page");
+            el.classList.add("page-animation");
+        });
         let page = document.getElementById(el.getAttribute("link"));
-        page.classList.add("page-animation")
-        page.classList.remove("hidden-page")
+        page.classList.add("page-animation");
+        page.classList.remove("hidden-page");
         leftSideMenu.parentNode.classList.add("menu-hidden");
-        el.classList.add("selected-page")
-    })
-})
+        el.classList.add("selected-page");
+        menuIcon.classList.add("menu-icon-close");
+    });
+});
 
 function changeProfilPage(el) {
     let profilId = el.getAttribute("profil-id");
@@ -234,20 +240,20 @@ function changeProfilPage(el) {
             inputProfilIcon.setAttribute("selected-value", el.icon);
             // add inputIcon link
         } 
-    })
+    });
 
     let profilPage = document.querySelectorAll(".profil-page");
     profilPage.forEach((el) => {
         el.classList.remove("selected-page");
-    })
+    });
     links.forEach((el) => {
         el.classList.remove("selected-page");
-    })
+    });
     
     pages.forEach((el) => {
         el.classList.add("hidden-page");
         el.classList.add("page-animation");
-    })
+    });
 
     let page = document.getElementById(el.getAttribute("link"));
     page.classList.add("page-animation");
@@ -258,25 +264,25 @@ function changeProfilPage(el) {
 
 window.addEventListener("resize", () => {
     pages.forEach((el) => {
-        el.classList.remove("page-animation")
-    })
-})
+        el.classList.remove("page-animation");
+    });
+});
 
 shortcutAddBtn.addEventListener("click", () => {
     let profils = "";
     config.profil.forEach((el) => {
-        profils += el.name + ";"
-    })
+        profils += el.name + ";";
+    });
     profils = profils.substring(0, profils.length - 1);
 
     let shortcutId = 0;
 
     config.shortcut.forEach((el) => {
         shortcutId += el.id;
-    })
+    });
 
     let shortcutLine = document.createElement("div");
-    shortcutLine.classList.add("shortcutLine")
+    shortcutLine.classList.add("shortcutLine");
     shortcutLine.setAttribute("shortcut-id", shortcutId);
 
     shortcutLine.innerHTML = `
@@ -297,7 +303,7 @@ shortcutAddBtn.addEventListener("click", () => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
             </svg>
         </div>
-    `
+    `;
 
     shortcutList.push(shortcutId);
     shortcutSection.appendChild(shortcutLine);
@@ -318,19 +324,19 @@ shortcutAddBtn.addEventListener("click", () => {
                         saveUpdate();
                         finded = true;
                     }
-                })
+                });
                 if (!finded) {
                     let newShortcut = {
                         id: Number(el.getAttribute("shortcut-id")),
                         action: document.querySelector("drop-down-menu[shortcut-id='" + el.getAttribute("shortcut-id") + "'").getAttribute("selected-value"),
                         control: document.querySelector("shortcut-picker[shortcut-id='" + el.getAttribute("shortcut-id") + "'").getAttribute("selected-value")
-                    }
+                    };
                     config.shortcut.push(newShortcut);
                     saveUpdate();
                 }
             }
-        })
-    })
+        });
+    });
 
     let editIcon = document.querySelectorAll(".edit-icon");
     editIcon.forEach((el) => {
@@ -339,8 +345,8 @@ shortcutAddBtn.addEventListener("click", () => {
             document.querySelector(".valid-icon[shortcut-id='" + el.getAttribute("shortcut-id") + "'").classList.remove("hidden");
             document.querySelector("drop-down-menu[shortcut-id='" + el.getAttribute("shortcut-id") + "'").removeAttribute("disable");
             document.querySelector("shortcut-picker[shortcut-id='" + el.getAttribute("shortcut-id") + "'").removeAttribute("disable");
-        })
-    })
+        });
+    });
 
     let deleteIcon = document.querySelectorAll(".trash-icon");
     deleteIcon.forEach((el) => {
@@ -354,31 +360,31 @@ shortcutAddBtn.addEventListener("click", () => {
                         if (shortcutObj.id == el.getAttribute("shortcut-id")) {
                             shortcutData.splice(index, 1);
                         }
-                    }) 
+                    }); 
                 }
-            })
+            });
             saveUpdate();
-        })
-    })
-})
+        });
+    });
+});
 
 profilCreateBtn.addEventListener("click", () => {
-    let newProfilId = 1
+    let newProfilId = 1;
 
     config.profil.forEach((el) => {
         newProfilId += el.id;
-    })
+    });
 
     let newProfilPage = document.createElement("div");
-    newProfilPage.classList.add("profil-page")
-    newProfilPage.setAttribute("link", "profil-page")
-    newProfilPage.setAttribute("profil-id", newProfilId)
+    newProfilPage.classList.add("profil-page");
+    newProfilPage.setAttribute("link", "profil-page");
+    newProfilPage.setAttribute("profil-id", newProfilId);
     newProfilPage.innerHTML = `
         <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
         </svg>
         <span class="link-name profil-link-name" profil-id="${newProfilId}">New Profil</span>
-    ` 
+    `; 
     let deleteIcon = document.createElement("span");
     let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -398,12 +404,15 @@ profilCreateBtn.addEventListener("click", () => {
 
         deleteIcon.addEventListener("click", () => {
             deleteProfil(newProfilId);
-        })
+        });
     }
 
     newProfilPage.addEventListener("click", (e) =>{
-        if (e.target != deleteIcon && e.target != svg && e.target != path) changeProfilPage(newProfilPage);
-    })
+        if (e.target != deleteIcon && e.target != svg && e.target != path) {
+            changeProfilPage(newProfilPage);
+            menuIcon.classList.add("menu-icon-close");
+        }
+    });
 
     newProfilPage.appendChild(deleteIcon);
     leftSideMenu.appendChild(newProfilPage);
@@ -413,20 +422,20 @@ profilCreateBtn.addEventListener("click", () => {
         name: "New Profil",
         programm: "sh -c $SHELL",
         icon: ""
-    }
+    };
     config.profil.push(newProfil);
     saveUpdate();
-})
+});
 
 
 
 function loadConfig() {
     let profils = "";
     config.profil.forEach((el) => {
-        profils += el.name + ";"
-    })
-    profils = profils.substring(0, profils.length - 1)
-    profilDropDownMenu.setAttribute("input-list", profils)
+        profils += el.name + ";";
+    });
+    profils = profils.substring(0, profils.length - 1);
+    profilDropDownMenu.setAttribute("input-list", profils);
 
     // Load all theme inside menu
     fs.readdir(osData.homeDir + "/Applications/tess/config/theme", (err, files) => {
@@ -436,13 +445,13 @@ function loadConfig() {
             let themeList = "";
             files.forEach((file) => {
                 if (file.endsWith(".json") && file != "default.json") {
-                    themeList += file.split(".json")[0] + ";"
+                    themeList += file.split(".json")[0] + ";";
                 }
-            })
+            });
             themeList += "default";
             themeDropDownMenu.setAttribute("input-list", themeList);
         }
-    })
+    });
 
     progressPicker.forEach((el) => {
         el.removeAttribute("selected-value");
@@ -451,42 +460,42 @@ function loadConfig() {
             config[el.getAttribute("parameters")] = el.getAttribute("selected-value");
             saveUpdate();
             if (el.getAttribute("reloadRequire") != undefined) {
-                reloadRequireIcon.classList.remove("invisible")
+                reloadRequireIcon.classList.remove("invisible");
             }
-        })
-    })
+        });
+    });
     setTimeout(() => {
         dropDownMenu.forEach((el) => {
-            el.setAttribute("selected-value", config[el.getAttribute("parameters")])
+            el.setAttribute("selected-value", config[el.getAttribute("parameters")]);
             el.addEventListener("update", () => {
-                config[el.getAttribute("parameters")] = el.getAttribute("selected-value")
+                config[el.getAttribute("parameters")] = el.getAttribute("selected-value");
                 saveUpdate();
                 if (el.getAttribute("reloadRequire") != undefined) {
-                    reloadRequireIcon.classList.remove("invisible")
+                    reloadRequireIcon.classList.remove("invisible");
                 }
-            })
-        })
+            });
+        });
     }, 40);
     switchButton.forEach((el) => {
         el.setAttribute("state", config[el.getAttribute("parameters")]);
         el.addEventListener("updatedValue", () => {
-            config[el.getAttribute("parameters")] = el.getAttribute("state")
+            config[el.getAttribute("parameters")] = el.getAttribute("state");
             saveUpdate();
             if (el.getAttribute("reloadRequire") != undefined) {
-                reloadRequireIcon.classList.remove("invisible")
+                reloadRequireIcon.classList.remove("invisible");
             }
-        })
-    })
+        });
+    });
     filePickerEl.forEach((el) => {
         el.setAttribute("selected-value", config[el.getAttribute("parameters")]);
         el.addEventListener("update", () => {
             config[el.getAttribute("parameters")] = el.getAttribute("selected-value");
             if (el.getAttribute("reloadRequire") != undefined) {
-                reloadRequireIcon.classList.remove("invisible")
+                reloadRequireIcon.classList.remove("invisible");
             }
             saveUpdate();
-        })
-    })
+        });
+    });
 
     // Load Plugin Section
     fs.readdir(osData.homeDir + "/Applications/tess/plugins", (err, plugins) => {
@@ -502,11 +511,11 @@ function loadConfig() {
                 description.classList.add("description");
     
                 let title = document.createElement("span");
-                title.classList.add("title")
+                title.classList.add("title");
                 title.innerHTML = plugin;
                 let details = document.createElement("span");
-                details.classList.add("details")
-                details.innerHTML = "TODO : get plugins description"
+                details.classList.add("details");
+                details.innerHTML = "TODO : get plugins description";
     
                 description.appendChild(title);
                 description.appendChild(details);
@@ -514,49 +523,49 @@ function loadConfig() {
                 newPluginSwitchOptions.appendChild(description);
     
                 let switchButton = document.createElement("switch-button");
-                switchButton.setAttribute("state", false)
+                switchButton.setAttribute("state", false);
                 
                 if (config.plugin.includes(plugin)) {
-                    switchButton.setAttribute("state", true)
+                    switchButton.setAttribute("state", true);
                 }
     
                 switchButton.addEventListener("updatedValue", () => {
                     if (switchButton.getAttribute("state") == "true") {
-                        config.plugin.push(plugin)
+                        config.plugin.push(plugin);
                     } else {
                         config.plugin.forEach((el, index) => {
                             if (el == plugin) {
                                 config.plugin.splice(index, 1);
                             }
-                        })
+                        });
                     }
                     reloadRequireIcon.classList.remove("invisible");
-                    saveUpdate()
-                })
+                    saveUpdate();
+                });
     
                 newPluginSwitchOptions.appendChild(switchButton);
                 pluginSection.appendChild(newPluginSwitchOptions);
-            })
+            });
         }
-    })
+    });
 }
 
 function loadShortcut() {
     let profils = "";
     config.profil.forEach((el) => {
-        profils += el.name + ";"
-    })
+        profils += el.name + ";";
+    });
     profils = profils.substring(0, profils.length - 1);
 
     shortcutList.forEach((el) => {
-        let shortcutLine = document.querySelector(`.shortcutLine[shortcut-id='${el}'`)
+        let shortcutLine = document.querySelector(`.shortcutLine[shortcut-id='${el}'`);
         shortcutSection.removeChild(shortcutLine);
-    })
+    });
     shortcutList = [];
 
     config.shortcut.forEach((el) => {
         let shortcutLine = document.createElement("div");
-        shortcutLine.classList.add("shortcutLine")
+        shortcutLine.classList.add("shortcutLine");
         shortcutLine.setAttribute("shortcut-id", el.id);
         shortcutLine.innerHTML = `
             <div>
@@ -576,11 +585,11 @@ function loadShortcut() {
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                 </svg>
             </div>
-        `
+        `;
 
         shortcutSection.appendChild(shortcutLine);
-        shortcutList.push(el.id)
-    })
+        shortcutList.push(el.id);
+    });
 
     let validIcon = document.querySelectorAll(".valid-icon");
     validIcon.forEach((el) => {
@@ -596,10 +605,10 @@ function loadShortcut() {
                         shortcut.control = document.querySelector("shortcut-picker[shortcut-id='" + el.getAttribute("shortcut-id") + "'").getAttribute("selected-value");
                         saveUpdate();
                     }
-                })
+                });
             }
-        })
-    })
+        });
+    });
 
     let editIcon = document.querySelectorAll(".edit-icon");
     editIcon.forEach((el) => {
@@ -608,8 +617,8 @@ function loadShortcut() {
             document.querySelector(".valid-icon[shortcut-id='" + el.getAttribute("shortcut-id") + "'").classList.remove("hidden");
             document.querySelector("drop-down-menu[shortcut-id='" + el.getAttribute("shortcut-id") + "'").removeAttribute("disable");
             document.querySelector("shortcut-picker[shortcut-id='" + el.getAttribute("shortcut-id") + "'").removeAttribute("disable");
-        })
-    })
+        });
+    });
 
     let deleteIcon = document.querySelectorAll(".trash-icon");
     deleteIcon.forEach((el) => {
@@ -621,14 +630,14 @@ function loadShortcut() {
                     obj.splice(index, 1);
                     config.shortcut.forEach((shortcutObj, index, shortcutData) => {
                         if (shortcutObj.id == el.getAttribute("shortcut-id")) {
-                            shortcutData.splice(index, 1)
+                            shortcutData.splice(index, 1);
                         }
-                    }) 
+                    }); 
                     saveUpdate();
                 }
-            })
-        })
-    })
+            });
+        });
+    });
 }
 
 function saveUpdate() {
@@ -643,13 +652,13 @@ function deleteProfil(id) {
             list.splice(index, 1);
             name = el.name;
         }
-    })
+    });
 
     config.shortcut.forEach((el, index, list) => {
         if (el.action == name) {
             list.splice(index, 1);
         }
-    })
+    });
 
     if (config.defaultProfil == name) {
         // update drop down menu for default profil

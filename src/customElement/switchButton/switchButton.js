@@ -1,31 +1,31 @@
 class SwitchButton extends HTMLElement {
     constructor() {
-        super()
-        this.shadow = this.attachShadow({mode: 'open'});
+        super();
+        this.shadow = this.attachShadow({mode: "open"});
 
-        let linkElem = document.createElement('link');
-        linkElem.setAttribute('rel', 'stylesheet');
-        linkElem.setAttribute('href', '../../customElement/switchButton/style.css');
+        let linkElem = document.createElement("link");
+        linkElem.setAttribute("rel", "stylesheet");
+        linkElem.setAttribute("href", "../../customElement/switchButton/style.css");
         this.shadow.appendChild(linkElem);
 
-        let button_div = document.createElement("div")
+        let button_div = document.createElement("div");
 
-        let selector = document.createElement("div")
-        selector.classList.add("selector", "selector-on")
-        button_div.appendChild(selector)
+        let selector = document.createElement("div");
+        selector.classList.add("selector", "selector-on");
+        button_div.appendChild(selector);
 
-        button_div.classList.add("button", "button-on")
+        button_div.classList.add("button", "button-on");
 
         button_div.addEventListener("click", () => {
             if (this.getAttribute("state") == "true") {
                 this.setAttribute("state", false);
             } else {
-                this.setAttribute("state", true)
+                this.setAttribute("state", true);
             }
-        })
+        });
 
         this.buttonDiv = button_div;
-        this.selector = selector
+        this.selector = selector;
 
         this.shadow.appendChild(button_div);
     }
@@ -52,4 +52,4 @@ class SwitchButton extends HTMLElement {
     }
 }
 
-customElements.define("switch-button", SwitchButton)
+customElements.define("switch-button", SwitchButton);

@@ -200,6 +200,24 @@ input::-webkit-inner-spin-button {
     top: 3px
 }
 
+#menu-icon svg {
+    height: 20px;
+    width: 20px;
+    transform: rotate(90deg);    
+}
+
+#menu-icon svg {
+    transition: all 325ms ease !important;
+}
+
+.menu-icon-close svg {
+    transform: rotate(0deg) !important;
+}
+
+.menu-icon-close svg path {
+    d: path("M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z") !important;
+}
+
 .left-side-menu-items {
     display: flex;
     height: calc(100% - 57px);
@@ -207,15 +225,6 @@ input::-webkit-inner-spin-button {
     flex-direction: column;
     overflow-y: overlay;
     align-items: center;
-}
-
-.save-alert span {
-    white-space: nowrap;
-    font-size: 17px;
-    overflow: hidden;
-    max-width: 35vw;
-    color: var(--item-textcolor);
-    font-weight: 500;
 }
 
 .config-group {
@@ -249,7 +258,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     flex-direction: column;
-    transition: all 425ms ease;
+    transition: all 450ms ease;
 }
 
 .left-side-menu-bottom {

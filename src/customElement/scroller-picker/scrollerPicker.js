@@ -1,11 +1,11 @@
 class ScrollerPicker extends HTMLElement {
     constructor() {
         super();
-        this.shadow = this.attachShadow({ mode: 'open' })
+        this.shadow = this.attachShadow({ mode: "open" });
 
-        let linkElem = document.createElement('link');
-        linkElem.setAttribute('rel', 'stylesheet');
-        linkElem.setAttribute('href', '../../customElement/scroller-picker/style.css');
+        let linkElem = document.createElement("link");
+        linkElem.setAttribute("rel", "stylesheet");
+        linkElem.setAttribute("href", "../../customElement/scroller-picker/style.css");
         this.shadow.appendChild(linkElem);
 
         let value = document.createElement("div");
@@ -14,81 +14,81 @@ class ScrollerPicker extends HTMLElement {
 
         let maxIndicator = document.createElement("div");
         maxIndicator.classList.add("indicator");
-        maxIndicator.innerHTML = "1"
+        maxIndicator.innerHTML = "1";
         this.shadow.appendChild(maxIndicator);
 
         let minIndicator = document.createElement("div");
         minIndicator.classList.add("indicator");
         minIndicator.classList.add("min-indicator");
-        minIndicator.innerHTML = "0"
+        minIndicator.innerHTML = "0";
         this.shadow.appendChild(minIndicator);
 
         this.maxIndicator = maxIndicator;
         this.minIndicator = minIndicator;
  
         let bar = document.createElement("div");
-        bar.classList.add("bar")
+        bar.classList.add("bar");
 
         let progress = document.createElement("div");
-        progress.classList.add("progress")
+        progress.classList.add("progress");
 
         this.progress = progress;
 
         bar.addEventListener("mousedown", (e) => {
             progress.style.transition = "none";
             this.mouseDown = true;
-            value.classList.add("visible")
-            let dif = e.pageX - progress.getBoundingClientRect().right
-            progress.style.width = progress.getBoundingClientRect().width + dif + "px"
-            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)"
-            let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width
+            value.classList.add("visible");
+            let dif = e.pageX - progress.getBoundingClientRect().right;
+            progress.style.width = progress.getBoundingClientRect().width + dif + "px";
+            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)";
+            let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
-            value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min)
-            this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min))
+            value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
+            this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min));
 
             this.dispatchEvent(new CustomEvent("update"), {
                 composed: true,
                 bubbles: true,
             });
-        })
+        });
 
         document.addEventListener("mousemove", (e) => {
             if (this.mouseDown == true) {
-                let dif = e.pageX - progress.getBoundingClientRect().right
-                progress.style.width = progress.getBoundingClientRect().width + dif + "px"
-                value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)"
-                let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width
+                let dif = e.pageX - progress.getBoundingClientRect().right;
+                progress.style.width = progress.getBoundingClientRect().width + dif + "px";
+                value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)";
+                let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
                 this.pourcent = pourcent;
-                value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min)
-                this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min))
+                value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
+                this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min));
 
                 this.dispatchEvent(new CustomEvent("update"), {
                     composed: true,
                     bubbles: true,
                 });
             }
-        })
+        });
 
         document.addEventListener("mouseup", () => {
             progress.style.transition = "all 500ms";
             this.mouseDown = false;
-            value.classList.remove("visible")
-        })
+            value.classList.remove("visible");
+        });
 
         bar.appendChild(progress);
-        this.shadow.appendChild(bar)
+        this.shadow.appendChild(bar);
 
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
-                maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)"
+                maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
             }, 265);
-        })
+        });
 
         window.addEventListener("resize", () => {
             progress.style.transition = "all 500ms";
             progress.style.width = this.pourcent * (this.getBoundingClientRect().width) + "px";
             maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
-        })
+        });
     }
 
     static get observedAttributes() {
@@ -107,9 +107,9 @@ class ScrollerPicker extends HTMLElement {
         } else if (name == "selected-value" && oldValue == null && newValue != null) {
             let pourcent = parseInt(newValue - this.min) / (this.max - this.min) * 100;
             this.pourcent = pourcent / 100;
-            this.progress.style.width = pourcent + "%"
+            this.progress.style.width = pourcent + "%";
         }
     }
 }
 
-customElements.define("scroller-picker", ScrollerPicker)
+customElements.define("scroller-picker", ScrollerPicker);

@@ -1,11 +1,11 @@
 class DropDownMenu extends HTMLElement {
     constructor() {
-        super()
-        this.shadow = this.attachShadow({mode: 'open'})
+        super();
+        this.shadow = this.attachShadow({mode: "open"});
 
-        let linkElem = document.createElement('link');
-        linkElem.setAttribute('rel', 'stylesheet');
-        linkElem.setAttribute('href', '../../customElement/dropDown/style.css');
+        let linkElem = document.createElement("link");
+        linkElem.setAttribute("rel", "stylesheet");
+        linkElem.setAttribute("href", "../../customElement/dropDown/style.css");
         this.shadow.appendChild(linkElem);
 
         let displayArea = document.createElement("div");
@@ -22,18 +22,18 @@ class DropDownMenu extends HTMLElement {
         icon.classList.add("icon");
         this.icon = icon;
 
-        displayArea.appendChild(selectedValue)
-        displayArea.appendChild(icon)
-        this.shadow.appendChild(displayArea)
+        displayArea.appendChild(selectedValue);
+        displayArea.appendChild(icon);
+        this.shadow.appendChild(displayArea);
 
         let dropdown = document.createElement("div");
-        dropdown.classList.add("drop-down", "invisible")
+        dropdown.classList.add("drop-down", "invisible");
         this.dropDown = dropdown;
         this.isOpen = false;
 
         displayArea.addEventListener("click", (event) => {
-            dropdown.classList.toggle("invisible")
-            icon.classList.toggle("icon-close")
+            dropdown.classList.toggle("invisible");
+            icon.classList.toggle("icon-close");
 
             if (this.isOpen == true) {
                 event.stopPropagation();
@@ -46,36 +46,36 @@ class DropDownMenu extends HTMLElement {
                     this.isOpen = true;
                 }
             }, 80);
-        })
+        });
 
         let listElement = document.createElement("div");
-        listElement.classList.add("list-element")
+        listElement.classList.add("list-element");
 
         this.dropDownValues = [];
 
         document.addEventListener("click", () => {
             if (this.isOpen == true) {
-                dropdown.classList.add("invisible")
-                icon.classList.remove("icon-close")
+                dropdown.classList.add("invisible");
+                icon.classList.remove("icon-close");
                 this.isOpen = false;
             }
-        })
+        });
 
         this.listElement = listElement;
-        dropdown.appendChild(listElement)
+        dropdown.appendChild(listElement);
         this.shadow.appendChild(dropdown);
 
         window.addEventListener("resize", () => {
             setTimeout(() => {
                 this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
-            }, 225)
-        })
+            }, 225);
+        });
 
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
             }, 325);
-        })
+        });
     }
 
     static get observedAttributes() {
@@ -84,27 +84,27 @@ class DropDownMenu extends HTMLElement {
       
     attributeChangedCallback(name, oldValue, newValue) {
         if (name == "input-list" && newValue != null) {
-            let inputValues = newValue.split(";")
+            let inputValues = newValue.split(";");
 
             this.listElement.innerHTML = "";
             this.dropDownValues = [];
 
             inputValues.forEach((value) => {
-                let el = document.createElement("span")
-                el.classList.add("drop-down-value")
-                el.innerHTML = value
+                let el = document.createElement("span");
+                el.classList.add("drop-down-value");
+                el.innerHTML = value;
 
-                this.dropDownValues.push(el)
+                this.dropDownValues.push(el);
 
                 el.addEventListener("click", (event) => {
-                    this.setAttribute("selected-value", el.innerHTML)
-                    this.dropDown.classList.toggle("invisible")
-                    this.icon.classList.toggle("icon-close")
+                    this.setAttribute("selected-value", el.innerHTML);
+                    this.dropDown.classList.toggle("invisible");
+                    this.icon.classList.toggle("icon-close");
                     this.isOpen = false;
                     event.stopPropagation();
-                })
+                });
 
-                this.listElement.appendChild(el)
+                this.listElement.appendChild(el);
             });
             
             setTimeout(() => {
@@ -120,7 +120,7 @@ class DropDownMenu extends HTMLElement {
                         bubbles: true,
                     });
                 }
-            })
+            });
             this.selectedValue.innerText = newValue;
         } else if (name == "parameters") {
             this.parameters = newValue;
@@ -131,12 +131,12 @@ class DropDownMenu extends HTMLElement {
             });
         } else if(name == "disable") {
             if (newValue == "") {
-                this.displayArea.classList.add("desactivate")
+                this.displayArea.classList.add("desactivate");
             } else {
-                this.displayArea.classList.remove("desactivate")
+                this.displayArea.classList.remove("desactivate");
             }
         }
     }
 }
 
-customElements.define("drop-down-menu", DropDownMenu)
+customElements.define("drop-down-menu", DropDownMenu);
