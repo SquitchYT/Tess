@@ -1,43 +1,39 @@
 <h1 align="center">Tess</h1>
 <p align="center">
-  <a href="https://aur.archlinux.org/packages/tess-git/"><img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white"/></a>
-  <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white"/></a>
-  <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Fedora-294172?style=for-the-badge&logo=fedora&logoColor=white"/></a>
-
+  <a href="https://aur.archlinux.org/packages/tess-git/"><img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" alt="Arch Linux"/></a>
+  <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Debian"/></a>
+  <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Fedora-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Fedora"/></a>
   <br>
-  <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" /></a>
-  <a href="https://isocpp.org/"><img src="https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" /></a>
+  <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JS"/></a>
+  <a href="https://isocpp.org/"><img src="https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++"/></a>
+  <a href="https://nodejs.org/en/"><img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node-dot-js&logoColor=white" alt="NodeJS"/></a>
   <br>
-  <a href="https://nodejs.org/en/"><img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node-dot-js&logoColor=white" /></a>
-  <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Electron-2B2E3A?style=for-the-badge&logo=electron&logoColor=9FEAF9" /></a>
+  <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Electron-2B2E3A?style=for-the-badge&logo=electron&logoColor=9FEAF9" alt="Electron"/></a>
+  <a href="https://discord.com/invite/e3Dz5gwMfu"><img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/></a>
 </p>
+<h3 align="center">
+    <strong>Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology. </strong>
+</h3>
+
+<h5 align="center">
+    <strong>Check <a href="https://github.com/SquitchYT/Tess/wiki/">Wiki</a> the to know how to use Tess and more information.</strong>
+</h5>
+
+
 
 ## Installation
-### Manual Build
-
-First, clone the project: `git clone https://github.com/SquitchYT/Tess`
-
-Move to folder: `cd Tess/`
-
-Install dependencies with [pnpm](https://pnpm.io/) or [npm](https://www.npmjs.com/): `npm i`
-
-Build package: `npm run build`
-
-Launch Tess: `npm run test`
-
 ### Install from packages
-**ArchLinux (aur)**: https://aur.archlinux.org/packages/tess-git/
- * `yay -S tess-git` (replace yay by your aur package manager if you don't use it)
+**ArchLinux (aur)**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#archlinux)
 <br>
+**Deb package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#debianubuntu)
+<br>
+**Rpm package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#install-with-rpm-package)
+<br>
+**Snap package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#snap)
 
-
-**Snap package**: https://snapcraft.io/tess
- * Install snap if you don't have it: https://snapcraft.io/docs/installing-snapd
- * When it's installed run: `snap install tess`
 
 ## Preview
 [<img width="520" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview.gif" alt="Preview1">]("https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview.gif")
-
 
 ## Contributors
 [<img width="45" src="https://avatars.githubusercontent.com/u/63391793?s=400&u=715a3054e5ce60b197271a3a2a188a48adbd405e&v=4" alt="Squitch">](https://github.com/SquitchYT)
