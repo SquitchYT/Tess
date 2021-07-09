@@ -16,7 +16,7 @@
 </h3>
 
 <h5 align="center">
-    <strong>Check the<a href="https://github.com/SquitchYT/Tess/wiki/">Wiki</a> to know how to use Tess</strong>
+    <strong>Check the <a href="https://github.com/SquitchYT/Tess/wiki/">Wiki</a> to know how to use Tess</strong>
 </h5>
 
 
