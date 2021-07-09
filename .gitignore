@@ -14,3 +14,4 @@ tess-git/pkg/
 .idea/
 patch Note
 .eslintrc.json
+pnpm-lock.yaml

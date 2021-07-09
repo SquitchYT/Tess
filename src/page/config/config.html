@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Document</title>
+        <title>Configuration</title>
         <script src="../../customElement/switchButton/switchButton.js"></script>
         <script src="../../customElement//dropDown/dropDown.js"></script>
         <script src="../../customElement/scroller-picker/scrollerPicker.js"></script>
@@ -19,12 +19,12 @@
                 </svg>
             </div>
             <div class="left-side-menu-items">
-                <h2 class="left-side-menu-title">Paramètres</h2>
+                <h2 class="left-side-menu-title">Settings</h2>
                 <div class="link" link="apparence-page">
                     <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd" />
                     </svg>
-                    <span class="link-name">Apparence</span>
+                    <span class="link-name">Appearance</span>
                 </div>
                 <div class="link" link="terminal-page">
                     <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -36,7 +36,7 @@
                     <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" />
                     </svg>
-                    <span class="link-name">Extentions</span>
+                    <span class="link-name">Extensions</span>
                 </div>
                 <div class="link" link="shortcut-page">
                     <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -44,9 +44,7 @@
                     </svg>
                     <span class="link-name">Shortcut</span>
                 </div>
-    
                 <br>
-    
                 <div class="profil-create">
                     <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
                         <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
@@ -54,11 +52,10 @@
                     <span class="link-name">Create</span>
                 </div>
             </div>
-
             <div class="left-side-menu-bottom">
                 <div class="left-side-menu-link">
                     <span link="https://discord.gg/e3Dz5gwMfu">Discord</span>
-                    <span link="https://github.com/SquitchYT/Tess">Site</span>
+                    <span link="https://github.com/SquitchYT/Tess">GitHub</span>
                 </div>
                 <div class="left-side-menu-icon">
                     <div class="reload-require invisible">
@@ -77,14 +74,13 @@
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                <span class="page-title">Apparences</span>
+                <span class="page-title">Appearances</span>
             </div>
-
             <div class="config-group">
                 <div class="config-props">
                     <div class="description">
-                        <span class="title"> Theme</span>
-                        <span class="details">Theme du terminal</span>
+                        <span class="title">Theme</span>
+                        <span class="details">Terminal theme</span>
                     </div>
                     <drop-down-menu input-list="default" selected-value="default" parameters="theme"></drop-down-menu>
                 </div>
@@ -92,44 +88,34 @@
             <div class="config-group">
                 <div class="config-props">
                     <div class="description">
-                        <span class="title"> Background type</span>
-                        <span class="details">Style du fond de l'application</span>
+                        <span class="title">Background type</span>
+                        <span class="details">Style of the application background</span>
                     </div>
                     <drop-down-menu input-list="full;transparent;image;acrylic;blurbehind" selected-value="full" parameters="background" name="background-type" reloadRequire></drop-down-menu>
                 </div>
                 <div class="config-props">
                     <div class="description">
-                        <span class="title">Transparence du terminal</span>
-                        <span class="details">Change la transparence du terminal quand le type de fond est défini sur transparent</span>
+                        <span class="title">Terminal transparency</span>
+                        <span class="details">Changes the transparency of terminal when the background type is set to transparent</span>
                     </div>
                     <scroller-picker min-value=0 max-value=100 suffix="%" parameters="transparencyValue" reloadRequire></scroller-picker>
                 </div>
                 <div class="config-props">
                     <div class="description">
-                        <span class="title">Lien de l'image</span>
-                        <span class="details">Change l'image de fond quand le type de fond est défini sur image</span>
+                        <span class="title">Image link</span>
+                        <span class="details">Change background image when the background type is set to image</span>
                     </div>
                     <file-picker reloadRequire parameters="imageLink"></file-picker>
                 </div>
                 <div class="config-props">
                     <div class="description">
-                        <span class="title">Flou de l'image</span>
-                        <span class="details">Change le flou de l'image quand le type de fond est défini sur image</span>
+                        <span class="title">Image blur</span>
+                        <span class="details">Changes the blur of the image when the background type is set to image</span>
                     </div>
                     <scroller-picker min-value=0 max-value=20 suffix="px" parameters="imageBlur" reloadRequire></scroller-picker>
                 </div>
             </div>
-            <div class="config-group">
-                <div class="config-props">
-                    <div class="description">
-                        <span class="title"> Background type</span>
-                        <span class="details">Style du fond de l'application</span>
-                    </div>
-                </div>
-            </div>
         </section>
-
-
 
         <section class="page no-transition hidden-page plugin" id="plugin-page">
             <div class="page-header">
@@ -142,8 +128,6 @@
             </div>
         </section>
 
-
-
         <section class="page no-transition hidden-page" id="terminal-page">
             <div class="page-header">
                 <div class="return-button">
@@ -153,26 +137,25 @@
                 </div>
                 <span class="page-title">Terminal</span>
             </div>
-
             <div class="config-group">
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Cursor</span>
-                        <span class="details">Curseur du terminal</span>
+                        <span class="details">Terminal cursor</span>
                     </div>
                     <drop-down-menu input-list="bar;block;underline" selected-value="block", parameters="cursorStyle"></drop-down-menu>
                 </div>
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Cursor blink</span>
-                        <span class="details">Defini si le curseur clignote.</span>
+                        <span class="details">Defines whether the cursor is blinking.</span>
                     </div>
                     <switch-button parameters="cursorBlink"></switch-button>
                 </div>
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Font size</span>
-                        <span class="details">Defini la taille du texte du terminal.</span>
+                        <span class="details">Defines the text size of the terminal.</span>
                     </div>
                     <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
                 </div>
@@ -180,14 +163,13 @@
             <div class="config-group">
                 <div class="config-props">
                     <div class="description">
-                        <span class="title">Default Profil</span>
-                        <span class="details">Profil par default du terminal</span>
+                        <span class="title">Default Profile</span>
+                        <span class="details">Default terminal profile</span>
                     </div>
                     <drop-down-menu input-list="default" selected-value="default" parameters="defaultProfil"></drop-down-menu>
                 </div>
             </div>
         </section>
-
 
         <section class="page no-transition hidden-page shortcut" id="shortcut-page">
             <div class="page-header">
@@ -205,10 +187,6 @@
             </div>
         </section>
 
-
-
-
-
         <section class="page no-transition hidden-page" id="profil-page">
             <div class="page-header">
                 <div class="return-button">
@@ -216,28 +194,27 @@
                         <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                     </svg>
                 </div>
-                <span class="page-title">Apparences</span>
+                <span class="page-title">Appearances</span>
             </div>
-
             <div class="config-group">
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Name</span>
-                        <span class="details">Nom du profil</span>
+                        <span class="details">Profile name</span>
                     </div>
                     <input class="profil-name" type="text">
                 </div>
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Icon</span>
-                        <span class="details">Icone du profil</span>
+                        <span class="details">Profile icon</span>
                     </div>
                     <file-picker class="profil-icon" type="profil-input"></file-picker>
                 </div>
                 <div class="config-props">
                     <div class="description">
-                        <span class="title">Commande</span>
-                        <span class="details">Commande du profil</span>
+                        <span class="title">Command</span>
+                        <span class="details">Command profile</span>
                     </div>
                     <input class="profil-command" type="text">
                 </div>
