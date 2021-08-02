@@ -6,6 +6,7 @@
 * {
     user-select: none;
     color: var(--text-color);
+    cursor: pointer;
 }
 
 .element {
@@ -40,6 +41,10 @@
     width: 36px;
     height: 100%;
     box-shadow: -12px 0px 9px -5px var(--background);
+}
+
+.edit-icon:hover {
+    filter: brightness(1.15);
 }
 
 .edit-icon svg {

@@ -32,6 +32,7 @@ class DropDownMenu extends HTMLElement {
         this.isOpen = false;
 
         displayArea.addEventListener("click", (event) => {
+            this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
             dropdown.classList.toggle("invisible");
             icon.classList.toggle("icon-close");
 
@@ -69,12 +70,6 @@ class DropDownMenu extends HTMLElement {
             setTimeout(() => {
                 this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
             }, 225);
-        });
-
-        document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
-                this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
-            }, 325);
         });
     }
 

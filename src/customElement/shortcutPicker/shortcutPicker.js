@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // eslint-disable-next-line no-global-assign
 require = parent.require; // for get the good require function
 try {
@@ -52,6 +51,7 @@ class shortcutPicker extends HTMLElement {
                 this.setAttribute("selected-value", shortcutString);
     
                 setTimeout(() => {
+                    // eslint-disable-next-line no-undef
                     ipcRenderer.send("shortcut", true);
                 }, 100);
                 this.underHandle = false;

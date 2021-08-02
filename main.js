@@ -249,7 +249,11 @@ ipc.on("to-define-name", () => {
 
 ipc.on("resize", (e, data) => {
     shells.forEach((el) => {
-        el.shell.resize(data.cols, data.rows);
+        try {
+            el.shell.resize(data.cols, data.rows);   
+        } catch (e) {
+            console.log(e);
+        }
     });
 });
 
