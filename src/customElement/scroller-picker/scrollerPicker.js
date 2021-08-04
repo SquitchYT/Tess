@@ -81,7 +81,7 @@ class ScrollerPicker extends HTMLElement {
         document.addEventListener("DOMContentLoaded", () => {
             setTimeout(() => {
                 maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
-            }, 325);
+            }, 500);
         });
 
         window.addEventListener("resize", () => {

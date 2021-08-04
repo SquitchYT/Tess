@@ -515,7 +515,8 @@ function loadConfig() {
                 title.innerHTML = plugin;
                 let details = document.createElement("span");
                 details.classList.add("details");
-                details.innerHTML = "TODO : get plugins description";
+                //details.innerHTML = "TODO : get plugins description";
+                details.innerHTML = plugin;
     
                 description.appendChild(title);
                 description.appendChild(details);
