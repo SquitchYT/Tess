@@ -21,11 +21,15 @@ let workers = [];
 let mainWindow;
 let shells = [];
 
-
-//Detect if workdir specified
+//Modifier getting with args
 let customWorkdir;
-if (argv.workdir) {
-    customWorkdir = argv.workdir;
+let customCommand;
+
+if (argv.workdir || argv.cd) {
+    customWorkdir = argv.workdir || argv.cd;
+}
+if (argv.command || argv.e) {
+    customCommand = argv.command || argv.e;
 }
 console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
 
@@ -34,7 +38,7 @@ console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You u
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
         config = JSON.parse(file);
     } catch (error) {
-        let toWrite= "{\"theme\":\"default\",\"background\":\"full\",\"cursorStyle\":\"block\",\"transparencyValue\":\"100\",\"imageBlur\":\"0\",\"imageLink\":\"\",\"plugin\":[],\"shortcut\":[{\"id\":1,\"action\":\"Default Shell\",\"control\":\"CTRL + T\"},{\"id\":2,\"action\":\"Config\",\"control\":\"CTRL + P\"},{\"id\":3,\"action\":\"Paste\",\"control\":\"CTRL + V\"},{\"id\":6,\"action\":\"Copy\",\"control\":\"CTRL + C\"},{\"id\":12,\"action\":\"Close\",\"control\":\"CTRL + W\"}],\"profil\":[{\"id\":1,\"programm\":\"sh -c $SHELL\",\"name\":\"Default Shell\",\"icon\":\"\"}],\"defaultProfil\":\"Default Shell\",\"terminalFontSize\":\"15\"}";
+        let toWrite= "{\"theme\":\"default\",\"background\":\"full\",\"cursorStyle\":\"block\",\"transparencyValue\":\"100\",\"imageBlur\":\"0\",\"imageLink\":\"\",\"plugin\":[],\"shortcut\":[{\"id\":1,\"action\":\"Default Shell\",\"control\":\"CTRL + T\"},{\"id\":2,\"action\":\"Config\",\"control\":\"CTRL + P\"},{\"id\":3,\"action\":\"Paste\",\"control\":\"CTRL + V\"},{\"id\":6,\"action\":\"Copy\",\"control\":\"CTRL + C\"},{\"id\":12,\"action\":\"Close\",\"control\":\"CTRL + W\"}],\"profil\":[{\"id\":1,\"programm\":\"sh -c $SHELL\",\"name\":\"Default Shell\",\"icon\":\"Default\"}],\"defaultProfil\":\"Default Shell\",\"terminalFontSize\":\"15\"}";
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/");
@@ -142,7 +146,7 @@ function openWindow(config, colors) {
 
 ipc.on("new-term", (e, data) => {
     // Check if command exist
-    let Command = data.shell.split(" ");
+    let Command = (customCommand || data.shell).split(" ");
     let prog = Command[0];
     Command.shift();
     let args = Command;
@@ -155,6 +159,7 @@ ipc.on("new-term", (e, data) => {
         env: process.env,
     });
     customWorkdir = ""; //Reset Workdir
+    customCommand = "";
     
     shell.onExit(() => {
         try {
@@ -202,7 +207,7 @@ app.on("ready", () => {
     if (needTransparent) {
         setTimeout(() => {
             openWindow(config, colors);
-        }, 200);
+        }, 275);
     } else {
         openWindow(config, colors);
     }
@@ -300,7 +305,7 @@ function reloadConfig() {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
         config = JSON.parse(file);
     } catch (_) {
-        let toWrite = "{\"theme\":\"default\",\"background\":\"full\",\"cursorStyle\":\"block\",\"transparencyValue\":\"100\",\"imageBlur\":\"0\",\"imageLink\":\"\",\"plugin\":[],\"shortcut\":[{\"id\":1,\"action\":\"Default Shell\",\"control\":\"CTRL + T\"},{\"id\":2,\"action\":\"Config\",\"control\":\"CTRL + P\"},{\"id\":3,\"action\":\"Paste\",\"control\":\"CTRL + V\"},{\"id\":6,\"action\":\"Copy\",\"control\":\"CTRL + C\"},{\"id\":12,\"action\":\"Close\",\"control\":\"CTRL + W\"}],\"profil\":[{\"id\":1,\"programm\":\"sh -c $SHELL\",\"name\":\"Default Shell\",\"icon\":\"\"}],\"defaultProfil\":\"Default Shell\",\"terminalFontSize\":\"15\"}";
+        let toWrite = "{\"theme\":\"default\",\"background\":\"full\",\"cursorStyle\":\"block\",\"transparencyValue\":\"100\",\"imageBlur\":\"0\",\"imageLink\":\"\",\"plugin\":[],\"shortcut\":[{\"id\":1,\"action\":\"Default Shell\",\"control\":\"CTRL + T\"},{\"id\":2,\"action\":\"Config\",\"control\":\"CTRL + P\"},{\"id\":3,\"action\":\"Paste\",\"control\":\"CTRL + V\"},{\"id\":6,\"action\":\"Copy\",\"control\":\"CTRL + C\"},{\"id\":12,\"action\":\"Close\",\"control\":\"CTRL + W\"}],\"profil\":[{\"id\":1,\"programm\":\"sh -c $SHELL\",\"name\":\"Default Shell\",\"icon\":\"Default\"}],\"defaultProfil\":\"Default Shell\",\"terminalFontSize\":\"15\"}";
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/");

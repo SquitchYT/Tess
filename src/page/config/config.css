@@ -22,6 +22,7 @@ body {
     font-family: 'Roboto', sans-serif;
     width: calc(100vw + 3px);
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 * {
@@ -79,13 +80,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100%;
-    max-height: 100%;
     position: absolute;
+    height: calc(100vh + 35px + 100px);
+    max-height: full;
     top: 0;
     left: 0;
-    overflow-y: overlay !important;
-    overflow-x: hidden;
+    overflow-y: overlay;
 }
 
 .hidden-page {
@@ -234,7 +234,7 @@ input::-webkit-inner-spin-button {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-bottom: 16px;
+    margin-bottom: 15px;
     margin-right: 15px;
 }
 
@@ -372,10 +372,6 @@ input::-webkit-inner-spin-button {
     padding-left: 20px;
 }
 
-.selected-page {
-    background: var(--app-dark-background) !important;
-}
-
 h2 {
     color: var(--item-textcolor);
     font-size: 16px;
@@ -411,7 +407,7 @@ h3 {
     align-items: center;
     justify-content: space-between;
     width: 92%;
-    height: 63px;
+    height: 66px;
 }
 
 .description {
@@ -506,8 +502,9 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 60px;
     width: calc(100% - 43px);
+    height: 45px;
+    margin-bottom: 15px;
 }
 
 .shortcutLine div {
@@ -529,23 +526,29 @@ h3 {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: 60px;
+    height: 38px;
+    margin-top: 15px;
 }
 
 .shortcutAddButton {
-    width: 30%;
-    height: 29px;
-    border: 2.5px solid white;
-    max-width: 520px;
-    min-width: 150px;
-    color: white;
-    font-size: 17px;
+    width: 15.5em;
+    height: 100%;
+    border: 2px solid var(--item-textcolor);
+    color: var(--item-textcolor);
+    font-size: 18px;
     font-weight: 500;
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
-    border-radius: 4px;
+    border-radius: 400px;
+    transition: 0.55s;
+    cursor: pointer;
+}
+
+.shortcutAddButton:hover {
+    box-shadow: inset 15.5em 0 0 0 var(--item-textcolor);
+    color: var(--item-background);
 }
 
 .invisible {
@@ -560,4 +563,8 @@ h3 {
 
 .shortcut {
     align-items: flex-start !important;
+}
+
+.selected-page {
+    background: var(--app-dark-background) !important;
 }

@@ -224,6 +224,8 @@ links.forEach((el) => {
         leftSideMenu.parentNode.classList.add("menu-hidden");
         el.classList.add("selected-page");
         menuIcon.classList.add("menu-icon-close");
+        
+        currentProfilPage = -1;
     });
 });
 
@@ -238,7 +240,6 @@ function changeProfilPage(el) {
             inputProfilCommand.setAttribute("value", el.programm);
             inputProfilCommand.value = el.programm;
             inputProfilIcon.setAttribute("selected-value", el.icon);
-            // add inputIcon link
         } 
     });
 
@@ -276,7 +277,6 @@ shortcutAddBtn.addEventListener("click", () => {
     profils = profils.substring(0, profils.length - 1);
 
     let shortcutId = 0;
-
     config.shortcut.forEach((el) => {
         shortcutId += el.id;
     });
@@ -421,9 +421,17 @@ profilCreateBtn.addEventListener("click", () => {
         id: newProfilId,
         name: "New Profil",
         programm: "sh -c $SHELL",
-        icon: ""
+        icon: "Default"
     };
     config.profil.push(newProfil);
+
+    let newProfilList = "";
+    config.profil.forEach((el) => {
+        newProfilList += el.name;
+        newProfilList += ";";
+    });
+    profilDropDownMenu.setAttribute("input-list", newProfilList.slice(0, -1));
+
     saveUpdate();
 });
 
@@ -516,7 +524,7 @@ function loadConfig() {
                 let details = document.createElement("span");
                 details.classList.add("details");
                 //details.innerHTML = "TODO : get plugins description";
-                details.innerHTML = plugin;
+                details.innerHTML = plugin; // get plugin description
     
                 description.appendChild(title);
                 description.appendChild(details);
@@ -661,6 +669,15 @@ function deleteProfil(id) {
         }
     });
 
+    let newProfilList = "";
+    config.profil.forEach((el) => {
+        newProfilList += el.name;
+        newProfilList += ";";
+    });
+    profilDropDownMenu.setAttribute("input-list", newProfilList.slice(0, -1));
+
+
+
     if (config.defaultProfil == name) {
         // update drop down menu for default profil
         config.defaultProfil = "Default Shell";
@@ -670,10 +687,6 @@ function deleteProfil(id) {
     if (currentProfilPage == id) {
         let defaultShellProfilLink = document.querySelector("*[profil-id='1']");
         defaultShellProfilLink.click();
-
-        setTimeout(() => {
-            defaultShellProfilLink.classList.add("selected-page");
-        }, 50);
     }
 
     let currentProfilLink = document.querySelector(`*[profil-id="${id}"]`);

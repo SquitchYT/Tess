@@ -145,6 +145,10 @@ function HandleShortcut() {
 }
 
 function CreateNewTerminal(toStart, name, icon) {
+    if (icon == "Default") {
+        icon = undefined;
+    }
+
     let tab = document.createElement("div");
     tab.classList.add("tab", "tab-all-" + index, "tab-active");
     tab.setAttribute("index", index + 1);
@@ -185,7 +189,7 @@ function CreateNewTerminal(toStart, name, icon) {
         focusTerm(tab_link.classList[2], tab);
     });
 
-    document.addEventListener("mousemove", (e) => {
+    document.addEventListener("mousemove", (e) => { // move that to global scope : optimizing
         if (tab.getAttribute("mousedown") == "true") {
             if (tab.getAttribute("dragged") != "true" && Math.abs(e.clientX - Number(tab.getAttribute("startDragX"))) > 15) {
                 tab.setAttribute("dragged", "true");
@@ -216,6 +220,24 @@ function CreateNewTerminal(toStart, name, icon) {
             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
         </svg>
     `;
+
+    close_button.addEventListener("mousedown", (e) => {
+        e.stopPropagation();
+        if (t.type == "Page") {
+            Close(close_button.getAttribute("close-button-number"));
+        } else {
+            ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
+        }
+
+        let tabs = document.querySelectorAll(".tab");
+        let indexList = [];
+        tabs.forEach((el) => {
+            indexList.push(Number(el.getAttribute("index")));
+        });
+
+        maxIndex = Math.max(...indexList);
+    });
+    
 
     let logo = document.createElement("img");
     logo.src = (icon) ? icon : "../../img/shell.png";
@@ -323,22 +345,6 @@ function CreateNewTerminal(toStart, name, icon) {
         };
     }
 
-    close_button.addEventListener("click", () => {
-        if (t.type == "Page") {
-            Close(close_button.getAttribute("close-button-number"));
-        } else {
-            ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
-        }
-
-        let tabs = document.querySelectorAll(".tab");
-        let indexList = [];
-        tabs.forEach((el) => {
-            indexList.push(Number(el.getAttribute("index")));
-        });
-
-        maxIndex = Math.max(...indexList);
-    });
-    
     n = index;
     index++;
     
@@ -604,8 +610,8 @@ function updateTerminalApparence() {
         if (el.type == "Terminal") {
             el.term.setOption("theme", colors.terminal.theme);
             el.term.setOption("fontSize", config.terminalFontSize);
-            el.term.setOption("cursorBlink", config.cursorBlink);
             el.term.setOption("cursorStyle", config.cursorStyle);
+            el.term.setOption("cursorBlink", (config.cursorBlink === "true"));
         }
     });
 
