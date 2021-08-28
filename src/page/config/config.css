@@ -81,7 +81,7 @@ body {
     flex-direction: column;
     align-items: center;
     position: absolute;
-    height: calc(100vh + 35px + 100px);
+    height: calc(100vh + 80px);
     max-height: full;
     top: 0;
     left: 0;
