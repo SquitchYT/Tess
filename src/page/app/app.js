@@ -311,7 +311,7 @@ function CreateNewTerminal(toStart, name, icon) {
             allowTransparency: true,
             fontSize: fontSize,
             cursorBlink: (config.cursorBlink == "true"),
-            fontFamily: "Consolas"
+            fontFamily: "Consolas, monospace"
         });
         term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon(("click", (e, url) => {
