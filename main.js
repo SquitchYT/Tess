@@ -14,8 +14,6 @@ const mkdir = require("mkdirp");
 const OsInfomations = require("./class/osinfo");
 const osData = new OsInfomations();
 
-//const sh = osData.os == "win32" ? "powershell.exe" : "bash";
-
 let config, colors;
 let workers = [];
 let mainWindow;
@@ -38,7 +36,7 @@ console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You u
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
         config = JSON.parse(file);
     } catch (error) {
-        let toWrite= "{\"theme\":\"default\",\"background\":\"full\",\"cursorStyle\":\"block\",\"transparencyValue\":\"100\",\"imageBlur\":\"0\",\"imageLink\":\"\",\"plugin\":[],\"shortcut\":[{\"id\":1,\"action\":\"Default Shell\",\"control\":\"CTRL + T\"},{\"id\":2,\"action\":\"Config\",\"control\":\"CTRL + P\"},{\"id\":3,\"action\":\"Paste\",\"control\":\"CTRL + V\"},{\"id\":6,\"action\":\"Copy\",\"control\":\"CTRL + C\"},{\"id\":12,\"action\":\"Close\",\"control\":\"CTRL + W\"}],\"profil\":[{\"id\":1,\"programm\":\"sh -c $SHELL\",\"name\":\"Default Shell\",\"icon\":\"Default\"}],\"defaultProfil\":\"Default Shell\",\"terminalFontSize\":\"15\"}";
+        let toWrite= `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/");
@@ -312,7 +310,7 @@ function reloadConfig() {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
         config = JSON.parse(file);
     } catch (_) {
-        let toWrite = "{\"theme\":\"default\",\"background\":\"full\",\"cursorStyle\":\"block\",\"transparencyValue\":\"100\",\"imageBlur\":\"0\",\"imageLink\":\"\",\"plugin\":[],\"shortcut\":[{\"id\":1,\"action\":\"Default Shell\",\"control\":\"CTRL + T\"},{\"id\":2,\"action\":\"Config\",\"control\":\"CTRL + P\"},{\"id\":3,\"action\":\"Paste\",\"control\":\"CTRL + V\"},{\"id\":6,\"action\":\"Copy\",\"control\":\"CTRL + C\"},{\"id\":12,\"action\":\"Close\",\"control\":\"CTRL + W\"}],\"profil\":[{\"id\":1,\"programm\":\"sh -c $SHELL\",\"name\":\"Default Shell\",\"icon\":\"Default\"}],\"defaultProfil\":\"Default Shell\",\"terminalFontSize\":\"15\"}";
+        let toWrite = `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/");
