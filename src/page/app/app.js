@@ -30,9 +30,22 @@ if (osData.wm != "win" && osData.wm != "macos") {
         ipc.send("reduce");
     });
     document.getElementById("screen-size").addEventListener("click", () => {
-        ipc.send("to-define-name");
+        ipc.send("reduce-expand");
     });
 }
+
+ipc.on("app-reduced-expanded", (_, maximazed) => {
+    let reduceIcon = document.getElementById("reduceIcon");
+    let expandIcon = document.getElementById("expandIcon");
+
+    if (maximazed) {
+        reduceIcon.classList.remove("app-button-hidden");
+        expandIcon.classList.add("app-button-hidden");
+    } else {
+        expandIcon.classList.remove("app-button-hidden");
+        reduceIcon.classList.add("app-button-hidden");
+    }
+})
 
 const shortcutAction = ["Close", "Copy", "Paste", "OpenShell"];
 const CustomPage = ["Config"];
@@ -297,7 +310,8 @@ function CreateNewTerminal(toStart, name, icon) {
             cursorStyle: config.cursorStyle,
             allowTransparency: true,
             fontSize: fontSize,
-            cursorBlink: (config.cursorBlink == "true")
+            cursorBlink: (config.cursorBlink == "true"),
+            fontFamily: "Consolas"
         });
         term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon(("click", (e, url) => {

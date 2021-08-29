@@ -85,7 +85,7 @@ if (config.background == "transparent" || config.background == "acrylic" || conf
 }();
 
 function openWindow(config, colors) {
-    let needFrame = (osData.wm == "win" || osData.wm) == "macos" ? false : true;
+    let needFrame = (osData.os == "win32") ? false : true;
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
     let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
 
@@ -145,6 +145,7 @@ function openWindow(config, colors) {
 
 
 ipc.on("new-term", (e, data) => {
+    //if (osData.os == "win32") { data.shell = "powershell.exe" }
     // Check if command exist
     let Command = (customCommand || data.shell).split(" ");
     let prog = Command[0];
@@ -204,7 +205,7 @@ ipc.on("terminal-data", (e, data) => {
 // App events
 app.on("ready", () => {
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
-    if (needTransparent) {
+    if (needTransparent && osData.os != "win32") {
         setTimeout(() => {
             openWindow(config, colors);
         }, 275);
@@ -245,11 +246,17 @@ ipc.on("reduce", () => {
     BrowserWindow.getFocusedWindow().minimize();
 });
 
-ipc.on("to-define-name", () => {
+ipc.on("reduce-expand", () => {
     BrowserWindow.getFocusedWindow().isMaximized() ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
         BrowserWindow.getFocusedWindow().webContents.send("resize");
     }, 400);
+
+    try {
+        mainWindow.webContents.send("app-reduced-expanded", BrowserWindow.getFocusedWindow().isMaximized());
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 ipc.on("resize", (e, data) => {

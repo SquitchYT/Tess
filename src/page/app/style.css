@@ -122,7 +122,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--background-no-opacity);
+    background: var(--tab-panel-background);
+}
+
+.app-button svg {
+    height: 15px;
+    width: 15px;
+    color: var(--general-text-color);
 }
 
 .app-button:hover {
@@ -261,4 +267,8 @@ svg {
 
 .end-order {
     order: 100000;
+}
+
+.app-button-hidden {
+    display: none;
 }
