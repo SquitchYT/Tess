@@ -28,7 +28,7 @@
 **Deb package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#debian-ubuntu)
 <br>
 **Rpm package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#redhat-fedora)
-<!--<br>
+<!--
 **Snap package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#snap)-->
 
 
