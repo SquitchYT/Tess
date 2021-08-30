@@ -146,7 +146,6 @@ function openWindow(config, colors) {
 
 
 ipc.on("new-term", (e, data) => {
-    //if (osData.os == "win32") { data.shell = "powershell.exe" }
     // Check if command exist
     let Command = (customCommand || data.shell).split(" ");
     let prog = Command[0];
