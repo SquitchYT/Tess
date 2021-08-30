@@ -8,7 +8,7 @@ const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
 const Color = require("../../../class/color");
 
-const topbar = document.querySelector(".tabs");
+const topbar = document.querySelector(".topbar");
 
 topbar.addEventListener("dblclick", () => {
     if (osData.os == "win32") {
@@ -261,7 +261,7 @@ function CreateNewTerminal(toStart, name, icon) {
     
 
     let logo = document.createElement("img");
-    logo.src = (icon) ? icon : "../../img/shell.png";
+    logo.src = (icon) ? icon : "../../img/default.png";
     logo.classList.add("logo");
 
     tab.appendChild(logo);

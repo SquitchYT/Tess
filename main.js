@@ -356,6 +356,7 @@ ipc.on("openFileDialog", (e, data) => {
 
 function fix_acrylic_window(win, pollingRate = 60){
     win.on("will-move", (e) => {
+        if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() } // move that to top of window
         e.preventDefault();
 
         // Track if the user is moving the window
