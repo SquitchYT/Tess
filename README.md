@@ -25,11 +25,11 @@
 ### Install from packages
 **ArchLinux (aur)**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#archlinux)
 <br>
-**Deb package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#debianubuntu)
+**Deb package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#debian-ubuntu)
 <br>
-**Rpm package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#install-with-rpm-package)
-<br>
-**Snap package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#snap)
+**Rpm package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#redhat-fedora)
+<!--<br>
+**Snap package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#snap)-->
 
 
 ## Preview
