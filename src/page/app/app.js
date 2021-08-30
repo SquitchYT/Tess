@@ -101,7 +101,7 @@ ipc.on("loaded", (e, data) => {
     } else if (config.background == "image") {
         colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
-        root.style.setProperty("--background-image", "url(" + config.imageLink + ")");
+        root.style.setProperty("--background-image", "url('" + config.imageLink + "')");
         root.style.setProperty("--background", colors.terminal.theme.background);
         root.style.setProperty("--blur", "blur(" + config.imageBlur +"px)");
         colors.terminal.theme.background = "transparent";
