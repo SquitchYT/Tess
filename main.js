@@ -136,6 +136,7 @@ function openWindow(config, colors) {
                 config: config,
                 colors: colors
             });
+            mainWindow.webContents.send("app-reduced-expanded", BrowserWindow.getFocusedWindow().isMaximized());
         } catch (err) {
             console.log(err);
         }
