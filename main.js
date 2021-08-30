@@ -1,7 +1,7 @@
 const time1 = new Date().getTime();
 
-const electron = require("electron")
-const { app, ipcMain : ipc, screen, dialog, BrowserView } = require("electron");
+const electron = require("electron");
+const { app, ipcMain : ipc, screen, dialog } = require("electron");
 const { BrowserWindow } = require("glasstron");
 const argv = require("yargs").argv;
 
@@ -355,19 +355,19 @@ ipc.on("openFileDialog", (e, data) => {
 });
 
 function fix_acrylic_window(win, pollingRate = 60){
-	win.on("will-move", (e) => {
-		e.preventDefault();
+    win.on("will-move", (e) => {
+        e.preventDefault();
 
-		// Track if the user is moving the window
-		if(win._moveTimeout)
-			clearTimeout(win._moveTimeout);
+        // Track if the user is moving the window
+        if(win._moveTimeout)
+            clearTimeout(win._moveTimeout);
 
-		win._moveTimeout = setTimeout(
-			() => {
-				win._isMoving = false;
-				clearInterval(win._moveInterval);
-				win._moveInterval = null;
-			}, 1000/pollingRate);
+        win._moveTimeout = setTimeout(
+            () => {
+                win._isMoving = false;
+                clearInterval(win._moveInterval);
+                win._moveInterval = null;
+            }, 1000/pollingRate);
 
 		// Start new behavior if not already
 		if(!win._isMoving){
@@ -401,14 +401,13 @@ function fix_acrylic_window(win, pollingRate = 60){
 
 	// Replace window resizing behavior to fix mouse polling rate bug
 	win.on("will-resize", (e) => {
+        const now = Date.now();
+        if(!win._resizeLastUpdate)
+            win._resizeLastUpdate = 0;
 
-		const now = Date.now();
-		if(!win._resizeLastUpdate)
-			win._resizeLastUpdate = 0;
-
-		if(now >= win._resizeLastUpdate + (1000/40))
-			win._resizeLastUpdate = now;
+        if(now >= win._resizeLastUpdate + (1000/40))
+            win._resizeLastUpdate = now;
         else { e.preventDefault(); }
 
-	});
+    });
 }

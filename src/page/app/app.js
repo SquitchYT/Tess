@@ -8,6 +8,14 @@ const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
 const Color = require("../../../class/color");
 
+const topbar = document.querySelector(".tabs");
+
+topbar.addEventListener("dblclick", () => {
+    if (osData.os == "win32") {
+        ipc.send("reduce-expand");
+    }
+});
+
 const tabs = document.querySelector(".tabs-tab");
 const terminals = document.querySelector(".terminals");
 const body = document.body;
@@ -45,7 +53,7 @@ ipc.on("app-reduced-expanded", (_, maximazed) => {
         expandIcon.classList.remove("app-button-hidden");
         reduceIcon.classList.add("app-button-hidden");
     }
-})
+});
 
 const shortcutAction = ["Close", "Copy", "Paste", "OpenShell"];
 const CustomPage = ["Config"];
