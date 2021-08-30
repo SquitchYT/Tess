@@ -23,6 +23,7 @@ package() {
 
 	mkdir -p "${pkgdir}/usr/share/kservices5/ServiceMenus/"
 	cp -r -f tesshere.desktop "${pkgdir}/usr/share/kservices5/ServiceMenus/tesshere.desktop"
+	cp -r -f appintess.desktop "${pkgdir}/usr/share/kservices5/ServiceMenus/appintess.desktop"
 
 	if type "$kbuildsycoca5" > /dev/null; then
 		kbuildsycoca5
