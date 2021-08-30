@@ -383,7 +383,7 @@ profilCreateBtn.addEventListener("click", () => {
         <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
         </svg>
-        <span class="link-name profil-link-name" profil-id="${newProfilId}">New Profil</span>
+        <span class="link-name profil-link-name" profil-id="${newProfilId}">New Profile</span>
     `; 
     let deleteIcon = document.createElement("span");
     let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -419,8 +419,8 @@ profilCreateBtn.addEventListener("click", () => {
 
     let newProfil = {
         id: newProfilId,
-        name: "New Profil",
-        programm: "sh -c $SHELL",
+        name: "New Profile",
+        programm: `${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}`,
         icon: "Default"
     };
     config.profil.push(newProfil);
