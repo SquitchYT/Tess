@@ -229,7 +229,7 @@ app.on("ready", () => {
     if (needTransparent && osData.os != "win32") {
         setTimeout(() => {
             openWindow(config, colors);
-        }, 275);
+        }, 300);
     } else {
         openWindow(config, colors);
     }
