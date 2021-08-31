@@ -94,8 +94,7 @@ if (config.background == "transparent" || config.background == "acrylic" || conf
 }();
 
 function openWindow(config, colors) {
-    let color = new Color(colors.terminal.theme.background, config.transparencyValue);
-    console.log("Hexa:", color.hexa);
+    let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
     let needFrame = (osData.os == "win32") ? false : true;
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
@@ -127,7 +126,7 @@ function openWindow(config, colors) {
         blurGnomeSigma: 100,
         blurCornerRadius: 0,
         vibrancy: {
-            theme: color.hexa,
+            theme: bgColor.hexa,
             effect: config.background,
             useCustomWindowRefreshMethod: true,
             disableOnBlur: true
@@ -155,15 +154,14 @@ function openWindow(config, colors) {
                 config: config,
                 colors: colors
             });
-            mainWindow.webContents.send("app-reduced-expanded", BrowserWindow.getFocusedWindow().isMaximized());
+            mainWindow.webContents.send("app-reduced-expanded", mainWindow.isMaximized());
         } catch (err) {
             console.log(err);
         }
     });
-    //if (osData.os == "win32" && config.background == "acrylic" && mainWindow.getDWM().supportsAcrylic()) { fix_acrylic_window(mainWindow); }
 
     mainWindow.on("will-move", () => {
-        //if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() }
+        if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() }
     })
 }
 
@@ -376,61 +374,3 @@ ipc.on("openFileDialog", (e, data) => {
         console.log(err);
     });
 });
-
-function fix_acrylic_window(win, pollingRate = 60){
-    win.on("will-move", (e) => {
-        e.preventDefault();
-
-        // Track if the user is moving the window
-        if(win._moveTimeout)
-            clearTimeout(win._moveTimeout);
-
-        win._moveTimeout = setTimeout(
-            () => {
-                win._isMoving = false;
-                clearInterval(win._moveInterval);
-                win._moveInterval = null;
-            }, 1000/pollingRate);
-
-		// Start new behavior if not already
-		if(!win._isMoving){
-			win._isMoving = true;
-			if(win._moveInterval)
-				return false;
-
-			// Get start positions
-			win._moveLastUpdate = 0;
-			win._moveStartBounds = win.getBounds();
-			win._moveStartCursor = electron.screen.getCursorScreenPoint();
-
-			// Poll at (refreshRate * 10) hz while moving window
-			win._moveInterval = setInterval(() => {
-				const now = Date.now();
-				if(now >= win._moveLastUpdate + (1000/pollingRate)){
-					win._moveLastUpdate = now;
-					const cursor = electron.screen.getCursorScreenPoint();
-
-					// Set new position
-					win.setBounds({
-						x: win._moveStartBounds.x + (cursor.x - win._moveStartCursor.x),
-						y: win._moveStartBounds.y + (cursor.y - win._moveStartCursor.y),
-						width: win._moveStartBounds.width,
-						height: win._moveStartBounds.height
-					});
-				}
-			}, 1000/(pollingRate * 10));
-		}
-	});
-
-	// Replace window resizing behavior to fix mouse polling rate bug
-	win.on("will-resize", (e) => {
-        const now = Date.now();
-        if(!win._resizeLastUpdate)
-            win._resizeLastUpdate = 0;
-
-        if(now >= win._resizeLastUpdate + (1000/40))
-            win._resizeLastUpdate = now;
-        else { e.preventDefault(); }
-
-    });
-}
