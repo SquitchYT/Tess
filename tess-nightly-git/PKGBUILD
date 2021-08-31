@@ -1,5 +1,5 @@
-pkgname=tess-nightly
-pkgver=1.2r118.b4fbc0e
+pkgname=tess-nightly-git
+pkgver=0.4.2r118.b4fbc0e
 pkgrel=1
 pkgdesc="Tess hackable, simple, rapid and beautiful terminal for the new era"
 arch=(x86_64)
@@ -12,7 +12,7 @@ md5sums=('SKIP')
 
 pkgver() {
   cd "Tess"
-  printf "1.2r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  printf "0.4.2r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 package() {
