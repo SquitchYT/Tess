@@ -16,7 +16,7 @@ jobs:
         uses: 2m/arch-pkgbuild-builder@v1.16
         with:
           target: 'pkgbuild'
-          pkgname: 'tess-nightly'
+          pkgname: 'tess-nightly-git'
           
       - name: Update AUR Package
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
