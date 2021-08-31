@@ -21,8 +21,8 @@ jobs:
       - name: Update AUR Package
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
         with:
-          pkgname: tess-nightly
-          pkgbuild: tess-nightly/PKGBUILD
+          pkgname: tess-nightly-git
+          pkgbuild: tess-nightly-git/PKGBUILD
           commit_username: ${{ secrets.AUR_USERNAME }}
           commit_email: ${{ secrets.AUR_EMAIL }}
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
