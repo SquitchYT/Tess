@@ -12,6 +12,10 @@ class Color{
         return this.ToRgba();
     }
 
+    get hexa() {
+        return this.ToHexa();
+    }
+
     ToRgb() {
         let r,g,b = 0;
         if (this.color.length == 4) {
@@ -44,6 +48,17 @@ class Color{
             a = "0x" + this.color[7] + this.color[8];
         }
         return "rgba(" + +r + "," + +g + "," + +b + "," + +a +")";
+    }
+
+    ToHexa() {
+
+        if (this.color.length != 9) {
+            let alpha = (this.alpha / 100) * 255
+            alpha = Math.round(alpha)
+            let a = alpha.toString(16)
+            if (alpha <= 15) { a = "0" + a };
+            return this.color + a
+        }
     }
 }
 

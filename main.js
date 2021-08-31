@@ -1,8 +1,6 @@
 const time1 = new Date().getTime();
 
 const electron = require("electron");
-const { app, ipcMain : ipc, screen, dialog } = require("electron");
-const { BrowserWindow } = require("glasstron");
 const argv = require("yargs").argv;
 
 const pty = require("node-pty");
@@ -12,8 +10,14 @@ const { Worker } = require("worker_threads");
 const fs = require("fs");
 const mkdir = require("mkdirp");
 
+const Color = require("./class/color")
+
 const OsInfomations = require("./class/osinfo");
 const osData = new OsInfomations();
+
+const { app, ipcMain : ipc, screen, dialog } = require("electron");
+
+let BrowserWindow;
 
 let config, colors;
 let workers = [];
@@ -62,6 +66,12 @@ console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You u
     }
 }();
 
+if (osData.os == "win32" && config.background != "transparent" && config.background != "image") {
+    BrowserWindow = require("electron-acrylic-window").BrowserWindow
+} else {
+    BrowserWindow = require("glasstron").BrowserWindow;
+}
+
 if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") {
     app.commandLine.appendSwitch("disable-gpu");
 }
@@ -84,6 +94,9 @@ if (config.background == "transparent" || config.background == "acrylic" || conf
 }();
 
 function openWindow(config, colors) {
+    let color = new Color(colors.terminal.theme.background, config.transparencyValue);
+    console.log("Hexa:", color.hexa);
+
     let needFrame = (osData.os == "win32") ? false : true;
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
     let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
@@ -112,7 +125,13 @@ function openWindow(config, colors) {
         blur: needBlur,
         blurType: config.background,
         blurGnomeSigma: 100,
-        blurCornerRadius: 0
+        blurCornerRadius: 0,
+        vibrancy: {
+            theme: color.hexa,
+            effect: config.background,
+            useCustomWindowRefreshMethod: true,
+            disableOnBlur: true
+         }
     });
 
     mainWindow.removeMenu();
@@ -141,10 +160,10 @@ function openWindow(config, colors) {
             console.log(err);
         }
     });
-    if (osData.os == "win32" && config.background == "acrylic" && mainWindow.getDWM().supportsAcrylic()) { fix_acrylic_window(mainWindow); }
+    //if (osData.os == "win32" && config.background == "acrylic" && mainWindow.getDWM().supportsAcrylic()) { fix_acrylic_window(mainWindow); }
 
     mainWindow.on("will-move", () => {
-        if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() }
+        //if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() }
     })
 }
 
