@@ -2,6 +2,7 @@
     --opacity: 1;
     --background: rgba(0,0,0,0);
     --background-image: var(--background);
+    /*--background-image: url("C:\\Users\\cleme\\Desktop\\dev\\Project\\Tess\\src\\img\\Tess Banner v2.png");*/
     --blur: blur(0px);
 
     --general-text-color: #fff;

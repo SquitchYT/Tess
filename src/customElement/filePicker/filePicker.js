@@ -41,7 +41,10 @@ class filePicker extends HTMLElement {
         element.addEventListener("click", () => {
             // eslint-disable-next-line no-undef
             let path = ipcRenderer.sendSync("openFileDialog", {properties : ["openFile"]});
-            if (path != undefined) this.setAttribute("selected-value", path);
+            if (path) {
+                path = path.replace(/\\/g, "/");
+                this.setAttribute("selected-value", path);
+            }
         });
     }
 

@@ -142,6 +142,10 @@ function openWindow(config, colors) {
         }
     });
     if (osData.os == "win32" && config.background == "acrylic" && mainWindow.getDWM().supportsAcrylic()) { fix_acrylic_window(mainWindow); }
+
+    mainWindow.on("will-move", () => {
+        if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() }
+    })
 }
 
 
@@ -356,7 +360,6 @@ ipc.on("openFileDialog", (e, data) => {
 
 function fix_acrylic_window(win, pollingRate = 60){
     win.on("will-move", (e) => {
-        if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() } // move that to top of window
         e.preventDefault();
 
         // Track if the user is moving the window
