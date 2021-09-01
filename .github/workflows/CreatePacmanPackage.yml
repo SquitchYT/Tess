@@ -10,8 +10,6 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
-    container:
-      image: archlinux:latest
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
@@ -26,6 +24,10 @@ jobs:
         run : |
           ls
           cd tess-nightly-git
+          ls
+          mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
+          echo "listing definitive file isnide dir \n"
+          ls
           
       - name: Generating Package
         run : |
