@@ -18,7 +18,7 @@ jobs:
           
       - name: Generating Package
         run : |
-          pacman -Syyu 
+          pacman -Sy
           pacman -S sudo
           cd tess-nightly-git
           useradd noroot
