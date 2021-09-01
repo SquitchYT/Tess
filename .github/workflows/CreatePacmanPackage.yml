@@ -21,18 +21,12 @@ jobs:
         uses: bruceadams/get-release@v1.2.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
-      
-      - name: Update PKGBUILD
-        uses: 2m/arch-pkgbuild-builder@v1.16
-        with:
-          target: 'pkgbuild'
-          pkgname: 'tess-nightly-git'
           
       - name: Generating Package
         run : |
           ls
           cd tess-nightly-git
-          makepkg 
+          makepkg --asroot
           mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
 
       - name: Upload release binary
