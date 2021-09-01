@@ -19,7 +19,7 @@ jobs:
       - name: Generating Package
         run : |
           pacman -Sy
-          pacman -S sudo
+          pacman -S sudo --noconfirm
           cd tess-nightly-git
           useradd noroot
           su noroot -c "chmod +rwx . && makepkg"
