@@ -15,6 +15,17 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
+        
+      - name: Update PKGBUILD
+        uses: 2m/arch-pkgbuild-builder@v1.16
+        with:
+          target: 'pkgbuild'
+          pkgname: 'tess-nightly-git'
+          
+      - name: test
+        run : |
+          ls
+          cd tess-nightly-git
           
       - name: Generating Package
         run : |
