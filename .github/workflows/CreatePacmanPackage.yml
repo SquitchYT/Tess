@@ -1,0 +1,45 @@
+name: Updating Packages
+
+on:
+  push:
+
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - name: Downloading Files
+        uses: actions/checkout@v2
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      
+      - name: Update PKGBUILD
+        uses: 2m/arch-pkgbuild-builder@v1.16
+        with:
+          target: 'pkgbuild'
+          pkgname: 'tess-nightly-git'
+          
+      - name: Generating Package
+        run : |
+          ls
+          cd tess-nightly-git
+          makepkg 
+          mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
+
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./tess-nightly-git/tess-git-x86_64.pkg.tar.zst
+          asset_name: tess-git-x86_64.pkg.tar.zst
+          asset_content_type: application/octet-stream
+
