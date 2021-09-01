@@ -2,6 +2,8 @@ name: Updating Packages
 
 on:
   push:
+    tags:
+      - '*'
 
   workflow_dispatch:
 
