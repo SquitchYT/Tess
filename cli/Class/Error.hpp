@@ -7,10 +7,10 @@
 
 #include "../Utils/Constant.hpp"
 
-template<typename T>
+/*template<typename T>
 inline T const& to_string(const T& s) { 
     return s; 
-}
+}*/
 
 class Error
 {
@@ -27,9 +27,7 @@ class Error
             _message = err_code.second;
             _isNull = (_code == ERR_NONE.first);
 
-            // Comprendre comment ça marche
-            int unpack[]{0, (_message += (std::string)to_string(more) + " ", 0)...};
-            static_cast<void>(unpack);
+            (_message += static_cast<std::string>(more) + " ", ...);
         };
 
         Error(std::pair<int, std::string> err_code);

@@ -9,8 +9,8 @@
 #include <list>
 
 
-std::tuple<Error, std::list<Extention>, std::string> handleArgs(int count, char **args) {
-    std::list<Extention> extentions;
+std::tuple<Error, std::vector<Extention>, std::string> handleArgs(int count, char **args) { //replace std::list by vector
+    std::vector<Extention> extentions;
 
     std::string current_type = "";
     std::string action = "";
@@ -23,9 +23,6 @@ std::tuple<Error, std::list<Extention>, std::string> handleArgs(int count, char 
     for (int i = 0; i < count; i++) {
         std::string s = args[i];
 
-        //###############################
-        //#Rework all of this to end !!!#
-        //###############################
         // Check if incorrect args
         if (s.rfind("-", 0) == 0) {
             bool isEquals = false;

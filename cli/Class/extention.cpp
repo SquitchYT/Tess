@@ -44,8 +44,8 @@ cpr::Response Extention::download(std::function<void (int)> callback) {
     cpr::Response r = cpr::Get(cpr::Url{_url},         
     cpr::ProgressCallback([&](size_t downloadTotal, size_t downloadNow, size_t uploadTotal, size_t uploadNow) -> bool
     {
-        if(int(downloadTotal) != 0) {
-            int pourcent = float(downloadNow) / float(downloadTotal) * 100;
+        if(static_cast<int>(downloadTotal) != 0) {
+            int pourcent = static_cast<float>(downloadNow) / static_cast<float>(downloadTotal) * 100;
             callback(pourcent);
         }
 
@@ -104,12 +104,12 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
             cpr::Response r = cpr::Get(cpr::Url{url.first},
             cpr::ProgressCallback([&](size_t downloadTotal, size_t downloadNow, size_t uploadTotal, size_t uploadNow) -> bool
             {
-                if(int(downloadTotal) != 0) {
-                    download_progress = float(downloadNow) / float(downloadTotal) * 100;
+                if(static_cast<int>(downloadTotal) != 0) {
+                    download_progress = static_cast<float>(downloadNow) / static_cast<float>(downloadTotal) * 100;
                 }
 
-                progress = float(download_progress / 100.0F) * (1.0F / float(todo));
-                progress += float(Do) / float(todo);
+                progress = static_cast<float>(download_progress / 100.0F) * (1.0F / static_cast<float>(todo));
+                progress += static_cast<float>(Do) / static_cast<float>(todo);
 
                 callback("Installing dependencies", progress * 100);
 
@@ -125,7 +125,7 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
             }
 
             Do++;
-            progress = float(Do) / float(todo);
+            progress = static_cast<float>(Do) / static_cast<float>(todo);
 
             callback("Installing dependencies", progress * 100);
         }
@@ -134,7 +134,7 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
         Utils::Cross::sleepMs(100);
         callback("Installing Node.js dependencies", -1);
 
-        // Fix print savd into nul file
+        // Fix print save into nul file
         Utils::Cross::change_dir((std::string)std::getenv("HOME") + "/Applications/tess/plugins/" + _name);
 
         std::string packageManager = Utils::Cross::getNodeJSPackageManager();

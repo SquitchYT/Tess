@@ -8,7 +8,7 @@
 ProgressBar::ProgressBar(int len, int pourcent) {
     pourcent = (pourcent < 0) ? 0 : pourcent;
     _totalChunk = len - 7;
-    _activeChunk = float(pourcent) / 100 * float((len - 7));
+    _activeChunk = static_cast<float>(pourcent) / 100 * static_cast<float>((len - 7));
     _inactiveChunk = _totalChunk - _activeChunk;
 
     switch (std::to_string(pourcent).length())

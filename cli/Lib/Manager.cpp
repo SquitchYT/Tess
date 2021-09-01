@@ -6,6 +6,7 @@
 #include <future>
 #include <thread>
 #include <list>
+#include <vector>
 
 
 #include "../Utils/ProgressBar.hpp"
@@ -17,7 +18,7 @@
 #include "../Class/Error.hpp"
 
 
-Manager::Manager(std::list<Extention> extentions, std::string action){
+Manager::Manager(std::vector<Extention> extentions, std::string action){
     _extention = extentions;
     _action = action;
     _status = STATUS_WAITING;
@@ -66,7 +67,7 @@ Error Manager::start(){
         else if (_status == STATUS_INSTALLING) {
             ProgressBar bar(progressBarLenght, _progress);
 
-            std::string out = " (" + std::to_string(int(_do + 1)) + "/" + std::to_string(_todo) + ") " + _details;
+            std::string out = " (" + std::to_string(static_cast<int>(_do + 1)) + "/" + std::to_string(_todo) + ") " + _details;
             for (int i = out.size(); i != cols - 1 - progressBarLenght; i++) {
                 out += " ";
             }
@@ -111,18 +112,19 @@ Error Manager::start(){
         Utils::Cross::sleepMs(40);
     }
 
-    std::cout << "download completed" << std::endl;
+    std::cout << "Download completed" << std::endl;
 
     auto err = download.get();
     return err;
 }
 
 Error Manager::Install() {
-    std::cout << "donwloading files..." << std::endl;
+    std::cout << "Downloading files..." << std::endl;
 
     _do = 0;
 
-    for (std::list<Extention>::iterator it = _extention.begin(); it != _extention.end();) {
+    auto it = std::begin(_extention);
+    while (it != std::end(_extention)) {
         _progress = 0;
         _item_name = it->getName();
         _status = STATUS_DOWNLOADING;
@@ -144,7 +146,6 @@ Error Manager::Install() {
         }
 
         while (_status != STATUS_WAITING);
-        
     }
     
     // optimize this !!!

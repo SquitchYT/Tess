@@ -8,7 +8,7 @@
 #include "../Class/Error.hpp"
 #include "../Class/extention.hpp"
 
-std::tuple<Error, std::list<Extention>, std::string> handleArgs(int count, char **args);
+std::tuple<Error, std::vector<Extention>, std::string> handleArgs(int count, char **args);
 
 
 #endif

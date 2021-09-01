@@ -12,7 +12,7 @@ void Utils::Cross::sleepMs(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-std::tuple <int, int> Utils::Cross::getTerminalSize() {
+std::tuple<int, int> Utils::Cross::getTerminalSize() {
     struct winsize w;
 
     //A COMPRENDRE COMMENT FONCTION IOCTL() !!!

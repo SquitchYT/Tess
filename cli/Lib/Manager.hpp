@@ -14,12 +14,12 @@
 class Manager
 {
 public:
-    Manager(std::list<Extention> extentions, std::string action);
+    Manager(std::vector<Extention> extentions, std::string action);
 
     Error start();
 
 private:
-    std::list<Extention> _extention;
+    std::vector<Extention> _extention;
     std::string _action;
 
     std::string _status;
