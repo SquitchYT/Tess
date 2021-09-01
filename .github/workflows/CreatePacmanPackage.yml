@@ -20,9 +20,8 @@ jobs:
         run : |
           pacman -Sy
           pacman -S sudo --noconfirm
-          cd tess-nightly-git
           useradd noroot
-          su noroot -c "chmod +rwx . && makepkg"
+          su noroot -c "chmod +rwx tess-nightly-git && cd tess-nightly-git && makepkg"
           mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
           
       - name: Get release
