@@ -1,7 +1,5 @@
 name: Updating Packages
 
-on:
-  push:
 
   workflow_dispatch:
 
