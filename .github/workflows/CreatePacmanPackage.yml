@@ -25,7 +25,7 @@ jobs:
           
       - name: Generating Package
         run : |
-          pacman -Syyu
+          sudo pacman -Syyu
           cd tess-nightly-git
           makepkg
           mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
