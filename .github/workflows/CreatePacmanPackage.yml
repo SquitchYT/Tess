@@ -18,7 +18,7 @@ jobs:
         uses: 2m/arch-pkgbuild-builder@v1.16
         with:
           target: 'pkgbuild'
-          pkgname: 'tess-nightly-git'
+          pkgname: 'tess-git'
           
       - name: Renaming package
         run : |
