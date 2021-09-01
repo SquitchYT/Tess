@@ -26,7 +26,7 @@ jobs:
         run : |
           cd tess-nightly-git
           useradd noroot
-          su noroot -C "makepkg"
+          su noroot -c "makepkg"
           mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
 
       - name: Upload release binary
