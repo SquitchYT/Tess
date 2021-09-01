@@ -12,7 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: archlinux:latest
-      options: --user 1001
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
@@ -25,9 +24,8 @@ jobs:
           
       - name: Generating Package
         run : |
-          sudo pacman -Syyu
           cd tess-nightly-git
-          makepkg
+          makepkg -S
           mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
 
       - name: Upload release binary
