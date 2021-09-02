@@ -41,7 +41,7 @@ package() {
 	cp -r -f tess-cli "${pkgdir}/opt/tess-cli/tess-cli" 
 	ln -s "/opt/tess-cli/tess-cli" "${pkgdir}/usr/bin/tess-cli"
 
-	cd ../
+	cd ../../
 
 	mkdir -p "${pkgdir}/opt/tess"
 
