@@ -1,4 +1,4 @@
-name: Updating Packages
+name: PACMAN
 
 on:
   push:
