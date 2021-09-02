@@ -199,7 +199,7 @@ ipc.on("new-term", (e, data) => {
             mainWindow.webContents.send("pty-data", {
                 index: data.index,
                 data: datas,
-                processName: shell.process
+                processName: osData.os == "win32" ? "" : shell.process
             });
         } catch (err) {
             console.log(err);
