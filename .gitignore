@@ -16,6 +16,3 @@ tess-git/pkg/
 pnpm-lock.yaml
 patchNote
 cli/_deps/*
-cli/Class/CMakeFiles
-cli/Utils/CMakeFiles
-cli/Lib/CMakeFiles
