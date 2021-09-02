@@ -4,6 +4,8 @@ add_compile_options(-lcurl -lpthread)
 
 project(tess-cli)
 
+add_executable(tess-cli main.cpp)
+
 add_subdirectory(Utils)
 add_subdirectory(Lib)
 add_subdirectory(Class)
@@ -18,5 +20,3 @@ target_link_libraries(tess-cli PRIVATE cpr::cpr)
 target_link_libraries(tess-cli PUBLIC Utils)
 target_link_libraries(tess-cli PUBLIC Lib)
 target_link_libraries(tess-cli PUBLIC Class)
-
-add_executable(tess-cli main.cpp)
