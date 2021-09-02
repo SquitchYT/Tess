@@ -15,3 +15,6 @@ tess-git/pkg/
 .eslintrc.json
 pnpm-lock.yaml
 patchNote
+cli/_deps/*
+cli/CMakeFiles/
+cli/*/CMakeFiles/
