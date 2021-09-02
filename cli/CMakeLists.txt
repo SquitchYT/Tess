@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(tess-cli)
 
+add_executable(tess-cli main.cpp)
+
 add_compile_options(-lcurl -lpthread)
 
 add_subdirectory(Utils)
@@ -11,7 +13,7 @@ add_subdirectory(Class)
 target_link_libraries(tess-cli PUBLIC Utils)
 target_link_libraries(tess-cli PUBLIC Lib)
 target_link_libraries(tess-cli PUBLIC Class)
-add_executable(tess-cli main.cpp)
+
 
 include(FetchContent)
 FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/whoshuu/cpr.git GIT_TAG f4622efcb59d84071ae11404ae61bd821c1c344b)
