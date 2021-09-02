@@ -1,7 +1,8 @@
-name: Updating Packages
+name: AUR
 
 on:
   push:
+    tags: "*"
   workflow_dispatch:
 
 jobs:
