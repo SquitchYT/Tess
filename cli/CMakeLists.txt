@@ -9,8 +9,9 @@ add_subdirectory(Utils)
 add_subdirectory(Lib)
 add_subdirectory(Class)
 
-find_package(Threads)
-target_link_libraries(tess-cli Threads::Threads)
+target_link_libraries(tess-cli PUBLIC Utils)
+target_link_libraries(tess-cli PUBLIC Class)
+target_link_libraries(tess-cli PUBLIC Lib)
 
 include(FetchContent)
 FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/whoshuu/cpr.git GIT_TAG f4622efcb59d84071ae11404ae61bd821c1c344b)
