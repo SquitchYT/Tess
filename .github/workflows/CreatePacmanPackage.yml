@@ -22,7 +22,7 @@ jobs:
           
       - name: Renaming package
         run : |
-          cd tess-nightly-git
+          cd tess-git
           mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
 
       - name: Get release
