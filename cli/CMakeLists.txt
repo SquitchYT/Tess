@@ -4,11 +4,11 @@ project(tess-cli)
 
 add_compile_options(-lcurl -lpthread)
 
-add_executable(tess-cli main.cpp)
-
 add_subdirectory(Utils)
 add_subdirectory(Lib)
 add_subdirectory(Class)
+
+add_executable(tess-cli main.cpp)
 
 include(FetchContent)
 FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/whoshuu/cpr.git GIT_TAG f4622efcb59d84071ae11404ae61bd821c1c344b)
