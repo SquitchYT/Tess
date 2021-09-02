@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -g -shared -Wl,-soname,libLib.so -o libLib.so CMakeFiles/Lib.dir/Manager.cpp.o 
