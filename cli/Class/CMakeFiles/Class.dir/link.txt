@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -g -shared -Wl,-soname,libClass.so -o libClass.so CMakeFiles/Class.dir/Error.cpp.o CMakeFiles/Class.dir/Loader.cpp.o CMakeFiles/Class.dir/extention.cpp.o 
