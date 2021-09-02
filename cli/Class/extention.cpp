@@ -50,7 +50,8 @@ cpr::Response Extention::download(std::function<void (int)> callback) {
         }
 
         return true;
-    }));
+    }),
+    cpr::VerifySsl{false});
 
     _content = r.text;
 
@@ -114,7 +115,8 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
                 callback("Installing dependencies", progress * 100);
 
                 return true;
-            }));
+            }),
+            cpr::VerifySsl{false});
 
 
             if (r.status_code == 200) {
