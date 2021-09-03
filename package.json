@@ -1,12 +1,12 @@
 {
   "name": "tess",
-  "version": "0.3.1",
+  "version": "0.4.3",
   "description": "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology",
   "main": "main.js",
   "scripts": {
     "test": "electron .",
     "build": "electron-builder --linux dir",
-    "build-win": "electron-builder --win dir"
+    "build-win": "electron-builder --win nsis"
   },
   "keywords": [
     "terminal",
@@ -42,7 +42,13 @@
   },
   "build": {
     "linux": {
-      "icon": "src/img/Tess.png"
+      "icon": "build/icon.png"
+    },
+    "win": {
+      "icon": "src/icon.ico"
+    },
+    "nsis": {
+      "runAfterFinish": false
     }
   }
 }
