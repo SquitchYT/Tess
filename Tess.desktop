@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/tess
-Icon=/usr/bin/Tess.png
+Icon=/usr/share/pixmaps/tess.png
 Name=Tess - Terminal
 GenericName=Terminal
 Terminal=False

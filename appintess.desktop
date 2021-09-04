@@ -4,7 +4,8 @@ X-KDE-ServiceTypes=KonqPopupMenu/Plugin
 MimeType=application/*;
 Actions=appintess;
 X-KDE-AuthorizeAction=shell_access
+
 [Desktop Action appintess]
 Name=Execute App in Tess
 Exec=tess --e %f
-Icon=/usr/bin/Tess.png
+Icon=/usr/share/pixmaps/tess.png

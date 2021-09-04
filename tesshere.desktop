@@ -4,7 +4,8 @@ X-KDE-ServiceTypes=KonqPopupMenu/Plugin
 MimeType=inode/directory;
 Actions=opentesshere;
 X-KDE-AuthorizeAction=shell_access
+
 [Desktop Action opentesshere]
 Name=Execute Tess Here
 Exec=tess --workdir %f
-Icon=/usr/bin/Tess.png
+Icon=/usr/share/pixmaps/tess.png
