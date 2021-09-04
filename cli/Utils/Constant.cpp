@@ -23,10 +23,16 @@ std::string COLOR_GREEN = "\e[38;5;2m";
 std::string SERVER_URL = "http://squitch.fr/assets/tess/marketplace/";
 
 std::vector<std::string> LOADERS = {
-        "/",
-        "-",
-        "\\",
-        "|"
+        "⠋",
+        "⠙",
+        "⠹",
+        "⠸",
+        "⠼",
+        "⠴",
+        "⠦",
+        "⠧",
+        "⠇",
+        "⠏"     
 };
 
 int ERR_INSTALLING = -2;

@@ -109,7 +109,7 @@ Error Manager::start(){
             }
         }
 
-        Utils::Cross::sleepMs(40);
+        Utils::Cross::sleepMs(60);
     }
 
     std::cout << "Download completed" << std::endl;

@@ -9,7 +9,7 @@ Loader::Loader(){
 }
 
 void Loader::UpdateCurrent(){
-    if (_current == 3) {
+    if (_current == (LOADERS.size() - 1)) {
         _current = 0;
     } else {
         _current++;
