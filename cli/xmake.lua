@@ -12,5 +12,5 @@ target("cli")
     add_files("**.cpp")
     add_headerfiles("**.hpp")
 
-    add_syslinks("stdc++fs")
+    add_syslinks("stdc++fs", "pthread")
     add_packages("cpr")
