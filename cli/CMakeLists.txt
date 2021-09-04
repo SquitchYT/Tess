@@ -2,9 +2,15 @@ cmake_minimum_required(VERSION 3.20)
 
 project(tess-cli)
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_compile_options(-lcurl -lpthread)
 
 add_executable(tess-cli main.cpp)
+
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_subdirectory(Utils)
 add_subdirectory(Lib)
