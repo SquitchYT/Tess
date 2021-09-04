@@ -4,7 +4,7 @@
 #include <string>
 
 #include <functional>
-#include "../Lib/external/cpr/include/cpr/cpr.h"
+#include <cpr/cpr.h>
 
 #include "../Class/Error.hpp"
 

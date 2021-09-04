@@ -21,16 +21,17 @@ jobs:
 
       - name: Generating DEBIAN Package    
         run: |
-          sudo apt-get install libcurl4-openssl-dev
+          sudo apt-get install libcurl4-openssl-dev cmake
           mkdir -p ./package/debian/tess/opt/tess/
           mkdir -p ./package/debian/tess/opt/tess-cli/
           npm install
           npm run build
           cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
           cd cli
-          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
-          cd ../
-          cp ./cli/tess-cli ./package/debian/tess/opt/tess-cli/tess-cli
+          mkdir build && cmake . -B build && cd build
+          make
+          cd ../../
+          cp ./cli/build/tess-cli ./package/debian/tess/opt/tess-cli/tess-cli
           
           printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
           cd ./package/debian

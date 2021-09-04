@@ -8,6 +8,8 @@
 #include "Class/Error.hpp"
 #include "Utils/cross.hpp"
 
+#include <cpr/cpr.h>
+
 
 
 int main(int argc, char **argv){

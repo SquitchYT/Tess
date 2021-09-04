@@ -9,7 +9,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "../Lib/external/cpr/include/cpr/cpr.h"
+#include <cpr/cpr.h>
 
 #include "../Lib/Manager.hpp"
 #include "../Utils/cross.hpp"

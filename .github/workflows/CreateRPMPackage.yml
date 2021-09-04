@@ -24,7 +24,7 @@ jobs:
 
       - name: Generating RPM Package    
         run: |
-          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs -y
+          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake -y
           
           mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
@@ -81,10 +81,11 @@ jobs:
           cp -r ./dist/linux-unpacked/* ./package/rpmbuild/SOURCES/tess-${VERSION}/app/
           
           cd cli
-          g++ main.cpp Class/*.cpp Utils/*.cpp Lib/*.cpp Lib/external/cpr/cpr/*.cpp -lpthread -lcurl -std=c++17 -o tess-cli
-          cd ../
+          mkdir build && cmake . -B build && cd build
+          make
+          cd ../../
           
-          cp ./cli/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
+          cp ./cli/build/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
                   
           cd ./package/rpmbuild/SOURCES
           tar zcvf tess.tar.gz ./*
