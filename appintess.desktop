@@ -7,4 +7,4 @@ X-KDE-AuthorizeAction=shell_access
 [Desktop Action appintess]
 Name=Execute App in Tess
 Exec=tess --e %f
-Icon=/usr/bin/Tess.png
+Icon=tess
