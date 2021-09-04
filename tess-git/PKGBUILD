@@ -2,7 +2,7 @@
 # Maintainer: squitch
 
 pkgname=tess-git
-pkgver=0.4.3.r5.gb1592e0
+pkgver=0.4.3.r9.g6b97423
 pkgrel=1
 epoch=1
 pkgdesc="Hackable, simple, rapid and beautiful terminal for the new era"
@@ -31,9 +31,10 @@ package() {
   fi
 
   cd cli
-  mkdir build
   cmake . -B build
-  make -C build
+  cd build
+  make
+  cd ../
   install -Dm755 build/tess-cli -t "${pkgdir}/usr/bin/"
 
   npm install
