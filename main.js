@@ -120,7 +120,7 @@ function openWindow(config, colors) {
         title: "Tess - Terminal",
         transparent: needTransparent,
         frame: needFrame,
-        icon: "/usr/bin/Tess.png",
+        icon: "/usr/share/pixmaps/tess.png",
         blur: needBlur,
         blurType: config.background,
         blurGnomeSigma: 100,
