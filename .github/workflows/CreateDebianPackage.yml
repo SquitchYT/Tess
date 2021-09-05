@@ -22,20 +22,19 @@ jobs:
       - name: Generating DEBIAN Package    
         run: |
           sudo apt-get install libcurl4-openssl-dev cmake
-          mkdir -p ./package/debian/tess/opt/tess/
-          mkdir -p ./package/debian/tess/opt/tess-cli/
+          mkdir -p package/debian/tess/usr/lib/tess/
           npm install
           npm run build
-          cp -r ./dist/linux-unpacked/* ./package/debian/tess/opt/tess/
+          cp -r dist/linux-unpacked/* package/debian/tess/usr/lib/tess/
           cd cli
-          mkdir build && cmake . -B build && cd build
-          make
-          cd ../../
-          cp ./cli/build/tess-cli ./package/debian/tess/opt/tess-cli/tess-cli
-          
-          printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./package/debian/tess/DEBIAN/control
-          cd ./package/debian
-          sudo chmod 755 ./tess/DEBIAN/postinst 
+          cmake . -B build -DBUILD_SHARED_LIBS=False
+          make -C build
+          cp build/tess-cli package/debian/tess/usr/bin/tess-cli
+          cd ../
+
+          printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > package/debian/tess/DEBIAN/control
+          cd package/debian
+          sudo chmod 755 tess/DEBIAN/postinst 
           dpkg-deb --build tess
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}

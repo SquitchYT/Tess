@@ -49,23 +49,21 @@ jobs:
 
           %%install
           rm -rf $RPM_BUILD_ROOT
-          mkdir -p "$RPM_BUILD_ROOT/opt/tess"
           mkdir -p "$RPM_BUILD_ROOT/usr/bin"
-          mkdir -p "$RPM_BUILD_ROOT/opt/tess-cli"
+          mkdir -p "$RPM_BUILD_ROOT/usr/lib/tess/tess"
           mkdir -p "$RPM_BUILD_ROOT/usr/share/applications"
 
           cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
-          cp Tess.png "$RPM_BUILD_ROOT/usr/bin/Tess.png"
+          cp icon.png "$RPM_BUILD_ROOT/usr/share/pixmaps/tess.png"
 
-          cp -r app/* "$RPM_BUILD_ROOT/opt/tess/"
-          ln -s "/opt/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
+          cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
+          ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
           
-          cp -r cli/tess-cli "$RPM_BUILD_ROOT/opt/tess-cli/"
-          ln -s "/opt/tess-cli/tess-cli" "$RPM_BUILD_ROOT/usr/bin/tess-cli"
+          cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli/"
 
           %%files
           /usr/bin/*
-          /opt/*
+          /usr/lib/tess/*
           /usr/share/applications/*
               
           ' "${VERSION}" > ./package/rpmbuild/SPECS/tess.spec
@@ -73,21 +71,21 @@ jobs:
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
           
-          cp ./Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          cp ./src/img/Tess.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp build/icon.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
           
           npm install
           npm run build
-          cp -r ./dist/linux-unpacked/* ./package/rpmbuild/SOURCES/tess-${VERSION}/app/
+          cp -r dist/linux-unpacked/* package/rpmbuild/SOURCES/tess-${VERSION}/app/
           
-          cd cli
-          mkdir build && cmake . -B build && cd build
-          make
-          cd ../../
+          cd 
+          cmake . -B build -DBUILD_SHARED_LIBS=False
+          make -C build
+          cd ../
           
-          cp ./cli/build/tess-cli ./package/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
+          cp cli/build/tess-cli package/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
                   
-          cd ./package/rpmbuild/SOURCES
+          cd package/rpmbuild/SOURCES
           tar zcvf tess.tar.gz ./*
           cd ../
           
