@@ -52,6 +52,7 @@ jobs:
           mkdir -p "$RPM_BUILD_ROOT/usr/bin"
           mkdir -p "$RPM_BUILD_ROOT/usr/lib/tess/tess"
           mkdir -p "$RPM_BUILD_ROOT/usr/share/applications"
+          mkdir -p "$RPM_BUILD_ROOT/usr/share/pixmaps/"
 
           cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
           cp icon.png "$RPM_BUILD_ROOT/usr/share/pixmaps/tess.png"
