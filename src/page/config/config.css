@@ -315,14 +315,12 @@ input::-webkit-inner-spin-button {
 
 .left-side-menu .link,.profil-page,.profil-create {
     height: 36px;
-    min-height: 36px;
-    width: 96%;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 16px;
     color: var(--item-textcolor);
-    border-radius: 3px;
     cursor: pointer;
     user-select: none;
 }
@@ -336,10 +334,9 @@ input::-webkit-inner-spin-button {
 }
 
 .delete-profil {
-    margin-right: 7px;
+    margin-right: 8px;
     visibility: hidden;
     height: 21px;
-    width: 21px;
     min-width: 21px;
     border-radius: 4px;
     display: flex;
