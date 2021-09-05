@@ -170,11 +170,11 @@ pageCloseButton.forEach((el) => {
             </svg>
             <span class="link-name profil-link-name" profil-id="${el.id}">${el.name}</span>
         `;
-
+        
         let deleteIcon = document.createElement("span");
         let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        
+
         if (el.id != 1) {
             svg.setAttribute("viewBox", "0 0 20 20");
             svg.setAttribute("fill", "currentColor");
@@ -384,11 +384,12 @@ profilCreateBtn.addEventListener("click", () => {
         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
         </svg>
         <span class="link-name profil-link-name" profil-id="${newProfilId}">New Profile</span>
-    `; 
+    `;
+    
     let deleteIcon = document.createElement("span");
     let svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     let path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    
+
     if (newProfilId != 1) {
         svg.setAttribute("viewBox", "0 0 20 20");
         svg.setAttribute("fill", "currentColor");

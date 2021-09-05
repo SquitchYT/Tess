@@ -90,6 +90,7 @@ body {
 
 .hidden-page {
     transform: translateX(100vw);
+    opacity: 0.35;
 }
 
 .menu-hidden {
@@ -356,9 +357,9 @@ input::-webkit-inner-spin-button {
 }
 
 .link-icon {
-    height: 21px;
-    width: 21px;
-    margin-left: 7px;
+    height: 19px;
+    min-width: 19px;
+    margin-left: 6px;
 }
 
 .link-name {
