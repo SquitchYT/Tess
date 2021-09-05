@@ -66,6 +66,7 @@ jobs:
           /usr/bin/*
           /usr/lib/tess/*
           /usr/share/applications/*
+          /usr/share/pixmaps/*
               
           ' "${VERSION}" > ./package/rpmbuild/SPECS/tess.spec
           
