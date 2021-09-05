@@ -34,6 +34,8 @@ class ScrollerPicker extends HTMLElement {
 
         this.progress = progress;
 
+        this.callbackTimeout;
+
         bar.addEventListener("mousedown", (e) => {
             progress.style.transition = "none";
             this.mouseDown = true;
@@ -54,6 +56,9 @@ class ScrollerPicker extends HTMLElement {
 
         document.addEventListener("mousemove", (e) => {
             if (this.mouseDown == true) {
+
+                clearTimeout(this.callbackTimeout);
+
                 let dif = e.pageX - progress.getBoundingClientRect().right;
                 progress.style.width = progress.getBoundingClientRect().width + dif + "px";
                 value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)";
@@ -61,16 +66,18 @@ class ScrollerPicker extends HTMLElement {
                 this.pourcent = pourcent;
                 value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
                 this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min));
-
-                this.dispatchEvent(new CustomEvent("update"), {
-                    composed: true,
-                    bubbles: true,
-                });
+                
+                this.callbackTimeout = setTimeout(() => {
+                    this.dispatchEvent(new CustomEvent("update"), {
+                        composed: true,
+                        bubbles: true,
+                    });
+                }, 400)
             }
         });
 
         document.addEventListener("mouseup", () => {
-            progress.style.transition = "all 500ms";
+            progress.style.transition = "all 450ms";
             this.mouseDown = false;
             value.classList.remove("visible");
         });
@@ -78,17 +85,15 @@ class ScrollerPicker extends HTMLElement {
         bar.appendChild(progress);
         this.shadow.appendChild(bar);
 
-        document.addEventListener("DOMContentLoaded", () => {
-            setTimeout(() => {
-                maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
-            }, 700);
-        });
-
         window.addEventListener("resize", () => {
-            progress.style.transition = "all 500ms";
+            progress.style.transition = "all 450ms";
             progress.style.width = this.pourcent * (this.getBoundingClientRect().width) + "px";
             maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
         });
+
+        window.addEventListener("transitionstart", () => {
+            maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
+        })
     }
 
     static get observedAttributes() {

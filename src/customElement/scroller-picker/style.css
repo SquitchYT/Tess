@@ -61,3 +61,8 @@
 .visible {
     opacity: 1;
 }
+
+.hidden-indicator {
+    opacity: 0;
+    transition: none !important;
+}
