@@ -13,6 +13,10 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
+
+      - name: Downloading git
+        run : |
+          pacman -S git --noconfirm
         
       - name: Update PKGBUILD
         uses: 2m/arch-pkgbuild-builder@v1.16
