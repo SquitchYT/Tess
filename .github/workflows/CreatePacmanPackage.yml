@@ -13,10 +13,6 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
-
-      - name: Downloading git
-        run : |
-          pacman -S git --noconfirm
         
       - name: Update PKGBUILD
         uses: 2m/arch-pkgbuild-builder@v1.16
@@ -41,7 +37,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./tess-nightly-git/tess-git-x86_64.pkg.tar.zst
+          asset_path: tess-git/tess-git-x86_64.pkg.tar.zst
           asset_name: tess-git-x86_64.pkg.tar.zst
           asset_content_type: application/octet-stream
 
