@@ -5,7 +5,7 @@ project(tess-cli)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_definitions("-lpthread")
+add_definitions("-lpthread -O0")
 
 add_executable(tess-cli main.cpp)
 
