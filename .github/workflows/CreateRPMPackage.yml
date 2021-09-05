@@ -24,7 +24,7 @@ jobs:
 
       - name: Generating RPM Package    
         run: |
-          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git -y
+          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git openssl -y
           
           mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
