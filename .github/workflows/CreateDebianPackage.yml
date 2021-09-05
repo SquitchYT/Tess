@@ -29,7 +29,7 @@ jobs:
           cd cli
           cmake . -B build -DBUILD_SHARED_LIBS=False
           make -C build
-          cp build/tess-cli package/debian/tess/usr/bin/tess-cli
+          cp build/tess-cli package/debian/tess/usr/bin/
           cd ../
 
           printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > package/debian/tess/DEBIAN/control

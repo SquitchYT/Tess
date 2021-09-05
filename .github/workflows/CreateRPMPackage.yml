@@ -78,7 +78,7 @@ jobs:
           npm run build
           cp -r dist/linux-unpacked/* package/rpmbuild/SOURCES/tess-${VERSION}/app/
           
-          cd 
+          cd cli
           cmake . -B build -DBUILD_SHARED_LIBS=False
           make -C build
           cd ../
