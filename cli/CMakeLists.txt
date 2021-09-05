@@ -7,8 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_definitions("-lpthread")
 
-
-message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 set(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")
 
 add_executable(tess-cli main.cpp)
@@ -21,7 +19,6 @@ add_subdirectory(Lib)
 add_subdirectory(Class)
 
 target_link_libraries(tess-cli PRIVATE Lib Class Utils)
-
 
 include(FetchContent)
 FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/whoshuu/cpr.git GIT_TAG f4622efcb59d84071ae11404ae61bd821c1c344b)
