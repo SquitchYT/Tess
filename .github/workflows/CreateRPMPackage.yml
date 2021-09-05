@@ -49,9 +49,9 @@ jobs:
 
           %%install
           rm -rf $RPM_BUILD_ROOT
-          mkdir -p "$RPM_BUILD_ROOT/usr/bin"
-          mkdir -p "$RPM_BUILD_ROOT/usr/lib/tess/tess"
-          mkdir -p "$RPM_BUILD_ROOT/usr/share/applications"
+          mkdir -p "$RPM_BUILD_ROOT/usr/bin/"
+          mkdir -p "$RPM_BUILD_ROOT/usr/lib/tess/"
+          mkdir -p "$RPM_BUILD_ROOT/usr/share/applications/"
           mkdir -p "$RPM_BUILD_ROOT/usr/share/pixmaps/"
 
           cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
@@ -60,7 +60,7 @@ jobs:
           cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
           ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
           
-          cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli/"
+          cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli"
 
           %%files
           /usr/bin/*
