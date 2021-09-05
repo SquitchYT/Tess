@@ -9,3 +9,9 @@ Categories=System;TerminalEmulator
 Description=Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology
 Comment=Simple Terminal Emulator
 StartupWMClass=tess
+Action=NewWindow
+
+[Desktop Action NewWindow]
+Name=Open a New Window
+Icon=window-new
+Exec=/usr/bin/tess

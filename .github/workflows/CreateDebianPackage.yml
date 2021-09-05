@@ -22,10 +22,13 @@ jobs:
       - name: Generating DEBIAN Package    
         run: |
           sudo apt-get install libcurl4-openssl-dev cmake git
+
           mkdir -p package/debian/tess/usr/lib/tess/
+          
           npm install
           npm run build
           cp -r dist/linux-unpacked/* package/debian/tess/usr/lib/tess/
+          
           cd cli
           cmake . -B build -DBUILD_SHARED_LIBS=False
           make -C build

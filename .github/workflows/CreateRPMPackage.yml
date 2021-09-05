@@ -53,20 +53,29 @@ jobs:
           mkdir -p "$RPM_BUILD_ROOT/usr/lib/tess/"
           mkdir -p "$RPM_BUILD_ROOT/usr/share/applications/"
           mkdir -p "$RPM_BUILD_ROOT/usr/share/pixmaps/"
+          mkdir -p "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
 
           cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
           cp icon.png "$RPM_BUILD_ROOT/usr/share/pixmaps/tess.png"
+
+          cp tesshere.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
+          cp appintess.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
 
           cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
           ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
           
           cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli"
 
+          if type "$kbuildsycoca5" > /dev/null; then
+            kbuildsycoca5
+          fi
+
           %%files
           /usr/bin/*
           /usr/lib/tess/*
           /usr/share/applications/*
           /usr/share/pixmaps/*
+          /usr/share/kservices5/ServiceMenus/*
               
           ' "${VERSION}" > ./package/rpmbuild/SPECS/tess.spec
           
@@ -74,6 +83,8 @@ jobs:
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
           
           cp Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp appintess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp tesshere.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
           cp build/icon.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
           
           npm install
