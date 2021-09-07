@@ -18,6 +18,7 @@
     align-items: center;
     justify-content: center;
     z-index: 1;
+    cursor: pointer;
 }
 
 .display-area:hover {
@@ -61,6 +62,7 @@ span {
     display: flex;
     align-items: center;
     padding: 8px;
+    cursor: pointer;
 }
 
 .drop-down-value:nth-last-child(1) {

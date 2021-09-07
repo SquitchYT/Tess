@@ -12,6 +12,7 @@
     transition-duration: 350ms;
     transition-timing-function: ease;
     background: var(--green);
+    cursor: pointer;
 }
 
 .button-off {
