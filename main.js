@@ -1,6 +1,5 @@
 const time1 = new Date().getTime();
 
-const electron = require("electron");
 const argv = require("yargs").argv;
 
 const pty = require("node-pty");
@@ -16,6 +15,25 @@ const OsInfomations = require("./class/osinfo");
 const osData = new OsInfomations();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
+const electron = require("electron")
+
+if (osData.os == "win32") {
+    app.setJumpList([
+        {
+            type: "tasks",
+            items: [
+                {
+                    type: "task",
+                    title: "New Window",
+                    description: "Open a new instance of Tess",
+                    program: process.execPath
+                }
+            ]
+        }
+    ])
+}
+
+
 
 let BrowserWindow;
 
