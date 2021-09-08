@@ -190,7 +190,8 @@ input::-webkit-inner-spin-button {
 
 #menu-icon {
     position: relative;
-    left: 54%;
+    top: 1px;
+    left: 56%;
     height: 24px;
     width: 24px;
     z-index: 1000;
