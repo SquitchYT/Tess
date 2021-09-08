@@ -30,7 +30,7 @@ jobs:
           cp -r dist/linux-unpacked/* package/debian/tess/usr/lib/tess/
           
           cd cli
-          cmake . -B build -DBUILD_SHARED_LIBS=False
+          cmake . -B build
           make -C build
           cp build/tess-cli ../package/debian/tess/usr/bin/
           cd ../

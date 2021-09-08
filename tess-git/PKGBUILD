@@ -31,7 +31,7 @@ package() {
   fi
 
   cd cli
-  cmake . -B build -DBUILD_SHARED_LIBS=False
+  cmake . -B build
   make -C build
   install -Dm755 build/tess-cli -t "${pkgdir}/usr/bin/"
 

@@ -92,7 +92,7 @@ jobs:
           cp -r dist/linux-unpacked/* package/rpmbuild/SOURCES/tess-${VERSION}/app/
           
           cd cli
-          cmake . -B build -DBUILD_SHARED_LIBS=False
+          cmake . -B build
           make -C build
           cd ../
           
