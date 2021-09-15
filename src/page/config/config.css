@@ -332,7 +332,7 @@ input::-webkit-inner-spin-button {
 }
 
 .profil-create {
-    order: 100;
+    order: 5000000;
 }
 
 .delete-profil {
@@ -541,7 +541,7 @@ h3 {
     align-items: center;
     user-select: none;
     border-radius: 400px;
-    transition: 0.55s;
+    transition: 0.4s;
     cursor: pointer;
 }
 

@@ -94,6 +94,7 @@ ipc.on("pty-data", (e, data) => {
 ipc.on("loaded", (e, data) => {
     config = data.config;
     colors = data.colors;
+    let loadOptions = data.loadOptions;
 
     HandleShortcut();
 
@@ -109,11 +110,6 @@ ipc.on("loaded", (e, data) => {
     } else if (config.background == "image") {
         colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
-        console.log(config.imageLink);
-        
-        
-
-
         root.style.setProperty("--background-image", 'url("' + config.imageLink + '")');
         root.style.setProperty("--background", colors.terminal.theme.background);
         root.style.setProperty("--blur", "blur(" + config.imageBlur +"px)");
@@ -134,13 +130,17 @@ ipc.on("loaded", (e, data) => {
 
     body.style.color = colors.app.textColor;
 
-    config.profil.forEach((el) => {
+    /*config.profil.forEach((el) => {
         if (el.name == config.defaultProfil) {
             CreateNewTerminal(el.programm, el.name, el.icon);
-            document.getElementById("new-tab").addEventListener("click", () => {
-                openDefaultProfil();
-            });
+            
         }
+    });*/
+
+    openNewPage(loadOptions);
+
+    document.getElementById("new-tab").addEventListener("click", () => {
+        openDefaultProfil();
     });
 
     ipc.send("load-end");
@@ -170,7 +170,7 @@ function HandleShortcut() {
     });
 }
 
-function CreateNewTerminal(toStart, name, icon) {
+function CreateNewTerminal(toStart, name, icon, workdir) {
     if (icon == "Default") {
         icon = undefined;
     }
@@ -362,7 +362,8 @@ function CreateNewTerminal(toStart, name, icon) {
             index: index,
             rows: rows,
             cols: cols,
-            shell: toStart
+            shell: toStart,
+            workdir: workdir
         });
 
         t = {
@@ -484,7 +485,8 @@ target.addEventListener("wheel", event => {
 
     if (toLeft || toRight) {
         event.preventDefault();
-        target.scrollLeft += event.deltaY;
+        target.scrollif (data.profil || data.command)
+        toLeft += event.deltaY;
     }
 });
 
@@ -643,4 +645,37 @@ function updateTerminalApparence() {
     });
 
     resize();
+}
+
+ipc.on("openNewPage", (e, data) => {
+    console.log(data)
+
+    openNewPage(JSON.parse(data))
+})
+
+function openNewPage(data) {
+    console.log(data)
+
+    if (data.page && CustomPage.includes(data.page)) {
+        CreateNewTerminal(data.page, data.page, undefined, undefined);
+
+        //openDefaultProfil();
+
+        //CreateNewTerminal(, data.page, undefined, undefined);
+    } else if (data.profil || data.customCommand) {
+        CreateNewTerminal((data.customCommand) ? data.customCommand : data.profil.programm, 
+                          (data.customCommand) ? data.customCommand : data.profil.name, 
+                          (data.customCommand) ? undefined : data.profil.icon,
+                          data.workdir)
+    } else {
+        console.log("'dfsdfsdf")
+    }
+
+
+
+    /*config.profil.forEach((el) => {
+        if (el.name == data.profil) {
+            CreateNewTerminal(el.programm, el.name, el.icon)
+        }
+    })*/
 }

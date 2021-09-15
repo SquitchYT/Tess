@@ -7,5 +7,5 @@ X-KDE-AuthorizeAction=shell_access
 
 [Desktop Action opentesshere]
 Name=Execute Tess Here
-Exec=tess --workdir %f
+Exec=tess --workdir %f --newtab
 Icon=/usr/share/pixmaps/tess.png

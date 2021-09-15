@@ -9,13 +9,14 @@ const { Worker } = require("worker_threads");
 const fs = require("fs");
 const mkdir = require("mkdirp");
 
-const Color = require("./class/color")
+const Color = require("./class/color");
 
 const OsInfomations = require("./class/osinfo");
 const osData = new OsInfomations();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
-const electron = require("electron")
+
+const net = require("net");
 
 if (osData.os == "win32") {
     app.setJumpList([
@@ -33,27 +34,7 @@ if (osData.os == "win32") {
     ])
 }
 
-
-
-let BrowserWindow;
-
 let config, colors;
-let workers = [];
-let mainWindow;
-let shells = [];
-
-//Modifier getting with args
-let customWorkdir;
-let customCommand;
-
-if (argv.workdir || argv.cd) {
-    customWorkdir = argv.workdir || argv.cd;
-}
-if (argv.command || argv.e) {
-    customCommand = argv.command || argv.e;
-}
-console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
-
 !function LoadConfig() {
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
@@ -84,6 +65,52 @@ console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You u
     }
 }();
 
+
+let BrowserWindow;
+let workers = [];
+let mainWindow;
+let shells = [];
+
+//Modifier getting with args
+let customWorkdir;
+let customCommand;
+let newTab;
+
+let launchProfil;
+let launchPage;
+
+// Optimizing this !!!
+if (argv.workdir || argv.cd) {
+    customWorkdir = argv.workdir || argv.cd;
+}
+if (argv.command || argv.e) {
+    customCommand = argv.command || argv.e;
+}
+if (argv.newtab) {
+    newTab = true;
+}
+if (argv["launch-profil"]) {
+    launchProfil = argv["launch-profil"];
+}
+if (argv["launch-page"]) {
+    launchPage = argv["launch-page"];
+}
+if (launchProfil) {
+    let finded = false;
+    config.profil.forEach((el) => {
+        if (el.name == launchProfil) {
+            launchProfil = el;
+            finded = true;
+        }
+    })
+    if (!finded) {
+        launchProfil = undefined
+    }
+}
+
+
+console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
+
 if (osData.os == "win32" && config.background != "transparent" && config.background != "image") {
     BrowserWindow = require("electron-acrylic-window").BrowserWindow
 } else {
@@ -112,6 +139,17 @@ if (config.background == "transparent" || config.background == "acrylic" || conf
 }();
 
 function openWindow(config, colors) {
+    let TCPServer = net.createServer((socket) => {
+        socket.on("data", (data) => {
+            try {
+                mainWindow.webContents.send("openNewPage", data.toString());
+            } catch (err) {
+                console.log(err);
+            }
+        })
+    })
+    TCPServer.listen(process.pid);
+
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
     let needFrame = (osData.os == "win32") ? false : true;
@@ -148,7 +186,7 @@ function openWindow(config, colors) {
             effect: config.background,
             useCustomWindowRefreshMethod: true,
             disableOnBlur: true
-         }
+        }
     });
 
     mainWindow.removeMenu();
@@ -166,13 +204,29 @@ function openWindow(config, colors) {
         }, 100);
     });
 
+    let profilToLaunch;
+    config.profil.forEach((el) => {
+        if (el.name == config.defaultProfil) {
+            profilToLaunch = el
+        }
+    })
+
+    let loadOptions = {
+        page: launchPage,
+        profil: (launchProfil) ? launchProfil : profilToLaunch,
+        workdir: customWorkdir,
+        customCommand: customCommand
+    }
+
     mainWindow.on("ready-to-show", () => {
         try {
             mainWindow.webContents.send("loaded", {
                 config: config,
-                colors: colors
+                colors: colors,
+                loadOptions: loadOptions
+
             });
-            mainWindow.webContents.send("app-reduced-expanded", mainWindow.isMaximized());
+            if (osData.os == "win32") { mainWindow.webContents.send("app-reduced-expanded", mainWindow.isMaximized()); }
         } catch (err) {
             console.log(err);
         }
@@ -186,20 +240,20 @@ function openWindow(config, colors) {
 
 ipc.on("new-term", (e, data) => {
     // Check if command exist
-    let Command = (customCommand || data.shell).split(" ");
+    let Command = data.shell.split(" ");
     let prog = Command[0];
     Command.shift();
     let args = Command;
+
+    let workdir = data.workdir
 
     let shell = pty.spawn(prog, args, {
         name: "xterm-color",
         cols: data.cols,
         rows: data.rows,
-        cwd:  (customWorkdir) ? customWorkdir : process.env.HOME,
+        cwd:  (workdir) ? workdir : process.env.HOME,
         env: process.env,
     });
-    customWorkdir = ""; // Reset Workdir
-    customCommand = ""; // Reset Command
     
     shell.onExit(() => {
         try {
@@ -244,12 +298,48 @@ ipc.on("terminal-data", (e, data) => {
 // App events
 app.on("ready", () => {
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
-    if (needTransparent && osData.os != "win32") {
-        setTimeout(() => {
-            openWindow(config, colors);
-        }, 300);
+
+    if (newTab) {
+        const client = net.createConnection({ port: getTessInstance() }, () => {
+            let profilToLaunch;
+            config.profil.forEach((el) => {
+                if (el.name == config.defaultProfil) {
+                    profilToLaunch = el
+                }
+            })
+
+            let loadOptions = {
+                page: launchPage,
+                profil: (launchProfil) ? launchProfil : profilToLaunch,
+                workdir: customWorkdir,
+                customCommand: customCommand
+            }
+
+            client.write(JSON.stringify(loadOptions));
+            process.exit();
+        });
+        
+        client.on("error", (e) => {
+            client.end()
+    
+            if (needTransparent && osData.os != "win32") {
+                setTimeout(() => {
+                    openWindow(config, colors);
+                }, 300);
+            } else {
+                openWindow(config, colors);
+            }
+
+
+        })
     } else {
-        openWindow(config, colors);
+        if (needTransparent && osData.os != "win32") {
+            setTimeout(() => {
+                openWindow(config, colors);
+            }, 300);
+        } else {
+            openWindow(config, colors);
+        }
     }
 });
 
@@ -264,7 +354,6 @@ app.on("activate", function() {
         openWindow();
     }
 });
-
 
 ipc.on("close-terminal", (e, data) => {
     let y = 0;
@@ -291,10 +380,12 @@ ipc.on("reduce-expand", () => {
         BrowserWindow.getFocusedWindow().webContents.send("resize");
     }, 400);
 
-    try {
-        mainWindow.webContents.send("app-reduced-expanded", BrowserWindow.getFocusedWindow().isMaximized());
-    } catch (err) {
-        console.log(err);
+    if (osData.os == "win32") {
+        try {
+            mainWindow.webContents.send("app-reduced-expanded", BrowserWindow.getFocusedWindow().isMaximized());
+        } catch (err) {
+            console.log(err);
+        }
     }
 });
 
@@ -392,3 +483,15 @@ ipc.on("openFileDialog", (e, data) => {
         console.log(err);
     });
 });
+
+function getTessInstance() {
+    try {
+        let result = Child_Proc.execSync("ps -C tess");
+        let PIDLine = result.toString().split("\n")
+    
+        let regex = /[0-9]+/i;
+        return regex.exec(PIDLine[1])[0];
+    } catch {
+        return 0;
+    }
+}
