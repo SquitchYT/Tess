@@ -486,11 +486,20 @@ ipc.on("openFileDialog", (e, data) => {
 
 function getTessInstance() {
     try {
-        let result = Child_Proc.execSync("ps -C tess");
-        let PIDLine = result.toString().split("\n")
-    
-        let regex = /[0-9]+/i;
-        return regex.exec(PIDLine[1])[0];
+        if (osData.os != "win32") {
+            let result = Child_Proc.execSync("ps -C tess");
+            let PIDLine = result.toString().split("\n")
+        
+            let regex = /[0-9]+/i;
+            return regex.exec(PIDLine[1])[0];
+        } else {
+            let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq electron.exe"');
+            let PIDLine = result.toString().split("\n")
+            
+            let regex = /[0-9]+/i;
+            return regex.exec(PIDLine[3])[0];
+        }
+
     } catch {
         return 0;
     }
