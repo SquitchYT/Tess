@@ -1,12 +1,12 @@
 [Setup]
 AppName=Tess
 AppVersion=0.5.0
-DefaultDirName=Tess
-OutputBaseFilename=tess-5.0.0-setup.exe
+DefaultDirName={autopf}\Tess
+OutputBaseFilename=tess-0.5.0-setup.exe
 AppVerName=Tess
 SetupIconFile="build\icon.ico"
 UninstallDisplayIcon="{app}\tess.exe"
-
+DisableDirPage=yes
 
 [files]
 Source: dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
@@ -14,12 +14,8 @@ Source: dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
 [Registry]
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"; ValueType: string; ValueName: "Path"; ValueData: "{reg:HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\,Path};{app}"
 
-
-
-
-
-
-
+[Icons]
+Name: "{userdesktop}\Tess"; Filename: "{app}\tess.exe"
 
 [Code]
 procedure RemovePath(Path: string);
@@ -64,4 +60,44 @@ begin
   begin
     RemovePath(ExpandConstant('{app}'));
   end;
+end;
+
+function SetTimer(hWnd, nIDEvent, uElapse, lpTimerFunc: LongWord): LongWord;
+  external 'SetTimer@User32.dll stdcall';
+function KillTimer(hWnd, nIDEvent: LongWord): LongWord;
+  external 'KillTimer@User32.dll stdcall';
+
+var
+  SubmitPageTimer: LongWord;
+
+procedure KillSubmitPageTimer;
+begin
+  KillTimer(0, SubmitPageTimer);
+  SubmitPageTimer := 0;
+end;  
+
+procedure SubmitPageProc(H: LongWord; Msg: LongWord; IdEvent: LongWord; Time: LongWord);
+begin
+  WizardForm.NextButton.OnClick(WizardForm.NextButton);
+  KillSubmitPageTimer;
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+begin
+  if CurPageID = wpReady then
+  begin
+    SubmitPageTimer := SetTimer(0, 0, 100, CreateCallback(@SubmitPageProc));
+  end
+    else
+  begin
+    if SubmitPageTimer <> 0 then
+    begin
+      KillSubmitPageTimer;
+    end;
+  end;
+end;
+
+function ShouldSkipPage(PageID: Integer): Boolean;
+begin
+  Result := True;
 end;
