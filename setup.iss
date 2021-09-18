@@ -12,7 +12,23 @@ DisableDirPage=yes
 Source: dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
 
 [Registry]
-Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"; ValueType: string; ValueName: "Path"; ValueData: "{reg:HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\,Path};{app}"
+Root: HKCU; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"; ValueType: string; ValueName: "Path"; ValueData: "{reg:HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\,Path};{app}"
+
+Root: HKCU; SubKey: "Software\Classes\Directory\Background\shell\Tess"; ValueType: string; ValueName: ""; ValueData: "Open Tess here"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCU; SubKey: "Software\Classes\Directory\Background\shell\Tess"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\tess.exe"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCU; SubKey: "Software\Classes\Directory\Background\shell\Tess\command"; ValueType: string; ValueName: ""; ValueData: "{app}\tess.exe --newtab --workdir=%V"; Flags: uninsdeletevalue uninsdeletekeyifempty
+
+Root: HKCU; SubKey: "Software\Classes\Directory\shell\Tess"; ValueType: string; ValueName: ""; ValueData: "Open Tess here"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCU; SubKey: "Software\Classes\Directory\shell\Tess"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\tess.exe"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCU; SubKey: "Software\Classes\Directory\shell\Tess\command"; ValueType: string; ValueName: ""; ValueData: "{app}\tess.exe --newtab --workdir=%V"; Flags: uninsdeletevalue uninsdeletekeyifempty
+
+Root: HKCU; SubKey: "Software\Classes\Drive\shell\Tess"; ValueType: string; ValueName: ""; ValueData: "Open Tess here"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCU; SubKey: "Software\Classes\Drive\shell\Tess"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\tess.exe"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCU; SubKey: "Software\Classes\Drive\shell\Tess\command"; ValueType: string; ValueName: ""; ValueData: "{app}\tess.exe --newtab --workdir=%V"; Flags: uninsdeletevalue uninsdeletekeyifempty
+
+Root: HKCR; SubKey: "exefile\shell\Tess"; ValueType: string; ValueName: ""; ValueData: "Execute App in Tess"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCR; SubKey: "exefile\shell\Tess"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\tess.exe"; Flags: uninsdeletevalue uninsdeletekeyifempty
+Root: HKCR; SubKey: "exefile\shell\Tess\command"; ValueType: string; ValueName: ""; ValueData: "{app}\tess.exe --newtab --e=%V"; Flags: uninsdeletevalue uninsdeletekeyifempty
 
 [Icons]
 Name: "{userdesktop}\Tess"; Filename: "{app}\tess.exe"
