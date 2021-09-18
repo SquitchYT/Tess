@@ -26,3 +26,4 @@ cli/Utils/cmake_install.cmake
 cli/Lib/cmake_install.cmake
 cli/CMakeCache.txt
 cli/build/
+Output/
