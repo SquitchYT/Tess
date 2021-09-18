@@ -18,22 +18,6 @@ const { app, ipcMain : ipc, screen, dialog } = require("electron");
 
 const net = require("net");
 
-if (osData.os == "win32") {
-    app.setJumpList([
-        {
-            type: "tasks",
-            items: [
-                {
-                    type: "task",
-                    title: "New Window",
-                    description: "Open a new instance of Tess",
-                    program: process.execPath
-                }
-            ]
-        }
-    ])
-}
-
 let config, colors;
 !function LoadConfig() {
     try {
@@ -64,6 +48,10 @@ let config, colors;
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
     }
 }();
+
+if (osData.os == "win32") {
+    updateJumpMenu();
+}
 
 
 let BrowserWindow;
@@ -469,6 +457,10 @@ function reloadConfig() {
         mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
     }
+
+    if (osData.os == "win32") {
+        updateJumpMenu();
+    }
 }
 
 ipc.on("debug", (e, data) => {
@@ -493,7 +485,7 @@ function getTessInstance() {
             let regex = /[0-9]+/i;
             return regex.exec(PIDLine[1])[0];
         } else {
-            let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq electron.exe"');
+            let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq tess.exe"');
             let PIDLine = result.toString().split("\n")
             
             let regex = /[0-9]+/i;
@@ -503,4 +495,62 @@ function getTessInstance() {
     } catch {
         return 0;
     }
+}
+
+function updateJumpMenu () {
+    app.setJumpList([
+        {
+            type: "tasks",
+            items: [
+                {
+                    type: "task",
+                    title: "New Tab",
+                    description: "Open a new tab inside Tess",
+                    program: process.execPath,
+                    args: "--newtab"
+                },
+                {
+                    type: "task",
+                    title: "New Window",
+                    description: "Open a new instance of Tess",
+                    program: process.execPath
+                }
+            ]
+        },
+        {
+            type: "custom",
+            name: "Profils",
+            items: getProfilJumpList()
+        },
+        {
+            type: "custom",
+            name: "Page",
+            items: [
+                {
+                    type: "task",
+                    title: "Config Page",
+                    description: "Open config page inside a new tab",
+                    program: process.execPath,
+                    args: "--newtab -launch-page=Config"
+                }
+            ]
+        }
+    ])
+}
+
+function getProfilJumpList () {
+    let profilList = [];
+
+    config.profil.forEach((el) => {
+        let newInput = {
+            type: "task",
+            title: el.name,
+            description: `Open profil ${el.name} on a new tab`,
+            program: process.execPath,
+            args: `--launch-profil=${el.name} --newtab`
+        }
+        profilList.push(newInput);
+    })
+
+    return profilList;
 }
