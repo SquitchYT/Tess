@@ -68,8 +68,8 @@ let launchProfil;
 let launchPage;
 
 // Optimizing this !!!
-if (argv.workdir || argv.cd) {
-    customWorkdir = argv.workdir || argv.cd;
+if ((argv.workdir || argv.cd) || osData.os == "win32") {
+    customWorkdir = (argv.workdir || argv.cd) || osData.homeDir;
 }
 if (argv.command || argv.e) {
     customCommand = argv.command || argv.e;
@@ -95,6 +95,8 @@ if (launchProfil) {
         launchProfil = undefined
     }
 }
+
+console.log(customWorkdir)
 
 
 console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
