@@ -12,7 +12,7 @@ DisableDirPage=yes
 Source: dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
 
 [Registry]
-Root: HKCU; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"; ValueType: string; ValueName: "Path"; ValueData: "{reg:HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\,Path};{app}"
+Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"; ValueType: string; ValueName: "Path"; ValueData: "{reg:HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\,Path};{app}"
 
 Root: HKCU; SubKey: "Software\Classes\Directory\Background\shell\Tess"; ValueType: string; ValueName: ""; ValueData: "Open Tess here"; Flags: uninsdeletevalue uninsdeletekeyifempty
 Root: HKCU; SubKey: "Software\Classes\Directory\Background\shell\Tess"; ValueType: string; ValueName: "Icon"; ValueData: "{app}\tess.exe"; Flags: uninsdeletevalue uninsdeletekeyifempty
