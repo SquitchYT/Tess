@@ -1,5 +1,5 @@
-#ifndef ERROR
-#define ERROR
+#ifndef ERRORTESS
+#define ERRORTESS
 
 
 #include <string>
@@ -27,10 +27,14 @@ class Error
             _message = err_code.second;
             _isNull = (_code == ERR_NONE.first);
 
-            (_message += static_cast<std::string>(more) + " ", ...);
+            ((_message += static_cast<std::string>(more) + " "), ...);
         };
 
         Error(std::pair<int, std::string> err_code);
+
+        //Error();
+
+        Error() = default ;
 
         friend std::ostream &operator<<(std::ostream &os, Error &err);
 
@@ -39,5 +43,6 @@ class Error
 
         bool isNull();
 };
+
 
 #endif

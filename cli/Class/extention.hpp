@@ -8,7 +8,6 @@
 
 #include "../Class/Error.hpp"
 
-
 class Extention
 {
 private:

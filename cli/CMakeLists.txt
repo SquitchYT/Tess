@@ -8,7 +8,15 @@ set(BUILD_SHARED_LIBS False)
 
 add_definitions("-lpthread")
 
-set(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")
+
+
+if (UNIX)
+    set(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")
+endif (UNIX)
+
+if (WIN32)
+    set(CMAKE_CXX_FLAGS "-O0 -Wall")
+endif (WIN32)
 
 add_executable(tess-cli main.cpp)
 
@@ -20,6 +28,7 @@ add_subdirectory(Lib)
 add_subdirectory(Class)
 
 target_link_libraries(tess-cli PRIVATE Lib Class Utils)
+#target_link_libraries(tess-cli PRIVATE Class Lib Utils)
 
 include(FetchContent)
 FetchContent_Declare(cpr GIT_REPOSITORY https://github.com/whoshuu/cpr.git GIT_TAG f4622efcb59d84071ae11404ae61bd821c1c344b)

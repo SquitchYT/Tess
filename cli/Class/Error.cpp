@@ -5,7 +5,6 @@
 
 #include "../Utils/Constant.hpp"
 
-
 Error::Error(std::pair<int, std::string> err_code) {
     _code = err_code.first;
     _message = err_code.second;
@@ -33,3 +32,5 @@ std::string Error::getMessage()
 bool Error::isNull() {
     return _isNull;
 }
+
+

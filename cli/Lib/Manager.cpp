@@ -1,13 +1,19 @@
 #include "Manager.hpp"
 
 #include <iostream>
+
+#ifdef __linux__
 #include <unistd.h>
+#endif
 #include <string>
 #include <future>
 #include <thread>
 #include <list>
 #include <vector>
 
+#ifdef _WIN32
+    #include <Windows.h>
+#endif
 
 #include "../Utils/ProgressBar.hpp"
 #include "../Utils/Constant.hpp"
@@ -25,15 +31,18 @@ Manager::Manager(std::vector<Extention> extentions, std::string action){
 }
 
 Error Manager::start(){
+    #ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+    #endif
     std::future<Error> download;
 
     // Try to switch !!! to switch
     if (_action == "install") {
-        download = async(std::launch::async, &Manager::Install, this);
+        download = std::async(std::launch::async, &Manager::Install, this);
     } else if (_action == "remove") {
-        download = async(std::launch::async, &Manager::Remove, this);
+        download = std::async(std::launch::async, &Manager::Remove, this);
     } else if (_action == "update") {
-        download = async(std::launch::async, &Manager::Update, this);
+        download = std::async(std::launch::async, &Manager::Update, this);
     } else {
         Error err(ERR_DISK);
         return err;

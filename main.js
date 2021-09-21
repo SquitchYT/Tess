@@ -96,7 +96,7 @@ if (launchProfil) {
     }
 }
 
-console.log(customWorkdir)
+console.log(launchProfil)
 
 
 console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
@@ -493,7 +493,6 @@ function getTessInstance() {
             let regex = /[0-9]+/i;
             return regex.exec(PIDLine[3])[0];
         }
-
     } catch {
         return 0;
     }
@@ -531,9 +530,9 @@ function updateJumpMenu () {
                 {
                     type: "task",
                     title: "Config Page",
-                    description: "Open config page inside a new tab",
+                    description: "Open config page on a new tab",
                     program: process.execPath,
-                    args: "--newtab -launch-page=Config"
+                    args: "--newtab --launch-page=Config"
                 }
             ]
         }
@@ -549,7 +548,7 @@ function getProfilJumpList () {
             title: el.name,
             description: `Open profil ${el.name} on a new tab`,
             program: process.execPath,
-            args: `--launch-profil=${el.name} --newtab`
+            args: `--launch-profil='${el.name}' --newtab`
         }
         profilList.push(newInput);
     })

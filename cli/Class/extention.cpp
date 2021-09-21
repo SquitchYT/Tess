@@ -64,7 +64,14 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
     if (_type == "theme") {
         callback("Installing theme ...", -1);
 
-        std::ofstream file((std::string)std::getenv("HOME") + "/Applications/tess/config/theme/" + _name + ".json");
+        std::ofstream file;
+
+        #ifdef _WIN32
+            file.open(static_cast<std::string>(std::getenv("HOMEDRIVE")) + static_cast<std::string>(std::getenv("HOMEPATH")) + "\\Applications\\tess\\config\\theme\\" + _name + ".json");
+        #else
+            file.open(static_cast<std::string>(std::getenv("HOME")) + "/Applications/tess/config/theme/" + _name + ".json");
+        #endif
+
         file << _content;
         file.close();
 
@@ -120,8 +127,15 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
 
 
             if (r.status_code == 200) {
-                Utils::Cross::create_dir((std::string)std::getenv("HOME") + "/Applications/tess/plugins/" + _name);
-                std::ofstream file((std::string)std::getenv("HOME") + "/Applications/tess/plugins/" + _name + "/" + url.second);
+                std::ofstream file;
+                #ifdef _WIN32
+                    Utils::Cross::create_dir(static_cast<std::string>(std::getenv("HOMEDRIVE")) + static_cast<std::string>(std::getenv("HOMEPATH")) + "\\Applications\\tess\\plugins\\" + _name);
+                    file.open(static_cast<std::string>(std::getenv("HOMEDRIVE")) + static_cast<std::string>(std::getenv("HOMEPATH")) + "\\Applications\\tess\\plugins\\" + _name + "\\" + url.second);
+                #else
+                    Utils::Cross::create_dir(static_cast<std::string>(std::getenv("HOME")) + "/Applications/tess/plugins/" + _name);
+                    file.open(static_cast<std::string>(std::getenv("HOME")) + "/Applications/tess/plugins/" + _name + "/" + url.second);
+                #endif
+
                 file << r.text;
                 file.close();
             }
@@ -137,11 +151,23 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
         callback("Installing Node.js dependencies", -1);
 
         // Fix print save into nul file
-        Utils::Cross::change_dir((std::string)std::getenv("HOME") + "/Applications/tess/plugins/" + _name);
+
+        #ifdef _WIN32
+            Utils::Cross::change_dir(static_cast<std::string>(std::getenv("HOMEDRIVE")) + static_cast<std::string>(std::getenv("HOMEPATH")) + "\\Applications\\tess\\plugins\\" + _name);
+        #else
+            Utils::Cross::change_dir(static_cast<std::string>(std::getenv("HOME")) + "/Applications/tess/plugins/" + _name);
+        #endif
 
         std::string packageManager = Utils::Cross::getNodeJSPackageManager();
+
+        std::cout << packageManager << std::endl;
+
         if (packageManager != "NO") {
-            packageManager += " install >/dev/null 2>&1";
+            #ifdef _WIN32
+                packageManager += " install >nul 2>nul";
+            #else
+                packageManager += " install >/dev/null 2>&1";
+            #endif
             system(packageManager.c_str());
             callback("Finishing ...", -1);
 
@@ -158,7 +184,11 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
 
 Error Extention::uninstall() {
     if (_type == "theme") {
-        Utils::Cross::change_dir((std::string)getenv("HOME") + "/Applications/tess/config/theme/");
+        #ifdef _WIN32
+            Utils::Cross::change_dir(static_cast<std::string>(getenv("HOMEDRIVE")) + static_cast<std::string>(std::getenv("HOMEPATH")) + "\\Applications\\tess\\config\\theme\\");
+        #else
+            Utils::Cross::change_dir(static_cast<std::string>(getenv("HOME")) + "/Applications/tess/config/theme/");
+        #endif
         Utils::Cross::toLower(_name);
         
         if (!std::filesystem::remove("./" + _name + ".json")) {
@@ -166,7 +196,12 @@ Error Extention::uninstall() {
             return err;
         }
     } else {
-        Utils::Cross::change_dir((std::string)getenv("HOME") + "/Applications/tess/plugins");
+        #ifdef _WIN32
+            Utils::Cross::change_dir(static_cast<std::string>(getenv("HOMEDRIVE")) + static_cast<std::string>(std::getenv("HOMEPATH")) +  "\\Applications\\tess\\plugins");
+        #else
+            Utils::Cross::change_dir(static_cast<std::string>(getenv("HOME")) + "/Applications/tess/plugins");
+        #endif
+
         Utils::Cross::toLower(_name);
 
         if (std::filesystem::remove_all("./" + _name) == 0) {

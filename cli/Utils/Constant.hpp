@@ -1,9 +1,8 @@
-#ifndef CONST
-#define CONST
+#ifndef CONSTTESS
+#define CONSTTESS
 
 #include <string>
 #include <vector>
-
 
 extern std::pair<int, std::string> ERR_NO_ARGS;
 extern std::pair<int, std::string> ERR_UNKNOW_ARG;
@@ -32,5 +31,6 @@ extern std::string STATUS_UNINSTALL;
 extern std::vector<std::pair<std::string, std::string>> ARGS_ALLIAS;
 
 extern int ERR_INSTALLING;
+
 
 #endif
