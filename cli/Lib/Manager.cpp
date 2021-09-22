@@ -110,10 +110,10 @@ Error Manager::start(){
             std::cout << "\r" << _loader << " (" << _do << "/" << _todo << ") " << "Unisntalling " << _item_name << std::flush;
 
             if (_details == "Error") {
-                std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << " (" << _do << "/" << _todo << ") " << _item_name << " Unable to remove         " << std::endl;
+                std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << " (" << _do << "/" << _todo << ") " << _item_name << " Unable to remove           " << std::endl;
                 _status = STATUS_FINISHED;
             } else if (_details == "Finish") {
-                std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << "(" << _do << "/" << _todo << ") " << _item_name << " Removed                  " << std::endl;
+                std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << " (" << _do << "/" << _todo << ") " << _item_name << " Removed                  " << std::endl;
                 _status = STATUS_WAITING;
             }
         }
@@ -198,6 +198,7 @@ Error Manager::Remove() {
     std::cout << "Removing..." << std::endl;
 
     _todo = _extention.size();
+    _do = 0;
 
     for (auto &extention : _extention) {
         _status = STATUS_UNINSTALL;
