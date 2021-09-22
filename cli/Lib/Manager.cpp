@@ -51,7 +51,7 @@ Error Manager::start(){
     while (_status != STATUS_FINISHED)
     {
         auto [cols, rows] = Utils::Cross::getTerminalSize();
-        int progressBarLenght = cols * 2 / 5;
+        int progressBarLenght = cols * 3 / 7;
 
         if (_status == STATUS_DOWNLOADING) {
             ProgressBar bar(progressBarLenght, _progress);

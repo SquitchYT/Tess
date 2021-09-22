@@ -21,7 +21,6 @@ void Utils::Cross::sleepMs(int ms) {
 std::tuple<int, int> Utils::Cross::getTerminalSize() {
     #ifdef __linux__ 
         struct winsize w;
-    //A COMPRENDRE COMMENT FONCTION IOCTL() !!!
         ioctl(1, TIOCGWINSZ, &w);
 
         return {w.ws_col, w.ws_row};
@@ -34,7 +33,6 @@ std::tuple<int, int> Utils::Cross::getTerminalSize() {
         rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 
         return {columns, rows};
-
     #endif
 }
 
@@ -79,6 +77,4 @@ std::string Utils::Cross::getNodeJSPackageManager() {
             return "npm";
         } else { return "NO"; }
     #endif
-
-    // replace which with windows 
 }

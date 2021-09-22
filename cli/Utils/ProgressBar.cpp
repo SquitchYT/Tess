@@ -23,7 +23,12 @@ ProgressBar::ProgressBar(int len, int pourcent) {
             break;
     }
 
-    _progressBar += std::to_string(pourcent) + "% [" + COLOR_GREEN;
+    if (pourcent == 0) {
+        _progressBar += std::to_string(pourcent) + "% ׀" + COLOR_GREEN;
+    } else {
+        _progressBar += std::to_string(pourcent) + "% " + COLOR_GREEN + "׀";
+    }
+
 
     //try to replace with only one for loop
     for (_activeChunk; _activeChunk != 0; _activeChunk--) {
@@ -33,7 +38,12 @@ ProgressBar::ProgressBar(int len, int pourcent) {
     for (_inactiveChunk; _inactiveChunk != 0; _inactiveChunk--) {
         _progressBar += "█";
     }
-    _progressBar += COLOR_DEFAULT + "]";
+
+    if (pourcent == 100) {
+        _progressBar += COLOR_GREEN + "׀" + COLOR_DEFAULT;
+    } else {
+        _progressBar += "׀" + COLOR_DEFAULT;
+    }
 }
 
 std::ostream &operator<<(std::ostream &os, ProgressBar &bar) {

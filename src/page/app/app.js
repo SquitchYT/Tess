@@ -130,13 +130,6 @@ ipc.on("loaded", (e, data) => {
 
     body.style.color = colors.app.textColor;
 
-    /*config.profil.forEach((el) => {
-        if (el.name == config.defaultProfil) {
-            CreateNewTerminal(el.programm, el.name, el.icon);
-            
-        }
-    });*/
-
     openNewPage(loadOptions);
 
     document.getElementById("new-tab").addEventListener("click", () => {
@@ -480,14 +473,8 @@ function Close(index) {
 }
 
 target.addEventListener("wheel", event => {
-    const toLeft  = event.deltaY < 0 && target.scrollLeft > 0;
-    const toRight = event.deltaY > 0 && target.scrollLeft < target.scrollWidth - target.clientWidth;
-
-    if (toLeft || toRight) {
-        event.preventDefault();
-        target.scrollif (data.profil || data.command)
-        toLeft += event.deltaY;
-    }
+    event.preventDefault();
+    target.scrollLeft += event.deltaY;
 });
 
 function ExecuteShortcut(e) {
@@ -654,8 +641,6 @@ ipc.on("openNewPage", (e, data) => {
 })
 
 function openNewPage(data) {
-    console.log(data)
-
     if (data.page && CustomPage.includes(data.page)) {
         CreateNewTerminal(data.page, data.page, undefined, undefined);
 
@@ -668,7 +653,7 @@ function openNewPage(data) {
                           (data.customCommand) ? undefined : data.profil.icon,
                           data.workdir)
     } else {
-        console.log("'dfsdfsdf")
+        openDefaultProfil();
     }
 
 

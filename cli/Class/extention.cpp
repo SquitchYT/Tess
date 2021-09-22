@@ -160,8 +160,6 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
 
         std::string packageManager = Utils::Cross::getNodeJSPackageManager();
 
-        std::cout << packageManager << std::endl;
-
         if (packageManager != "NO") {
             #ifdef _WIN32
                 packageManager += " install >nul 2>nul";

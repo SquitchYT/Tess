@@ -96,8 +96,6 @@ if (launchProfil) {
     }
 }
 
-console.log(launchProfil)
-
 
 console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
 

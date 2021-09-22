@@ -1,16 +1,10 @@
 #ifndef ERRORTESS
 #define ERRORTESS
 
-
 #include <string>
 #include <iostream>
 
 #include "../Utils/Constant.hpp"
-
-/*template<typename T>
-inline T const& to_string(const T& s) { 
-    return s; 
-}*/
 
 class Error
 {
@@ -31,9 +25,6 @@ class Error
         };
 
         Error(std::pair<int, std::string> err_code);
-
-        //Error();
-
         Error() = default ;
 
         friend std::ostream &operator<<(std::ostream &os, Error &err);
