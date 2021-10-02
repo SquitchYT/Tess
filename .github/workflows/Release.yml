@@ -12,20 +12,20 @@ jobs:
      
      steps:
         - name: Checkout code
-        uses: actions/checkout@v2
+          uses: actions/checkout@v2
         
         - name: df
-        run: echo "checking"
+          run: echo "checking"
 
   linux:
-  needs: check
-     runs-on: ubuntu-latest
+    needs: check
+    runs-on: ubuntu-latest
      
-     steps:
-        - name: Checkout code
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v2
         
-        - name: df
+      - name: df
         run: echo "ffd"
     
     
