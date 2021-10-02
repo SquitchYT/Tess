@@ -28,7 +28,7 @@ jobs:
             cd cli
             cmake . -B build
             cd build && make
-            ./tess-cli --help
+            ./tess-cli -S --theme default
 
   Linux:
     needs: Check
