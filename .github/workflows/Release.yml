@@ -40,6 +40,7 @@ jobs:
     
     
   DEB_Package:
+    name: Creating Debain Package
     needs: Linux
     runs-on: ubuntu-latest
     steps:
@@ -84,6 +85,7 @@ jobs:
           asset_content_type: application/octet-stream
           
   Pacman_Package:
+    name: Creating Pacman Package
     needs: Linux
     runs-on: ubuntu-latest
     steps:
@@ -116,9 +118,8 @@ jobs:
           asset_name: tess-git-x86_64.pkg.tar.zst
           asset_content_type: application/octet-stream
           
-          
-          
   RPM_Package:
+    name: Creating RPM Package
     needs: Linux
     runs-on: ubuntu-latest
     container:
@@ -220,6 +221,7 @@ jobs:
           
           
   AUR_Package_tess-git:
+    name: Updating AUR Tess-git Package
     needs: Linux
     runs-on: ubuntu-latest
     steps:
