@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  check:
+  Check:
      runs-on: ubuntu-latest
      
      steps:
@@ -17,7 +17,7 @@ jobs:
         - name: df
           run: echo "checking"
 
-  linux:
+  Linux:
     needs: check
     runs-on: ubuntu-latest
      
@@ -29,7 +29,7 @@ jobs:
         run: echo "ffd"
     
     
-  debian:
+  DEB_Package:
     needs: linux
     runs-on: ubuntu-latest
     steps:
@@ -72,3 +72,161 @@ jobs:
           asset_path: ./package/debian/tess.deb
           asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.deb
           asset_content_type: application/octet-stream
+          
+  Pacman_Package:
+    needs: linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Downloading Files
+        uses: actions/checkout@v2
+        
+      - name: Update PKGBUILD
+        uses: 2m/arch-pkgbuild-builder@v1.16
+        with:
+          target: 'pkgbuild'
+          pkgname: 'tess-git'
+          
+      - name: Renaming package
+        run : |
+          cd tess-git
+          mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: tess-git/tess-git-x86_64.pkg.tar.zst
+          asset_name: tess-git-x86_64.pkg.tar.zst
+          asset_content_type: application/octet-stream
+          
+          
+          
+  RPM_Package:
+    needs: linux
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Generating RPM Package    
+        run: |
+          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git openssl-devel -y
+          
+          mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          
+          printf '
+          Name:           tess
+          Version:        %s
+          Release:        0
+          Summary:        Tess is an terminal emulator
+          License:        GPL
+          Source0:        tess.tar.gz
+          %%description
+          Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology.
+          %%global debug_package %%{nil}
+          %%prep
+          %%setup -q
+          %%build
+          %%install
+          rm -rf $RPM_BUILD_ROOT
+          mkdir -p "$RPM_BUILD_ROOT/usr/bin/"
+          mkdir -p "$RPM_BUILD_ROOT/usr/lib/tess/"
+          mkdir -p "$RPM_BUILD_ROOT/usr/share/applications/"
+          mkdir -p "$RPM_BUILD_ROOT/usr/share/pixmaps/"
+          mkdir -p "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
+          cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
+          cp icon.png "$RPM_BUILD_ROOT/usr/share/pixmaps/tess.png"
+          cp tesshere.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
+          cp appintess.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
+          cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
+          ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
+          
+          cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli"
+          if type "$kbuildsycoca5" > /dev/null; then
+            kbuildsycoca5
+          fi
+          %%files
+          /usr/bin/*
+          /usr/lib/tess/*
+          /usr/share/applications/*
+          /usr/share/pixmaps/*
+          /usr/share/kservices5/ServiceMenus/*
+              
+          ' "${VERSION}" > ./package/rpmbuild/SPECS/tess.spec
+          
+          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
+          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
+          
+          cp Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp appintess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp tesshere.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp build/icon.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          
+          npm install
+          npm run build
+          cp -r dist/linux-unpacked/* package/rpmbuild/SOURCES/tess-${VERSION}/app/
+          
+          cd cli
+          cmake . -B build
+          make -C build
+          cd ../
+          
+          cp cli/build/tess-cli package/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
+                  
+          cd package/rpmbuild/SOURCES
+          tar zcvf tess.tar.gz ./*
+          cd ../
+          
+          rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
+          
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
+        
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
+          asset_content_type: application/octet-stream
+          
+          
+  AUR_Package_tess-git:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Downloading Files
+        uses: actions/checkout@v2
+      
+      - name: Update PKGBUILD
+        uses: 2m/arch-pkgbuild-builder@v1.16
+        with:
+          target: 'pkgbuild'
+          pkgname: 'tess-git'
+          
+      - name: Update AUR Package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
+        with:
+          pkgname: tess-git
+          pkgbuild: tess-git/PKGBUILD
+          commit_username: ${{ secrets.AUR_USfERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Update AUR package
