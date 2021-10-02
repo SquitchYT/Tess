@@ -264,4 +264,5 @@ jobs:
         run: |
           Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O setup.exe
           ./setup.exe /silent
-          iscc
+          iscc ./setup.iss
+          ls
