@@ -262,6 +262,6 @@ jobs:
      
       - name: Installing InnoSetup
         run: |
-          wget https://jrsoftware.org/download.php/is.exe -O setup.exe
+          Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O setup.exe
           ./setup.exe /silent
           iscc /help
