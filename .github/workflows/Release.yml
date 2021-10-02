@@ -13,9 +13,21 @@ jobs:
      steps:
         - name: Checkout code
           uses: actions/checkout@v2
+          
+        - name: Installing dependencies
+          run: |
+            sudo apt install npm libcurl4-openssl-dev cmake git
         
-        - name: df
-          run: echo "checking"
+        - name: Checking Tess Compilation
+          run: |
+            npm install
+            npm run build
+            
+        - name: Checking Tess-cli Compilation
+          run: |
+            cmake . -B build
+            cd build && make
+            ./tess-cli --help
 
   Linux:
     needs: Check
