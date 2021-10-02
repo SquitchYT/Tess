@@ -182,9 +182,11 @@ function CreateNewTerminal(toStart, name, icon, workdir) {
     **********************/
     tab_link.addEventListener("mouseup", () => {
         changeTabOrder(tab, tab_link);
+        tab.setAttribute("dragged", "false");
     });
     tab.addEventListener("mouseup", () => {
         changeTabOrder(tab, tab_link);
+        tab.setAttribute("dragged", "false");
     });
     tab_link.addEventListener("click", () => {
         changeTabOrder(tab, tab_link);

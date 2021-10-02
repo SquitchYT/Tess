@@ -274,3 +274,7 @@ svg {
 .app-button-hidden {
     display: none;
 }
+
+*[dragged="true"] {
+    cursor: move !important;
+}
