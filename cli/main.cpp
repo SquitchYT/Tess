@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 
+#include <signal.h>
+
 #include "Utils/argsHandler.hpp"
 #include "Class/extention.hpp"
 #include "Lib/Manager.hpp"
@@ -10,9 +12,15 @@
 
 #include <cpr/cpr.h>
 
-
+void exit_handler() {
+    std::cout << "\033[?25h";
+}
 
 int main(int argc, char **argv){
+    atexit(exit_handler);
+    signal(SIGINT, exit);
+    std::cout << "\033[?25l";
+
     auto [err, extentions, action] = handleArgs(argc, argv);
 
     if (err.getCode() != 0) {

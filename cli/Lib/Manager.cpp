@@ -111,7 +111,7 @@ Error Manager::start(){
 
             if (_details == "Error") {
                 std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << " (" << _do << "/" << _todo << ") " << _item_name << " Unable to remove           " << std::endl;
-                _status = STATUS_FINISHED;
+                _status = STATUS_WAITING;
             } else if (_details == "Finish") {
                 std::cout << "\r" << COLOR_GREEN << "✔" << COLOR_DEFAULT << " (" << _do << "/" << _todo << ") " << _item_name << " Removed                  " << std::endl;
                 _status = STATUS_WAITING;
@@ -121,14 +121,14 @@ Error Manager::start(){
         Utils::Cross::sleepMs(60);
     }
 
-    std::cout << "Download completed" << std::endl;
+    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " All Done" << FONT_NORMAL << std::endl;
 
     auto err = download.get();
     return err;
 }
 
 Error Manager::Install() {
-    std::cout << "Downloading files..." << std::endl;
+    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " Downloading Files" << FONT_NORMAL << std::endl;
 
     _do = 0;
 
@@ -138,7 +138,7 @@ Error Manager::Install() {
         _item_name = it->getName();
         _status = STATUS_DOWNLOADING;
 
-        auto downloadCallback = [&](int pourcent) {
+        auto downloadCallback = [&](float pourcent) {
             this->_progress = pourcent;
         };
 
@@ -163,7 +163,7 @@ Error Manager::Install() {
         return ERR_CONNECTION;
     }
 
-    std::cout << "Installing your extentions !" << std::endl;
+    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " Installing Extentions" << FONT_NORMAL << std::endl;
 
     _todo = _extention.size();
     _do = 0;
@@ -173,7 +173,7 @@ Error Manager::Install() {
         _progress = -1;
         _item_name = extention.getName();
 
-        auto updateDetails = [&](std::string new_details, int progress_details) {
+        auto updateDetails = [&](std::string new_details, float progress_details) {
             this->_details = new_details;
             this->_progress = progress_details;
         };
@@ -195,7 +195,7 @@ Error Manager::Install() {
 }
 
 Error Manager::Remove() {
-    std::cout << "Removing..." << std::endl;
+    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " Uninstalling Extentions" << FONT_NORMAL << std::endl;
 
     _todo = _extention.size();
     _do = 0;
@@ -207,7 +207,6 @@ Error Manager::Remove() {
 
         Error err = extention.uninstall();
         _details = (err.isNull()) ? "Finish" : "Error";
-        if (_details == "Error") { return err; }
 
         while (_status != STATUS_WAITING);
         _details = "";
@@ -220,7 +219,7 @@ Error Manager::Remove() {
 }
 
 Error Manager::Update() {
-    std::cout << "Not yet implemented" << std::endl;
+    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_ERR << " Not Yet Implemented" << FONT_NORMAL << COLOR_DEFAULT << std::endl;
     _status = STATUS_FINISHED;
     return ERR_NONE;
 }

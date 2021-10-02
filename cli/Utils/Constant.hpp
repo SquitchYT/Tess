@@ -18,9 +18,13 @@ extern std::string COLOR_DEFAULT;
 extern std::string COLOR_BLUE;
 extern std::string COLOR_GREEN;
 
+extern std::string FONT_BOLD;
+extern std::string FONT_NORMAL;
+
 extern std::string SERVER_URL;
 
 extern std::vector<std::string> LOADERS;
+extern std::vector<std::string> BAR_ELEMENTS;
 
 extern std::string STATUS_DOWNLOADING;
 extern std::string STATUS_INSTALLING;
@@ -29,8 +33,6 @@ extern std::string STATUS_WAITING;
 extern std::string STATUS_UNINSTALL;
 
 extern std::vector<std::pair<std::string, std::string>> ARGS_ALLIAS;
-
-extern int ERR_INSTALLING;
 
 
 #endif

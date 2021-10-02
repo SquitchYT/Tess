@@ -9,7 +9,7 @@ class ProgressBar
     public:
         std::string _progressBar;
 
-        ProgressBar(int len, int pourcent);
+        ProgressBar(int len, float pourcent);
 
         friend std::ostream &operator<<(std::ostream &os, ProgressBar &bar);
 

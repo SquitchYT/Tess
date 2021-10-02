@@ -5,13 +5,14 @@
 
 #include "Constant.hpp"
 
-ProgressBar::ProgressBar(int len, int pourcent) {
+ProgressBar::ProgressBar(int len, float pourcent) {
+    len = len * BAR_ELEMENTS.size();
     pourcent = (pourcent < 0) ? 0 : pourcent;
-    _totalChunk = len - 7;
-    _activeChunk = static_cast<float>(pourcent) / 100 * static_cast<float>((len - 7));
+    _totalChunk = len - 7 * 8;
+    _activeChunk = static_cast<float>(pourcent) / 100 * static_cast<float>((len - 7 * 8));
     _inactiveChunk = _totalChunk - _activeChunk;
 
-    switch (std::to_string(pourcent).length())
+    switch (std::to_string(int(pourcent)).length())
     {
         case 1:
             _progressBar = "  ";
@@ -24,25 +25,33 @@ ProgressBar::ProgressBar(int len, int pourcent) {
     }
 
     if (pourcent == 0) {
-        _progressBar += std::to_string(pourcent) + "% ׀" + COLOR_GREEN;
+        _progressBar += std::to_string(int(pourcent)) + "% [" + COLOR_GREEN;
     } else {
-        _progressBar += std::to_string(pourcent) + "% " + COLOR_GREEN + "׀";
+        _progressBar += std::to_string(int(pourcent)) + "% " + COLOR_GREEN + "[";
     }
 
+    _progressBar += COLOR_GREEN;
 
-    //try to replace with only one for loop
-    for (_activeChunk; _activeChunk != 0; _activeChunk--) {
-        _progressBar += "█";
+    while (_activeChunk > BAR_ELEMENTS.size()) {
+        _activeChunk -= BAR_ELEMENTS.size();
+        _progressBar += BAR_ELEMENTS[BAR_ELEMENTS.size() - 1];
     }
-    _progressBar += COLOR_ERR;
-    for (_inactiveChunk; _inactiveChunk != 0; _inactiveChunk--) {
-        _progressBar += "█";
+
+    if (_activeChunk > 0) {
+        _progressBar += BAR_ELEMENTS[_activeChunk - 1];
     }
+
+    while (_inactiveChunk >= BAR_ELEMENTS.size())
+    {
+        _inactiveChunk -= BAR_ELEMENTS.size();
+        _progressBar += " ";
+    }
+    
 
     if (pourcent == 100) {
-        _progressBar += COLOR_GREEN + "׀" + COLOR_DEFAULT;
-    } else {
         _progressBar += "׀" + COLOR_DEFAULT;
+    } else {
+        _progressBar += COLOR_DEFAULT + "]";
     }
 }
 

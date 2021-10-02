@@ -26,7 +26,7 @@ private:
     std::string _item_name;
 
     // NEXT REPlACEMENT
-    int _progress;
+    float _progress;
     std::string _details;
 
     int _do;

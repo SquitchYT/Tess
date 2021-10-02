@@ -22,11 +22,16 @@ std::pair<int, std::string> ERR_NO_PKG_MANAGER = {15, "Unbale to find your nodeJ
         std::string COLOR_DEFAULT = "\033[0m";
         std::string COLOR_BLUE = "\033[34m";
         std::string COLOR_GREEN = "\033[32m";
+
+        std::string FONT_BOLD = "\e[1m";
+        std::string FONT_NORMAL = "\e[0m";
 #else
         std::string COLOR_ERR = "\e[38;5;1m";
         std::string COLOR_DEFAULT = "\e[39m";
         std::string COLOR_BLUE = "\e[38;5;4m";
         std::string COLOR_GREEN = "\e[38;5;2m";
+        std::string FONT_BOLD = "\e[1m";
+        std::string FONT_NORMAL = "\e[0m";
 #endif
 
 
@@ -47,15 +52,22 @@ std::vector<std::string> LOADERS = {
         "⠏"
 };
 
-int ERR_INSTALLING = -2;
-
+std::vector<std::string> BAR_ELEMENTS = {
+        "▏",
+        "▎",
+        "▍",
+        "▌",
+        "▋",
+        "▊",
+        "▉",
+        "█"
+};
 
 std::string STATUS_DOWNLOADING = "DOWNLOADING";
 std::string STATUS_INSTALLING = "INSTALLING";
 std::string STATUS_FINISHED = "FINISHED";
 std::string STATUS_WAITING = "WAITING";
 std::string STATUS_UNINSTALL = "uninstall";
-
 
 
 std::vector<std::pair<std::string, std::string>> ARGS_ALLIAS = {

@@ -58,7 +58,7 @@ cpr::Response Extention::download(std::function<void (int)> callback) {
     return r;
 }
 
-Error Extention::install(std::function<void (std::string, int)> callback) {
+Error Extention::install(std::function<void (std::string, float)> callback) {
     Utils::Cross::toLower(_name);
 
     if (_type == "theme") {
@@ -107,12 +107,12 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
         callback("Installing dependencies", 0);
 
         for (auto url : dependencies) {
-            int download_progress = 0;
+            float download_progress = 0;
 
             cpr::Response r = cpr::Get(cpr::Url{url.first},
             cpr::ProgressCallback([&](size_t downloadTotal, size_t downloadNow, size_t uploadTotal, size_t uploadNow) -> bool
             {
-                if(static_cast<int>(downloadTotal) != 0) {
+                if(static_cast<float>(downloadTotal) != 0) {
                     download_progress = static_cast<float>(downloadNow) / static_cast<float>(downloadTotal) * 100;
                 }
 
@@ -172,7 +172,7 @@ Error Extention::install(std::function<void (std::string, int)> callback) {
             Error err(ERR_NONE);
             return err;
         } else {
-            callback("Unable to find a NodeJS package manager. Please intall it before.", ERR_INSTALLING);
+            callback("Unable to find a NodeJS package manager. Please intall it before.", -1);
 
             Error err(ERR_NO_PKG_MANAGER);
             return err;
