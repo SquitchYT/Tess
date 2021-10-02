@@ -18,7 +18,17 @@ jobs:
           run: echo "checking"
 
   Linux:
-    needs: check
+    needs: Check
+    runs-on: ubuntu-latest
+     
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        
+      - name: df
+        run: echo "ffd"
+  Windows:
+    needs: Check
     runs-on: ubuntu-latest
      
     steps:
@@ -30,7 +40,7 @@ jobs:
     
     
   DEB_Package:
-    needs: linux
+    needs: Linux
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -74,7 +84,7 @@ jobs:
           asset_content_type: application/octet-stream
           
   Pacman_Package:
-    needs: linux
+    needs: Linux
     runs-on: ubuntu-latest
     steps:
       - name: Downloading Files
@@ -109,7 +119,7 @@ jobs:
           
           
   RPM_Package:
-    needs: linux
+    needs: Linux
     runs-on: ubuntu-latest
     container:
       image: fedora:latest
@@ -210,6 +220,7 @@ jobs:
           
           
   AUR_Package_tess-git:
+    needs: Linux
     runs-on: ubuntu-latest
     steps:
       - name: Downloading Files
