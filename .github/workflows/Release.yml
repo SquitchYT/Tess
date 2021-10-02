@@ -267,8 +267,8 @@ jobs:
         run: |
           Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O setup.exe
           ./setup.exe /silent
-          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.exe
-          ./cmake-setup.exe /silent
+          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
+          ./cmake-setup.msi /silent
           
       - name: Building App
         run: |
