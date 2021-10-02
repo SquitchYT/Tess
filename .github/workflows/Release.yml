@@ -272,7 +272,7 @@ jobs:
           
       - name: Building App
         run: |
-          npm run build-win
+          npm install && npm run build-win
           cd cli
           cmake . -B build
           cd build
