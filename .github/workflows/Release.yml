@@ -25,6 +25,7 @@ jobs:
             
         - name: Checking Tess-cli Compilation
           run: |
+            cd cli
             cmake . -B build
             cd build && make
             ./tess-cli --help
