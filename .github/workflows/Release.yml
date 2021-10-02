@@ -255,7 +255,13 @@ jobs:
   Inno_Setup_App:
     name: Creating Windows Setup
     needs: Windows
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
+     
+      - name: Installing InnoSetup
+        run: |
+          wget https://jrsoftware.org/download.php/is.exe -O setup.exe
+          ./setup.exe /silent
+          iscc /help
