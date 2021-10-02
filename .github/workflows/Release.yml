@@ -259,10 +259,28 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
+        
+      - name: Installing MSVC
+        uses: ilammy/msvc-dev-cmd@v1
      
-      - name: Installing InnoSetup
+      - name: Installing Make Dependencies
         run: |
           Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O setup.exe
           ./setup.exe /silent
-          iscc ./setup.iss
+          InvokeWebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.exe
+          ./cmake-setup.exe /silent
+          
+      - name: Building App
+        run: |
+          npm run build-win
+          cd cli
+          cmake . -B build
+          cd build
+          cmake --build .
+          cd ..
+          
+      - name: Packaging App
+        run: |
+          iscc setup.iss
           ls
+          
