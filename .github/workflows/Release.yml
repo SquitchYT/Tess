@@ -48,7 +48,7 @@ jobs:
     
     
   DEB_Package:
-    name: Creating Debain Package
+    name: Creating Debian Package
     needs: Linux
     runs-on: ubuntu-latest
     steps:
@@ -277,10 +277,30 @@ jobs:
           cmake . -B build
           cd build
           cmake --build .
-          cd ..
+          cd Debug
+          cp .\tess-cli.exe ../../../dist/win-unpacked/
+          cd ../../../
           
       - name: Packaging App
         run: |
           iscc setup.iss
+          cd Output
+          mv tess-0.5.0-setup.exe.exe tess-setup.exe
           ls
+          
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: D:\a\Tess\Tess\Output\tess-setup.exe
+          asset_name: tess-setup.exe
+          asset_content_type: application/octet-stream
           
