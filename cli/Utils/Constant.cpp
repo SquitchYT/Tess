@@ -22,9 +22,8 @@ std::pair<int, std::string> ERR_NO_PKG_MANAGER = {15, "Unbale to find your nodeJ
         std::string COLOR_DEFAULT = "\033[0m";
         std::string COLOR_BLUE = "\033[34m";
         std::string COLOR_GREEN = "\033[32m";
-
-        std::string FONT_BOLD = "\e[1m";
-        std::string FONT_NORMAL = "\e[0m";
+        std::string FONT_BOLD = "\033[1m";
+        std::string FONT_NORMAL = "\033[0m";
 #else
         std::string COLOR_ERR = "\e[38;5;1m";
         std::string COLOR_DEFAULT = "\e[39m";
