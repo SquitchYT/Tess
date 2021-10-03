@@ -49,7 +49,7 @@ ProgressBar::ProgressBar(int len, float pourcent) {
     
 
     if (pourcent == 100) {
-        _progressBar += "׀" + COLOR_DEFAULT;
+        _progressBar += "]" + COLOR_DEFAULT;
     } else {
         _progressBar += COLOR_DEFAULT + "]";
     }
