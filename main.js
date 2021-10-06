@@ -206,6 +206,25 @@ function openWindow(config, colors) {
         customCommand: customCommand
     }
 
+    if (osData.os == "win32") {
+        app.on('browser-window-focus', () => {
+            try {
+                mainWindow.webContents.send("focus");
+            } catch (e) {
+                console.log(e);
+            }
+        })
+        app.on('browser-window-blur', (e, win) => {
+            if (!win.webContents.isDevToolsFocused()) {
+                try {
+                    mainWindow.webContents.send("unfocus");
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        })
+    }
+
     mainWindow.on("ready-to-show", () => {
         try {
             mainWindow.webContents.send("loaded", {

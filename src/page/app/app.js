@@ -55,6 +55,18 @@ ipc.on("app-reduced-expanded", (_, maximazed) => {
     }
 });
 
+ipc.on("focus", () => {
+    document.querySelectorAll(".app-button").forEach((el) => {
+        el.classList.remove("app-button-unfocus")
+    })
+})
+
+ipc.on("unfocus", () => {
+    document.querySelectorAll(".app-button").forEach((el) => {
+        el.classList.add("app-button-unfocus")
+    })
+})
+
 const shortcutAction = ["Close", "Copy", "Paste", "OpenShell"];
 const CustomPage = ["Config"];
 

@@ -133,6 +133,10 @@ body {
     color: var(--general-text-color);
 }
 
+.app-button:hover svg {
+    color: var(--general-text-color);
+}
+
 .app-button:hover {
     filter: invert(0.1)
 }
@@ -277,4 +281,8 @@ svg {
 
 *[dragged="true"] {
     cursor: move !important;
+}
+
+.app-button-unfocus svg{
+    color: #ffffff7c;
 }
