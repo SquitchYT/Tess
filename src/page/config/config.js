@@ -27,6 +27,7 @@ const shortcutSection = document.querySelector(".shortcut");
 const inputProfilName = document.querySelector(".profil-name");
 const inputProfilCommand = document.querySelector(".profil-command");
 const inputProfilIcon = document.querySelector(".profil-icon");
+const inputProfilProcessName = document.querySelector(".profil-process-name");
 
 const reloadRequireIcon = document.querySelector(".reload-require");
 const leftSideMenuLink = document.querySelectorAll(".left-side-menu-link span");
@@ -96,7 +97,7 @@ inputProfilName.addEventListener("input", () => {
 
     inputTimerName = setTimeout(() => {
         saveUpdate();
-    }, 500);
+    }, 450);
 });
 
 let inputCommandTimer;
@@ -111,7 +112,7 @@ inputProfilCommand.addEventListener("input", () => {
 
     inputCommandTimer = setTimeout(() => {
         saveUpdate();
-    }, 500);
+    }, 450);
 });
 inputProfilIcon.addEventListener("update", () => {
     config.profil.forEach((el) => {
@@ -121,6 +122,17 @@ inputProfilIcon.addEventListener("update", () => {
         }
     });
 });
+
+inputProfilProcessName.addEventListener("click", () => {
+    reloadRequireIcon.classList.remove("invisible");
+    config.profil.forEach((el) => {
+        if (el.id == currentProfilPage) {
+            el.processName = inputProfilProcessName.getAttribute("state");
+            console.log(el)
+            saveUpdate();
+        }
+    });
+})
 
 function setTheme() {
     root.style.setProperty("--background", colors.terminal.theme.background);
@@ -240,6 +252,7 @@ function changeProfilPage(el) {
             inputProfilCommand.setAttribute("value", el.programm);
             inputProfilCommand.value = el.programm;
             inputProfilIcon.setAttribute("selected-value", el.icon);
+            inputProfilProcessName.setAttribute("state", el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName == "true" : true);
         } 
     });
 
@@ -439,10 +452,14 @@ profilCreateBtn.addEventListener("click", () => {
 
 
 function loadConfig() {
+    config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
     let profils = "";
+    console.log(config.profil)
     config.profil.forEach((el) => {
+        el.processName = (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName : "true")
         profils += el.name + ";";
     });
+    console.log(config.profil)
     profils = profils.substring(0, profils.length - 1);
     profilDropDownMenu.setAttribute("input-list", profils);
 
@@ -649,10 +666,14 @@ function loadShortcut() {
         });
     });
 }
+let saveUpdateTimeout;
 
 function saveUpdate() {
+    clearTimeout(saveUpdateTimeout)
     fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config));
-    ipcRenderer.send("reloadConfig");
+    saveUpdateTimeout = setTimeout(() => {
+        ipcRenderer.send("reloadConfig");
+    }, 500)
 }
 
 function deleteProfil(id) {

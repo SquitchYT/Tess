@@ -97,8 +97,10 @@ ipc.on("pty-data", (e, data) => {
         if (el.index === data.index) {
             el.term.write(data.data);
             let tab = document.querySelector(".tab-" + data.index);
-            let process = data.processName.split("/");
-            tab.innerHTML = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
+            if (data.processName != "" && !tab.hasAttribute("profil-named")) {
+                let process = data.processName.split("/");
+                tab.innerHTML = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
+            }
         } 
     });
 });
@@ -107,7 +109,9 @@ ipc.on("rename-tab", (e, data) => {
     terminalsList.forEach((el) => {
         if (el.index === data.index) {
             let tab = document.querySelector(".tab-" + data.index);
-            tab.innerHTML = data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1);
+            if (!tab.hasAttribute("profil-named")) {
+                tab.innerHTML = data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1);
+            }
         } 
     });
 });
@@ -184,11 +188,8 @@ function HandleShortcut() {
     });
 }
 
-function CreateNewTerminal(toStart, name, icon, workdir) {
-    if (icon == "Default") {
-        icon = undefined;
-    }
-
+function CreateNewTerminal(toStart, name, icon, workdir, processNamed) { // manage profil-name attribute end of this script (ipc server start method)
+    if (icon == undefined) { icon = "Default"; }
     let tab = document.createElement("div");
     tab.classList.add("tab", "tab-all-" + index, "tab-active");
     tab.setAttribute("index", index + 1);
@@ -252,6 +253,7 @@ function CreateNewTerminal(toStart, name, icon, workdir) {
 
     tab_link.innerHTML = name;
     tab_link.classList.add("tab-link", "tab-" + index, index);
+    if (!processNamed) { tab_link.setAttribute("profil-named", "true"); }
 
     let close_button = document.createElement("div");
     close_button.classList.add("close-button");
@@ -282,7 +284,7 @@ function CreateNewTerminal(toStart, name, icon, workdir) {
     
 
     let logo = document.createElement("img");
-    logo.src = (icon) ? icon : "../../img/default.png";
+    logo.src = (icon != "Default") ? icon : "../../img/default.png";
     logo.classList.add("logo");
 
     tab.appendChild(logo);
@@ -515,7 +517,7 @@ function ExecuteShortcut(e) {
                 } else {
                     config.profil.forEach((profil) => {
                         if (profil.name == el.action) {
-                            CreateNewTerminal(profil.programm, profil.name, profil.icon);
+                            CreateNewTerminal(profil.programm, profil.name, profil.icon, undefined, (profil.processName != undefined && (profil.processName == "true" || profil.processName == "false") ? profil.processName == "true" : true));
                             result = false;
                         }
                     }); 
@@ -639,8 +641,9 @@ ipc.on("close-tab", (e, data) => {
 
 function openDefaultProfil() {
     config.profil.forEach((el) => {
+        console.log(el, el.processName == "true")
         if (el.name == config.defaultProfil) {
-            CreateNewTerminal(el.programm, el.name, el.icon);
+            CreateNewTerminal(el.programm, el.name, el.icon, undefined, (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName == "true" : true));
         }
     });
 }
@@ -658,19 +661,18 @@ function updateTerminalApparence() {
 }
 
 ipc.on("openNewPage", (e, data) => {
-    console.log(data)
-
     openNewPage(JSON.parse(data))
 })
 
 function openNewPage(data) {
     if (data.page && CustomPage.includes(data.page)) {
-        CreateNewTerminal(data.page, data.page, undefined, undefined);
+        CreateNewTerminal(data.page, data.page, undefined, undefined, undefined);
     } else if (data.profil || data.customCommand) {
         CreateNewTerminal((data.customCommand) ? data.customCommand : data.profil.programm, 
                           (data.customCommand) ? data.customCommand : data.profil.name, 
                           (data.customCommand) ? undefined : data.profil.icon,
-                          data.workdir)
+                          data.workdir,
+                          data.profil.processName != undefined && (data.profil.processName == "true" || data.profil.processName == "false") ? data.profil.processName == "true" : true)
     } else {
         openDefaultProfil();
     }

@@ -114,6 +114,13 @@
                     </div>
                     <scroller-picker min-value=0 max-value=20 suffix="px" parameters="imageBlur" reloadRequire></scroller-picker>
                 </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Dim Background on Blur</span>
+                        <span class="details">Dim the background on unfocus in windows. Only with acrylic and blurbehind</span>
+                    </div>
+                    <switch-button parameters="disableOnBlur" reloadRequire></switch-button>
+                </div>
             </div>
         </section>
 
@@ -215,6 +222,13 @@
                         <span class="details">Command profile</span>
                     </div>
                     <input class="profil-command" type="text">
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Process Name</span>
+                        <span class="details">Display the current process name inside the tab</span>
+                    </div>
+                    <switch-button state=false class="profil-process-name"></switch-button>
                 </div>
             </div>
         </section>

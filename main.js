@@ -174,7 +174,7 @@ function openWindow(config, colors) {
             theme: bgColor.hexa,
             effect: config.background,
             useCustomWindowRefreshMethod: true,
-            disableOnBlur: true
+            disableOnBlur: (config.disableOnBlur != undefined ? config.disableOnBlur == "true" : true)
         }
     });
 
