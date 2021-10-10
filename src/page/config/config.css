@@ -488,7 +488,7 @@ h3 {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .shortcutLine drop-down-menu, shortcut-picker {
@@ -566,4 +566,14 @@ h3 {
 
 .selected-page {
     background: var(--app-dark-background) !important;
+}
+
+.no-plugin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 75px;
+    color: var(--item-textcolor);
+    font-size: 17px;
 }

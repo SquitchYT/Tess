@@ -39,6 +39,8 @@ const pageCloseButton = document.querySelectorAll(".return-button");
 const pages = document.querySelectorAll(".page");
 const links = document.querySelectorAll(".link");
 
+const noPluginMessage = document.querySelector(".no-plugin");
+
 let shortcutList = [];
 
 const shortcutAddBtn = document.querySelector(".shortcutAddButton");
@@ -454,12 +456,10 @@ profilCreateBtn.addEventListener("click", () => {
 function loadConfig() {
     config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
     let profils = "";
-    console.log(config.profil)
     config.profil.forEach((el) => {
         el.processName = (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName : "true")
         profils += el.name + ";";
     });
-    console.log(config.profil)
     profils = profils.substring(0, profils.length - 1);
     profilDropDownMenu.setAttribute("input-list", profils);
 
@@ -528,51 +528,54 @@ function loadConfig() {
         if (err) {
             console.log(err);
         } else {
-            // Fix cancel options duplicate plugin
-            plugins.forEach((plugin) => {
-                let newPluginSwitchOptions = document.createElement("div");
-                newPluginSwitchOptions.classList.add("plugin-props");
-    
-                let description = document.createElement("div");
-                description.classList.add("description");
-    
-                let title = document.createElement("span");
-                title.classList.add("title");
-                title.innerHTML = plugin;
-                let details = document.createElement("span");
-                details.classList.add("details");
-                //details.innerHTML = "TODO : get plugins description";
-                details.innerHTML = plugin; // get plugin description
-    
-                description.appendChild(title);
-                description.appendChild(details);
-    
-                newPluginSwitchOptions.appendChild(description);
-    
-                let switchButton = document.createElement("switch-button");
-                switchButton.setAttribute("state", false);
-                
-                if (config.plugin.includes(plugin)) {
-                    switchButton.setAttribute("state", true);
-                }
-    
-                switchButton.addEventListener("updatedValue", () => {
-                    if (switchButton.getAttribute("state") == "true") {
-                        config.plugin.push(plugin);
-                    } else {
-                        config.plugin.forEach((el, index) => {
-                            if (el == plugin) {
-                                config.plugin.splice(index, 1);
-                            }
-                        });
+            if (plugins.length == 0) {
+                noPluginMessage.classList.remove("hidden")
+            } else {
+                plugins.forEach((plugin) => {
+                    let newPluginSwitchOptions = document.createElement("div");
+                    newPluginSwitchOptions.classList.add("plugin-props");
+        
+                    let description = document.createElement("div");
+                    description.classList.add("description");
+        
+                    let title = document.createElement("span");
+                    title.classList.add("title");
+                    title.innerHTML = plugin;
+                    let details = document.createElement("span");
+                    details.classList.add("details");
+                    //details.innerHTML = "TODO : get plugins description";
+                    details.innerHTML = plugin; // get plugin description
+        
+                    description.appendChild(title);
+                    description.appendChild(details);
+        
+                    newPluginSwitchOptions.appendChild(description);
+        
+                    let switchButton = document.createElement("switch-button");
+                    switchButton.setAttribute("state", false);
+                    
+                    if (config.plugin.includes(plugin)) {
+                        switchButton.setAttribute("state", true);
                     }
-                    reloadRequireIcon.classList.remove("invisible");
-                    saveUpdate();
+        
+                    switchButton.addEventListener("updatedValue", () => {
+                        if (switchButton.getAttribute("state") == "true") {
+                            config.plugin.push(plugin);
+                        } else {
+                            config.plugin.forEach((el, index) => {
+                                if (el == plugin) {
+                                    config.plugin.splice(index, 1);
+                                }
+                            });
+                        }
+                        reloadRequireIcon.classList.remove("invisible");
+                        saveUpdate();
+                    });
+        
+                    newPluginSwitchOptions.appendChild(switchButton);
+                    pluginSection.appendChild(newPluginSwitchOptions);
                 });
-    
-                newPluginSwitchOptions.appendChild(switchButton);
-                pluginSection.appendChild(newPluginSwitchOptions);
-            });
+            }
         }
     });
 }
