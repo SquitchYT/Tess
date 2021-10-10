@@ -98,7 +98,6 @@ if (launchProfil) {
     }
 }
 
-
 console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
 
 if (osData.os == "win32" && config.background != "transparent" && config.background != "image") {
@@ -269,7 +268,7 @@ ipc.on("new-term", (e, data) => {
             mainWindow.webContents.send("close-tab", {
                 index: data.index,
             });
-            shell.kill();
+            if (osData.os != "win32") { shell.kill(); }
         } catch (e) {
             console.log(e);
         } 
