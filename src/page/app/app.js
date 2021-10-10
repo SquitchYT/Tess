@@ -103,6 +103,15 @@ ipc.on("pty-data", (e, data) => {
     });
 });
 
+ipc.on("rename-tab", (e, data) => {
+    terminalsList.forEach((el) => {
+        if (el.index === data.index) {
+            let tab = document.querySelector(".tab-" + data.index);
+            tab.innerHTML = data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1);
+        } 
+    });
+});
+
 ipc.on("loaded", (e, data) => {
     config = data.config;
     colors = data.colors;
@@ -657,10 +666,6 @@ ipc.on("openNewPage", (e, data) => {
 function openNewPage(data) {
     if (data.page && CustomPage.includes(data.page)) {
         CreateNewTerminal(data.page, data.page, undefined, undefined);
-
-        //openDefaultProfil();
-
-        //CreateNewTerminal(, data.page, undefined, undefined);
     } else if (data.profil || data.customCommand) {
         CreateNewTerminal((data.customCommand) ? data.customCommand : data.profil.programm, 
                           (data.customCommand) ? data.customCommand : data.profil.name, 
@@ -669,12 +674,4 @@ function openNewPage(data) {
     } else {
         openDefaultProfil();
     }
-
-
-
-    /*config.profil.forEach((el) => {
-        if (el.name == data.profil) {
-            CreateNewTerminal(el.programm, el.name, el.icon)
-        }
-    })*/
 }

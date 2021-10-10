@@ -16,6 +16,8 @@ const osData = new OsInfomations();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
 
+const { getProcessTree } = require("windows-process-tree");
+
 const net = require("net");
 
 let config, colors;
@@ -282,6 +284,25 @@ ipc.on("new-term", (e, data) => {
             });
         } catch (err) {
             console.log(err);
+        }
+
+        if (osData.os == "win32") {
+            !function updateTabName(pid) {
+                getProcessTree(pid, (tree) => {
+                    while(tree.children.length != 0) {
+                        tree = tree.children[0]
+                    }
+    
+                    try {
+                        mainWindow.webContents.send("rename-tab", {
+                            index: data.index,
+                            name: tree.name,
+                        });
+                    } catch (err) {
+                        console.log(err);
+                    }
+                })
+            }(shell.pid);
         }
     });
 
