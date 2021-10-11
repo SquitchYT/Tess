@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@700&display=swap');
+
+
 :root {
     --opacity: 1;
     --background: rgba(0,0,0,0);
     --background-image: var(--background);
-    /*--background-image: url("C:\\Users\\cleme\\Desktop\\dev\\Project\\Tess\\src\\img\\Tess Banner v2.png");*/
     --blur: blur(0px);
 
     --general-text-color: #fff;
@@ -13,7 +15,7 @@
     --tab-hover: rgb(36, 36, 36);
 
     --tab-text-color: #000;
-    --tab-text-size: 13px;
+    --tab-text-size: 15px;
 }
 
 body {
@@ -23,6 +25,7 @@ body {
     background: var(--background-image);
     background-size: cover;
     color: var(--general-text-color);
+    font-family: 'Ubuntu', sans-serif;
     backdrop-filter: var(--blur);
 }
 
@@ -44,8 +47,6 @@ body {
     height: 100%;
     display: flex;
     align-items: center;
-    font-weight: bolder;
-    font-family: monospace;
     cursor: pointer;
     animation: 375ms nodeInserted;
     -webkit-app-region: no-drag;

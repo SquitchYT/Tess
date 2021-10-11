@@ -373,9 +373,10 @@ input::-webkit-inner-spin-button {
 
 h2 {
     color: var(--item-textcolor);
-    font-size: 16px;
+    font-size: 17px;
     width: 98%;
     text-align: center;
+    font-weight: normal;
 }
 
 .left-side-menu .link:hover,.profil-page:hover,.profil-create:hover {

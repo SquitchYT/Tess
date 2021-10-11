@@ -188,7 +188,7 @@ function HandleShortcut() {
     });
 }
 
-function CreateNewTerminal(toStart, name, icon, workdir, processNamed) { // manage profil-name attribute end of this script (ipc server start method)
+function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     if (icon == undefined) { icon = "Default"; }
     let tab = document.createElement("div");
     tab.classList.add("tab", "tab-all-" + index, "tab-active");
