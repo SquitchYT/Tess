@@ -16,8 +16,9 @@ const osData = new OsInfomations();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
 
-const { getProcessTree } = require("windows-process-tree");
+let getProcessTree;
 
+if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
 const net = require("net");
 
 let config, colors;
