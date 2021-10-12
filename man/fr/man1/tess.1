@@ -1,0 +1,71 @@
+'\"
+.\"     Title: tess
+.\"    Author: Squitch
+.\"      Date: 16/09/2021
+.\"    Manual: Commandes utilisateur
+.\"  Language: French
+.\"
+.TH "TESS" "1" "16/09/2021" "TESS(1)" "Terminal Emulator"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NOM"
+tess: un terminal pour le futur
+.SH "SYNOPSIS"
+.HP \w'\fBtess\fR\ 'u
+\fItess\fR [options]
+.SH "DESCRIPTION"
+.PP
+\fBTess\fR est un emulateur de terminal basé sur des techologies web, entièrement personnalisable et avec un support d'extension nativement.
+.SH "OPTIONS"
+.PP
+Les options applicables à la commande sont\ \&:
+.PP
+\fB\-\-help\fR
+.RS 4
+Afficher l'aide
+.RE
+.PP
+\fB\-\-version\fR
+.RS 4
+Afficher la version
+.RE
+.PP
+\fB\-\-newtab\fR
+.RS 4
+Ouvrir un nouvel onglet dans Tess. Si aucune instance de tess est en cours d'exécution, une nouvelle sera créée
+.RE
+.PP
+\fB\-\-launch-profil\fR \fIprofil\fR |\fB\-\-launch-page\fR \fIpage\fR
+.RS 4
+Ouvrir une page ou un profil au lancement du terminal. Si la page ou le profil sont introuvable, le terminal lancera le profil par défaut
+.RE
+.PP
+\fB\-\-e\fR, \fB\-\-command\fR \fIcommande\fR
+.RS 4
+Choisir la commande à exécuter. Crash si la commande est introuvable.
+.RE
+.PP
+\fB\-\-workdir\fR, \fB\-\-cd\fR \fIworkdir\fR
+.RS 4
+Choisir le répertoire par défaut
+.RE
+.SH "VOIR AUSSI"
+.PP
+\fBtess-cli\fR(1)
