@@ -133,12 +133,12 @@ function openWindow(config, colors) {
         socket.on("data", (data) => {
             try {
                 mainWindow.webContents.send("openNewPage", data.toString());
-            } catch (err) {
-                console.log(err);
+            } catch (e) {
+                console.log(e);
             }
         })
     })
-    TCPServer.listen(process.pid);
+    TCPServer.listen(`/tmp/tess-${process.pid}.sock`);
 
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
@@ -328,7 +328,7 @@ app.on("ready", () => {
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
 
     if (newTab) {
-        const client = net.createConnection({ port: getTessInstance() }, () => {
+        const client = net.createConnection({ path: `/tmp/tess-${getTessInstance()}.sock` }, () => {
             let profilToLaunch;
             config.profil.forEach((el) => {
                 if (el.name == config.defaultProfil) {
