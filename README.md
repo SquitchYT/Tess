@@ -36,7 +36,7 @@
 
 
 ## Preview
-[<img width="520" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview.gif" alt="Preview1">]("https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview.gif")
+[<img width="520" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview.png" alt="Preview1">]("https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview.png")
 
 ## Contributors
 [<img width="45" src="https://avatars.githubusercontent.com/u/63391793?s=400&u=715a3054e5ce60b197271a3a2a188a48adbd405e&v=4" alt="Squitch">](https://github.com/SquitchYT)
