@@ -138,7 +138,7 @@ function openWindow(config, colors) {
             }
         })
     })
-    TCPServer.listen(`/tmp/tess-${process.pid}.sock`);
+    TCPServer.listen(osData.os == "win32" ? `\\\\?\\pipe\\tess-${process.pid}` : `/tmp/tess-${process.pid}.sock`);
 
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
@@ -328,7 +328,7 @@ app.on("ready", () => {
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
 
     if (newTab) {
-        const client = net.createConnection({ path: `/tmp/tess-${getTessInstance()}.sock` }, () => {
+        const client = net.createConnection({ path: osData.os == "win32" ? `\\\\?\\pipe-tess-${getTessInstance()}` : `/tmp/tess-${getTessInstance()}.sock` }, () => {
             let profilToLaunch;
             config.profil.forEach((el) => {
                 if (el.name == config.defaultProfil) {
