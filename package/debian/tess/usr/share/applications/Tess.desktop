@@ -1,5 +1,22 @@
 [Desktop Entry]
 Type=Application
 Exec=/usr/bin/tess
-Icon=/usr/bin/Tess.png
+Icon=/usr/share/pixmaps/tess.png
 Name=Tess - Terminal
+GenericName=Terminal
+Terminal=False
+Categories=System;TerminalEmulator
+Description=Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology
+Comment=Simple Terminal Emulator
+StartupWMClass=tess
+Actions=NewWindow;NewTab;
+
+[Desktop Action NewWindow]
+Name=Open a New Window
+Icon=/usr/share/pixmaps/tess.png
+Exec=/usr/bin/tess
+
+[Desktop Action NewTab]
+Name=Open a New Tab
+Icon=/usr/share/pixmaps/tess.png
+Exec=/usr/bin/tess --newtab
