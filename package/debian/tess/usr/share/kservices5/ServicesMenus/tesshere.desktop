@@ -1,10 +1,16 @@
 [Desktop Entry]
 Type=Service
 X-KDE-ServiceTypes=KonqPopupMenu/Plugin
-MimeType=all/all;
-Actions=opentesshere;
+MimeType=inode/directory;
+Actions=OpenTessHere;OpenTessHereNewWindow;
 X-KDE-AuthorizeAction=shell_access
+
 [Desktop Action opentesshere]
-Name=Execute Tess Here
+Name=Execute Tess Here in a New Tab
+Exec=tess --workdir %f --newtab
+Icon=/usr/share/pixmaps/tess.png
+
+[Desktop Action OpenTessHereNewWindow]
+Name=Execute Tess Here in a New Window
 Exec=tess --workdir %f
-Icon=/usr/bin/Tess.png
+Icon=/usr/share/pixmaps/tess.png
