@@ -443,14 +443,15 @@ function resize() {
             rows = fitAddon.proposeDimensions().rows;
             cols = fitAddon.proposeDimensions().cols;
 
-            el.term.resize(cols + 1, rows);
+            // Temporary workaround of resize bug: https://github.com/xtermjs/xterm.js/issues/3504
+            el.term._core.viewport._refresh();
         } catch (err) {
             console.log(err);
         }
     });
 
     ipc.send("resize", {
-        cols: cols + 1,
+        cols: cols,
         rows: rows
     });
 }
