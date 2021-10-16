@@ -251,7 +251,7 @@ jobs:
         with:
           pkgname: tess-git
           pkgbuild: tess-git/PKGBUILD
-          commit_username: ${{ secrets.AUR_USfERNAME }}
+          commit_username: ${{ secrets.AUR_USERNAME }}
           commit_email: ${{ secrets.AUR_EMAIL }}
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: Update AUR package
@@ -358,7 +358,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:\a\Tess\Tess\Output\tess-setup.exe
-          asset_name: tess-setup.exe
+          asset_path: D:\a\Tess\Tess\dist\win-unpacked\tess-portable.zip
+          asset_name: tess-portable.zip
           asset_content_type: application/octet-stream
         
