@@ -389,6 +389,9 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             term: term,
             type: "Terminal"
         };
+
+        // Fixing Double Line Break: https://github.com/xtermjs/xterm.js/issues/3504
+        resize();
     }
 
     n = index;
