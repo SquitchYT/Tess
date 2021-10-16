@@ -442,11 +442,12 @@ function resize() {
 
     terminalsList.forEach((el) => {
         try {
-            fitAddon.fit();
+            // Temporary workaround of resize bug: https://github.com/xtermjs/xterm.js/issues/3504
+            // fitAddong.fit may broke the terminal render
             rows = fitAddon.proposeDimensions().rows;
             cols = fitAddon.proposeDimensions().cols;
+            el.term.resize(cols, rows)
 
-            // Temporary workaround of resize bug: https://github.com/xtermjs/xterm.js/issues/3504
             el.term._core.viewport._refresh();
         } catch (err) {
             console.log(err);
