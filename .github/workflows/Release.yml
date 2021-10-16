@@ -176,10 +176,6 @@ jobs:
           cp appintess.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
           cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
           ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
-          ls
-          ls man
-          ls man/fr
-          ls man/fr/man1
           cp -r "man/fr/man1/*" "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
           
           cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli"
@@ -198,13 +194,13 @@ jobs:
           
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
-          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/man
+          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1
           
           cp Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
           cp appintess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
           cp tesshere.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
           cp build/icon.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          cp -r man/* ./package/rpmbuild/SOURCES/tess-${VERSION}/man/
+          cp -r man/fr/man1/* ./package/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1/
           
           npm install
           npm run build
