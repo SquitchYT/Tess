@@ -177,6 +177,9 @@ jobs:
           cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
           ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
           ls
+          ls man
+          ls man/fr
+          ls man/fr/man1
           cp -r "man/fr/man1/*" "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
           
           cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli"
