@@ -198,6 +198,7 @@ jobs:
           
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
           mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
+          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/man
           
           cp Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
           cp appintess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
