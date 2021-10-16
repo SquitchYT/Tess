@@ -1,6 +1,6 @@
 [Setup]
 AppName=Tess
-AppVersion=0.5.0
+AppVersion=0.5.1
 DefaultDirName={autopf}\Tess
 OutputBaseFilename=tess-0.5.0-setup.exe
 AppVerName=Tess
