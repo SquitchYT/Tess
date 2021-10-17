@@ -2,8 +2,6 @@ const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const { WebLinksAddon } = require("xterm-addon-web-links");
 
-const fitAddon = new FitAddon();
-
 const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
 const Color = require("../../../class/color");
@@ -334,8 +332,10 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     } else {
         if (!cols) resize();
 
+        const fitAddon = new FitAddon();
+
         let term = new Terminal({
-            cols: cols + 1,
+            cols: cols,
             rows: rows,
             theme: colors.terminal.theme,
             cursorStyle: config.cursorStyle,
@@ -350,8 +350,6 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         })));
         term.open(termDiv);
 
-        fitAddon.fit();
-
         term.attachCustomKeyEventHandler((e) => {
             let o = ExecuteShortcut(e);
             return (o == undefined) ? false : o;
@@ -362,8 +360,6 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
                 index: n,
                 data: e
             });
-
-            resize()
         });
 
         let terms = document.getElementsByClassName("terms");
@@ -389,16 +385,13 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         t = {
             index: index,
             term: term,
-            type: "Terminal"
+            type: "Terminal",
+            fitAddon: fitAddon
         };
-
-        // Fixing Double Line Break: https://github.com/xtermjs/xterm.js/issues/3504
-        resize();
     }
 
     n = index;
     index++;
-    
     terminals.appendChild(termDiv);
     terminalsList.push(t);
 }
@@ -440,20 +433,22 @@ function focusTerm(index, tab) {
 
 function resize() {
     rows = 64;
-    cols = 64;
+    cols = 36;
 
     terminalsList.forEach((el) => {
-        try {
-            // Temporary workaround of resize bug: https://github.com/xtermjs/xterm.js/issues/3504
-            // fitAddong.fit may broke the terminal render
-            rows = fitAddon.proposeDimensions().rows;
-            cols = fitAddon.proposeDimensions().cols;
-            el.term.resize(cols, rows)
-
-            el.term._core.viewport._refresh();
-        } catch (err) {
-            console.log(err);
+        if (el.type == "Terminal") {
+            try {
+                // Temporary workaround of resize bug: https://github.com/xtermjs/xterm.js/issues/3504
+                // fitAddong.fit may broke the terminal render
+                rows = el.fitAddon.proposeDimensions().rows;
+                cols = el.fitAddon.proposeDimensions().cols;
+                el.term.resize(cols, rows);
+                el.term._core.viewport._refresh();
+            } catch (err) {
+                console.log(err);
+            }
         }
+        
     });
 
     ipc.send("resize", {

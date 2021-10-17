@@ -18,6 +18,8 @@ const { app, ipcMain : ipc, screen, dialog } = require("electron");
 
 let getProcessTree;
 
+let resizeTimeout;
+
 if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
 const net = require("net");
 
@@ -185,13 +187,14 @@ function openWindow(config, colors) {
         mainWindow = null;
     });
     mainWindow.on("resize",() =>{
-        setTimeout(() => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
             try {
                 mainWindow.webContents.send("resize");
             } catch (err) {
                 console.log(err);
             }
-        }, 100);
+        }, 200);
     });
 
     let profilToLaunch;
