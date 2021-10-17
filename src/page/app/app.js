@@ -362,6 +362,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
                 index: n,
                 data: e
             });
+
+            resize()
         });
 
         let terms = document.getElementsByClassName("terms");
