@@ -252,6 +252,7 @@ function openWindow(config, colors) {
 
 ipc.on("new-term", (e, data) => {
     let Command, prog, args;
+
     if (osData.os == "win32") {
         Command = data.shell.split(".exe ")
 
