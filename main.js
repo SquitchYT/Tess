@@ -251,11 +251,25 @@ function openWindow(config, colors) {
 
 
 ipc.on("new-term", (e, data) => {
-    // Check if command exist
-    let Command = data.shell.split(" ");
-    let prog = Command[0];
-    Command.shift();
-    let args = Command;
+    let Command, prog, args;
+    if (osData.os == "win32") {
+        Command = data.shell.split(".exe ")
+
+        prog = Command[0]
+        prog += (Command[0] != data.shell) ? ".exe" : ""
+
+        if (Command[0] == data.shell) {
+            args = []
+        } else {
+            Command.shift()
+            args = Command[0].split(" ")
+        }
+    } else {
+        Command = data.shell.split(" ");
+        prog = Command[0]
+        Command.shift()
+        args = Command
+    }
 
     let workdir = data.workdir
 
