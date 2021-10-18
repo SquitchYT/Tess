@@ -109,7 +109,7 @@ if (osData.os == "win32" && config.background != "transparent" && config.backgro
     BrowserWindow = require("glasstron").BrowserWindow;
 }
 
-if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") {
+if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind" && osData.os != "win32") {
     app.commandLine.appendSwitch("disable-gpu");
 }
 
