@@ -443,7 +443,7 @@ function resize() {
                 rows = el.fitAddon.proposeDimensions().rows;
                 cols = el.fitAddon.proposeDimensions().cols;
                 el.term.resize(cols, rows);
-                el.term._core.viewport._refresh();
+                el.term._core.viewport._refresh(); // Can now delete this ???!!
             } catch (err) {
                 console.log(err);
             }

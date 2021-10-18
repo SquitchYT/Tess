@@ -258,7 +258,8 @@ ipc.on("new-term", (e, data) => {
         prog = Command[0]
         prog += (Command[0] != data.shell) ? ".exe" : ""
 
-        if (Command[0] == data.shell) {
+
+        if (prog.trim() == data.shell.trim()) {
             args = []
         } else {
             Command.shift()
@@ -273,7 +274,7 @@ ipc.on("new-term", (e, data) => {
 
     let workdir = data.workdir
 
-    let shell = pty.spawn(prog, args, {
+    let shell = pty.spawn(prog.trim(), args, {
         name: "xterm-color",
         cols: data.cols,
         rows: data.rows,
