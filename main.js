@@ -347,7 +347,7 @@ app.on("ready", () => {
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
 
     if (newTab) {
-        const client = net.createConnection({ path: osData.os == "win32" ? `\\\\?\\pipe-tess-${getTessInstance()}` : `/tmp/tess-${getTessInstance()}.sock` }, () => {
+        const client = net.createConnection({ path: osData.os == "win32" ? `\\\\?\\pipe\\tess-${getTessInstance()}` : `/tmp/tess-${getTessInstance()}.sock` }, () => {
             let profilToLaunch;
             config.profil.forEach((el) => {
                 if (el.name == config.defaultProfil) {
