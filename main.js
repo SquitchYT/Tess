@@ -280,7 +280,7 @@ ipc.on("new-term", (e, data) => {
         cols: data.cols,
         rows: data.rows,
         cwd:  (workdir) ? workdir : process.env.HOME,
-        env: process.env,
+        env: process.env
     });
     
     shell.onExit(() => {
@@ -605,7 +605,7 @@ function getProfilJumpList () {
             title: el.name,
             description: `Open profil ${el.name} on a new tab`,
             program: process.execPath,
-            args: `--launch-profil='${el.name}' --newtab`
+            args: `--newtab --launch-profil="${el.name}"`
         }
         profilList.push(newInput);
     })
