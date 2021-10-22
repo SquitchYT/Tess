@@ -273,6 +273,10 @@ ipc.on("new-term", (e, data) => {
         args = Command
     }
 
+    prog = getProcessPath(prog.trim())
+    if (prog == undefined && osData.os == "win32") { prog = getProcessPath("powershell.exe"); }
+    else if (prog == undefined && osData != "win32") { prog = "sh -C $SHELL"; }
+
     let workdir = data.workdir
 
     let shell = pty.spawn(prog.trim(), args, {
@@ -538,14 +542,14 @@ ipc.on("openFileDialog", (e, data) => {
 function getTessInstance() {
     try {
         if (osData.os != "win32") {
-            let result = Child_Proc.execSync("ps -C tess");
-            let PIDLine = result.toString().split("\n")
+            let result = Child_Proc.execSync("ps -C tess").toString();
+            let PIDLine = result.split("\n")
         
             let regex = /[0-9]+/i;
             return regex.exec(PIDLine[1])[0];
         } else {
-            let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq tess.exe"');
-            let PIDLine = result.toString().split("\n")
+            let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq tess.exe"').toString();
+            let PIDLine = result.split("\n")
             
             let regex = /[0-9]+/i;
             return regex.exec(PIDLine[3])[0];
@@ -611,4 +615,18 @@ function getProfilJumpList () {
     })
 
     return profilList;
+}
+
+function getProcessPath(process) {
+    if (osData.os == "win32") {
+        try {
+            let result = Child_Proc.execSync(`where.exe ${process}`, {stdio: "pipe"} ).toString();
+            return(result.split("\n")[0])
+        } catch (_) {
+            return undefined
+        }
+    } else {
+        // To Update Here
+        let result = Child_Proc.execSync("ps -C tess").toString();
+    }
 }
