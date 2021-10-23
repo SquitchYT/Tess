@@ -101,7 +101,7 @@ if (launchProfil) {
     }
 }
 
-console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use an development release. You can have damage deal to your system");
+console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You use a development release. You can have damage deal to your system.");
 
 if (osData.os == "win32" && config.background != "transparent" && config.background != "image") {
     BrowserWindow = require("electron-acrylic-window").BrowserWindow
@@ -274,8 +274,9 @@ ipc.on("new-term", (e, data) => {
     }
 
     prog = getProcessPath(prog.trim())
+
     if (prog == undefined && osData.os == "win32") { prog = getProcessPath("powershell.exe"); }
-    else if (prog == undefined && osData != "win32") { prog = "sh -C $SHELL"; }
+    else if (prog == undefined && osData != "win32") { prog = "sh"; args = ["-c", "$SHELL"]; }
 
     let workdir = data.workdir
 
@@ -453,7 +454,7 @@ ipc.on("resize", (e, data) => {
 ipc.on("load-end", () => {
     let time2 = new Date().getTime();
     let time = time2 - time1;
-    console.log("launch in :" + time + "ms");
+    console.log(`\x1b[32m[SUCCESS]\x1b[0m launch in: ${time}ms`);
 });
 
 ipc.on("get-theme", (event) => {
@@ -626,7 +627,11 @@ function getProcessPath(process) {
             return undefined
         }
     } else {
-        // To Update Here
-        let result = Child_Proc.execSync("ps -C tess").toString();
+        try {
+            let result = Child_Proc.execSync(`which ${process}`, {stdio: "pipe"}).toString();
+            return result
+        } catch (_) {
+            return undefined
+        }
     }
 }
