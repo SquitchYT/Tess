@@ -345,6 +345,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             fontFamily: "Consolas, courier-new, courier, monospace"
         });
         term.loadAddon(fitAddon);
+        fitAddon.fit();
         term.loadAddon(new WebLinksAddon(("click", (e, url) => {
             shell.openExternal(url);
         })));
