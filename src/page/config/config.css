@@ -338,8 +338,8 @@ input::-webkit-inner-spin-button {
 .delete-profil {
     margin-right: 8px;
     visibility: hidden;
-    height: 21px;
-    min-width: 21px;
+    height: 20px;
+    min-width: 20px;
     border-radius: 4px;
     display: flex;
     justify-content: center;

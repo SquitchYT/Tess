@@ -79,8 +79,8 @@ body {
 }
 
 .close-button {
-    height: 21px;
-    min-width: 21px;
+    height: 20px;
+    min-width: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
