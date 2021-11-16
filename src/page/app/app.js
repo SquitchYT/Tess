@@ -66,7 +66,12 @@ ipc.on("unfocus", () => {
 })
 
 const shortcutAction = ["Close", "Copy", "Paste", "OpenShell"];
-const CustomPage = ["Config"];
+const CustomPage = [
+    {
+        name: "Config",
+        onePage: true
+    }
+];
 
 let cols;
 let rows;
@@ -187,6 +192,18 @@ function HandleShortcut() {
 }
 
 function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
+    if (onlyOnePage(toStart) && checkIfPageAlreadyOpened(toStart) && checkIfCustomPage(toStart)) 
+    {
+        terminalsList.forEach((el) => {
+            if (el?.customPage == toStart) {
+                let tab = document.querySelector(".tab-all-" + el.index)
+                focusTerm(el.index, tab)
+            }
+        })
+
+        return
+    }
+
     if (icon == undefined) { icon = "Default"; }
     let tab = document.createElement("div");
     tab.classList.add("tab", "tab-all-" + index, "tab-active");
@@ -303,7 +320,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     });
 
     let t;
-    if (CustomPage.includes(toStart)) {
+    if (checkIfCustomPage(toStart)) {
         let page = document.createElement("iframe");
         page.setAttribute("src", "../config/config.html");
         page.setAttribute("nodeintegration", "");
@@ -327,7 +344,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         t = {
             index: index,
             term: page,
-            type: "Page"
+            type: "Page",
+            customPage: toStart
         };
     } else {
         if (!cols) resize();
@@ -514,7 +532,7 @@ function ExecuteShortcut(e) {
             if (shortcutAction.includes(el.action)) {
                 result = window[el.action](n);
             } else {
-                if (CustomPage.includes(el.action)) {
+                if (checkIfCustomPage(el.action)) {
                     CreateNewTerminal(el.action, el.action);
                     result = false;
                 } else {
@@ -612,7 +630,7 @@ function changeTabOrder(tab, tab_link) {
                 nextTab.setAttribute("index", Number(tab.getAttribute("index")) - 1);
     
                 allTab.forEach((el) => {
-                    el.style.order = el.getAttribute("index");
+                    el.stylCustomPage.includes(toStart).order = el.getAttribute("index");
                 });
             }
         } else {
@@ -679,4 +697,32 @@ function openNewPage(data) {
     } else {
         openDefaultProfil();
     }
+}
+
+function checkIfCustomPage(pageName) {
+    let finded = false
+    CustomPage.forEach((el) => {
+        if (pageName == el.name) { 
+            finded = true
+        }
+    })
+    return finded
+}
+
+
+function onlyOnePage(pageName) {
+    let onePage = false
+    CustomPage.forEach((el) => {
+        if (pageName == el.name) { onePage = el.onePage == true }
+    })
+
+    return onePage
+}
+
+function checkIfPageAlreadyOpened(pageName) {
+    let finded = false
+    terminalsList.forEach((el) => {
+        if (el?.customPage == pageName) { finded = true }
+    })
+    return finded
 }
