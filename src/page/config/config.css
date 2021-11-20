@@ -317,6 +317,7 @@ input::-webkit-inner-spin-button {
 
 .left-side-menu .link,.profil-page,.profil-create {
     height: 36px;
+    min-height: 36px;
     width: 100%;
     display: flex;
     justify-content: center;

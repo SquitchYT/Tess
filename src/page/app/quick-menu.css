@@ -12,7 +12,7 @@
     top: 30px;
     width: auto;
     height: auto;
-    z-index: 100000;
+    z-index: 100000000;
     visibility: hidden;
     padding-top: 12px;
     transform: translateY(-30px);
@@ -30,8 +30,6 @@
     align-items: center;
     box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.45);
     pointer-events: none;
-    /*transition: pointer-events;
-    transition-duration: 100ms;*/
 }
 
 .pointer-event {

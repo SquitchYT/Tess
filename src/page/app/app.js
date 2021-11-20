@@ -843,4 +843,15 @@ function updateQuickMenu() {
     if (count == 0) {
         quickMenuNoOtherShell.classList.remove("hide");
     }
+
+    switch (true) {
+        case (count > 12):
+            root.style.setProperty("--col-count", 5);
+            break;
+        case (count > 6):
+            root.style.setProperty("--col-count", 4);
+            break;
+        default:
+            root.style.setProperty("--col-count", 3);
+    }
 }
