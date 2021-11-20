@@ -21,6 +21,65 @@ const root = document.documentElement;
 const target = document.getElementById("test");
 const osInformations = require("../../../class/osinfo");
 
+const dropDownArrow = document.getElementById("show-all-shell");
+const quickAccessMenu = document.querySelector(".quick-menu");
+const quickMenuInner = document.querySelector(".inner-quick-menu");
+
+const quickDefault = document.getElementById("quick-default");
+const quickConfig = document.getElementById("quick-config");
+//const quickMarket = document.getElementById("quick-market");
+
+const quickDefaultName = document.getElementById("quick-default-name");
+const quickDefaultShortcut = document.getElementById("quick-default-shortcut");
+const quickDefaultIcon = document.getElementById("quick-default-icon");
+
+const quickConfigShortcut = document.getElementById("quick-config-shortcut");
+
+const quickMenuShellBox = document.querySelector(".quick-menu-other");
+
+const quickMenuNoOtherShell = document.getElementById("quick-no-other-shell")
+
+
+quickDefault.addEventListener("click", () => {
+    openDefaultProfil();
+})
+
+quickConfig.addEventListener("click", () => {
+    CreateNewTerminal("Config", "Config", "../../img/gear.svg");
+})
+
+dropDownArrow.addEventListener("mouseover", () => {
+    quickAccessMenu.classList.add("quick-visible");
+    let maxLeft = window.innerWidth - quickAccessMenu.getBoundingClientRect()["width"] - 10
+    let left = dropDownArrow.offsetLeft - quickAccessMenu.getBoundingClientRect()["width"] / 2 < maxLeft ? dropDownArrow.offsetLeft - quickAccessMenu.getBoundingClientRect()["width"] / 2 : maxLeft
+    quickAccessMenu.style.left = `${left}px`
+    setTimeout(() => {
+        quickMenuInner.classList.add("pointer-event");
+    }, 180);
+})
+
+dropDownArrow.addEventListener("mouseleave", () => {
+    quickAccessMenu.classList.remove("quick-visible");
+    quickMenuInner.classList.remove("pointer-event");
+})
+
+quickAccessMenu.addEventListener("mouseover", () => {
+    quickAccessMenu.classList.add("quick-visible");
+    setTimeout(() => {
+        quickMenuInner.classList.add("pointer-event");
+    }, 50);
+})
+
+quickAccessMenu.addEventListener("mouseleave", () => {
+    quickAccessMenu.classList.remove("quick-visible");
+})
+
+function closeQuickAccessMenu() {
+    quickAccessMenu.classList.remove("quick-visible");
+    quickMenuInner.classList.remove("pointer-event");
+}
+
+
 const osData = new osInformations();
 
 if (osData.wm != "win" && osData.wm != "macos") {
@@ -69,7 +128,8 @@ const shortcutAction = ["Close", "Copy", "Paste", "OpenShell"];
 const CustomPage = [
     {
         name: "Config",
-        onePage: true
+        onePage: true,
+        icon: "../../img/gear.svg"
     }
 ];
 
@@ -149,6 +209,7 @@ ipc.on("loaded", (e, data) => {
     colors.terminal.theme.background = "transparent";
 
     root.style.setProperty("--tab-panel-background", colors.app.topBar);
+    root.style.setProperty("--quick-access-menu-color", colors.app.topBar);
     root.style.setProperty("--tab-active-background", colors.app.tabActive);
     root.style.setProperty("--tab-inactive-background", colors.app.tabInactive);
     root.style.setProperty("--tab-text-color", colors.app.textColor);
@@ -163,6 +224,8 @@ ipc.on("loaded", (e, data) => {
     document.getElementById("new-tab").addEventListener("click", () => {
         openDefaultProfil();
     });
+
+    updateQuickMenu();
 
     ipc.send("load-end");
 });
@@ -204,7 +267,18 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         return
     }
 
+    closeQuickAccessMenu()
+
     if (icon == undefined) { icon = "Default"; }
+
+    if (checkIfCustomPage(toStart)) {
+        CustomPage.forEach((el) => {
+            if (el.name == toStart && el.icon) {
+                icon = el.icon;
+            }
+        })
+    }
+
     let tab = document.createElement("div");
     tab.classList.add("tab", "tab-all-" + index, "tab-active");
     tab.setAttribute("index", index + 1);
@@ -477,6 +551,7 @@ function resize() {
 }
 
 function Close(index) {
+    closeQuickAccessMenu()
     let te = document.querySelector(".terminal-" + index);
     let ta = document.querySelector(".tab-all-" + index);
     try {
@@ -589,6 +664,7 @@ ipc.on("newConfig", (e, data) => {
 
     colors.terminal.theme.background = "transparent";
     root.style.setProperty("--tab-panel-background", colors.app.topBar);
+    root.style.setProperty("--quick-access-menu-color", colors.app.topBar)
     root.style.setProperty("--tab-active-background", colors.app.tabActive);
     root.style.setProperty("--tab-inactive-background", colors.app.tabInactive);
     root.style.setProperty("--tab-text-color", colors.app.textColor);
@@ -599,6 +675,7 @@ ipc.on("newConfig", (e, data) => {
     body.style.color = colors.app.textColor;
     fontSize = (config?.terminalFontSize) ? config.terminalFontSize : 14;
     updateTerminalApparence();
+    updateQuickMenu();
 });
 
 ipc.on("resize", () => {
@@ -662,7 +739,6 @@ ipc.on("close-tab", (e, data) => {
 
 function openDefaultProfil() {
     config.profil.forEach((el) => {
-        console.log(el, el.processName == "true")
         if (el.name == config.defaultProfil) {
             CreateNewTerminal(el.programm, el.name, el.icon, undefined, (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName == "true" : true));
         }
@@ -725,4 +801,46 @@ function checkIfPageAlreadyOpened(pageName) {
         if (el?.customPage == pageName) { finded = true }
     })
     return finded
+}
+
+function updateQuickMenu() {
+    quickConfigShortcut.innerText = "";
+    quickDefaultShortcut.innerText = "";
+    quickMenuShellBox.innerHTML = "";
+
+    quickDefaultName.innerText = config.defaultProfil;
+
+    quickMenuNoOtherShell.classList.add("hide");
+
+    config.shortcut.forEach((el) => {
+        if (el.action == config.defaultProfil) {
+            quickDefaultShortcut.innerText = el.control;
+        } else if (el.action == "Config") {
+            quickConfigShortcut.innerText = el.control;
+        }
+    })
+
+    let count = 0;
+    config.profil.forEach((el) => {
+        if (el.name != config.defaultProfil) {
+            count++;
+            let div = document.createElement("div");
+            div.classList.add("quick-menu-other-item");
+            let img = document.createElement("img");
+            img.src = el.icon != "Default" ? el.icon : "../../img/default.png";
+            div.appendChild(img)
+
+            div.addEventListener("click", () => {
+                CreateNewTerminal(el.programm, el.name, el.icon, undefined, (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName == "true" : true))
+            })
+
+            quickMenuShellBox.appendChild(div);
+        } else {
+            quickDefaultIcon.src = el.icon != "Default" ? el.icon : "../../img/default.png";
+        }
+    })
+
+    if (count == 0) {
+        quickMenuNoOtherShell.classList.remove("hide");
+    }
 }

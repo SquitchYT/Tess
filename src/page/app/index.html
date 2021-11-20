@@ -4,9 +4,38 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="../../../node_modules/xterm/css/xterm.css">
+        <link rel="stylesheet" href="quick-menu.css">
         <title>Tess - Terminal</title>
     </head>
     <body>
+        <div class="quick-menu">
+            <div class="inner-quick-menu">
+                <div class="quick-menu-main">
+                    <div class="quick-menu-main-item" id="quick-default">
+                        <img src="../../img/default.png" id="quick-default-icon">
+                        <span class="name" id="quick-default-name">Default Shell</span>
+                        <span class="shortcut" id="quick-default-shortcut">CTRL + T</span>
+                    </div>
+                    <div class="quick-menu-main-item" id="quick-config">
+                        <img src="../../img/gear.svg">
+                        <span class="name">Config</span>
+                        <span class="shortcut" id="quick-config-shortcut">CTRL + P</span>
+                    </div>
+                    <!--<div class="quick-menu-main-item" id="quick-market">
+                        <img src="../../img/default.png">
+                        <span class="name">Marketplace</span>
+                        <span class="shortcut">CTRL + M</span>
+                    </div>-->
+                </div>
+
+
+                <div class="separator">
+
+                </div>
+                <div class="quick-menu-other"></div>
+                <div class="no-profil-menu hide" id="quick-no-other-shell">Create a new profil in the config page !</div>
+            </div>
+        </div>
         <div class="tabs topbar">
             <div class="tabs-panel">
                 <div class="tabs-tab" id="test">

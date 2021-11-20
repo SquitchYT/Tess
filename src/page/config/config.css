@@ -209,7 +209,7 @@ input::-webkit-inner-spin-button {
 }
 
 #menu-icon svg {
-    transition: all 325ms ease !important;
+    transition: all 350ms ease !important;
 }
 
 .menu-icon-close svg {
