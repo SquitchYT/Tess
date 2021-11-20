@@ -120,7 +120,7 @@ body {
 
 .app-button {
     height: 100%;
-    width: 54px;
+    min-width: 48px;
     -webkit-app-region: no-drag;
     display: flex;
     justify-content: center;

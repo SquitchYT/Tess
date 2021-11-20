@@ -156,7 +156,7 @@ file-picker {
 }
 input {
     height: 33px;
-    width: 33vw;
+    width: calc(33vw - 9px);
     max-width: 425px;
     min-width: 250px;
     background: var(--item-background);
@@ -168,6 +168,11 @@ input {
     flex-shrink: 0;
     box-shadow: -8px 0px 7px var(--app-background);
     padding-left: 9px;
+}
+
+.input-config {
+    min-width: 241px !important;
+    max-width: 416px !important;
 }
 
 ::-webkit-scrollbar {
@@ -556,10 +561,13 @@ h3 {
     visibility: hidden;
 }
 
-#profil-page file-picker{
-    width: calc(33vw + 9px) !important;
-    max-width: 434px !important;
-    min-width: 259px !important;
+#profil-page input {
+    max-width: 415px !important;
+    min-width: 240px !important;
+}
+
+#profil-page file-picker {
+    width: calc(33vw + 1px) !important;
 }
 
 .shortcut {

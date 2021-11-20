@@ -155,6 +155,8 @@ function openWindow(config, colors) {
     const minwidth = Math.floor( (width - (width >> 1)) / 1.47 );
     const minheight = Math.floor( (height - (height >> 1)) / 1.4 );
 
+    console.log((config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace"))
+
 
     mainWindow = new BrowserWindow({
         webPreferences: {
@@ -181,7 +183,7 @@ function openWindow(config, colors) {
         }
     });
 
-    mainWindow.removeMenu();
+    //mainWindow.removeMenu();
     mainWindow.loadFile("src/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;

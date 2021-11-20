@@ -80,9 +80,16 @@
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Theme</span>
-                        <span class="details">Terminal theme</span>
+                        <span class="details">The theme of the terminal</span>
                     </div>
                     <drop-down-menu input-list="default" selected-value="default" parameters="theme"></drop-down-menu>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Bring App Front</span>
+                        <span class="details">Bring app to front on new tab</span>
+                    </div>
+                    <switch-button parameters="bringAppToFront"></switch-button>
                 </div>
             </div>
             <div class="config-group">
@@ -120,13 +127,6 @@
                         <span class="details">Dim the background on unfocus in windows. Only with acrylic and blurbehind</span>
                     </div>
                     <switch-button parameters="disableOnBlur" reloadRequire></switch-button>
-                </div>
-                <div class="config-props">
-                    <div class="description">
-                        <span class="title">Bring App Front</span>
-                        <span class="details">Bring app to front on NewTab</span>
-                    </div>
-                    <switch-button parameters="bringAppToFront" reloadRequire></switch-button>
                 </div>
             </div>
         </section>
@@ -176,6 +176,13 @@
                     </div>
                     <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
                 </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Fonts</span>
+                        <span class="details">Defines the font used in the terminal. Separated by a colon</span>
+                    </div>
+                    <input parameters="terminalFonts" class="input-config">
+                </div>
             </div>
             <div class="config-group">
                 <div class="config-props">
@@ -215,21 +222,21 @@
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Name</span>
-                        <span class="details">Profile name</span>
+                        <span class="details">The name of the profil</span>
                     </div>
                     <input class="profil-name" type="text">
                 </div>
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Icon</span>
-                        <span class="details">Profile icon</span>
+                        <span class="details">The icon of the profil</span>
                     </div>
                     <file-picker class="profil-icon" type="profil-input"></file-picker>
                 </div>
                 <div class="config-props">
                     <div class="description">
                         <span class="title">Command</span>
-                        <span class="details">Command profile</span>
+                        <span class="details">Command to execute when the profil is launched</span>
                     </div>
                     <input class="profil-command" type="text">
                 </div>

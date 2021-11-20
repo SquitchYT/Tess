@@ -168,7 +168,7 @@ ipc.on("pty-data", (e, data) => {
     });
 });
 
-ipc.on("rename-tab", (e, data) => {
+ipc.on("rename-tab", (_, data) => {
     terminalsList.forEach((el) => {
         if (el.index === data.index) {
             let tab = document.querySelector(".tab-" + data.index);
@@ -179,7 +179,7 @@ ipc.on("rename-tab", (e, data) => {
     });
 });
 
-ipc.on("loaded", (e, data) => {
+ipc.on("loaded", (_, data) => {
     config = data.config;
     colors = data.colors;
     let loadOptions = data.loadOptions;
@@ -438,7 +438,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             allowTransparency: true,
             fontSize: fontSize,
             cursorBlink: (config.cursorBlink == "true"),
-            fontFamily: "Consolas, courier-new, courier, monospace"
+            fontFamily: (config?.terminalFonts) ? config?.terminalFonts : "Consolas, courier-new, courier, monospace"
         });
         term.loadAddon(fitAddon);
         fitAddon.fit();
@@ -754,7 +754,8 @@ function updateTerminalApparence() {
             el.term.setOption("theme", colors.terminal.theme);
             el.term.setOption("fontSize", config.terminalFontSize);
             el.term.setOption("cursorStyle", config.cursorStyle);
-            el.term.setOption("cursorBlink", (config.cursorBlink === "true"));
+            el.term.setOption("cursorBlink", (config.cursorBlink == "true"));
+            el.term.setOption("fontFamily", config.terminalFonts);
         }
     });
 

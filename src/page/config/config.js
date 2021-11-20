@@ -20,6 +20,7 @@ const dropDownMenu = document.querySelectorAll("drop-down-menu");
 const progressPicker = document.querySelectorAll("scroller-picker");
 const switchButton = document.querySelectorAll("switch-button");
 const filePickerEl = document.querySelectorAll("file-picker:not([type=\"profil-input\"])");
+const inputs = document.querySelectorAll(".input-config");
 
 const pluginSection = document.querySelector(".plugin");
 const shortcutSection = document.querySelector(".shortcut");
@@ -456,6 +457,7 @@ profilCreateBtn.addEventListener("click", () => {
 function loadConfig() {
     config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
     config.bringAppToFront = (config?.bringAppToFront != undefined ? config.bringAppToFront == "true" : true);
+    config.terminalFonts = (config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace")
     let profils = "";
     config.profil.forEach((el) => {
         el.processName = (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName : "true")
@@ -523,6 +525,19 @@ function loadConfig() {
             saveUpdate();
         });
     });
+
+    inputs.forEach((el) => {
+        let timeout;
+        el.value = config[el.getAttribute("parameters")];
+        el.addEventListener("input", () => {
+            clearTimeout(timeout);
+
+            timeout = setTimeout(() => {
+                config[el.getAttribute("parameters")] = el.value;
+                saveUpdate();
+            }, 150)
+        })
+    })
 
     // Load Plugin Section
     fs.readdir(osData.homeDir + "/Applications/tess/plugins", (err, plugins) => {
