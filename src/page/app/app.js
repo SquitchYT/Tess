@@ -255,7 +255,9 @@ function HandleShortcut() {
 }
 
 function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
-    ipc.send("focus")
+    if (config?.bringAppToFront == "true") {
+        ipc.send("focus");
+    }
 
     if (onlyOnePage(toStart) && checkIfPageAlreadyOpened(toStart) && checkIfCustomPage(toStart)) 
     {

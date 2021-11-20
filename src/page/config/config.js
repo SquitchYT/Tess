@@ -455,6 +455,7 @@ profilCreateBtn.addEventListener("click", () => {
 
 function loadConfig() {
     config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
+    config.bringAppToFront = (config?.bringAppToFront != undefined ? config.bringAppToFront == "true" : true);
     let profils = "";
     config.profil.forEach((el) => {
         el.processName = (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName : "true")
