@@ -28,3 +28,4 @@ cli/CMakeCache.txt
 cli/build/
 Output/
 yarn.lock
+debug.log

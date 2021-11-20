@@ -291,7 +291,7 @@ jobs:
         run: |
           iscc setup.iss
           cd Output
-          mv tess-0.5.0-setup.exe.exe tess-setup.exe
+          mv tess-0.5.3-setup.exe tess-setup.exe
           ls
           
       - name: Get release

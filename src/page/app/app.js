@@ -255,6 +255,8 @@ function HandleShortcut() {
 }
 
 function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
+    ipc.send("focus")
+
     if (onlyOnePage(toStart) && checkIfPageAlreadyOpened(toStart) && checkIfCustomPage(toStart)) 
     {
         terminalsList.forEach((el) => {
@@ -707,7 +709,7 @@ function changeTabOrder(tab, tab_link) {
                 nextTab.setAttribute("index", Number(tab.getAttribute("index")) - 1);
     
                 allTab.forEach((el) => {
-                    el.stylCustomPage.includes(toStart).order = el.getAttribute("index");
+                    el.style.order = el.getAttribute("index");
                 });
             }
         } else {
@@ -715,7 +717,7 @@ function changeTabOrder(tab, tab_link) {
                 let nextTab = null;
                 let i = 1;
 
-                while (nextTab == null) {
+                while (nextTab == null && i <= maxIndex) {
                     nextTab = document.querySelector(".tab[index='" + Number(Number(tab.getAttribute("index")) - i++) + "']");
                 }
 

@@ -635,3 +635,7 @@ function getProcessPath(process) {
         }
     }
 }
+
+ipc.on("focus", () => {
+    mainWindow.show();
+})
