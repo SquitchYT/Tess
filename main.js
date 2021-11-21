@@ -183,7 +183,7 @@ function openWindow(config, colors) {
         }
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("src/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
