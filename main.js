@@ -135,9 +135,7 @@ function openWindow(config, colors) {
         socket.on("data", (data) => {
             try {
                 mainWindow.webContents.send("openNewPage", data.toString());
-            } catch (e) {
-                console.log(e);
-            }
+            } catch (_) { }
         })
     })
     TCPServer.listen(osData.os == "win32" ? `\\\\?\\pipe\\tess-${process.pid}` : `/tmp/tess-${process.pid}.sock`);
@@ -154,9 +152,6 @@ function openWindow(config, colors) {
     const appheight = height - (height >> 2);
     const minwidth = Math.floor( (width - (width >> 1)) / 1.47 );
     const minheight = Math.floor( (height - (height >> 1)) / 1.4 );
-
-    console.log((config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace"))
-
 
     mainWindow = new BrowserWindow({
         webPreferences: {
@@ -193,9 +188,7 @@ function openWindow(config, colors) {
         resizeTimeout = setTimeout(() => {
             try {
                 mainWindow.webContents.send("resize");
-            } catch (err) {
-                console.log(err);
-            }
+            } catch (_) { }
         }, 200);
     });
 
@@ -217,17 +210,13 @@ function openWindow(config, colors) {
         app.on('browser-window-focus', () => {
             try {
                 mainWindow.webContents.send("focus");
-            } catch (e) {
-                console.log(e);
-            }
+            } catch (_) { }
         })
         app.on('browser-window-blur', (e, win) => {
             if (!win.webContents.isDevToolsFocused()) {
                 try {
                     mainWindow.webContents.send("unfocus");
-                } catch (e) {
-                    console.log(e);
-                }
+                } catch (_) { }
             }
         })
     }
@@ -241,9 +230,7 @@ function openWindow(config, colors) {
 
             });
             if (osData.os == "win32") { mainWindow.webContents.send("app-reduced-expanded", mainWindow.isMaximized()); }
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (_) { }
     });
 
     mainWindow.on("will-move", () => {
@@ -296,9 +283,7 @@ ipc.on("new-term", (e, data) => {
                 index: data.index,
             });
             if (osData.os != "win32") { shell.kill(); }
-        } catch (e) {
-            console.log(e);
-        } 
+        } catch (_) { } 
     });
 
     shell.onData((datas) => {
@@ -308,9 +293,7 @@ ipc.on("new-term", (e, data) => {
                 data: datas,
                 processName: osData.os == "win32" ? "" : shell.process
             });
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (_) { }
 
         if (osData.os == "win32") {
             !function updateTabName(pid) {
@@ -324,9 +307,7 @@ ipc.on("new-term", (e, data) => {
                             index: data.index,
                             name: tree.name,
                         });
-                    } catch (err) {
-                        console.log(err);
-                    }
+                    } catch (_) { }
                 })
             }(shell.pid);
         }
@@ -437,9 +418,7 @@ ipc.on("reduce-expand", () => {
     if (osData.os == "win32") {
         try {
             mainWindow.webContents.send("app-reduced-expanded", BrowserWindow.getFocusedWindow().isMaximized());
-        } catch (err) {
-            console.log(err);
-        }
+        } catch (_) { }
     }
 });
 
@@ -447,9 +426,7 @@ ipc.on("resize", (e, data) => {
     shells.forEach((el) => {
         try {
             el.shell.resize(data.cols, data.rows);   
-        } catch (e) {
-            console.log(e);
-        }
+        } catch (_) { }
     });
 });
 
@@ -480,9 +457,7 @@ ipc.on("reload", () => {
 ipc.on("shortcut", (e, state) => {
     try {
         BrowserWindow.getFocusedWindow().webContents.send("shortcutStateUpdate", state);
-    } catch (e) {
-        console.log(e);
-    }
+    } catch (_) { }
 });
 
 ipc.on("reloadConfig", () => {
@@ -490,9 +465,7 @@ ipc.on("reloadConfig", () => {
 
     try {
         BrowserWindow.getFocusedWindow().webContents.send("newConfig", {config: config, color: colors});
-    } catch (e) {
-        console.log(e);
-    }
+    } catch (_) { }
 });
 
 function reloadConfig() {
