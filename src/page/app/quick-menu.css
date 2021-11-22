@@ -52,6 +52,8 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    transition: background-color;
+    transition-duration: 75ms;
 }
 
 .quick-visible {
@@ -121,6 +123,8 @@
     margin-bottom: 14px;
     margin-top: 5px;
     cursor: pointer;
+    transition: background-color;
+    transition-duration: 75ms;
 }
 
 .quick-menu-other-item:hover {
