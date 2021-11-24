@@ -119,7 +119,6 @@ drop-down-menu {
     --background: var(--item-background);
     --foreground: var(--item-background-hover);
     --text-color : var(--item-textcolor);
-    /*ADD radius*/
 }
 scroller-picker {
     height: 25px;

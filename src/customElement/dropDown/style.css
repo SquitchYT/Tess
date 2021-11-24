@@ -32,6 +32,7 @@ span {
     font-weight: 500;
     white-space: nowrap;
     overflow-x: hidden;
+    text-transform: capitalize;
 }
 
 .icon {
@@ -45,7 +46,7 @@ span {
     position: absolute;
     margin-top: 33px;
     height: auto;
-    max-height: 390px;
+    max-height: 275px;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
