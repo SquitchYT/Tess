@@ -87,7 +87,7 @@ jobs:
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./package/debian/tess.deb
-          asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_x86-64.deb
+          asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
           asset_content_type: application/octet-stream
           
   Pacman_Package:
