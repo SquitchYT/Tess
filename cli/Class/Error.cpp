@@ -14,7 +14,7 @@ Error::Error(std::pair<int, std::string> err_code) {
 std::ostream &operator<<(std::ostream &os, Error &err)
 {
     if (!err.isNull()) {
-        os << COLOR_ERR << "Error : " << err._message << COLOR_DEFAULT;
+        os << COLOR_ERR << "Error: " << err._message << COLOR_DEFAULT;
     }
     return os;
 }

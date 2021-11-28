@@ -19,13 +19,13 @@
 #include "../Utils/Constant.hpp"
 #include "../Utils/cross.hpp"
 
-#include "../Class/extention.hpp"
+#include "../Class/Extension.hpp"
 #include "../Class/Loader.hpp"
 #include "../Class/Error.hpp"
 
 
-Manager::Manager(std::vector<Extention> extentions, std::string action){
-    _extention = extentions;
+Manager::Manager(std::vector<Extension> extensions, std::string action){
+    _extension = extensions;
     _action = action;
     _status = STATUS_WAITING;
 }
@@ -88,7 +88,7 @@ Error Manager::start(){
             std::cout << "\r" << _loader << out << std::flush;
 
             if (_details == "Finish") {
-                std::string output = " (" + std::to_string(_do) + "/" + std::to_string(_todo) + ") " + _item_name + " Installed !";
+                std::string output = " (" + std::to_string(_do) + "/" + std::to_string(_todo) + ") " + _item_name + " Installed!";
                 for (int i = output.size(); i != cols - 1; i++) {
                     output += " ";
                 }
@@ -107,7 +107,7 @@ Error Manager::start(){
         }
         // Remove Section
         else if(_status == STATUS_UNINSTALL) {
-            std::cout << "\r" << _loader << " (" << _do << "/" << _todo << ") " << "Unisntalling " << _item_name << std::flush;
+            std::cout << "\r" << _loader << " (" << _do << "/" << _todo << ") " << "Uninstalling " << _item_name << std::flush;
 
             if (_details == "Error") {
                 std::cout << "\r" << COLOR_ERR << "✖" << COLOR_DEFAULT << " (" << _do << "/" << _todo << ") " << _item_name << " Unable to remove           " << std::endl;
@@ -132,8 +132,8 @@ Error Manager::Install() {
 
     _do = 0;
 
-    auto it = std::begin(_extention);
-    while (it != std::end(_extention)) {
+    auto it = std::begin(_extension);
+    while (it != std::end(_extension)) {
         _progress = 0;
         _item_name = it->getName();
         _status = STATUS_DOWNLOADING;
@@ -151,7 +151,7 @@ Error Manager::Install() {
             it++;
         } else {
             _progress = -1;
-            it = _extention.erase(it);
+            it = _extension.erase(it);
         }
 
         while (_status != STATUS_WAITING);
@@ -163,22 +163,22 @@ Error Manager::Install() {
         return ERR_CONNECTION;
     }
 
-    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " Installing Extentions" << FONT_NORMAL << std::endl;
+    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " Installing Extensions" << FONT_NORMAL << std::endl;
 
-    _todo = _extention.size();
+    _todo = _extension.size();
     _do = 0;
     
-    for (auto &extention : _extention) {
+    for (auto &extension : _extension) {
         _status = STATUS_INSTALLING;
         _progress = -1;
-        _item_name = extention.getName();
+        _item_name = extension.getName();
 
         auto updateDetails = [&](std::string new_details, float progress_details) {
             this->_details = new_details;
             this->_progress = progress_details;
         };
 
-        auto err = extention.install(updateDetails);
+        auto err = extension.install(updateDetails);
 
         _do++;
 
@@ -195,17 +195,17 @@ Error Manager::Install() {
 }
 
 Error Manager::Remove() {
-    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " Uninstalling Extentions" << FONT_NORMAL << std::endl;
+    std::cout << FONT_BOLD << COLOR_BLUE << "==>" << COLOR_DEFAULT << " Uninstalling Extensions" << FONT_NORMAL << std::endl;
 
-    _todo = _extention.size();
+    _todo = _extension.size();
     _do = 0;
 
-    for (auto &extention : _extention) {
+    for (auto &extension : _extension) {
         _status = STATUS_UNINSTALL;
-        _item_name = extention.getName();
+        _item_name = extension.getName();
         _do++;
 
-        Error err = extention.uninstall();
+        Error err = extension.uninstall();
         _details = (err.isNull()) ? "Finish" : "Error";
 
         while (_status != STATUS_WAITING);

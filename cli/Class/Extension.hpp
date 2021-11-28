@@ -1,5 +1,5 @@
-#ifndef EXTENTION
-#define EXTENTION
+#ifndef EXTENSION
+#define EXTENSION
 
 #include <string>
 
@@ -8,7 +8,7 @@
 
 #include "../Class/Error.hpp"
 
-class Extention
+class Extension
 {
 private:
     std::string _name;
@@ -17,7 +17,7 @@ private:
     std::string _content;
     
 public:
-    Extention(std::string name, std::string type);
+    Extension(std::string name, std::string type);
 
     std::string getName();
     std::string getUrl();

@@ -5,12 +5,12 @@
 #include <vector>
 
 extern std::pair<int, std::string> ERR_NO_ARGS;
-extern std::pair<int, std::string> ERR_UNKNOW_ARG;
+extern std::pair<int, std::string> ERR_UNKNOWN_ARG;
 extern std::pair<int, std::string> ERR_NONE;
 extern std::pair<int, std::string> ERR_DISK;
 extern std::pair<int, std::string> ERR_DEFAULT;
 extern std::pair<int, std::string> ERR_CONNECTION;
-extern std::pair<int, std::string> ERR_NO_EXTENTION;
+extern std::pair<int, std::string> ERR_NO_EXTENSION;
 extern std::pair<int, std::string> ERR_NO_PKG_MANAGER;
 
 extern std::string COLOR_ERR;

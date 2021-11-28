@@ -1,4 +1,4 @@
-#include "extention.hpp"
+#include "Extension.hpp"
 
 #include "../Utils/Constant.hpp"
 
@@ -17,7 +17,7 @@
 #include "../Class/Error.hpp"
 
 
-Extention::Extention(std::string name, std::string type) {
+Extension::Extension(std::string name, std::string type) {
     _type = type;
     _name = name;
 
@@ -27,19 +27,19 @@ Extention::Extention(std::string name, std::string type) {
     _url = SERVER_URL + type + "/" + name + a;
 }
 
-std::string Extention::getName() {
+std::string Extension::getName() {
     return _name;
 }
 
-std::string Extention::getType() {
+std::string Extension::getType() {
     return _type;
 }
 
-std::string Extention::getUrl() {
+std::string Extension::getUrl() {
     return _url;
 }
 
-cpr::Response Extention::download(std::function<void (int)> callback) {
+cpr::Response Extension::download(std::function<void (int)> callback) {
 
     cpr::Response r = cpr::Get(cpr::Url{_url},         
     cpr::ProgressCallback([&](size_t downloadTotal, size_t downloadNow, size_t uploadTotal, size_t uploadNow) -> bool
@@ -58,7 +58,7 @@ cpr::Response Extention::download(std::function<void (int)> callback) {
     return r;
 }
 
-Error Extention::install(std::function<void (std::string, float)> callback) {
+Error Extension::install(std::function<void (std::string, float)> callback) {
     Utils::Cross::toLower(_name);
 
     if (_type == "theme") {
@@ -172,7 +172,7 @@ Error Extention::install(std::function<void (std::string, float)> callback) {
             Error err(ERR_NONE);
             return err;
         } else {
-            callback("Unable to find a NodeJS package manager. Please intall it before.", -1);
+            callback("Unable to find a NodeJS package manager. Please install it before.", -1);
 
             Error err(ERR_NO_PKG_MANAGER);
             return err;
@@ -180,7 +180,7 @@ Error Extention::install(std::function<void (std::string, float)> callback) {
     }   
 }
 
-Error Extention::uninstall() {
+Error Extension::uninstall() {
     if (_type == "theme") {
         #ifdef _WIN32
             Utils::Cross::change_dir(static_cast<std::string>(getenv("HOMEDRIVE")) + static_cast<std::string>(std::getenv("HOMEPATH")) + "\\Applications\\tess\\config\\theme\\");

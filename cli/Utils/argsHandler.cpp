@@ -1,6 +1,6 @@
 #include "argsHandler.hpp"
 
-#include "../Class/extention.hpp"
+#include "../Class/Extension.hpp"
 #include "../Class/Error.hpp"
 #include "Constant.hpp"
 
@@ -9,15 +9,15 @@
 #include <list>
 
 
-std::tuple<Error, std::vector<Extention>, std::string> handleArgs(int count, char **args) { //replace std::list by vector
-    std::vector<Extention> extentions;
+std::tuple<Error, std::vector<Extension>, std::string> handleArgs(int count, char **args) { //replace std::list by vector
+    std::vector<Extension> extensions;
 
     std::string current_type = "";
     std::string action = "";
 
     if (count == 1) {
         Error err(ERR_NO_ARGS);
-        return {err, extentions, action};
+        return {err, extensions, action};
     }
 
     for (int i = 0; i < count; i++) {
@@ -34,8 +34,8 @@ std::tuple<Error, std::vector<Extention>, std::string> handleArgs(int count, cha
             }
 
             if (!isEquals) {
-                Error err(ERR_UNKNOW_ARG, s);
-                return {err, extentions, action};
+                Error err(ERR_UNKNOWN_ARG, s);
+                return {err, extensions, action};
             }
         }
 
@@ -52,12 +52,12 @@ std::tuple<Error, std::vector<Extention>, std::string> handleArgs(int count, cha
         } else if (s == "--plugin" || s == "-P") {
             current_type = "plugin";
         } else if(current_type != "") {
-            Extention ext(s, current_type);
+            Extension ext(s, current_type);
 
-            extentions.push_back(ext);
+            extensions.push_back(ext);
         }
     }
 
-    Error err( (action == "") ? ERR_NO_ARGS : (extentions.size() == 0 ) ? ERR_NO_EXTENTION : ERR_NONE, action );
-    return {err, extentions, action};
+    Error err( (action == "") ? ERR_NO_ARGS : (extensions.size() == 0 ) ? ERR_NO_EXTENSION : ERR_NONE, action );
+    return {err, extensions, action};
 }

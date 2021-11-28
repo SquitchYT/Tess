@@ -6,9 +6,9 @@
 #include <list>
 
 #include "../Class/Error.hpp"
-#include "../Class/extention.hpp"
+#include "../Class/Extension.hpp"
 
-std::tuple<Error, std::vector<Extention>, std::string> handleArgs(int count, char **args);
+std::tuple<Error, std::vector<Extension>, std::string> handleArgs(int count, char **args);
 
 
 #endif
