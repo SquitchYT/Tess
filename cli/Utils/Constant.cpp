@@ -9,13 +9,13 @@
 
 
 std::pair<int, std::string> ERR_NO_ARGS = {11, "Please specifies an action to do. See tess-cli --help for more informations."};
-std::pair<int, std::string> ERR_UNKNOW_ARG = {14, "Arguments inconnus : "};
+std::pair<int, std::string> ERR_UNKNOWN_ARG = {14, "Unknown arguments: "};
 std::pair<int, std::string> ERR_NONE = {0, ""};
-std::pair<int, std::string> ERR_DISK = {10, "Vous n'avez pas assez d'espace disque"};
-std::pair<int, std::string> ERR_DEFAULT = {255, "Erreur inconnue"};
-std::pair<int, std::string> ERR_CONNECTION = {12, "Unable to download extentions. Check your connection"};
-std::pair<int, std::string> ERR_NO_EXTENTION = {13, "Please specifies one or more extentions to "};
-std::pair<int, std::string> ERR_NO_PKG_MANAGER = {15, "Unbale to find your nodeJS package manager. Please install it before."};
+std::pair<int, std::string> ERR_DISK = {10, "You don't have enough disk space."};
+std::pair<int, std::string> ERR_DEFAULT = {255, "Unknown error"};
+std::pair<int, std::string> ERR_CONNECTION = {12, "Unable to download extensions. Check your internet connection."};
+std::pair<int, std::string> ERR_NO_EXTENSION = {13, "Please specifies one or more extensions to "};
+std::pair<int, std::string> ERR_NO_PKG_MANAGER = {15, "Unable to find your NodeJS package manager. Please install it before."};
 
 #ifdef _WIN32
         std::string COLOR_ERR = "\033[31m";
