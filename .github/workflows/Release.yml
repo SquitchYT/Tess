@@ -352,8 +352,8 @@ jobs:
           cd cli
           cmake . -B build
           cd build
-          cmake --build .
-          cd Debug
+          cmake --build . --config Release
+          cd Release
           cp .\tess-cli.exe ../../../dist/win-unpacked/
           cd ../../../
           
