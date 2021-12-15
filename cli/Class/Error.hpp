@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 
-#include "../Utils/Constant.hpp"
+#include "../Utils/Constants.hpp"
 
 class Error
 {

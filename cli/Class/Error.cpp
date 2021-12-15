@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "../Utils/Constant.hpp"
+#include "../Utils/Constants.hpp"
 
 Error::Error(std::pair<int, std::string> err_code) {
     _code = err_code.first;

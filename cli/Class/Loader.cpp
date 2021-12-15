@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "../Utils/Constant.hpp"
+#include "../Utils/Constants.hpp"
 
 Loader::Loader(){
     _current = 0;

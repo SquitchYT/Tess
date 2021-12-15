@@ -16,8 +16,8 @@
 #endif
 
 #include "../Utils/ProgressBar.hpp"
-#include "../Utils/Constant.hpp"
-#include "../Utils/cross.hpp"
+#include "../Utils/Constants.hpp"
+#include "../Utils/Cross.hpp"
 
 #include "../Class/Extension.hpp"
 #include "../Class/Loader.hpp"

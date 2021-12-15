@@ -1,6 +1,6 @@
 #include "Extension.hpp"
 
-#include "../Utils/Constant.hpp"
+#include "../Utils/Constants.hpp"
 
 #include <string>
 #include <string.h>
@@ -12,7 +12,7 @@
 #include <cpr/cpr.h>
 
 #include "../Lib/Manager.hpp"
-#include "../Utils/cross.hpp"
+#include "../Utils/Cross.hpp"
 
 #include "../Class/Error.hpp"
 
