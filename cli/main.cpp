@@ -3,12 +3,12 @@
 
 #include <signal.h>
 
-#include "Utils/argsHandler.hpp"
+#include "Utils/ArgsHandler.hpp"
 #include "Class/Extension.hpp"
 #include "Lib/Manager.hpp"
-#include "Utils/Constant.hpp"
+#include "Utils/Constants.hpp"
 #include "Class/Error.hpp"
-#include "Utils/cross.hpp"
+#include "Utils/Cross.hpp"
 
 #include <cpr/cpr.h>
 

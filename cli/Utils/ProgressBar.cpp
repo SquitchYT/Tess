@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 
-#include "Constant.hpp"
+#include "Constants.hpp"
 
 ProgressBar::ProgressBar(int len, float pourcent) {
     len = len * BAR_ELEMENTS.size();

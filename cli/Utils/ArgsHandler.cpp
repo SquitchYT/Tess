@@ -1,8 +1,8 @@
-#include "argsHandler.hpp"
+#include "ArgsHandler.hpp"
 
 #include "../Class/Extension.hpp"
 #include "../Class/Error.hpp"
-#include "Constant.hpp"
+#include "Constants.hpp"
 
 #include <string>
 #include <tuple>

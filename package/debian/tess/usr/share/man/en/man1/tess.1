@@ -2,10 +2,10 @@
 .\"     Title: tess
 .\"    Author: Squitch
 .\"      Date: 16/09/2021
-.\"    Manual: Commandes utilisateur
-.\"  Language: French
+.\"    Manual: User commands
+.\"  Language: English
 .\"
-.TH "TESS" "1" "16/09/2021" "TESS(1)" "Émulateur de Terminal"
+.TH "TESS" "1" "16/09/2021" "TESS(1)" "Terminal Emulator"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -25,47 +25,47 @@
 .\" -----------------------------------------------------------------
 .\" * MAIN CONTENT STARTS HERE *
 .\" -----------------------------------------------------------------
-.SH "NOM"
-Tess : un terminal pour le futur.
+.SH "NAME"
+Tess: a terminal for the future.
 .SH "SYNOPSIS"
 .HP \w'\fBtess\fR\ 'u
 \fItess\fR [options]
 .SH "DESCRIPTION"
 .PP
-\fBTess\fR est un émulateur de terminal basé sur des technologies web, entièrement personnalisable ayant un support d'extension natif.
+\fBTess\fR is a terminal emulator based on web technologies, fully customizable and with native extension support.
 .SH "OPTIONS"
 .PP
-Les options applicables à la commande sont\ \&:
+The options applicable to the order are:
 .PP
 \fB\-\-help\fR
 .RS 4
-Afficher l'aide.
+Show help.
 .RE
 .PP
 \fB\-\-version\fR
 .RS 4
-Afficher la version de Tess.
+View the Tess version.
 .RE
 .PP
 \fB\-\-newtab\fR
 .RS 4
-Ouvrir un nouvel onglet dans Tess. Si aucune instance de tess n'est en cours d'exécution, une nouvelle sera créée.
+Open a new tab in Tess. If no tess instance is running, a new one will be created.
 .RE
 .PP
 \fB\-\-launch-profil\fR \fIprofil\fR |\fB\-\-launch-page\fR \fIpage\fR
 .RS 4
-Ouvrir une page ou un profil au lancement du terminal. Si la page ou le profil sont introuvable, le terminal lancera le profil par défaut.
+Open a page or a profile when the terminal is launched. If the page or profile can't be found, the terminal will launch with the default profile.
 .RE
 .PP
-\fB\-\-e\fR, \fB\-\-command\fR \fIcommande\fR
+\fB\-\-e\fR, \fB\-\-command\fR \fIcommand\fR
 .RS 4
-Choisir la commande à exécuter. Le terminal ne démarrera pas si la commande est introuvable.
+Choose the command to run. The terminal won't start if the command can't be found.
 .RE
 .PP
 \fB\-\-workdir\fR, \fB\-\-cd\fR \fIworkdir\fR
 .RS 4
-Choisir le répertoire par défaut.
+Choose the default directory.
 .RE
-.SH "VOIR AUSSI"
+.SH "SEE ALSO"
 .PP
 \fBtess-cli\fR(1)

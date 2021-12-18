@@ -1,4 +1,4 @@
-#include "cross.hpp"
+#include "Cross.hpp"
 
 #include <time.h>
 
