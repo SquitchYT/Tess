@@ -40,6 +40,9 @@ const quickMenuShellBox = document.querySelector(".quick-menu-other");
 const quickMenuNoOtherShell = document.getElementById("quick-no-other-shell")
 
 
+let previousBackgroundStyle = undefined;
+
+
 quickDefault.addEventListener("click", () => {
     openDefaultProfil();
 })
@@ -184,12 +187,14 @@ ipc.on("loaded", (_, data) => {
     colors = data.colors;
     let loadOptions = data.loadOptions;
 
+    previousBackgroundStyle = config.background
+
     HandleShortcut();
 
     fontSize = (config.terminalFontSize != undefined) ? config.terminalFontSize : 14;
     const bgColor = new Color(colors.terminal.theme.background, config.transparencyValue / 100);
 
-    let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
+    let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind");
     if (needTransparent) {
         colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
@@ -662,8 +667,16 @@ ipc.on("newConfig", (e, data) => {
     colors =  JSON.parse(JSON.stringify(data.color));
     HandleShortcut();
 
-    if (config.background == "full" && getComputedStyle(document.documentElement).getPropertyValue("--opacity") == 1 && getComputedStyle(document.documentElement).getPropertyValue("--background-image").startsWith("url") == false) {
+    if (previousBackgroundStyle == "full") {
         root.style.setProperty("--background", colors.terminal.theme.background);
+    }
+
+    const bgColor = new Color(colors.terminal.theme.background, config.transparencyValue / 100);
+
+    let needTransparent = (previousBackgroundStyle == "transparent" || previousBackgroundStyle == "acrylic" || previousBackgroundStyle == "blurbehind" || previousBackgroundStyle == "image");
+    if (needTransparent) {
+        root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
+        root.style.setProperty("--background", bgColor.rgba);
     }
 
     colors.terminal.theme.background = "transparent";
