@@ -44,6 +44,12 @@
                     </svg>
                     <span class="link-name">Shortcut</span>
                 </div>
+                <div class="link" link="experimental-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7 2a1 1 0 00-.707 1.707L7 4.414v3.758a1 1 0 01-.293.707l-4 4C.817 14.769 2.156 18 4.828 18h10.343c2.673 0 4.012-3.231 2.122-5.121l-4-4A1 1 0 0113 8.172V4.414l.707-.707A1 1 0 0013 2H7zm2 6.172V4h2v4.172a3 3 0 00.879 2.12l1.027 1.028a4 4 0 00-2.171.102l-.47.156a4 4 0 01-2.53 0l-.563-.187a1.993 1.993 0 00-.114-.035l1.063-1.063A3 3 0 009 8.172z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Experimental Features</span>
+                </div>
                 <br>
                 <div class="profil-create">
                     <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
@@ -246,6 +252,26 @@
                         <span class="details">Display the current process name inside the tab</span>
                     </div>
                     <switch-button state=false class="profil-process-name"></switch-button>
+                </div>
+            </div>
+        </section>
+
+        <section class="page no-transition hidden-page" id="experimental-page">
+            <div class="page-header">
+                <div class="return-button">
+                    <svg viewBox="0 0 20 20" fill="currentColor" class="return-arrow">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <span class="page-title">Experimental Features</span>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Font Ligature</span>
+                        <span class="details">Enable font ligature inside the terminal</span>
+                    </div>
+                    <switch-button parameters="experimentalFontLigature"></switch-button>
                 </div>
             </div>
         </section>
