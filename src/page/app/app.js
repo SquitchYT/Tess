@@ -446,11 +446,11 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             fontFamily: (config?.terminalFonts) ? config?.terminalFonts : "Consolas, courier-new, courier, monospace"
         });
         term.loadAddon(fitAddon);
-        fitAddon.fit();
         term.loadAddon(new WebLinksAddon(("click", (e, url) => {
             shell.openExternal(url);
         })));
         term.open(termDiv);
+        fitAddon.fit()
 
         term.attachCustomKeyEventHandler((e) => {
             let o = ExecuteShortcut(e);
@@ -534,18 +534,16 @@ function focusTerm(index, tab) {
 }
 
 function resize() {
-    rows = 64;
-    cols = 36;
+    rows = 128;
+    cols = 72;
 
     terminalsList.forEach((el) => {
         if (el.type == "Terminal") {
             try {
-                // Temporary workaround of resize bug: https://github.com/xtermjs/xterm.js/issues/3504
-                // fitAddong.fit may broke the terminal render
                 rows = el.fitAddon.proposeDimensions().rows;
                 cols = el.fitAddon.proposeDimensions().cols;
-                el.term.resize(cols, rows);
-                el.term._core.viewport._refresh(); // Can now delete this ???!!
+                el.fitAddon.fit()
+                el.term._core.viewport._refresh();
             } catch (err) {
                 console.log(err);
             }

@@ -113,6 +113,7 @@ if (osData.os == "win32" && config.background != "transparent" && config.backgro
 
 if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind" && osData.os != "win32") {
     app.commandLine.appendSwitch("disable-gpu");
+    app.commandLine.appendSwitch("no-sandbox");
 }
 
 !function LoadModules(){
@@ -191,7 +192,7 @@ function openWindow(config, colors) {
             try {
                 mainWindow.webContents.send("resize");
             } catch (_) { }
-        }, 200);
+        }, 500);
     });
 
     let profilToLaunch;
