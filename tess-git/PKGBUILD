@@ -25,6 +25,7 @@ package() {
   install -D tesshere.desktop "${pkgdir}/usr/share/kservices5/ServiceMenus/tesshere.desktop"
   install -D appintess.desktop "${pkgdir}/usr/share/kservices5/ServiceMenus/appintess.desktop"
   install -D build/icon.png "${pkgdir}/usr/share/pixmaps/tess.png"
+  mkdir -p "${pkgdir}/usr/share/man"
   cp -r -f ./man/* "${pkgdir}/usr/share/man/"
 
   if type "$kbuildsycoca5" > /dev/null; then
