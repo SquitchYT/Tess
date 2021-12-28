@@ -131,7 +131,6 @@ inputProfilProcessName.addEventListener("click", () => {
     config.profil.forEach((el) => {
         if (el.id == currentProfilPage) {
             el.processName = inputProfilProcessName.getAttribute("state");
-            console.log(el)
             saveUpdate();
         }
     });
@@ -541,57 +540,53 @@ function loadConfig() {
 
     // Load Plugin Section
     fs.readdir(osData.homeDir + "/Applications/tess/plugins", (err, plugins) => {
-        if (err) {
-            console.log(err);
+        if (err || plugins.length == 0) {
+            noPluginMessage.classList.remove("hidden")
         } else {
-            if (plugins.length == 0) {
-                noPluginMessage.classList.remove("hidden")
-            } else {
-                plugins.forEach((plugin) => {
-                    let newPluginSwitchOptions = document.createElement("div");
-                    newPluginSwitchOptions.classList.add("plugin-props");
-        
-                    let description = document.createElement("div");
-                    description.classList.add("description");
-        
-                    let title = document.createElement("span");
-                    title.classList.add("title");
-                    title.innerHTML = plugin;
-                    let details = document.createElement("span");
-                    details.classList.add("details");
-                    //details.innerHTML = "TODO : get plugins description";
-                    details.innerHTML = plugin; // get plugin description
-        
-                    description.appendChild(title);
-                    description.appendChild(details);
-        
-                    newPluginSwitchOptions.appendChild(description);
-        
-                    let switchButton = document.createElement("switch-button");
-                    switchButton.setAttribute("state", false);
-                    
-                    if (config.plugin.includes(plugin)) {
-                        switchButton.setAttribute("state", true);
+            plugins.forEach((plugin) => {
+                let newPluginSwitchOptions = document.createElement("div");
+                newPluginSwitchOptions.classList.add("plugin-props");
+    
+                let description = document.createElement("div");
+                description.classList.add("description");
+    
+                let title = document.createElement("span");
+                title.classList.add("title");
+                title.innerHTML = plugin;
+                let details = document.createElement("span");
+                details.classList.add("details");
+                //details.innerHTML = "TODO : get plugins description";
+                details.innerHTML = plugin; // get plugin description
+    
+                description.appendChild(title);
+                description.appendChild(details);
+    
+                newPluginSwitchOptions.appendChild(description);
+    
+                let switchButton = document.createElement("switch-button");
+                switchButton.setAttribute("state", false);
+                
+                if (config.plugin.includes(plugin)) {
+                    switchButton.setAttribute("state", true);
+                }
+    
+                switchButton.addEventListener("updatedValue", () => {
+                    if (switchButton.getAttribute("state") == "true") {
+                        config.plugin.push(plugin);
+                    } else {
+                        config.plugin.forEach((el, index) => {
+                            if (el == plugin) {
+                                config.plugin.splice(index, 1);
+                            }
+                        });
                     }
-        
-                    switchButton.addEventListener("updatedValue", () => {
-                        if (switchButton.getAttribute("state") == "true") {
-                            config.plugin.push(plugin);
-                        } else {
-                            config.plugin.forEach((el, index) => {
-                                if (el == plugin) {
-                                    config.plugin.splice(index, 1);
-                                }
-                            });
-                        }
-                        reloadRequireIcon.classList.remove("invisible");
-                        saveUpdate();
-                    });
-        
-                    newPluginSwitchOptions.appendChild(switchButton);
-                    pluginSection.appendChild(newPluginSwitchOptions);
+                    reloadRequireIcon.classList.remove("invisible");
+                    saveUpdate();
                 });
-            }
+    
+                newPluginSwitchOptions.appendChild(switchButton);
+                pluginSection.appendChild(newPluginSwitchOptions);
+            });
         }
     });
 }
