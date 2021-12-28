@@ -105,13 +105,10 @@ console.log("\x1b[33m[WARNING]\x1b[0m Tess is currently under development. You u
 
 if (osData.os == "win32" && config.background != "transparent" && config.background != "image" && config.background != "full") {
     BrowserWindow = require("electron-acrylic-window").BrowserWindow
-    console.log(1)
 } else if (osData.os != "win32" && config.background != "transparent" && config.background != "image" && config.background != "full") {
     BrowserWindow = require("glasstron").BrowserWindow;
-    console.log(2)
 } else {
     BrowserWindow = require("electron").BrowserWindow
-    console.log(3)
 }
 
 if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind" && osData.os != "win32") {
@@ -183,7 +180,7 @@ function openWindow(config, colors) {
         }
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("src/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
