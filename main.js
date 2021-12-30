@@ -192,7 +192,7 @@ function openWindow(config, colors) {
             try {
                 mainWindow.webContents.send("resize");
             } catch (_) { }
-        }, 500);
+        }, 200);
     });
 
     let profilToLaunch;
@@ -322,6 +322,12 @@ ipc.on("new-term", (e, data) => {
     };
 
     shells.push(s);
+
+    setTimeout(() => {
+        try {
+            mainWindow.webContents.send("resize");
+        } catch (_) { }
+    }, 250);
 });
 
 ipc.on("terminal-data", (e, data) => {
