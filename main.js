@@ -1,6 +1,31 @@
 const time1 = new Date().getTime();
 
-const argv = require("yargs").argv;
+const yargs = require("yargs")
+const argv = yargs.options({
+    "newtab": {
+        describe: "Launch in a new tab"
+    },
+    "launch-profil": {
+        describe: "Profil to launch"
+    },
+    "launch-page": {
+        describe: "Page to launch"
+    },
+    "command": {
+        alias: "e",
+        describe: "Command to launch instead of profil"
+    },
+    "workdir": {
+        alias: "cd",
+        describe: "Default directory for the new tab"
+    }
+}).parse(process.argv, (_, __, output) => {
+    if (output) {
+      output = output.replace(/\[.*?\]/g, '');
+      console.log(output);
+      process.exit()
+    }
+})
 
 const pty = require("node-pty");
 const Child_Proc = require("child_process");
@@ -8,6 +33,7 @@ const { Worker } = require("worker_threads");
 
 const fs = require("fs");
 const mkdir = require("mkdirp");
+const net = require("net");
 
 const Color = require("./class/color");
 
@@ -17,11 +43,9 @@ const osData = new OsInfomations();
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
 
 let getProcessTree;
+if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
 
 let resizeTimeout;
-
-if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
-const net = require("net");
 
 let config, colors;
 !function LoadConfig() {
