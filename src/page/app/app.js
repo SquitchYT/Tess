@@ -778,7 +778,14 @@ ipc.on("openNewPage", (e, data) => {
 })
 
 function openNewPage(data) {
-    if (data.page && CustomPage.includes(data.page)) {
+    inCustomPage = false;
+    if (data.page) {
+        CustomPage.forEach((el) => {
+            if (el.name == data.page) { inCustomPage = true; }
+        })
+    }
+
+    if (inCustomPage) {
         CreateNewTerminal(data.page, data.page, undefined, undefined, undefined);
     } else if (data.profil || data.customCommand) {
         CreateNewTerminal((data.customCommand) ? data.customCommand : data.profil.programm, 
