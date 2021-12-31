@@ -552,7 +552,7 @@ function loadConfig() {
     
                 let title = document.createElement("span");
                 title.classList.add("title");
-                title.innerHTML = plugin;
+                title.innerHTML = plugin.replace("-", " ");
                 let details = document.createElement("span");
                 details.classList.add("details");
                 //details.innerHTML = "TODO : get plugins description";
