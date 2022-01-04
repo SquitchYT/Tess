@@ -71,7 +71,6 @@ body {
     order: 1000;
     -webkit-app-region: no-drag;
     color: var(--general-text-color);
-    /*transition: flex 1000ms linear;*/
 }
 
 .more:hover {
@@ -226,8 +225,8 @@ body {
 
 @keyframes nodeInserted { 
     from { 
-            opacity: 0.2;
-            transform: translateY(25px);
+            opacity: 0.25;
+            transform: translateY(24px);
          }
     to   { 
             opacity: 1;

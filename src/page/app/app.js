@@ -274,6 +274,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             }
         })
 
+        closeQuickAccessMenu()
+
         return
     }
 
@@ -539,7 +541,7 @@ function focusTerm(index, tab) {
                 el.term.focus();
             } 
         });
-    }, 50);
+    }, 20);
 }
 
 function resize() {

@@ -12,6 +12,7 @@ extern std::pair<int, std::string> ERR_DEFAULT;
 extern std::pair<int, std::string> ERR_CONNECTION;
 extern std::pair<int, std::string> ERR_NO_EXTENSION;
 extern std::pair<int, std::string> ERR_NO_PKG_MANAGER;
+extern std::pair<int, std::string> ERR_HELP_NEEDED;
 
 extern std::string COLOR_ERR;
 extern std::string COLOR_DEFAULT;
