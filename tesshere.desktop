@@ -5,7 +5,7 @@ MimeType=inode/directory;
 Actions=OpenTessHere;OpenTessHereNewWindow;
 X-KDE-AuthorizeAction=shell_access
 
-[Desktop Action opentesshere]
+[Desktop Action OpenTessHere]
 Name=Execute Tess Here in a New Tab
 Exec=tess --workdir %f --newtab
 Icon=/usr/share/pixmaps/tess.png

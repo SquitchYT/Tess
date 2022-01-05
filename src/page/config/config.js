@@ -455,8 +455,9 @@ profilCreateBtn.addEventListener("click", () => {
 
 function loadConfig() {
     config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
-    config.bringAppToFront = (config?.bringAppToFront != undefined ? config.bringAppToFront == "true" : true);
-    config.terminalFonts = (config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace")
+    config.bringAppToFront = config?.bringAppToFront == "true" ? "true" : "false";
+    config.terminalFonts = (config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace");
+
     let profils = "";
     config.profil.forEach((el) => {
         el.processName = (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName : "true")
