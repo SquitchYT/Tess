@@ -137,7 +137,7 @@ inputProfilProcessName.addEventListener("click", () => {
 })
 
 function setTheme() {
-    root.style.setProperty("--background", colors.terminal.theme.background);
+    root.style.setProperty("--background", colors.app.appBackground);
     root.style.setProperty("--item-background", colors.app.background);
     root.style.setProperty("--item-background-hover", colors.app.backgroundHover);
     root.style.setProperty("--item-textcolor", colors.app.textColor);
@@ -145,7 +145,7 @@ function setTheme() {
     root.style.setProperty("--item-green", colors.terminal.theme?.green);
     root.style.setProperty("--item-red", colors.terminal.theme.red);
     root.style.setProperty("--item-yellow", colors.terminal.theme.yellow);
-    root.style.setProperty("--app-background", colors.terminal.theme.background);
+    root.style.setProperty("--app-background", colors.app.appBackground);
     root.style.setProperty("--app-dark-background", colors.app.secondaryBackground);
 }
 

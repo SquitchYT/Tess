@@ -76,6 +76,8 @@ let config, colors;
         mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
     }
+
+    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background
 }();
 
 if (osData.os == "win32") {
