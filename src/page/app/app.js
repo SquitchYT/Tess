@@ -795,7 +795,7 @@ ipc.on("openNewPage", (e, data) => {
 })
 
 function openNewPage(data) {
-    inCustomPage = false;
+    let inCustomPage = false;
     if (data.page) {
         CustomPage.forEach((el) => {
             if (el.name == data.page) { inCustomPage = true; }
