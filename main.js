@@ -370,38 +370,54 @@ app.on("ready", () => {
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
 
     if (newTab) {
-        const client = net.createConnection({ path: osData.os == "win32" ? `\\\\?\\pipe\\tess-${getTessInstance()}` : `/tmp/tess-${getTessInstance()}.sock` }, () => {
-            let profilToLaunch;
-            config.profil.forEach((el) => {
-                if (el.name == config.defaultProfil) {
-                    profilToLaunch = el
-                }
-            })
-
-            let loadOptions = {
-                page: launchPage,
-                profil: (launchProfil) ? launchProfil : profilToLaunch,
-                workdir: customWorkdir,
-                customCommand: customCommand
-            }
-
-            client.write(JSON.stringify(loadOptions));
-            process.exit();
-        });
-        
-        client.on("error", (e) => {
-            client.end()
-    
-            if (needTransparent && osData.os != "win32") {
-                setTimeout(() => {
+        !function connectToTessInstance(count=0) {
+            let pid = getTessInstance(count)
+            if (pid == 0) {
+                if (needTransparent && osData.os != "win32") {
+                    setTimeout(() => {
+                        openWindow(config, colors);
+                    }, 300);
+                } else {
                     openWindow(config, colors);
-                }, 300);
+                }
             } else {
-                openWindow(config, colors);
+                const client = net.createConnection({ path: osData.os == "win32" ? `\\\\?\\pipe\\tess-${pid}` : `/tmp/tess-${pid}.sock` }, () => {
+                    let profilToLaunch;
+                    config.profil.forEach((el) => {
+                        if (el.name == config.defaultProfil) {
+                            profilToLaunch = el
+                        }
+                    })
+        
+                    let loadOptions = {
+                        page: launchPage,
+                        profil: (launchProfil) ? launchProfil : profilToLaunch,
+                        workdir: customWorkdir,
+                        customCommand: customCommand
+                    }
+        
+                    client.write(JSON.stringify(loadOptions));
+                    process.exit();
+                });
+                
+                client.on("error", (e) => {
+                    client.end();
+                    if (e["code"] == "ENOENT") {
+                        connectToTessInstance(count + 1)
+                    } else {
+                        if (needTransparent && osData.os != "win32") {
+                            setTimeout(() => {
+                                openWindow(config, colors);
+                            }, 300);
+                        } else {
+                            openWindow(config, colors);
+                        }
+                    }
+                })
             }
+        }(0);
 
-
-        })
+        
     } else {
         if (needTransparent && osData.os != "win32") {
             setTimeout(() => {
@@ -437,7 +453,7 @@ ipc.on("close-terminal", (e, data) => {
 });
 
 ipc.on("close", () => {
-    app.quit();
+    mainWindow.close()
 });
 
 ipc.on("reduce", () => {
@@ -552,14 +568,18 @@ ipc.on("openFileDialog", (e, data) => {
     });
 });
 
-function getTessInstance() {
+function getTessInstance(line_number=0) {
     try {
         if (osData.os != "win32") {
             let result = Child_Proc.execSync("ps -C tess").toString();
             let PIDLine = result.split("\n")
+
+            if ((PIDLine.length - 1) <= line_number) {
+                return 0;
+            }
         
             let regex = /[0-9]+/i;
-            return regex.exec(PIDLine[1])[0];
+            return regex.exec(PIDLine[line_number+1])[0];
         } else {
             let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq tess.exe"').toString();
             let PIDLine = result.split("\n")
