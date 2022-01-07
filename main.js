@@ -582,10 +582,14 @@ function getTessInstance(line_number=0) {
             return regex.exec(PIDLine[line_number+1])[0];
         } else {
             let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq tess.exe"').toString();
-            let PIDLine = result.split("\n")
+            let PIDLine = result.split("\n");
+
+            if ((PIDLine.length - 3) <= line_number) {
+                return 0;
+            }
             
             let regex = /[0-9]+/i;
-            return regex.exec(PIDLine[3])[0];
+            return regex.exec(PIDLine[line_number + 3])[0];
         }
     } catch {
         return 0;
