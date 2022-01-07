@@ -49,7 +49,7 @@
       "icon": "build/icon.png"
     },
     "win": {
-      "icon": "src/icon.ico"
+      "icon": "build/icon.ico"
     },
     "nsis": {
       "runAfterFinish": false
