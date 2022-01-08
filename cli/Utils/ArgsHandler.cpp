@@ -6,14 +6,19 @@
 
 #include <string>
 #include <tuple>
-#include <list>
 
 
-std::tuple<Error, std::vector<Extension>, std::string> handleArgs(int count, char **args) { //replace std::list by vector
+std::tuple<Error, std::vector<Extension>, std::string> handleArgs(int count, char **args) {
     std::vector<Extension> extensions;
 
     std::string current_type = "";
     std::string action = "";
+
+    std::string first_arg = args[1];
+    if (first_arg == "--help") {
+        Error err(ERR_HELP_NEEDED);
+        return {err, extensions, action};
+    }
 
     if (count == 1) {
         Error err(ERR_NO_ARGS);

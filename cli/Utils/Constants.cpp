@@ -16,6 +16,7 @@ std::pair<int, std::string> ERR_DEFAULT = {255, "Unknown error"};
 std::pair<int, std::string> ERR_CONNECTION = {12, "Unable to download extensions. Check your internet connection."};
 std::pair<int, std::string> ERR_NO_EXTENSION = {13, "Please specifies one or more extensions to "};
 std::pair<int, std::string> ERR_NO_PKG_MANAGER = {15, "Unable to find your NodeJS package manager. Please install it before."};
+std::pair<int, std::string> ERR_HELP_NEEDED = {16, "Openning help"};
 
 #ifdef _WIN32
         std::string COLOR_ERR = "\033[31m";
@@ -32,8 +33,6 @@ std::pair<int, std::string> ERR_NO_PKG_MANAGER = {15, "Unable to find your NodeJ
         std::string FONT_BOLD = "\e[1m";
         std::string FONT_NORMAL = "\e[0m";
 #endif
-
-
 
 
 std::string SERVER_URL = "http://squitch.fr/assets/tess/marketplace/";
@@ -77,4 +76,3 @@ std::vector<std::pair<std::string, std::string>> ARGS_ALLIAS = {
         std::make_pair("-H", "--help"),
         std::make_pair("-U", "--upgrade")
 };
-

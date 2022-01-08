@@ -1,6 +1,31 @@
 const time1 = new Date().getTime();
 
-const argv = require("yargs").argv;
+const yargs = require("yargs")
+const argv = yargs.options({
+    "newtab": {
+        describe: "Launch in a new tab"
+    },
+    "launch-profil": {
+        describe: "Profil to launch"
+    },
+    "launch-page": {
+        describe: "Page to launch"
+    },
+    "command": {
+        alias: "e",
+        describe: "Command to launch instead of profil"
+    },
+    "workdir": {
+        alias: "cd",
+        describe: "Default directory for the new tab"
+    }
+}).parse(process.argv, (_, __, output) => {
+    if (output) {
+      output = output.replace(/\[.*?\]/g, '');
+      console.log(output);
+      process.exit()
+    }
+})
 
 const pty = require("node-pty");
 const Child_Proc = require("child_process");
@@ -8,6 +33,7 @@ const { Worker } = require("worker_threads");
 
 const fs = require("fs");
 const mkdir = require("mkdirp");
+const net = require("net");
 
 const Color = require("./class/color");
 
@@ -17,18 +43,16 @@ const osData = new OsInfomations();
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
 
 let getProcessTree;
+if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
 
 let resizeTimeout;
-
-if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
-const net = require("net");
 
 let config, colors;
 !function LoadConfig() {
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
         config = JSON.parse(file);
-    } catch (error) {
+    } catch (_) {
         let toWrite= `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
@@ -45,13 +69,15 @@ let config, colors;
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
         colors = JSON.parse(file);
-    } catch (error) {
+    } catch (_) {
         let toWrite = "{ \"terminal\": { \"theme\": { \"foreground\": \"#979FAD\", \"background\": \"#282C34\", \"black\": \"#3c4045\", \"red\": \"#ff5370\", \"green\": \"#97f553\", \"yellow\": \"#d19a66\", \"blue\": \"#61aeef\", \"magenta\": \"#c679dd\", \"cyan\": \"#57b6c2\", \"white\": \"#ABB2BF\", \"brightBlack\": \"#59626f\", \"brightRed\": \"#e06c75\", \"brightGreen\": \"#c3e88d\", \"brightYellow\": \"#e5c17c\", \"brightBlue\": \"#61AEEF\", \"brightMagenta\": \"#C679DD\", \"brightCyan\": \"#56B6C2\", \"brightWhite\": \"#abb2bf\" } }, \"app\": { \"textColor\": \"#979FAD\", \"tabActive\": \"#2F333D\", \"tabInactive\": \"#21252B\" , \"topBar\": \"#21252B\", \"background\":\"#21252B\", \"secondaryBackground\": \"#2F333D\", \"backgroundHover\": \"#2D3339\", \"buttonRadius\": 20 } }";
         colors = JSON.parse(toWrite);
         
         mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
     }
+
+    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background
 }();
 
 if (osData.os == "win32") {
@@ -192,7 +218,7 @@ function openWindow(config, colors) {
             try {
                 mainWindow.webContents.send("resize");
             } catch (_) { }
-        }, 500);
+        }, 200);
     });
 
     let profilToLaunch;
@@ -322,6 +348,12 @@ ipc.on("new-term", (e, data) => {
     };
 
     shells.push(s);
+
+    setTimeout(() => {
+        try {
+            mainWindow.webContents.send("resize");
+        } catch (_) { }
+    }, 250);
 });
 
 ipc.on("terminal-data", (e, data) => {
@@ -338,38 +370,54 @@ app.on("ready", () => {
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind") ? true : false;
 
     if (newTab) {
-        const client = net.createConnection({ path: osData.os == "win32" ? `\\\\?\\pipe\\tess-${getTessInstance()}` : `/tmp/tess-${getTessInstance()}.sock` }, () => {
-            let profilToLaunch;
-            config.profil.forEach((el) => {
-                if (el.name == config.defaultProfil) {
-                    profilToLaunch = el
-                }
-            })
-
-            let loadOptions = {
-                page: launchPage,
-                profil: (launchProfil) ? launchProfil : profilToLaunch,
-                workdir: customWorkdir,
-                customCommand: customCommand
-            }
-
-            client.write(JSON.stringify(loadOptions));
-            process.exit();
-        });
-        
-        client.on("error", (e) => {
-            client.end()
-    
-            if (needTransparent && osData.os != "win32") {
-                setTimeout(() => {
+        !function connectToTessInstance(count=0) {
+            let pid = getTessInstance(count)
+            if (pid == 0) {
+                if (needTransparent && osData.os != "win32") {
+                    setTimeout(() => {
+                        openWindow(config, colors);
+                    }, 300);
+                } else {
                     openWindow(config, colors);
-                }, 300);
+                }
             } else {
-                openWindow(config, colors);
+                const client = net.createConnection({ path: osData.os == "win32" ? `\\\\?\\pipe\\tess-${pid}` : `/tmp/tess-${pid}.sock` }, () => {
+                    let profilToLaunch;
+                    config.profil.forEach((el) => {
+                        if (el.name == config.defaultProfil) {
+                            profilToLaunch = el
+                        }
+                    })
+        
+                    let loadOptions = {
+                        page: launchPage,
+                        profil: (launchProfil) ? launchProfil : profilToLaunch,
+                        workdir: customWorkdir,
+                        customCommand: customCommand
+                    }
+        
+                    client.write(JSON.stringify(loadOptions));
+                    process.exit();
+                });
+                
+                client.on("error", (e) => {
+                    client.end();
+                    if (e["code"] == "ENOENT") {
+                        connectToTessInstance(count + 1)
+                    } else {
+                        if (needTransparent && osData.os != "win32") {
+                            setTimeout(() => {
+                                openWindow(config, colors);
+                            }, 300);
+                        } else {
+                            openWindow(config, colors);
+                        }
+                    }
+                })
             }
+        }(0);
 
-
-        })
+        
     } else {
         if (needTransparent && osData.os != "win32") {
             setTimeout(() => {
@@ -405,7 +453,7 @@ ipc.on("close-terminal", (e, data) => {
 });
 
 ipc.on("close", () => {
-    app.quit();
+    mainWindow.close()
 });
 
 ipc.on("reduce", () => {
@@ -500,6 +548,8 @@ function reloadConfig() {
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
     }
 
+    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background
+
     if (osData.os == "win32") {
         updateJumpMenu();
     }
@@ -518,20 +568,28 @@ ipc.on("openFileDialog", (e, data) => {
     });
 });
 
-function getTessInstance() {
+function getTessInstance(line_number=0) {
     try {
         if (osData.os != "win32") {
             let result = Child_Proc.execSync("ps -C tess").toString();
             let PIDLine = result.split("\n")
+
+            if ((PIDLine.length - 1) <= line_number) {
+                return 0;
+            }
         
             let regex = /[0-9]+/i;
-            return regex.exec(PIDLine[1])[0];
+            return regex.exec(PIDLine[line_number+1])[0];
         } else {
             let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq tess.exe"').toString();
-            let PIDLine = result.split("\n")
+            let PIDLine = result.split("\n");
+
+            if ((PIDLine.length - 3) <= line_number) {
+                return 0;
+            }
             
             let regex = /[0-9]+/i;
-            return regex.exec(PIDLine[3])[0];
+            return regex.exec(PIDLine[line_number + 3])[0];
         }
     } catch {
         return 0;

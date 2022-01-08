@@ -1,6 +1,7 @@
 const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const { WebLinksAddon } = require("xterm-addon-web-links");
+const { LigaturesAddon } = require("xterm-addon-ligatures");
 
 const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
@@ -273,6 +274,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             }
         })
 
+        closeQuickAccessMenu()
+
         return
     }
 
@@ -449,7 +452,14 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         term.loadAddon(new WebLinksAddon(("click", (e, url) => {
             shell.openExternal(url);
         })));
+
         term.open(termDiv);
+
+        let ligatureAddon = new LigaturesAddon()
+        if (config.experimentalFontLigature == "true") {
+            term.loadAddon(ligatureAddon)
+        }
+
         fitAddon.fit()
 
         term.attachCustomKeyEventHandler((e) => {
@@ -488,7 +498,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             index: index,
             term: term,
             type: "Terminal",
-            fitAddon: fitAddon
+            fitAddon: fitAddon,
+            ligatureAddon: ligatureAddon
         };
     }
 
@@ -530,12 +541,12 @@ function focusTerm(index, tab) {
                 el.term.focus();
             } 
         });
-    }, 50);
+    }, 20);
 }
 
 function resize() {
-    rows = 128;
-    cols = 72;
+    rows = 36;
+    cols = 64;
 
     terminalsList.forEach((el) => {
         if (el.type == "Terminal") {
@@ -762,6 +773,12 @@ function openDefaultProfil() {
 function updateTerminalApparence() {
     terminalsList.forEach((el) => {
         if (el.type == "Terminal") {
+            if (config.experimentalFontLigature == "true") {
+                el.term.loadAddon(el.ligatureAddon)
+            } else {
+                el.ligatureAddon.dispose()
+            }
+
             el.term.setOption("theme", colors.terminal.theme);
             el.term.setOption("fontSize", config.terminalFontSize);
             el.term.setOption("cursorStyle", config.cursorStyle);
@@ -778,7 +795,7 @@ ipc.on("openNewPage", (e, data) => {
 })
 
 function openNewPage(data) {
-    inCustomPage = false;
+    let inCustomPage = false;
     if (data.page) {
         CustomPage.forEach((el) => {
             if (el.name == data.page) { inCustomPage = true; }

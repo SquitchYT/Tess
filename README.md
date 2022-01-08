@@ -27,9 +27,9 @@
 ### Install from packages
 **ArchLinux**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#archlinux)
 <br>
-**Deb package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#debian-ubuntu)
+**Debian / Ubuntu**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#debian-ubuntu)
 <br>
-**Rpm package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#redhat-fedora)
+**Fedora / RedHat**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#redhat-fedora)
 <br>
 **Windows**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#windows)
 <!--

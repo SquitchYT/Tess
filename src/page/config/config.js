@@ -137,7 +137,7 @@ inputProfilProcessName.addEventListener("click", () => {
 })
 
 function setTheme() {
-    root.style.setProperty("--background", colors.terminal.theme.background);
+    root.style.setProperty("--background", colors.app.appBackground);
     root.style.setProperty("--item-background", colors.app.background);
     root.style.setProperty("--item-background-hover", colors.app.backgroundHover);
     root.style.setProperty("--item-textcolor", colors.app.textColor);
@@ -145,7 +145,7 @@ function setTheme() {
     root.style.setProperty("--item-green", colors.terminal.theme?.green);
     root.style.setProperty("--item-red", colors.terminal.theme.red);
     root.style.setProperty("--item-yellow", colors.terminal.theme.yellow);
-    root.style.setProperty("--app-background", colors.terminal.theme.background);
+    root.style.setProperty("--app-background", colors.app.appBackground);
     root.style.setProperty("--app-dark-background", colors.app.secondaryBackground);
 }
 
@@ -455,8 +455,9 @@ profilCreateBtn.addEventListener("click", () => {
 
 function loadConfig() {
     config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
-    config.bringAppToFront = (config?.bringAppToFront != undefined ? config.bringAppToFront == "true" : true);
-    config.terminalFonts = (config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace")
+    config.bringAppToFront = config?.bringAppToFront == "true" ? "true" : "false";
+    config.terminalFonts = (config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace");
+
     let profils = "";
     config.profil.forEach((el) => {
         el.processName = (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName : "true")
@@ -552,7 +553,7 @@ function loadConfig() {
     
                 let title = document.createElement("span");
                 title.classList.add("title");
-                title.innerHTML = plugin;
+                title.innerHTML = plugin.replace("-", " ");
                 let details = document.createElement("span");
                 details.classList.add("details");
                 //details.innerHTML = "TODO : get plugins description";

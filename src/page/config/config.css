@@ -433,6 +433,7 @@ h3 {
 
 .title {
     font-size: 15px;
+    text-transform: capitalize;
 }
 
 .details {
