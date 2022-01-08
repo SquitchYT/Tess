@@ -453,7 +453,7 @@ ipc.on("close-terminal", (e, data) => {
 });
 
 ipc.on("close", () => {
-    mainWindow.close()
+    mainWindow.close();
 });
 
 ipc.on("reduce", () => {
@@ -556,7 +556,7 @@ function reloadConfig() {
 }
 
 ipc.on("debug", (e, data) => {
-    console.log(data);
+    console.log("DEBUG: " + data);
 });
 
 ipc.on("openFileDialog", (e, data) => {

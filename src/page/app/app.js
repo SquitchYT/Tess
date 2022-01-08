@@ -581,35 +581,40 @@ function Close(index) {
     }
 
     let y = 0;
-    terminalsList.forEach((el) => {
-        if (el.index == index) {
-            if (el.type == "Terminal") {
-                el.term.dispose();
-            }
-            terminalsList.splice(y, 1);
-        }
-        y++;
-    });
 
-    if (terminalsList.length === 0) {
-        ipc.send("close");
-    } else if (n == index){
-        let i = {
-            index: 0,
-            dif: Infinity
-        };
+    try {
         terminalsList.forEach((el) => {
-            if (Math.abs(index - el.index) < i.dif) {
-                i.index = el.index;
-                i.dif = Math.abs(index - el.index);
+            if (el.index == index) {
+                if (el.type == "Terminal") {
+                    el.term.dispose();
+                }
+                terminalsList.splice(y, 1);
             }
+            y++;
         });
-
-        let tab = document.querySelector(".tab-all-" + i.index);
-        focusTerm(i.index, tab);
+    
+        if (terminalsList.length === 0) {
+            ipc.send("close");
+        } else if (n == index){
+            let i = {
+                index: 0,
+                dif: Infinity
+            };
+            terminalsList.forEach((el) => {
+                if (Math.abs(index - el.index) < i.dif) {
+                    i.index = el.index;
+                    i.dif = Math.abs(index - el.index);
+                }
+            });
+            focusTerm(i.index, document.querySelector(".tab-all-" + i.index));
+        } else {
+            focusTerm(n, document.querySelector(".tab-all-" + n))
+        }
+    
+        return false;
+    } catch (_) {
+        ipc.send("debug", _)
     }
-
-    return false;
 }
 
 target.addEventListener("wheel", event => {
