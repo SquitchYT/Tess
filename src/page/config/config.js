@@ -457,6 +457,7 @@ function loadConfig() {
     config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
     config.bringAppToFront = config?.bringAppToFront == "true" ? "true" : "false";
     config.terminalFonts = (config?.terminalFonts ? config.terminalFonts : "Consolas, courier-new, courier, monospace");
+    config.experimentalRendererType = (config?.experimentalRendererType ? config.experimentalRendererType : "canvas");
 
     let profils = "";
     config.profil.forEach((el) => {

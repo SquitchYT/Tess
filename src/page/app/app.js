@@ -446,7 +446,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             allowTransparency: true,
             fontSize: fontSize,
             cursorBlink: (config.cursorBlink == "true"),
-            fontFamily: (config?.terminalFonts) ? config?.terminalFonts : "Consolas, courier-new, courier, monospace"
+            fontFamily: (config?.terminalFonts) ? config?.terminalFonts : "Consolas, courier-new, courier, monospace",
+            rendererType: config?.experimentalRendererType ? config.experimentalRendererType : "canvas"
         });
         term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon(("click", (e, url) => {
