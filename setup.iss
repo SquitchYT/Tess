@@ -1,8 +1,8 @@
 [Setup]
 AppName=Tess
-AppVersion=0.5.3
+AppVersion=0.5.4
 DefaultDirName={autopf}\Tess
-OutputBaseFilename=tess-0.5.3-setup
+OutputBaseFilename=tess-0.5.4-setup
 AppVerName=Tess
 SetupIconFile="build\icon.ico"
 UninstallDisplayIcon="{app}\tess.exe"
