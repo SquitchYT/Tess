@@ -218,7 +218,7 @@ function openWindow(config, colors) {
             try {
                 mainWindow.webContents.send("resize");
             } catch (_) { }
-        }, 175);
+        }, 150);
     });
 
     let profilToLaunch;

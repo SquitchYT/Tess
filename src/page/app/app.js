@@ -594,9 +594,7 @@ function Close(index) {
         return false;
     } catch (_) {
         ipc.send("debug", _)
-        ipc.send("debug", _.type)
         ipc.send("close");
-        
     }
 }
 
@@ -607,10 +605,10 @@ target.addEventListener("wheel", event => {
 
 function ExecuteShortcut(e) {
     let result = true;
-    let dos = false; // replace that by a 'Do' variable name
+    let shortcut_executed = false;
     shortcut.forEach((el) => {
-        if (e.ctrlKey == el.ctrl && e.shiftKey == el.shift && e.altKey == el.alt && e.key.toUpperCase() == el.key && e.type == "keydown" && !dos) {
-            dos = true;
+        if (e.ctrlKey == el.ctrl && e.shiftKey == el.shift && e.altKey == el.alt && e.key.toUpperCase() == el.key && e.type == "keydown" && !shortcut_executed) {
+            shortcut_executed = true;
             if (shortcutAction.includes(el.action)) {
                 result = window[el.action](n);
             } else {
@@ -655,10 +653,6 @@ function Copy() {
     });
     return result;
 }
-
-setTimeout(() => {
-    resize();
-}, 150);
 
 ipc.on("newConfig", (e, data) => {
     config = data.config;
@@ -805,31 +799,29 @@ function openNewPage(data) {
 }
 
 function checkIfCustomPage(pageName) {
-    let finded = false
+    let finded = false;
     CustomPage.forEach((el) => {
-        if (pageName == el.name) { 
-            finded = true
-        }
+        if (pageName == el.name) { finded = true; }
     })
-    return finded
+    return finded;
 }
 
 
 function onlyOnePage(pageName) {
-    let onePage = false
+    let onePage = false;
     CustomPage.forEach((el) => {
-        if (pageName == el.name) { onePage = el.onePage == true }
+        if (pageName == el.name) { onePage = el.onePage == true; }
     })
 
-    return onePage
+    return onePage;
 }
 
 function checkIfPageAlreadyOpened(pageName) {
-    let finded = false
+    let finded = false;
     terminalsList.forEach((el) => {
-        if (el?.customPage == pageName) { finded = true }
+        if (el?.customPage == pageName) { finded = true; }
     })
-    return finded
+    return finded;
 }
 
 function updateQuickMenu() {
@@ -838,7 +830,6 @@ function updateQuickMenu() {
     quickMenuShellBox.innerHTML = "";
 
     quickDefaultName.innerText = config.defaultProfil;
-
     quickMenuNoOtherShell.classList.add("hide");
 
     config.shortcut.forEach((el) => {
