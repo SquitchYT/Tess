@@ -21,6 +21,7 @@ const body = document.body;
 const root = document.documentElement;
 const target = document.getElementById("test");
 const osInformations = require("../../../class/osinfo");
+const osData = new osInformations();
 
 const dropDownArrow = document.getElementById("show-all-shell");
 const quickAccessMenu = document.querySelector(".quick-menu");
@@ -35,11 +36,8 @@ const quickDefaultShortcut = document.getElementById("quick-default-shortcut");
 const quickDefaultIcon = document.getElementById("quick-default-icon");
 
 const quickConfigShortcut = document.getElementById("quick-config-shortcut");
-
 const quickMenuShellBox = document.querySelector(".quick-menu-other");
-
 const quickMenuNoOtherShell = document.getElementById("quick-no-other-shell")
-
 
 let previousBackgroundStyle = undefined;
 
@@ -47,7 +45,6 @@ let previousBackgroundStyle = undefined;
 quickDefault.addEventListener("click", () => {
     openDefaultProfil();
 })
-
 quickConfig.addEventListener("click", () => {
     CreateNewTerminal("Config", "Config", "../../img/gear.svg");
 })
@@ -83,8 +80,6 @@ function closeQuickAccessMenu() {
     quickMenuInner.classList.remove("pointer-event");
 }
 
-
-const osData = new osInformations();
 
 if (osData.wm != "win" && osData.wm != "macos") {
     let titleBarButton = document.querySelectorAll(".app-button");
@@ -200,14 +195,12 @@ ipc.on("loaded", (_, data) => {
         colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
         root.style.setProperty("--background", colors.terminal.theme.background);
-        colors.terminal.theme.background = "transparent";
     } else if (config.background == "image") {
         colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
         root.style.setProperty("--background-image", 'url("' + config.imageLink + '")');
         root.style.setProperty("--background", colors.terminal.theme.background);
         root.style.setProperty("--blur", "blur(" + config.imageBlur +"px)");
-        colors.terminal.theme.background = "transparent";
     } else {
         root.style.setProperty("--background", colors.terminal.theme.background);
     }
@@ -240,23 +233,13 @@ function HandleShortcut() {
     shortcut = [];
 
     config.shortcut.forEach((el) => {
-        let newShortcut= {
-            ctrl : false,
-            shift : false,
-            alt: false,
+        shortcut.push({
+            ctrl : el.control.includes("CTRL"),
+            shift : el.control.includes("SHIFT"),
+            alt: el.control.includes("ALT"),
             key : el.control.slice(-1).toUpperCase(),
             action : el.action
-        };
-
-        if (el.control.includes("CTRL")) {
-            newShortcut.ctrl = true;
-        } if (el.control.includes("ALT")) {
-            newShortcut.alt = true;
-        } if (el.control.includes("SHIFT")) {
-            newShortcut.shift = true;
-        }
-
-        shortcut.push(newShortcut);
+        });
     });
 }
 
@@ -269,17 +252,16 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     {
         terminalsList.forEach((el) => {
             if (el?.customPage == toStart) {
-                let tab = document.querySelector(".tab-all-" + el.index)
-                focusTerm(el.index, tab)
+                let tab = document.querySelector(".tab-all-" + el.index);
+                focusTerm(el.index, tab);
             }
         })
 
-        closeQuickAccessMenu()
-
-        return
+        closeQuickAccessMenu();
+        return;
     }
 
-    closeQuickAccessMenu()
+    closeQuickAccessMenu();
 
     if (icon == undefined) { icon = "Default"; }
 
@@ -388,9 +370,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     logo.src = (icon != "Default") ? icon : "../../img/default.png";
     logo.classList.add("logo");
 
-    tab.appendChild(logo);
-    tab.appendChild(tab_link);
-    tab.appendChild(close_button);
+    tab.append(logo, tab_link, close_button)
     tabs.appendChild(tab);
 
     let termDiv = document.createElement("div");
@@ -517,13 +497,13 @@ function focusTerm(index, tab) {
 
     let i = 0;
     while (i < terms.length) {
-        let a = terms.item(i);
-        let r = tabs.item(i);
-        a.classList.add("hidden");
-        a.classList.remove("visible");
+        let current_terms = terms.item(i);
+        let current_tabs = tabs.item(i);
+        current_terms.classList.add("hidden");
+        current_terms.classList.remove("visible");
 
-        r.classList.remove("tab-active");
-        r.classList.add("tab-inactive");
+        current_tabs.classList.remove("tab-active");
+        current_tabs.classList.add("tab-inactive");
         i++;  
     }
 
@@ -557,7 +537,7 @@ function resize() {
                 el.fitAddon.fit()
                 el.term._core.viewport._refresh();
             } catch (err) {
-                console.log(err);
+                ipc.send("debug", err)
             }
         }
         
@@ -576,13 +556,13 @@ function Close(index) {
     try {
         ta.remove();
         te.remove();   
-    } catch (e) {
-        console.log(e);
+    } catch (err) {
+        ipc.send("debug", err)
     }
 
-    let y = 0;
 
     try {
+        let y = 0;
         terminalsList.forEach((el) => {
             if (el.index == index) {
                 if (el.type == "Terminal") {
@@ -608,12 +588,15 @@ function Close(index) {
             });
             focusTerm(i.index, document.querySelector(".tab-all-" + i.index));
         } else {
-            focusTerm(n, document.querySelector(".tab-all-" + n))
+            focusTerm(n, document.querySelector(".tab-all-" + n));
         }
     
         return false;
     } catch (_) {
         ipc.send("debug", _)
+        ipc.send("debug", _.type)
+        ipc.send("close");
+        
     }
 }
 

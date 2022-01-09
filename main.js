@@ -218,7 +218,7 @@ function openWindow(config, colors) {
             try {
                 mainWindow.webContents.send("resize");
             } catch (_) { }
-        }, 200);
+        }, 175);
     });
 
     let profilToLaunch;
@@ -342,18 +342,16 @@ ipc.on("new-term", (e, data) => {
         }
     });
 
-    let s = {
+    shells.push({
         index: data.index,
         shell: shell
-    };
-
-    shells.push(s);
+    });
 
     setTimeout(() => {
         try {
             mainWindow.webContents.send("resize");
         } catch (_) { }
-    }, 250);
+    }, 175);
 });
 
 ipc.on("terminal-data", (e, data) => {
@@ -473,7 +471,7 @@ ipc.on("reduce-expand", () => {
     }
 });
 
-ipc.on("resize", (e, data) => {
+ipc.on("resize", (_, data) => {
     shells.forEach((el) => {
         try {
             el.shell.resize(data.cols, data.rows);   
@@ -487,22 +485,23 @@ ipc.on("load-end", () => {
     console.log(`\x1b[32m[SUCCESS]\x1b[0m launch in: ${time}ms`);
 });
 
-ipc.on("get-theme", (event) => {
-    event.returnValue = colors;
+ipc.on("get-theme", (e) => {
+    e.returnValue = colors;
 });
 
-ipc.on("get-config", (event) => {
-    event.returnValue = config;
+ipc.on("get-config", (e) => {
+    e.returnValue = config;
 });
 
 ipc.on("reload", () => {
     if (osData.os == "win32") { 
         app.relaunch();
-        app.exit();
-        return;
+        mainWindow.close();
+        //app.exit();
+    } else {
+        Child_Proc.exec("tess");
+        mainWindow.close();
     }
-    Child_Proc.exec("tess");
-    app.exit();
 });
 
 ipc.on("shortcut", (e, state) => {
@@ -528,7 +527,6 @@ function reloadConfig() {
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         mkdir.sync(osData.homeDir + "/.config/");
-
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", toWrite);
         config = JSON.parse(toWrite);
     }
@@ -555,7 +553,7 @@ function reloadConfig() {
     }
 }
 
-ipc.on("debug", (e, data) => {
+ipc.on("debug", (_, data) => {
     console.log("DEBUG: " + data);
 });
 
@@ -591,7 +589,7 @@ function getTessInstance(line_number=0) {
             let regex = /[0-9]+/i;
             return regex.exec(PIDLine[line_number + 3])[0];
         }
-    } catch {
+    } catch (_) {
         return 0;
     }
 }

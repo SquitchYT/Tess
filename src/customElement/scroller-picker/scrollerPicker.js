@@ -90,10 +90,6 @@ class ScrollerPicker extends HTMLElement {
             progress.style.width = this.pourcent * (this.getBoundingClientRect().width) + "px";
             maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
         });
-
-        window.addEventListener("transitionstart", () => {
-            maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
-        })
     }
 
     static get observedAttributes() {
@@ -114,6 +110,10 @@ class ScrollerPicker extends HTMLElement {
             this.pourcent = pourcent / 100;
             this.progress.style.width = pourcent + "%";
         }
+
+        setTimeout(() => {
+            this.maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - this.maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
+        }, 75)
     }
 }
 
