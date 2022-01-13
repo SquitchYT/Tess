@@ -10,7 +10,7 @@ arch=(x86_64)
 url="https://github.com/SquitchYT/Tess"
 license=(MPL2)
 depends=(gtk3 nss)
-makedepends=(git npm cmake nodejs-let-gallium)
+makedepends=(git npm cmake nodejs-lts-gallium)
 source=("git+https://github.com/SquitchYT/Tess.git")
 sha256sums=('SKIP')
 
