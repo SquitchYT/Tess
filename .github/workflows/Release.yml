@@ -166,74 +166,32 @@ jobs:
         run: |
           dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git openssl-devel -y
           
-          mkdir -p ./package/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          mkdir -p ./build/linux/rhel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
-          printf '
-          Name:           tess
-          Version:        %s
-          Release:        0
-          Summary:        Tess is an terminal emulator
-          License:        GPL
-          Source0:        tess.tar.gz
-          %%description
-          Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology.
-          %%global debug_package %%{nil}
-          %%prep
-          %%setup -q
-          %%build
-          %%install
-          rm -rf $RPM_BUILD_ROOT
-          mkdir -p "$RPM_BUILD_ROOT/usr/bin/"
-          mkdir -p "$RPM_BUILD_ROOT/usr/lib/tess/"
-          mkdir -p "$RPM_BUILD_ROOT/usr/share/applications/"
-          mkdir -p "$RPM_BUILD_ROOT/usr/share/pixmaps/"
-          mkdir -p "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
-          mkdir -p "$RPM_BUILD_ROOT/usr/share/man/fr/man1"
-          cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
-          cp icon.png "$RPM_BUILD_ROOT/usr/share/pixmaps/tess.png"
-          cp tesshere.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
-          cp appintess.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
-          cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
-          ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
-          cp tess.1 "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
-          cp tess-cli.1 "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
+          sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/rhel/rpmbuild/SPECS/tess.spec
+
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1
           
-          cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli"
-          if type "$kbuildsycoca5" > /dev/null; then
-            kbuildsycoca5
-          fi
-          %%files
-          /usr/bin/*
-          /usr/lib/tess/*
-          /usr/share/applications/*
-          /usr/share/pixmaps/*
-          /usr/share/kservices5/ServiceMenus/*
-          /usr/share/man/fr/man1/*
-              
-          ' "${VERSION}" > ./package/rpmbuild/SPECS/tess.spec
-          
-          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/app
-          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/cli
-          mkdir -p ./package/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1
-          
-          cp Tess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          cp appintess.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          cp tesshere.desktop ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          cp build/icon.png ./package/rpmbuild/SOURCES/tess-${VERSION}/
-          cp -r man/fr/man1/* ./package/rpmbuild/SOURCES/tess-${VERSION}/
+          cp Tess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp appintess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp tesshere.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp build/icon.png ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp -r man/fr/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
           
           npm install
           npm run build
-          cp -r dist/linux-unpacked/* package/rpmbuild/SOURCES/tess-${VERSION}/app/
+          cp -r dist/linux-unpacked/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app/
           
           cd cli
           cmake . -B build
           make -C build
           cd ../
           
-          cp cli/build/tess-cli package/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
+          cp cli/build/tess-cli ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
                   
-          cd package/rpmbuild/SOURCES
+          cd ./build/linux/rhel/rpmbuild/SOURCES
           tar zcvf tess.tar.gz ./*
           cd ../
           
@@ -248,7 +206,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./package/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          asset_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
           asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
           asset_content_type: application/octet-stream
           
