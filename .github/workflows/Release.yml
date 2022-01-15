@@ -181,6 +181,10 @@ jobs:
           cp ./build/ressources/icon/icon.png ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
           cp -r ./build/ressources/man/fr/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
           cp -r ./build/ressources/man/en/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
+
+          ls ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          ls ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
+          ls ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
           
           npm install
           npm run build
