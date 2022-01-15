@@ -18,14 +18,17 @@ mkdir -p "$RPM_BUILD_ROOT/usr/share/applications/"
 mkdir -p "$RPM_BUILD_ROOT/usr/share/pixmaps/"
 mkdir -p "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
 mkdir -p "$RPM_BUILD_ROOT/usr/share/man/fr/man1"
-cp Tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
+mkdir -p "$RPM_BUILD_ROOT/usr/share/man/en/man1"
+cp tess.desktop "$RPM_BUILD_ROOT/usr/share/applications/"
 cp icon.png "$RPM_BUILD_ROOT/usr/share/pixmaps/tess.png"
-cp tesshere.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
-cp appintess.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
+cp open-tess-here.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
+cp open-app-in-tess.desktop "$RPM_BUILD_ROOT/usr/share/kservices5/ServiceMenus/"
 cp -r app/* "$RPM_BUILD_ROOT/usr/lib/tess/"
 ln -s "/usr/lib/tess/tess" "$RPM_BUILD_ROOT/usr/bin/tess"
-cp tess.1 "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
-cp tess-cli.1 "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
+cp man-fr/tess.1 "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
+cp man-fr/tess-cli.1 "$RPM_BUILD_ROOT/usr/share/man/fr/man1/"
+cp man-en/tess.1 "$RPM_BUILD_ROOT/usr/share/man/en/man1/"
+cp man-en/tess-cli.1 "$RPM_BUILD_ROOT/usr/share/man/en/man1/"
 
 cp -r cli/tess-cli "$RPM_BUILD_ROOT/usr/bin/tess-cli"
 if type "$kbuildsycoca5" > /dev/null; then
@@ -38,3 +41,4 @@ fi
 /usr/share/pixmaps/*
 /usr/share/kservices5/ServiceMenus/*
 /usr/share/man/fr/man1/*
+/usr/share/man/en/man1/*
