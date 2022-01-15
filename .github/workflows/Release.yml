@@ -46,7 +46,6 @@ jobs:
         uses: actions/checkout@v2
     
   DEB_Package:
-    if: ${{ false }}
     name: Creating Debian Package
     needs: Linux
     runs-on: ubuntu-latest
@@ -92,24 +91,24 @@ jobs:
           asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
           asset_content_type: application/octet-stream
           
-      - name: Deploy to server
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          SOURCE: ./package/debian/tess.deb
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
+      # - name: Deploy to server
+      #   uses: easingthemes/ssh-deploy@main
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      #     SOURCE: ./package/debian/tess.deb
+      #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+      #     REMOTE_USER: ${{ secrets.REMOTE_USER }}
+      #     REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+      #     TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
           
-      - name: Update apt repository
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.REMOTE_PORT }}
-          script: ${{ secrets.REMOTE_DEPLOY }}
+      # - name: Update apt repository
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.REMOTE_HOST }}
+      #     username: ${{ secrets.REMOTE_USER }}
+      #     key: ${{ secrets.SERVER_SSH_KEY }}
+      #     port: ${{ secrets.REMOTE_PORT }}
+      #     script: ${{ secrets.REMOTE_DEPLOY }}
 
           
   Pacman_Package:
