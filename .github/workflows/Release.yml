@@ -87,7 +87,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./package/debian/tess.deb
+          asset_path: ./build/linux/debian/tess.deb
           asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
           asset_content_type: application/octet-stream
           
@@ -95,7 +95,7 @@ jobs:
       #   uses: easingthemes/ssh-deploy@main
       #   env:
       #     SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-      #     SOURCE: ./package/debian/tess.deb
+      #     SOURCE: ./build/linux/debian/tess.deb
       #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
       #     REMOTE_USER: ${{ secrets.REMOTE_USER }}
       #     REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
