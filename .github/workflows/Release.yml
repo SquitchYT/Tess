@@ -62,20 +62,20 @@ jobs:
       - name: Generating DEBIAN Package    
         run: |
           sudo apt-get install libcurl4-openssl-dev cmake git
-          mkdir -p package/debian/tess/usr/lib/tess/
-          mkdir -p package/debian/tess/usr/bin
+          mkdir -p ./build/linux/debian/tess/usr/lib/tess/
+          mkdir -p ./build/linux/debian/tess/usr/bin
           
           npm install
           npm run build
-          cp -r dist/linux-unpacked/* package/debian/tess/usr/lib/tess/
+          cp -r dist/linux-unpacked/* ./build/linux/debian/tess/usr/lib/tess/
           
           cd cli
           cmake . -B build
           make -C build
-          cp build/tess-cli ../package/debian/tess/usr/bin/
+          cp build/tess-cli ../build/linux/debian//tess/usr/bin/
           cd ../
-          printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > package/debian/tess/DEBIAN/control
-          cd package/debian
+          printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./build/linux/debian/tess/DEBIAN/control
+          cd ./build/linux/debian/
           sudo chmod 755 tess/DEBIAN/postinst 
           dpkg-deb --build tess
         env:
