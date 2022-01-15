@@ -7,10 +7,10 @@ X-KDE-AuthorizeAction=shell_access
 
 [Desktop Action OpenTessHere]
 Name=Execute Tess Here in a New Tab
-Exec=tess --workdir %f --newtab
+Exec=/usr/bin/tess --workdir %f --newtab
 Icon=/usr/share/pixmaps/tess.png
 
 [Desktop Action OpenTessHereNewWindow]
 Name=Execute Tess Here in a New Window
-Exec=tess --workdir %f
+Exec=/usr/bin/tess --workdir %f
 Icon=/usr/share/pixmaps/tess.png
