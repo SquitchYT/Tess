@@ -5,7 +5,7 @@ const { LigaturesAddon } = require("xterm-addon-ligatures");
 
 const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
-const Color = require("../../../class/color");
+const Color = require("../../../utils/color");
 
 const topbar = document.querySelector(".topbar");
 
@@ -20,7 +20,7 @@ const terminals = document.querySelector(".terminals");
 const body = document.body;
 const root = document.documentElement;
 const target = document.getElementById("test");
-const osInformations = require("../../../class/osinfo");
+const osInformations = require("../../../utils/osinfo");
 const osData = new osInformations();
 
 const dropDownArrow = document.getElementById("show-all-shell");
@@ -46,7 +46,7 @@ quickDefault.addEventListener("click", () => {
     openDefaultProfil();
 })
 quickConfig.addEventListener("click", () => {
-    CreateNewTerminal("Config", "Config", "../../img/gear.svg");
+    CreateNewTerminal("Config", "Config", "../../../ressources/img/gear.svg");
 })
 
 dropDownArrow.addEventListener("mouseover", () => {
@@ -128,7 +128,7 @@ const CustomPage = [
     {
         name: "Config",
         onePage: true,
-        icon: "../../img/gear.svg"
+        icon: "../../../ressources/img/gear.svg"
     }
 ];
 
@@ -367,7 +367,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     
 
     let logo = document.createElement("img");
-    logo.src = (icon != "Default") ? icon : "../../img/default.png";
+    logo.src = (icon != "Default") ? icon : "../../../ressources/img/default.png";
     logo.classList.add("logo");
 
     tab.append(logo, tab_link, close_button)
@@ -847,7 +847,7 @@ function updateQuickMenu() {
             let div = document.createElement("div");
             div.classList.add("quick-menu-other-item");
             let img = document.createElement("img");
-            img.src = el.icon != "Default" ? el.icon : "../../img/default.png";
+            img.src = el.icon != "Default" ? el.icon : "../../../ressources/img/default.png";
             div.appendChild(img)
 
             div.addEventListener("click", () => {
@@ -856,7 +856,7 @@ function updateQuickMenu() {
 
             quickMenuShellBox.appendChild(div);
         } else {
-            quickDefaultIcon.src = el.icon != "Default" ? el.icon : "../../img/default.png";
+            quickDefaultIcon.src = el.icon != "Default" ? el.icon : "../../../ressources/img/default.png";
         }
     })
 

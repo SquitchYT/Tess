@@ -11,7 +11,7 @@ let config = ipcRenderer.sendSync("get-config");
 
 let currentProfilPage = 0;
 
-const OsInfomations = require("../../../class/osinfo");
+const OsInfomations = require("../../../utils/osinfo");
 const osData = new OsInfomations();
 
 const themeDropDownMenu = document.querySelector("drop-down-menu[parameters='theme']");
@@ -47,12 +47,12 @@ let shortcutList = [];
 const shortcutAddBtn = document.querySelector(".shortcutAddButton");
 const profilCreateBtn = document.querySelector(".profil-create");
 
-ipcRenderer.on("config", (e, data) => {
+ipcRenderer.on("config", (_, data) => {
     colors = data.color,
     setTheme();
 });
 
-ipcRenderer.on("newConfig", (e, data) => {
+ipcRenderer.on("newConfig", (_, data) => {
     config = data.config;
     colors = data.color;
     setTheme();

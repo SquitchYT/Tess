@@ -35,9 +35,9 @@ const fs = require("fs");
 const mkdir = require("mkdirp");
 const net = require("net");
 
-const Color = require("./class/color");
+const Color = require("./src/utils/color");
 
-const OsInfomations = require("./class/osinfo");
+const OsInfomations = require("./src/utils/osinfo");
 const osData = new OsInfomations();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
@@ -208,7 +208,7 @@ function openWindow(config, colors) {
     });
 
     mainWindow.removeMenu();
-    mainWindow.loadFile("src/page/app/index.html");
+    mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
     });
@@ -451,7 +451,11 @@ ipc.on("close-terminal", (e, data) => {
 });
 
 ipc.on("close", () => {
-    mainWindow.close();
+    if (mainWindow != undefined) {
+        mainWindow.close();
+    } else {
+        app.quit();
+    }
 });
 
 ipc.on("reduce", () => {
