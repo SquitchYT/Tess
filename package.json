@@ -2,7 +2,7 @@
   "name": "tess",
   "version": "0.5.4",
   "description": "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology",
-  "main": "main.js",
+  "main": "src/main.js",
   "scripts": {
     "test": "electron .",
     "build": "electron-builder --linux dir",

@@ -35,9 +35,9 @@ const fs = require("fs");
 const mkdir = require("mkdirp");
 const net = require("net");
 
-const Color = require("./src/utils/color");
+const Color = require("./utils/color");
 
-const OsInfomations = require("./src/utils/osinfo");
+const OsInfomations = require("./utils/osinfo");
 const osData = new OsInfomations();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
