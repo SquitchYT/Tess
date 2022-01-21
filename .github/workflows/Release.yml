@@ -125,7 +125,7 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ github.token }}
 
-        - name: Generating DEBIAN Package    
+        - name: Generating AppImage    
           run: |
             npm install && npm run build-appimage
 

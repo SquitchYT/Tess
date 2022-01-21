@@ -7,7 +7,7 @@
     "test": "electron .",
     "build": "electron-builder --linux dir",
     "build-win": "electron-builder --win dir",
-    "build-appimage": "electron-builder --linux appimage"
+    "build-appimage": "electron-builder --linux appimage --publish=never"
   },
   "keywords": [
     "terminal",
