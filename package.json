@@ -6,7 +6,8 @@
   "scripts": {
     "test": "electron .",
     "build": "electron-builder --linux dir",
-    "build-win": "electron-builder --win dir"
+    "build-win": "electron-builder --win dir",
+    "build-appimage": "electron-builder --linux appimage"
   },
   "keywords": [
     "terminal",
@@ -46,13 +47,10 @@
   },
   "build": {
     "linux": {
-      "icon": "build/icon.png"
+      "icon": "build/ressources/icon/icon.png"
     },
     "win": {
-      "icon": "build/icon.ico"
-    },
-    "nsis": {
-      "runAfterFinish": false
+      "icon": "build/ressources/icon/icon.ico"
     }
   }
 }
