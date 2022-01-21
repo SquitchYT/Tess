@@ -111,33 +111,33 @@ jobs:
       #     script: ${{ secrets.REMOTE_DEPLOY }}
 
 
-AppImage:
-    name: Creating AppImage
-    needs: Linux
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  AppImage:
+      name: Creating AppImage
+      needs: Linux
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
 
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        - name: Get release
+          id: get_release
+          uses: bruceadams/get-release@v1.2.2
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Generating DEBIAN Package    
-        run: |
-          npm install && npm run build-appimage
-        
-      - name: Upload release binary
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage
-          asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
-          asset_content_type: application/octet-stream
+        - name: Generating DEBIAN Package    
+          run: |
+            npm install && npm run build-appimage
+
+        - name: Upload release binary
+          uses: actions/upload-release-asset@v1.0.2
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.get_release.outputs.upload_url }}
+            asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage
+            asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
+            asset_content_type: application/octet-stream
           
   Pacman_Package:
     name: Creating Pacman Package
