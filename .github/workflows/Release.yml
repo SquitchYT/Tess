@@ -300,10 +300,10 @@ jobs:
           
       - name: Packaging App
         run: |
-          iscc build/windows/setup.iss
+          cd build/windows
+          iscc setup.iss
           cd Output
           mv tess-0.5.4-setup.exe tess-setup.exe
-          ls
           
       - name: Get release
         id: get_release
@@ -317,7 +317,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:\a\Tess\Tess\Output\tess-setup.exe
+          asset_path: D:\a\Tess\Tess\build\windows\Output\tess-setup.exe
           asset_name: tess-setup.exe
           asset_content_type: application/octet-stream
           
