@@ -3,7 +3,8 @@
   <a href="https://aur.archlinux.org/packages/tess-git/"><img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" alt="Arch Linux"/></a>
   <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Debian"/></a>
   <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Fedora-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Fedora"/></a>
-<a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows"/></a>
+  <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows"><a>
+  <a href="https://community.chocolatey.org/packages/tess/"><img src="https://img.shields.io/static/v1?style=for-the-badge&message=Chocolatey&color=222222&logo=Chocolatey&logoColor=80B5E3&label=" alt="Chocolatey"><a>
   <br>
   <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JS"/></a>
   <a href="https://isocpp.org/"><img src="https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++"/></a>
@@ -44,3 +45,7 @@
 
 ## License
 **[Tess](https://github.com/SquitchYT/tess) | [Mozilla Public License 2.0](https://github.com/SquitchYT/Tess/blob/main/LICENSE)**
+
+
+
+https://camo.githubusercontent.com/13a5214c1d3629698e8b98cbe89de6b2a924f4d3c5cba97500bc5a568504a441/68747470733a2f2f696d672e736869656c64732e696f2f7374617469632f76313f7374796c653d666f722d7468652d6261646765266d6573736167653d43686f636f6c6174657926636f6c6f723d323232323232266c6f676f3d43686f636f6c61746579266c6f676f436f6c6f723d383042354533266c6162656c3d
