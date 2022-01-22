@@ -32,3 +32,4 @@ debug.log
 build/linux/Tess.zip
 build/linux/tess_0.5.4_amd64.snap
 build/windows/chocolatey/tess.0.5.4.nupkg
+build/windows/chocolatey/tools/tess-setup.exe

@@ -398,7 +398,8 @@ jobs:
           Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
           ./cmake-setup.msi /silent
           Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          
+          choco install checksum
+
       - name: Building App
         run: |
           npm install && npm run build-win
@@ -422,6 +423,9 @@ jobs:
           cd build/windows/setup/Output
           mv tess-setup.exe ../../chocolatey/tools/
           cd ../../chocolatey
+          $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
+          get-content tools\chocolateyinstall.ps1 | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/chocolateyinstall.ps1
+
           choco pack
           choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
           choco push .\tess.0.5.4.nupkg --source https://push.chocolatey.org/
