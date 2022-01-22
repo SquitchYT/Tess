@@ -384,6 +384,12 @@ jobs:
         
       - name: Installing MSVC
         uses: ilammy/msvc-dev-cmd@v1
+      
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
      
       - name: Installing Make Dependencies
         run: |
@@ -417,10 +423,5 @@ jobs:
           mv tess-setup.exe ../../chocolatey/tools/
           cd ../../chocolatey
           choco pack
-           
-          
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+          choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
+          choco push .\tess.0.5.4.nupkg --source https://push.chocolatey.org/
