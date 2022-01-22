@@ -9,6 +9,7 @@
     <tags>tess terminal terminal_emulator</tags>
     <summary>Beautiful Terminal Emulator</summary>
     <description>Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology.</description>
+    <iconUrl>https://tessapp.dev/src/assets/icon.png</iconUrl>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />
