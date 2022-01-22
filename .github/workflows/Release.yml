@@ -354,7 +354,7 @@ jobs:
           
       - name: Packaging App
         run: |
-          win-unpacked/
+          cd win-unpacked/
           Compress-Archive ./* tess-portable.zip
           
       - name: Get release
