@@ -354,10 +354,8 @@ jobs:
           
       - name: Packaging App
         run: |
-          cd build/windows
-          iscc setup.iss
-          cd Output
-          mv tess-0.5.4-setup.exe tess-setup.exe
+          cd dist/win-unpacked
+          Compress-Archive ./* tess-portable.zip
           
       - name: Get release
         id: get_release
