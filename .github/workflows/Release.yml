@@ -346,12 +346,15 @@ jobs:
           cd build
           cmake --build . --config Release
           cd Release
+          mkdir ../../../dist/win-unpacked
           cp .\tess-cli.exe ../../../dist/win-unpacked/
           cd ../../../
+          cd dist
+          cp '.\tess 0.5.4.exe' ./win-unpacked
           
       - name: Packaging App
         run: |
-          cd dist/win-unpacked/
+          win-unpacked/
           Compress-Archive ./* tess-portable.zip
           
       - name: Get release
