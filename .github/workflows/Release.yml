@@ -300,7 +300,7 @@ jobs:
           
       - name: Packaging App
         run: |
-          iscc setup.iss
+          iscc build/windows/setup.iss
           cd Output
           mv tess-0.5.4-setup.exe tess-setup.exe
           ls
@@ -340,7 +340,7 @@ jobs:
           
       - name: Building App
         run: |
-          npm install && npm run build-win
+          npm install && npm run build-win-portable
           cd cli
           cmake . -B build
           cd build
@@ -353,8 +353,6 @@ jobs:
         run: |
           cd dist/win-unpacked/
           Compress-Archive ./* tess-portable.zip
-          pwd
-          ls
           
       - name: Get release
         id: get_release

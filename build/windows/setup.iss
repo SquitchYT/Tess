@@ -9,7 +9,7 @@ UninstallDisplayIcon="{app}\tess.exe"
 DisableDirPage=yes
 
 [files]
-Source: dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
+Source: ..\..\dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
 
 [Registry]
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"; ValueType: string; ValueName: "Path"; ValueData: "{reg:HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\,Path};{app}"
