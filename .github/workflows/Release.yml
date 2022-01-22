@@ -346,7 +346,7 @@ jobs:
           cd build
           cmake --build . --config Release
           cd Release
-          mkdir ../../../dist/win-unpacked
+          rm -r -Force ../../../dist/win-unpacked && mkdir ../../../dist/win-unpacked
           cp .\tess-cli.exe ../../../dist/win-unpacked/
           cd ../../../
           cd dist
