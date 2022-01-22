@@ -300,7 +300,7 @@ jobs:
           
       - name: Packaging App
         run: |
-          cd build/windows
+          cd build/windows/setup
           iscc setup.iss
           cd Output
           mv tess-0.5.4-setup.exe tess-setup.exe
@@ -317,7 +317,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:\a\Tess\Tess\build\windows\Output\tess-setup.exe
+          asset_path: D:\a\Tess\Tess\build\windows\setup\Output\tess-setup.exe
           asset_name: tess-setup.exe
           asset_content_type: application/octet-stream
           
@@ -354,8 +354,10 @@ jobs:
           
       - name: Packaging App
         run: |
-          cd dist/win-unpacked
-          Compress-Archive ./* tess-portable.zip
+          cd build/windows
+          iscc setup.iss
+          cd Output
+          mv tess-0.5.4-setup.exe tess-setup.exe
           
       - name: Get release
         id: get_release
@@ -372,3 +374,54 @@ jobs:
           asset_path: D:\a\Tess\Tess\dist\win-unpacked\tess-portable.zip
           asset_name: tess-portable.zip
           asset_content_type: application/octet-stream
+
+  
+  Chocolatey:
+    name: Creating Chocolatey Package
+    needs: Windows
+    runs-on: windows-latest
+    steps:
+      - name: Downloading Files
+        uses: actions/checkout@v2
+        
+      - name: Installing MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+     
+      - name: Installing Make Dependencies
+        run: |
+          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
+          ./cmake-setup.msi /silent
+          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
+          ./cmake-setup.msi /silent
+          
+      - name: Building App
+        run: |
+          npm install && npm run build-win
+          cd cli
+          cmake . -B build
+          cd build
+          cmake --build . --config Release
+          cd Release
+          cp .\tess-cli.exe ../../../dist/win-unpacked/
+          cd ../../../
+          
+      - name: Packaging App
+        run: |
+          cd build/windows/setup
+          iscc setup.iss
+          cd Output
+          mv tess-0.5.4-setup.exe tess-setup.exe
+
+      - name: Creating Chocolatey Package
+        run: |
+          cd build/windows/setup/Output
+          mv tess-setup.exe ../../chocolatey/tools/
+          cd ../../chocolatey
+          choco pack
+           
+          
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

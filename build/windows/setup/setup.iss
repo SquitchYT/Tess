@@ -4,12 +4,12 @@ AppVersion=0.5.4
 DefaultDirName={autopf}\Tess
 OutputBaseFilename=tess-0.5.4-setup
 AppVerName=Tess
-SetupIconFile="..\ressources\icon\icon.ico"
+SetupIconFile="..\..\ressources\icon\icon.ico"
 UninstallDisplayIcon="{app}\tess.exe"
 DisableDirPage=yes
 
 [files]
-Source: ..\..\dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
+Source: ..\..\..\dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
 
 [Registry]
 Root: HKLM; SubKey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment\"; ValueType: string; ValueName: "Path"; ValueData: "{reg:HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment\,Path};{app}"
