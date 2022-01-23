@@ -295,6 +295,10 @@ input::-webkit-inner-spin-button {
     cursor: pointer;
 }
 
+.left-side-menu-link span:hover {
+    border-bottom: 1px var(--item-textcolor) solid;
+}
+
 .left-side-menu-icon {
     display: flex;
     justify-content: center;
