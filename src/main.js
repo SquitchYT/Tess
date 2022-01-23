@@ -41,6 +41,7 @@ const OsInfomations = require("./utils/osinfo");
 const osData = new OsInfomations();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
+const path = require("path");
 
 let getProcessTree;
 if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
@@ -277,10 +278,9 @@ ipc.on("new-term", (e, data) => {
         prog = Command[0]
         prog += (Command[0] != data.shell) ? ".exe" : ""
 
-
-        if (prog.trim() == data.shell.trim()) {
+        if (prog.trim() == data.shell.trim()) { // No args provided
             args = []
-        } else {
+        } else { // Arg provided
             Command.shift()
             args = Command[0].split(" ")
         }
@@ -290,8 +290,8 @@ ipc.on("new-term", (e, data) => {
         Command.shift()
         args = Command
     }
-
-    prog = getProcessPath(prog.trim())
+    
+    prog = getProcessPath(osData.os != "win32" ? prog.trim() : path.basename(prog.trim()))
 
     if (prog == undefined && osData.os == "win32") { prog = getProcessPath("powershell.exe"); }
     else if (prog == undefined && osData != "win32") { prog = "sh"; args = ["-c", "$SHELL"]; }
@@ -583,7 +583,7 @@ function getTessInstance(line_number=0) {
             let regex = /[0-9]+/i;
             return regex.exec(PIDLine[line_number+1])[0];
         } else {
-            let result = Child_Proc.execSync('tasklist /FI "IMAGENAME eq tess.exe"').toString();
+            let result = Child_Proc.execSync('C:\\Windows\\System32\\tasklist.exe /FI "IMAGENAME eq tess.exe"').toString();
             let PIDLine = result.split("\n");
 
             if ((PIDLine.length - 3) <= line_number) {
@@ -659,7 +659,7 @@ function getProfilJumpList () {
 function getProcessPath(process) {
     if (osData.os == "win32") {
         try {
-            let result = Child_Proc.execSync(`where.exe ${process}`, {stdio: "pipe"} ).toString();
+            let result = Child_Proc.execSync(`C:\\Windows\\System32\\where.exe ${process}`, {stdio: "pipe"} ).toString();
             return(result.split("\n")[0])
         } catch (_) {
             return undefined
