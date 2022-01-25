@@ -48,6 +48,8 @@ if (osData.os == "win32") { getProcessTree = require("windows-process-tree").get
 
 let resizeTimeout;
 
+const customWMIntegration = ["KDE", "X-Cinnamon", "GNOME"] // Add other here
+
 let config, colors;
 !function LoadConfig() {
     try {
@@ -85,6 +87,9 @@ if (osData.os == "win32") {
     updateJumpMenu();
 }
 
+if (osData.wm == "win" || customWMIntegration.includes(osData.wm)) {
+    console.log("custom Title Bar Integration supported")
+}
 
 let BrowserWindow;
 let workers = [];
