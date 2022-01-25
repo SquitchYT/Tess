@@ -4,7 +4,7 @@ const os = require("os");
 class OsInfomations{
     constructor(){
         this._os = process.platform;
-        this._wm = Child_Proc.execSync("echo $XDG_CURRENT_DESKTOP").toString();
+        this._wm = Child_Proc.execSync("echo $XDG_CURRENT_DESKTOP").toString().trim();
         this._homedir = os.homedir();
     }
 
@@ -23,6 +23,31 @@ class OsInfomations{
     get homeDir() {
         return this._homedir;
     }
+
+    get closeTitleBarButton() {
+        /*Need to be DONE*/ 
+    }
+
+    get reduceTitleBarButton() {
+        /*Need to be DONE*/ 
+    }
+
+    get expandTitleBarButton() {
+        /*Need to be DONE*/ 
+    }
+
+    get minimizeTitleBarButton() {
+        /*Need to be DONE*/ 
+    }
+
+    get titleBarButtonsWidth() {
+        /*Need to be DONE*/ 
+    }
+
+    get titleBarButtonWidth () {
+        /*Need to be DONE*/ 
+    }
 }
+
 
 module.exports = OsInfomations;

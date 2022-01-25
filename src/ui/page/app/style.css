@@ -288,3 +288,7 @@ svg {
 .app-button-unfocus svg{
     color: #ffffff7c;
 }
+
+title-bar-button {
+    display: inline-block;
+}

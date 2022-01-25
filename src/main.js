@@ -88,7 +88,7 @@ if (osData.os == "win32") {
 }
 
 if (osData.wm == "win" || customWMIntegration.includes(osData.wm)) {
-    console.log("custom Title Bar Integration supported")
+    console.log("custom Title Bar Integration is supported.")
 }
 
 let BrowserWindow;
@@ -177,7 +177,8 @@ function openWindow(config, colors) {
 
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
-    let needFrame = (osData.os == "win32") ? false : true;
+    let needFrame = !(osData.wm == "win" || customWMIntegration.includes(osData.wm));
+    console.log("need frame:", needFrame);
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
     let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
 
