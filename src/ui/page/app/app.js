@@ -81,7 +81,7 @@ function closeQuickAccessMenu() {
 }
 
 
-if (osData.wm != "win" && osData.wm != "macos") {
+/*if (osData.wm != "win" && osData.wm != "macos") {
     let titleBarButton = document.querySelectorAll(".app-button");
     titleBarButton.forEach(element => {
         element.remove();
@@ -96,7 +96,7 @@ if (osData.wm != "win" && osData.wm != "macos") {
     document.getElementById("screen-size").addEventListener("click", () => {
         ipc.send("reduce-expand");
     });
-}
+}*/
 
 ipc.on("app-reduced-expanded", (_, maximazed) => {
     let reduceIcon = document.getElementById("reduceIcon");

@@ -42,6 +42,8 @@ class OsInfomations{
 
     get titleBarButtonsWidth() {
         /*Need to be DONE*/ 
+
+        return this.os == "win32" ? 0 : 150
     }
 
     get titleBarButtonWidth () {

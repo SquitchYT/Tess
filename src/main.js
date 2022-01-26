@@ -145,8 +145,10 @@ if (osData.os == "win32" && config.background != "transparent" && config.backgro
 
 if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind" && osData.os != "win32") {
     app.commandLine.appendSwitch("disable-gpu");
-    app.commandLine.appendSwitch("no-sandbox");
+
 }
+
+if (osData.os == "linux") { app.commandLine.appendSwitch("no-sandbox"); }
 
 !function LoadModules(){
     config.plugin.forEach((el) => {
@@ -211,7 +213,13 @@ function openWindow(config, colors) {
             effect: config.background,
             useCustomWindowRefreshMethod: true,
             disableOnBlur: (config.disableOnBlur != undefined ? config.disableOnBlur == "true" : true)
-        }
+        },
+        titleBarStyle: 'hidden',
+        titleBarOverlay: {
+            color: colors.app.topBar,
+            symbolColor: colors.app.textColor
+        },
+        show: false
     });
 
     mainWindow.removeMenu();
@@ -227,6 +235,10 @@ function openWindow(config, colors) {
             } catch (_) { }
         }, 150);
     });
+
+    mainWindow.on("did-finish-load", () => {
+        mainWindow.show();
+    })
 
     let profilToLaunch;
     config.profil.forEach((el) => {
