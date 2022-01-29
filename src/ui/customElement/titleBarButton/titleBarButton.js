@@ -9,17 +9,30 @@ class TitleBarButton extends HTMLElement {
         super();
         this.shadow = this.attachShadow({mode: "open"});
 
-        let linkElem = document.createElement("link");
-        linkElem.setAttribute("rel", "stylesheet");
-        linkElem.setAttribute("href", "../../customElement/titleBarButton/style.css");
-        this.shadow.appendChild(linkElem);
-
-        let a = document.createElement("div");
-        a.classList.add('background');
-        a.style.width = systemData.titleBarButtonsWidth() + "px";
-
-        this.shadow.appendChild(a);
         
+
+        if (systemData.supportCustomTitleBar) {
+            let linkElem = document.createElement("link");
+            linkElem.setAttribute("rel", "stylesheet");
+            linkElem.setAttribute("href", "../../customElement/titleBarButton/style.css");
+            this.shadow.appendChild(linkElem);
+
+            if (systemData.wm == "KDE") {
+                linkElem = document.createElement("link");
+                linkElem.setAttribute("rel", "stylesheet");
+                linkElem.setAttribute("href", "../../customElement/titleBarButton/KDE-titlebar.css");
+                this.shadow.appendChild(linkElem);
+            }
+
+            let a = document.createElement("div");
+            a.classList.add('background');
+            
+            a.appendChild(systemData.closeTitleBarButton)
+            a.appendChild(systemData.expandTitleBarButton)
+            a.appendChild(systemData.minimizeTitleBarButton)
+
+            this.shadow.appendChild(a);
+        }
     }
 }
 

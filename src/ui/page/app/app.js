@@ -80,37 +80,6 @@ function closeQuickAccessMenu() {
     quickMenuInner.classList.remove("pointer-event");
 }
 
-
-/*if (osData.wm != "win" && osData.wm != "macos") {
-    let titleBarButton = document.querySelectorAll(".app-button");
-    titleBarButton.forEach(element => {
-        element.remove();
-    });
-} else {
-    document.getElementById("close").addEventListener("click", () => {
-        ipc.send("close");
-    });
-    document.getElementById("reduce").addEventListener("click", () => {
-        ipc.send("reduce");
-    });
-    document.getElementById("screen-size").addEventListener("click", () => {
-        ipc.send("reduce-expand");
-    });
-}*/
-
-ipc.on("app-reduced-expanded", (_, maximazed) => {
-    let reduceIcon = document.getElementById("reduceIcon");
-    let expandIcon = document.getElementById("expandIcon");
-
-    if (maximazed) {
-        reduceIcon.classList.remove("app-button-hidden");
-        expandIcon.classList.add("app-button-hidden");
-    } else {
-        expandIcon.classList.remove("app-button-hidden");
-        reduceIcon.classList.add("app-button-hidden");
-    }
-});
-
 ipc.on("focus", () => {
     document.querySelectorAll(".app-button").forEach((el) => {
         el.classList.remove("app-button-unfocus")

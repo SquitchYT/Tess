@@ -1,4 +1,8 @@
 .background {
-    background: #55ff66;
     height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    -webkit-app-region: no-drag;
+    margin-right: 5px;
 }

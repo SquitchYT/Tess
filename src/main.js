@@ -180,7 +180,6 @@ function openWindow(config, colors) {
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
     let needFrame = !(osData.wm == "win" || customWMIntegration.includes(osData.wm));
-    console.log("need frame:", needFrame);
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
     let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
 
@@ -476,21 +475,24 @@ ipc.on("close", () => {
     }
 });
 
-ipc.on("reduce", () => {
+ipc.on("minimize", () => {
     BrowserWindow.getFocusedWindow().minimize();
 });
 
-ipc.on("reduce-expand", () => {
-    BrowserWindow.getFocusedWindow().isMaximized() ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
+ipc.on("reduce-expand", (e, _) => {
+    let maximized = BrowserWindow.getFocusedWindow().isMaximized();
+    maximized ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
         BrowserWindow.getFocusedWindow().webContents.send("resize");
     }, 400);
 
     if (osData.os == "win32") {
         try {
-            mainWindow.webContents.send("app-reduced-expanded", BrowserWindow.getFocusedWindow().isMaximized());
+            mainWindow.webContents.send("app-reduced-expanded", !maximized);
         } catch (_) { }
     }
+
+    e.reply("reduced-expanded", !maximized)
 });
 
 ipc.on("resize", (_, data) => {
