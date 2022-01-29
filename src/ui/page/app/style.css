@@ -108,52 +108,6 @@ body {
     background: var(--tab-panel-background);
 }
 
-.app-buttons {
-    height: 100%;
-    width: auto;
-    display: flex;
-    overflow: hidden;
-    flex-direction: row-reverse;
-    -webkit-app-region: no-drag;
-}
-
-.app-button {
-    height: 100%;
-    min-width: 48px;
-    -webkit-app-region: no-drag;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: var(--tab-panel-background);
-    cursor: pointer;
-}
-
-.app-button svg {
-    height: 15px;
-    width: 15px;
-    color: var(--general-text-color);
-}
-
-.app-button:hover svg {
-    color: var(--general-text-color);
-}
-
-.app-button:hover {
-    filter: invert(0.1)
-}
-
-.app-button#close:hover{
-    background: red;
-}
-
-.app-button#separator{
-    -webkit-app-region: drag;
-}
-
-.app-button#separator:hover{
-    filter: invert(0)
-}
-
 .tab .tab-link {
     width: 100%;
     max-width: 14rem;
@@ -277,16 +231,8 @@ svg {
     order: 100000;
 }
 
-.app-button-hidden {
-    display: none;
-}
-
 *[dragged="true"] {
     cursor: move !important;
-}
-
-.app-button-unfocus svg{
-    color: #ffffff7c;
 }
 
 title-bar-button {

@@ -9,7 +9,12 @@ class TitleBarButton extends HTMLElement {
         super();
         this.shadow = this.attachShadow({mode: "open"});
 
-        
+        if (systemData.os == "win32") {
+            let a = document.createElement("div");
+            a.classList.add('background');
+            a.style.width = "156px";
+            this.shadow.appendChild(a);
+        }
 
         if (systemData.supportCustomTitleBar) {
             let linkElem = document.createElement("link");
