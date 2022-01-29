@@ -107,23 +107,28 @@ class OsInfomations{
     }
 
     get supportCustomTitleBar() {
-        let supportCustomTitleBar = true;
+        let supportCustomTitleBar = false;
         try {
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-symbolic.svg");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-hover-symbolic.svg");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-active-symbolic.svg");
+            switch (this._wm) {
+                case "KDE":
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-symbolic.svg");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-hover-symbolic.svg");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-active-symbolic.svg");
+        
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-symbolic.svg");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-hover-symbolic.svg");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-active-symbolic.svg");
+        
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-symbolic.svg");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-hover-symbolic.svg");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-active-symbolic.svg");
+        
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-active@2.png");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-hover@2.png");
+                    fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
+                    supportCustomTitleBar = true;
+            }
 
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-symbolic.svg");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-hover-symbolic.svg");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-active-symbolic.svg");
-
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-symbolic.svg");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-hover-symbolic.svg");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-active-symbolic.svg");
-
-            fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-active@2.png");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-hover@2.png");
-            fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
         } catch {
             supportCustomTitleBar = false;
         } finally {

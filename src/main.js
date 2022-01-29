@@ -218,7 +218,7 @@ function openWindow(config, colors) {
             color: colors.app.topBar,
             symbolColor: colors.app.textColor
         },
-        show: false
+        show: osData.os == "win32" ? false : true
     });
 
     mainWindow.removeMenu();
