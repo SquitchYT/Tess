@@ -1,9 +1,7 @@
 #include "ArgsHandler.hpp"
-
 #include "../Class/Extension.hpp"
 #include "../Class/Error.hpp"
 #include "Constants.hpp"
-
 #include <string>
 #include <tuple>
 
@@ -14,14 +12,13 @@ std::tuple<Error, std::vector<Extension>, std::string> handleArgs(int count, cha
     std::string current_type = "";
     std::string action = "";
 
-    std::string first_arg = args[1];
-    if (first_arg == "--help") {
+    if (count == 1) {
         Error err(ERR_HELP_NEEDED);
         return {err, extensions, action};
     }
-
-    if (count == 1) {
-        Error err(ERR_NO_ARGS);
+    std::string first_arg = args[1];
+    if (first_arg == "--help") {
+        Error err(ERR_HELP_NEEDED);
         return {err, extensions, action};
     }
 
@@ -58,7 +55,6 @@ std::tuple<Error, std::vector<Extension>, std::string> handleArgs(int count, cha
             current_type = "plugin";
         } else if(current_type != "") {
             Extension ext(s, current_type);
-
             extensions.push_back(ext);
         }
     }

@@ -1,16 +1,14 @@
 #include <iostream>
 #include <string>
-
 #include <signal.h>
-
 #include "Utils/ArgsHandler.hpp"
 #include "Class/Extension.hpp"
 #include "Lib/Manager.hpp"
 #include "Utils/Constants.hpp"
 #include "Class/Error.hpp"
 #include "Utils/Cross.hpp"
-
 #include <cpr/cpr.h>
+
 
 void exit_handler() {
     std::cout << "\033[?25h";
