@@ -179,7 +179,7 @@ function openWindow(config, colors) {
 
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
-    let needFrame = !(osData.wm == "win" || customWMIntegration.includes(osData.wm));
+    let needFrame = !(osData.wm == "win" || osData.supportCustomTitleBar);
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
     let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
 
@@ -506,7 +506,7 @@ ipc.on("resize", (_, data) => {
 ipc.on("load-end", () => {
     let time2 = new Date().getTime();
     let time = time2 - time1;
-    console.log(`\x1b[32m[SUCCESS]\x1b[0m launch in: ${time}ms`);
+    console.log(`\x1b[32m[SUCCESS]\x1b[0m Launched in ${time}ms`);
 });
 
 ipc.on("get-theme", (e) => {

@@ -27,6 +27,11 @@ class TitleBarButton extends HTMLElement {
                 linkElem.setAttribute("rel", "stylesheet");
                 linkElem.setAttribute("href", "../../customElement/titleBarButton/KDE-titlebar.css");
                 this.shadow.appendChild(linkElem);
+            } else if (systemData.wm == "X-Cinnamon") {
+                linkElem = document.createElement("link");
+                linkElem.setAttribute("rel", "stylesheet");
+                linkElem.setAttribute("href", "../../customElement/titleBarButton/cinnamon-titlebar.css");
+                this.shadow.appendChild(linkElem);
             }
 
             let a = document.createElement("div");
