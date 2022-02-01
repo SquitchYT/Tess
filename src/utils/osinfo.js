@@ -50,9 +50,11 @@ class OsInfomations{
                     let svg_text = fs.readFileSync(el.filename).toString();
 
                     if (el.colorize) {
-                        console.log(el.colorize)
                         let regex = /#(?:[a-f\d]{3}){1,2}\b/g
                         svg_text = svg_text.replaceAll(regex, el.colorize);
+                    }
+                    if (el.shade) {
+                        new_layer.style.filter = "brightness(" + el.shade + ")"
                     }
 
                     new_layer.innerHTML = svg_text;
@@ -111,9 +113,11 @@ class OsInfomations{
                     let svg_text = fs.readFileSync(el.filename).toString();
 
                     if (el.colorize) {
-                        console.log(el.colorize)
                         let regex = /#(?:[a-f\d]{3}){1,2}\b/g
                         svg_text = svg_text.replaceAll(regex, el.colorize);
+                    }
+                    if (el.shade) {
+                        new_layer.style.filter = "brightness(" + el.shade + ")"
                     }
 
                     new_layer.innerHTML = svg_text;
@@ -151,6 +155,9 @@ class OsInfomations{
                                 let regex = /#(?:[a-f\d]{3}){1,2}\b/g
                                 svg_text = svg_text.replaceAll(regex, el.colorize);
                             }
+                            if (el.shade) {
+                                new_layer.style.filter = "brightness(" + el.shade + ")"
+                            }
         
                             new_layer.innerHTML = svg_text;
                             expand_reduce_button.appendChild(new_layer)
@@ -185,9 +192,14 @@ class OsInfomations{
 
                     let svg_text = fs.readFileSync(el.filename).toString();
 
+                    console.log(el)
+
                     if (el.colorize) {
                         let regex = /#(?:[a-f\d]{3}){1,2}\b/g
                         svg_text = svg_text.replaceAll(regex, el.colorize);
+                    }
+                    if (el.shade) {
+                        new_layer.style.filter = "brightness(" + el.shade + ")"
                     }
 
                     new_layer.innerHTML = svg_text;
@@ -299,10 +311,12 @@ class OsInfomations{
                     
                                                 if (Array.isArray(images)) {
                                                     images.forEach((el) => {
-                                                        titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  el["@_filename"], colorize: this.valueFromConstantMetacity(el["@_colorize"], metacity_theme)})
+                                                        let name_to_to_define = this.valueFromConstantMetacity(el["@_colorize"], metacity_theme)
+                                                        titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  el["@_filename"], colorize: name_to_to_define.color, shade: name_to_to_define.shade})
                                                     })
                                                 } else {
-                                                    titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  images["@_filename"], colorize: this.valueFromConstantMetacity(images["@_colorize"], metacity_theme)})
+                                                    let name_to_to_define = this.valueFromConstantMetacity(images["@_colorize"], metacity_theme)
+                                                    titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  images["@_filename"], colorize: name_to_to_define.color, shade: name_to_to_define.shade})
                                                 }
                                             }
                                         })
@@ -311,8 +325,6 @@ class OsInfomations{
                             }
                         })
                     })
-                    
-                    //console.log(titlebar_buttons)
 
                     this.titlebar_buttons = titlebar_buttons
                     supportCustomTitleBar = true
@@ -328,8 +340,10 @@ class OsInfomations{
 
     valueFromConstantMetacity(const_name, theme) {
         let value = undefined
+        let shade = undefined
         theme.metacity_theme.constant.forEach((el) => {
             if (el["@_name"] == const_name) {
+                console.log(el["@_value"])
                 if (el["@_value"].startsWith("#")) {
                     value = el["@_value"]
                 } else if (el["@_value"].startsWith("gtk:custom")) {
@@ -337,11 +351,17 @@ class OsInfomations{
                     let name_to_define_both_mm = this.getValueFromGTKConstant(test.split(",")[0])
 
                     value = name_to_define_both_mm ? name_to_define_both_mm : el["@_value"].split(",")[1].split(")")[0]
+                } else if (el["@_value"].startsWith("shade/gtk:custom")) {
+                    let test = el["@_value"].split("shade/gtk:custom(")[1].replaceAll(")", "");
+                    let name_to_define_both_mm = this.getValueFromGTKConstant(test.split(",")[0])
+
+                    value = name_to_define_both_mm ? name_to_define_both_mm : el["@_value"].split(",")[1].split(")")[0]
+                    shade = el["@_value"].split(",")[1].split(")")[1].replace("/", "")
                 }
             }
         })
 
-        return value
+        return {color: value, shade: shade}
     }
 
     getValueFromGTKConstant(const_name, theme_name) {
