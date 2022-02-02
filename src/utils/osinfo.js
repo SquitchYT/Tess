@@ -365,7 +365,6 @@ class OsInfomations{
         let shade = undefined
         theme.metacity_theme.constant.forEach((el) => {
             if (el["@_name"] == const_name) {
-                console.log(el["@_value"])
                 if (el["@_value"].startsWith("#")) {
                     value = el["@_value"]
                 } else if (el["@_value"].startsWith("gtk:custom")) {
@@ -386,12 +385,28 @@ class OsInfomations{
         return {color: value, shade: shade}
     }
 
-    getValueFromGTKConstant(const_name, theme_name) {
-        //todo get corerct theme icon name
-        let file_location = "/usr/share/themes/Mint-Y-Red/gtk-3.0/gtk-dark.css"
-
+    getValueFromGTKConstant(const_name) {
+        let gtk_theme = Child_Proc.execSync("gsettings get org.cinnamon.desktop.interface gtk-theme").toString().trim().replaceAll("'", "");
+        let aa = undefined
         let value = undefined
-        let aa = fs.readFileSync(file_location).toString();
+        try {
+            aa = fs.readFileSync("/usr/share/themes/" + gtk_theme + "/gtk-3.0/gtk-dark.css").toString()
+        } catch {
+            try {
+                aa = fs.readFileSync("/usr/share/themes/" + gtk_theme + "/gtk-3.0/gtk.css").toString()
+            } catch {
+                try {
+                    aa = fs.readFileSync(this.homeDir + "/.themes/" + gtk_theme + "/gtk-3.0/gtk-dark.css").toString()
+                } catch {
+                    try {
+                        aa = fs.readFileSync(this.homeDir + "/.themes/" + gtk_theme + "/gtk-3.0/gtk.css").toString()
+                    } catch {
+                        return value
+                    }
+                }
+            }
+        }
+
         aa.split("\n").forEach((el) => {
             if (el.startsWith("@define-color")) {
                 let line_const_name = el.split(" ")[1]
