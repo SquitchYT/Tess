@@ -47,17 +47,23 @@ class OsInfomations{
                     new_layer.style.alignItems = "center";
                     new_layer.classList.add("cinnamon-close-" + state_mode)
 
-                    let svg_text = fs.readFileSync(el.filename).toString();
+                    if (el.filename.endsWith(".svg")) {
+                        let svg_text = fs.readFileSync(el.filename).toString();
 
-                    if (el.colorize) {
-                        let regex = /#(?:[a-f\d]{3}){1,2}\b/g
-                        svg_text = svg_text.replaceAll(regex, el.colorize);
+                        if (el.colorize) {
+                            let regex = /#(?:[a-f\d]{3}){1,2}\b/g
+                            svg_text = svg_text.replaceAll(regex, el.colorize);
+                        }
+
+                        new_layer.innerHTML = svg_text;
+                    } else {
+                        new_layer.style.background = "url('" + el.filename + "')";
+                        new_layer.style.backgroundSize = "cover";
                     }
+
                     if (el.shade) {
                         new_layer.style.filter = "brightness(" + el.shade + ")"
                     }
-
-                    new_layer.innerHTML = svg_text;
 
                     close_button.appendChild(new_layer)
                 })
@@ -110,17 +116,24 @@ class OsInfomations{
                     new_layer.style.alignItems = "center";
                     new_layer.classList.add("cinnamon-maximize-" + state_mode)
 
-                    let svg_text = fs.readFileSync(el.filename).toString();
+                    if (el.filename.endsWith(".svg")) {
+                        let svg_text = fs.readFileSync(el.filename).toString();
 
-                    if (el.colorize) {
-                        let regex = /#(?:[a-f\d]{3}){1,2}\b/g
-                        svg_text = svg_text.replaceAll(regex, el.colorize);
+                        if (el.colorize) {
+                            let regex = /#(?:[a-f\d]{3}){1,2}\b/g
+                            svg_text = svg_text.replaceAll(regex, el.colorize);
+                        }
+
+                        new_layer.innerHTML = svg_text;
+                    } else {
+                        new_layer.style.background = "url('" + el.filename + "')";
+                        new_layer.style.backgroundSize = "cover";
                     }
+
                     if (el.shade) {
                         new_layer.style.filter = "brightness(" + el.shade + ")"
                     }
 
-                    new_layer.innerHTML = svg_text;
                     expand_reduce_button.appendChild(new_layer)
                 })
             }
@@ -148,18 +161,24 @@ class OsInfomations{
                             new_layer.style.alignItems = "center";
                             new_layer.classList.add("cinnamon-maximize-" + state_mode)
         
-                            let svg_text = fs.readFileSync(el.filename).toString();
+                            if (el.filename.endsWith(".svg")) {
+                                let svg_text = fs.readFileSync(el.filename).toString();
         
-                            if (el.colorize) {
-                                console.log(el.colorize)
-                                let regex = /#(?:[a-f\d]{3}){1,2}\b/g
-                                svg_text = svg_text.replaceAll(regex, el.colorize);
+                                if (el.colorize) {
+                                    let regex = /#(?:[a-f\d]{3}){1,2}\b/g
+                                    svg_text = svg_text.replaceAll(regex, el.colorize);
+        
+                                }
+                                new_layer.innerHTML = svg_text;
+                            } else {
+                                new_layer.style.background = "url('" + el.filename + "')";
+                                new_layer.style.backgroundSize = "cover";
                             }
+
                             if (el.shade) {
                                 new_layer.style.filter = "brightness(" + el.shade + ")"
                             }
         
-                            new_layer.innerHTML = svg_text;
                             expand_reduce_button.appendChild(new_layer)
                         })
                     }
@@ -190,19 +209,22 @@ class OsInfomations{
                     new_layer.style.alignItems = "center";
                     new_layer.classList.add("cinnamon-minimize-" + state_mode)
 
-                    let svg_text = fs.readFileSync(el.filename).toString();
+                    if (el.filename.endsWith(".svg")) {
+                        let svg_text = fs.readFileSync(el.filename).toString();
 
-                    console.log(el)
-
-                    if (el.colorize) {
-                        let regex = /#(?:[a-f\d]{3}){1,2}\b/g
-                        svg_text = svg_text.replaceAll(regex, el.colorize);
+                        if (el.colorize) {
+                            let regex = /#(?:[a-f\d]{3}){1,2}\b/g
+                            svg_text = svg_text.replaceAll(regex, el.colorize);
+                        }                            
+                        new_layer.innerHTML = svg_text;
+                    } else {
+                        new_layer.style.background = "url('" + el.filename + "')";
+                        new_layer.style.backgroundSize = "cover";
                     }
+
                     if (el.shade) {
                         new_layer.style.filter = "brightness(" + el.shade + ")"
                     }
-
-                    new_layer.innerHTML = svg_text;
 
                     minimize_button.appendChild(new_layer)
                 })
@@ -260,8 +282,6 @@ class OsInfomations{
                     let theme_location = undefined;
                     let metacity_theme_file;
 
-                    let name_to_find = ["normal-focused_close", "normal-focused_maximize", "normal-focused_minimize", "maximized-focused_maximize"]
-
                     try {
                         metacity_theme_file = fs.readFileSync("/usr/share/themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
                         theme_location = "/usr/share/themes/" + theme + "/metacity-1/";
@@ -297,13 +317,16 @@ class OsInfomations{
                         }
                     }
 
-                    name_to_find.forEach((current_name_to_find) => { //TODO get windows style_set key from windows correcpondoing to type=normal after get name of normal and maximized windows for get good icon
+                    let windowMetacityName = this.getTestToDefine(metacity_theme)
+                    let name_to_find = [windowMetacityName[0] + "*close", windowMetacityName[0] + "*maximize", windowMetacityName[0] + "*minimize", windowMetacityName[1] + "*maximize"]
+
+                    name_to_find.forEach((current_name_to_find) => {
                         metacity_theme.metacity_theme.frame_style.forEach((el) => {
-                            if (el["@_name"] == current_name_to_find.split("_")[0].replace("-", "_")) {
+                            if (el["@_name"] == current_name_to_find.split("*")[0].replaceAll("-", "_")) {
                                 el.button.forEach((el) => {
                                     let action_to_get = ["normal", "prelight", "pressed"]
-                                    if (el["@_function"] == current_name_to_find.split("_")[1] && action_to_get.includes(el["@_state"])) {
-                                        let current_icon_type = !current_name_to_find.startsWith("maximized") ? el["@_function"] : "unmaximize"
+                                    if (el["@_function"] == current_name_to_find.split("*")[1] && action_to_get.includes(el["@_state"])) {
+                                        let current_icon_type = current_name_to_find.startsWith(windowMetacityName[0]) ? el["@_function"] : "unmaximize"
                                         let current_icon_mode = el["@_state"]
                                         metacity_theme.metacity_theme.draw_ops.forEach((draw_ops_el) => {
                                             if (draw_ops_el["@_name"] == el["@_draw_ops"]) {
@@ -330,8 +353,7 @@ class OsInfomations{
                     supportCustomTitleBar = true
             }
 
-        } catch (e) {
-            console.log(e)
+        } catch {
             supportCustomTitleBar = false;
         } finally {
             return supportCustomTitleBar
@@ -366,7 +388,7 @@ class OsInfomations{
 
     getValueFromGTKConstant(const_name, theme_name) {
         //todo get corerct theme icon name
-        let file_location = "/usr/share/themes/Mint-Y/gtk-3.0/gtk-dark.css"
+        let file_location = "/usr/share/themes/Mint-Y-Red/gtk-3.0/gtk-dark.css"
 
         let value = undefined
         let aa = fs.readFileSync(file_location).toString();
@@ -380,6 +402,26 @@ class OsInfomations{
         })
 
         return value
+    }
+
+    getTestToDefine(theme) {
+        let normal_mode = undefined;
+        let maximized_mode = undefined;
+        theme.metacity_theme.window.forEach((el1) => {
+            if (el1["@_type"] == "normal") {
+                theme.metacity_theme.frame_style_set.forEach((el2) => {
+                    if (el2["@_name"] == el1["@_style_set"]) {
+                        el2.frame.forEach((el3) => {
+                            if (["normal", "maximized"].includes(el3["@_state"]) && el3["@_focus"] == "yes") {
+                                (el3["@_state"] == "normal") ? normal_mode = el3["@_style"] : maximized_mode = el3["@_style"]
+                            }
+                        })
+                    }
+                })
+            }
+        })
+
+        return [normal_mode.replaceAll("_", "-"), maximized_mode.replaceAll("_", "-")]
     }
 }
 
