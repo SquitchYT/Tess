@@ -48,7 +48,7 @@ if (osData.os == "win32") { getProcessTree = require("windows-process-tree").get
 
 let resizeTimeout;
 
-const customWMIntegration = ["KDE", "X-Cinnamon", "GNOME"] // Add other here
+const customWMIntegration = ["KDE", "X-Cinnamon", "GNOME", "Budgie:GNOME"] // Add other here
 
 let config, colors;
 !function LoadConfig() {

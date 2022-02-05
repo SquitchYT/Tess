@@ -34,7 +34,7 @@ class OsInfomations{
             close_button.style.width = "18px";
             close_button.style.height = "18px";
             close_button.classList.add('close-button-KDE', "icon-KDE");
-        } else if (this._wm == "X-Cinnamon") {
+        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["close"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -103,7 +103,7 @@ class OsInfomations{
                     }
                 })
             })
-        } else if (this._wm == "X-Cinnamon") {
+        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["maximize"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -196,7 +196,7 @@ class OsInfomations{
             minimize_button.style.width = "18px";
             minimize_button.style.height = "18px";
             minimize_button.classList.add("minimize-button-KDE", "icon-KDE");
-        } else if (this._wm == "X-Cinnamon") {
+        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["minimize"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -250,6 +250,8 @@ class OsInfomations{
         switch (this._wm) {
             case "X-Cinnamon":
                 currentTheme = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences theme").toString().trim().replaceAll("'", "");
+            case "Budgie:GNOME":
+                currentTheme = Child_Proc.execSync("gsettings get org.gnome.desktop.wm.preferences theme").toString().trim().replaceAll("'", "");
         }
 
         return currentTheme
@@ -276,7 +278,7 @@ class OsInfomations{
                     fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-hover@2.png");
                     fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
                     supportCustomTitleBar = true;
-                case "X-Cinnamon":
+                case "X-Cinnamon", "Budgie:GNOME":
                     let theme = this.currentWindowTheme;
                     
                     let theme_location = undefined;
@@ -353,7 +355,7 @@ class OsInfomations{
                     supportCustomTitleBar = true
             }
 
-        } catch {
+        } catch{
             supportCustomTitleBar = false;
         } finally {
             return supportCustomTitleBar
