@@ -278,6 +278,7 @@ class OsInfomations{
                     fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-hover@2.png");
                     fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
                     supportCustomTitleBar = true;
+                    break;
                 case "X-Cinnamon", "Budgie:GNOME":
                     let theme = this.currentWindowTheme;
                     
@@ -351,11 +352,13 @@ class OsInfomations{
                         })
                     })
 
-                    this.titlebar_buttons = titlebar_buttons
-                    supportCustomTitleBar = true
+                    this.titlebar_buttons = titlebar_buttons;
+                    supportCustomTitleBar = true;
+                    break;
             }
 
-        } catch{
+        } catch (e) {
+            console.log(e)
             supportCustomTitleBar = false;
         } finally {
             return supportCustomTitleBar

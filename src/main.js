@@ -221,7 +221,7 @@ function openWindow(config, colors) {
         show: osData.os == "win32" ? false : true
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
