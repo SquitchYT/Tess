@@ -73,6 +73,17 @@ body {
     color: var(--general-text-color);
 }
 
+.more svg {
+    height: 14px;
+    width: 14px;
+    color: var(--tab-text-color);
+}
+
+.more svg.drop-down-arrow {
+    height: 17px;
+    width: 17px;
+}
+
 .more:hover {
     cursor: pointer;
     filter: brightness(1.15);

@@ -295,7 +295,7 @@ ipc.on("new-term", (e, data) => {
 
         if (prog.trim() == data.shell.trim()) { // No args provided
             args = []
-        } else { // Arg provided
+        } else {
             Command.shift()
             args = Command[0].split(" ")
         }
