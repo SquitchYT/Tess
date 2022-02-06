@@ -41,7 +41,6 @@ const quickMenuNoOtherShell = document.getElementById("quick-no-other-shell")
 
 let previousBackgroundStyle = undefined;
 
-
 quickDefault.addEventListener("click", () => {
     openDefaultProfil();
 })
@@ -422,6 +421,20 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
                 index: n,
                 data: e
             });
+        });
+
+        termDiv.addEventListener('drop', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            ipc.send("terminal-data", {
+                index: n,
+                data: event.dataTransfer.files[0].path
+            })
+        });
+        termDiv.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
         });
 
         let terms = document.getElementsByClassName("terms");
