@@ -158,7 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 250);
 });
 
-/* NEW FUNCTION REWORK OPTIONS SCREEN*/
 menuIcon.addEventListener("click", () => {
     leftSideMenu.parentNode.classList.toggle("menu-hidden");
     menuIcon.classList.toggle("menu-icon-close");
@@ -452,7 +451,6 @@ profilCreateBtn.addEventListener("click", () => {
 });
 
 
-
 function loadConfig() {
     config.disableOnBlur = (config?.disableOnBlur != undefined ? config.disableOnBlur == "true" : true);
     config.bringAppToFront = config?.bringAppToFront == "true" ? "true" : "false";
@@ -471,16 +469,17 @@ function loadConfig() {
     fs.readdir(osData.homeDir + "/Applications/tess/config/theme", (err, files) => {
         if (err) {
             console.log(err);
-        } else {
-            let themeList = "";
-            files.forEach((file) => {
-                if (file.endsWith(".json") && file != "default.json") {
-                    themeList += file.split(".json")[0] + ";";
-                }
-            });
-            themeList += "default";
-            themeDropDownMenu.setAttribute("input-list", themeList);
+            return
         }
+
+        let themeList = "";
+        files.forEach((file) => {
+            if (file.endsWith(".json") && file != "default.json") {
+                themeList += file.split(".json")[0] + ";";
+            }
+        });
+        themeList += "default";
+        themeDropDownMenu.setAttribute("input-list", themeList);
     });
 
     progressPicker.forEach((el) => {
@@ -715,13 +714,10 @@ function deleteProfil(id) {
     profilDropDownMenu.setAttribute("input-list", newProfilList.slice(0, -1));
 
 
-
     if (config.defaultProfil == name) {
-        // update drop down menu for default profil
         config.defaultProfil = "Default Shell";
         profilDropDownMenu.setAttribute("selected-value", "Default Shell");
     }
-
     if (currentProfilPage == id) {
         let defaultShellProfilLink = document.querySelector("*[profil-id='1']");
         defaultShellProfilLink.click();
