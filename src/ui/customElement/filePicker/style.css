@@ -40,7 +40,7 @@
     align-items: center;
     width: 36px;
     height: 100%;
-    box-shadow: -12px 0px 9px -5px var(--background);
+    box-shadow: -10px 0px 9px -5px var(--background);
 }
 
 .edit-icon:hover {

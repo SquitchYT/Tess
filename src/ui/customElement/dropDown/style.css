@@ -37,8 +37,8 @@ span {
 
 .icon {
     transition: ease;
-    transition-duration: 600ms;
-    font-size: 23px;
+    transition-duration: 460ms;
+    font-size: 22px;
 }
 
 .drop-down {

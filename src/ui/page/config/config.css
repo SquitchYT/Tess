@@ -49,26 +49,6 @@ body {
     text-align: center;
 }
 
-.return-button {
-    height: 22px;
-    width: 22px;
-    border-radius: var(--item-radius);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid var(--item-textcolor);
-    cursor: pointer;
-    transition: all 150ms ease;
-    position: fixed;
-    right: 13px;
-    top: 13px;
-}
-
-.return-button:hover {
-    border-radius: calc(var(--item-radius) + 1px);
-    transform: scale(0.97);
-}
-
 .return-arrow {
     height: 19px;
     width: 19px;
@@ -241,15 +221,15 @@ input::-webkit-inner-spin-button {
     align-items: center;
     flex-direction: column;
     margin-bottom: 15px;
-    margin-right: 15px;
+    margin-right: 0px;
 }
 
 .config-group::after {
     display: block;
     height: 1px;
-    width: 96%;
+    width: 95%;
     background: var(--item-textcolor);
-    opacity: 0.13;
+    opacity: 0.14;
     content: "";
 }
 
@@ -415,7 +395,7 @@ h3 {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    width: 92%;
+    width: 96%;
     height: 66px;
 }
 
@@ -512,7 +492,7 @@ h3 {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: calc(100% - 43px);
+    width: 100%;
     height: 45px;
     margin-bottom: 15px;
 }
@@ -572,10 +552,6 @@ h3 {
 
 #profil-page file-picker {
     width: calc(33vw + 1px) !important;
-}
-
-.shortcut {
-    align-items: flex-start !important;
 }
 
 .selected-page {

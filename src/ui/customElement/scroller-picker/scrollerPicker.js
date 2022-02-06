@@ -35,6 +35,7 @@ class ScrollerPicker extends HTMLElement {
         this.progress = progress;
 
         this.callbackTimeout;
+        this.hideValueTimeout;
 
         bar.addEventListener("mousedown", (e) => {
             progress.style.transition = "none";
@@ -54,10 +55,26 @@ class ScrollerPicker extends HTMLElement {
             });
         });
 
+        bar.addEventListener("mouseenter", (_) => {
+            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)";
+            let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
+            this.pourcent = pourcent;
+            value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
+            setTimeout(() => {
+                value.classList.add("visible");
+            }, 260)
+        })
+
+        bar.addEventListener("mouseleave", (_) => {
+            this.hideValueTimeout = setTimeout(() => {
+                value.classList.remove("visible");
+            }, 160)
+        })
+
         document.addEventListener("mousemove", (e) => {
             if (this.mouseDown == true) {
-
                 clearTimeout(this.callbackTimeout);
+                clearTimeout(this.hideValueTimeout);
 
                 let dif = e.pageX - progress.getBoundingClientRect().right;
                 progress.style.width = progress.getBoundingClientRect().width + dif + "px";
