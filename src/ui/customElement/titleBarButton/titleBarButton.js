@@ -9,40 +9,37 @@ class TitleBarButton extends HTMLElement {
         super();
         this.shadow = this.attachShadow({mode: "open"});
 
+        let a = document.createElement("div");
+        a.classList.add('background');
+
         if (systemData.os == "win32") {
-            let a = document.createElement("div");
-            a.classList.add('background');
             a.style.width = "156px";
-            this.shadow.appendChild(a);
-        }
-
-        if (systemData.supportCustomTitleBar) {
-            let linkElem = document.createElement("link");
-            linkElem.setAttribute("rel", "stylesheet");
-            linkElem.setAttribute("href", "../../customElement/titleBarButton/style.css");
-            this.shadow.appendChild(linkElem);
-
-            if (systemData.wm == "KDE") {
-                linkElem = document.createElement("link");
+        } else {
+            if (systemData.supportCustomTitleBar) {
+                let linkElem = document.createElement("link");
                 linkElem.setAttribute("rel", "stylesheet");
-                linkElem.setAttribute("href", "../../customElement/titleBarButton/KDE-titlebar.css");
+                linkElem.setAttribute("href", "../../customElement/titleBarButton/style.css");
                 this.shadow.appendChild(linkElem);
-            } else if (systemData.wm == "X-Cinnamon" || systemData.wm == "Budgie:GNOME") {
-                linkElem = document.createElement("link");
-                linkElem.setAttribute("rel", "stylesheet");
-                linkElem.setAttribute("href", "../../customElement/titleBarButton/cinnamon-titlebar.css");
-                this.shadow.appendChild(linkElem);
+    
+                if (systemData.wm == "KDE") {
+                    linkElem = document.createElement("link");
+                    linkElem.setAttribute("rel", "stylesheet");
+                    linkElem.setAttribute("href", "../../customElement/titleBarButton/KDE-titlebar.css");
+                    this.shadow.appendChild(linkElem);
+                } else if (systemData.wm == "X-Cinnamon" || systemData.wm == "Budgie:GNOME") {
+                    linkElem = document.createElement("link");
+                    linkElem.setAttribute("rel", "stylesheet");
+                    linkElem.setAttribute("href", "../../customElement/titleBarButton/cinnamon-titlebar.css");
+                    this.shadow.appendChild(linkElem);
+                }
+                
+                a.appendChild(systemData.closeTitleBarButton);
+                a.appendChild(systemData.expandTitleBarButton);
+                a.appendChild(systemData.minimizeTitleBarButton);
             }
-
-            let a = document.createElement("div");
-            a.classList.add('background');
-            
-            a.appendChild(systemData.closeTitleBarButton)
-            a.appendChild(systemData.expandTitleBarButton)
-            a.appendChild(systemData.minimizeTitleBarButton)
-
-            this.shadow.appendChild(a);
         }
+
+        this.shadow.appendChild(a);
     }
 }
 

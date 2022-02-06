@@ -48,7 +48,7 @@ if (osData.os == "win32") { getProcessTree = require("windows-process-tree").get
 
 let resizeTimeout;
 
-const customWMIntegration = ["KDE", "X-Cinnamon", "GNOME", "Budgie:GNOME"] // Add other here
+const customWMIntegration = ["KDE", "X-Cinnamon", "GNOME", "Budgie:GNOME"]; // Add other here
 
 let config, colors;
 !function LoadConfig() {
@@ -80,7 +80,7 @@ let config, colors;
         fs.writeFileSync(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite);
     }
 
-    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background
+    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
 }();
 
 if (osData.os == "win32") {
@@ -100,7 +100,6 @@ let shells = [];
 let customWorkdir;
 let customCommand;
 let newTab;
-
 let launchProfil;
 let launchPage;
 
@@ -184,7 +183,6 @@ function openWindow(config, colors) {
     let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
 
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
-
     const appwidth = width - (width >> 2);
     const appheight = height - (height >> 2);
     const minwidth = Math.floor( (width - (width >> 1)) / 1.47 );
@@ -242,7 +240,7 @@ function openWindow(config, colors) {
     let profilToLaunch;
     config.profil.forEach((el) => {
         if (el.name == config.defaultProfil) {
-            profilToLaunch = el
+            profilToLaunch = el;
         }
     })
 
