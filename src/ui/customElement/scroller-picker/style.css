@@ -32,7 +32,7 @@
     border-radius: 4px;
     transition: opacity;
     transition-timing-function: ease;
-    transition-duration: 420ms;
+    transition-duration: 340ms;
     opacity: 0;
     user-select: none;
     display: flex;

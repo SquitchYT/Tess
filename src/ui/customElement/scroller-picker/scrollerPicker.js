@@ -60,15 +60,16 @@ class ScrollerPicker extends HTMLElement {
             let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
             value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
-            setTimeout(() => {
+            this.showValueTimeout = setTimeout(() => {
                 value.classList.add("visible");
-            }, 260)
+            }, 120)
         })
 
         bar.addEventListener("mouseleave", (_) => {
+            clearTimeout(this.showValueTimeout);
             this.hideValueTimeout = setTimeout(() => {
                 value.classList.remove("visible");
-            }, 160)
+            }, 10)
         })
 
         document.addEventListener("mousemove", (e) => {
