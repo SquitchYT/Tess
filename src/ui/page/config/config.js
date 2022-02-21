@@ -681,14 +681,13 @@ function loadShortcut() {
         });
     });
 }
-let saveUpdateTimeout;
 
 function saveUpdate() {
-    clearTimeout(saveUpdateTimeout)
-    fs.writeFileSync(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config));
-    saveUpdateTimeout = setTimeout(() => {
-        ipcRenderer.send("reloadConfig");
-    }, 500)
+    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+        if (!err) {
+            ipcRenderer.send("reloadConfig");
+        }
+    });
 }
 
 function deleteProfil(id) {
