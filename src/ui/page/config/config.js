@@ -228,8 +228,7 @@ links.forEach((el) => {
             el.classList.remove("selected-page");
         });
         pages.forEach((el) => {
-            el.classList.add("hidden-page");
-            el.classList.add("page-animation");
+            el.classList.add("hidden-page", "page-animation");
         });
         let page = document.getElementById(el.getAttribute("link"));
         page.classList.add("page-animation");
@@ -266,8 +265,7 @@ function changeProfilPage(el) {
     });
     
     pages.forEach((el) => {
-        el.classList.add("hidden-page");
-        el.classList.add("page-animation");
+        el.classList.add("hidden-page", "page-animation");
     });
 
     let page = document.getElementById(el.getAttribute("link"));

@@ -26,14 +26,13 @@ class DropDownMenu extends HTMLElement {
         displayArea.appendChild(icon);
         this.shadow.appendChild(displayArea);
 
-        let dropdown = document.createElement("div");
-        dropdown.classList.add("drop-down", "invisible");
-        this.dropDown = dropdown;
+        this.dropDown = document.createElement("div");
+        this.dropDown.classList.add("drop-down", "invisible");
         this.isOpen = false;
 
         displayArea.addEventListener("click", (event) => {
             this.dropDown.style.width = this.displayArea.getBoundingClientRect().width + "px";
-            dropdown.classList.toggle("invisible");
+            this.dropDown.classList.toggle("invisible");
             icon.classList.toggle("icon-close");
 
             if (this.isOpen == true) {
@@ -56,15 +55,15 @@ class DropDownMenu extends HTMLElement {
 
         document.addEventListener("click", () => {
             if (this.isOpen == true) {
-                dropdown.classList.add("invisible");
+                this.dropDown.classList.add("invisible");
                 icon.classList.remove("icon-close");
                 this.isOpen = false;
             }
         });
 
         this.listElement = listElement;
-        dropdown.appendChild(listElement);
-        this.shadow.appendChild(dropdown);
+        this.dropDown.appendChild(listElement);
+        this.shadow.appendChild(this.dropDown);
 
         window.addEventListener("resize", () => {
             setTimeout(() => {
@@ -77,7 +76,7 @@ class DropDownMenu extends HTMLElement {
         return ["input-list", "selected-value", "parameters", "disable"];
     }
       
-    attributeChangedCallback(name, oldValue, newValue) {
+    attributeChangedCallback(name, _, newValue) {
         if (name == "input-list" && newValue != null) {
             let inputValues = newValue.split(";");
 

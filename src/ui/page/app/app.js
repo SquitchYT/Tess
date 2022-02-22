@@ -542,19 +542,25 @@ function Close(index) {
         ipc.send("debug", err)
     }
 
-
+    let y = 0;
     try {
-        let y = 0;
         terminalsList.forEach((el) => {
+            y++;
             if (el.index == index) {
                 if (el.type == "Terminal") {
                     el.term.dispose();
                 }
-                terminalsList.splice(y, 1);
+                terminalsList.splice(y - 1, 1);
             }
-            y++;
         });
     
+        
+    
+        return false;
+    } catch (_) {
+        ipc.send("debug", "Something go wrong when closing a TAB. Please report this on the github page. " + _);
+        terminalsList.splice(y - 1, 1);
+    } finally {
         if (terminalsList.length === 0) {
             ipc.send("close");
         } else if (n == index){
@@ -572,11 +578,6 @@ function Close(index) {
         } else {
             focusTerm(n, document.querySelector(".tab-all-" + n));
         }
-    
-        return false;
-    } catch (_) {
-        ipc.send("debug", _)
-        ipc.send("close");
     }
 }
 
