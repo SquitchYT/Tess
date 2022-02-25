@@ -62,7 +62,6 @@ body {
     align-items: center;
     position: absolute;
     height: calc(100vh + 80px);
-    max-height: full;
     top: 0;
     left: 0;
     overflow-y: overlay;
@@ -78,6 +77,13 @@ body {
     box-shadow: none !important;
 }
 
+drop-down-menu, scroller-picker, shortcut-picker, file-picker {
+    max-width: 425px;
+    min-width: 250px;
+    --background: var(--item-background);
+    --text-color: var(--item-textcolor);
+}
+
 switch-button {
     height: 28px;
     width: 58px;
@@ -88,56 +94,40 @@ switch-button {
     --background: var(--item-background);
     --radius: var(--item-radius);
 }
+
+
 drop-down-menu {
     height: 33px;
     width: 33vw;
-    max-width: 425px;
-    min-width: 250px;
     display: flex;
     flex-shrink: 0;
     box-shadow: -8px 0px 7px var(--app-background);
-    --background: var(--item-background);
     --foreground: var(--item-background-hover);
-    --text-color : var(--item-textcolor);
 }
 scroller-picker {
     height: 25px;
     width: 33vw;
-    max-width: 425px;
-    min-width: 250px;
     flex-shrink: 0;
     margin-top: 12px;
     box-shadow: -8px 0px 7px var(--app-background);
-    --background: var(--item-background);
-    --text-color: var(--item-textcolor);
     --progress-color: var(--item-green);
 }
 shortcut-picker {
     height: 33px;
     width: 33vw;
-    max-width: 425px;
-    min-width: 250px;
     display: flex;
     flex-shrink: 0;
     box-shadow: -8px 0px 7px var(--app-background);
-    --background: var(--item-background);
-    --text-color: var(--item-textcolor);
 }
 file-picker {
     height: 33px;
     width: 33vw;
-    max-width: 425px;
-    min-width: 250px;
     flex-shrink: 0;
     box-shadow: -8px 0px 7px var(--app-background);
-    --background: var(--item-background);
-    --text-color: var(--item-textcolor);
 }
 input {
     height: 33px;
     width: calc(33vw - 9px);
-    max-width: 425px;
-    min-width: 250px;
     background: var(--item-background);
     border: 0;
     border-radius: 4px;
@@ -189,11 +179,11 @@ input::-webkit-inner-spin-button {
 #menu-icon svg {
     height: 20px;
     width: 20px;
-    transform: rotate(90deg);    
+    transform: rotate(90deg);
 }
 
 #menu-icon svg {
-    transition: all 350ms ease !important;
+    transition: all 340ms ease !important;
 }
 
 .menu-icon-close svg {
@@ -244,7 +234,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     flex-direction: column;
-    transition: all 450ms ease;
+    transition: all 360ms ease;
 }
 
 .left-side-menu-bottom {
@@ -436,12 +426,6 @@ h3 {
     transition: none !important;
 }
 
-.transition {
-    transition: all;
-    transition-duration: 750ms;
-    transition-timing-function: cubic-bezier(0.68, -0.6, 0.32, 1.6);;
-}
-
 .trash-icon {
     color: var(--item-red);
 }
@@ -475,7 +459,7 @@ h3 {
 }
 
 .page-animation {
-    transition: transform 425ms ease;
+    transition: transform 360ms ease-in-out;
 }
 
 .hidden {
