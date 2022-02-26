@@ -43,7 +43,7 @@ class ScrollerPicker extends HTMLElement {
             value.classList.add("visible");
             let dif = e.pageX - progress.getBoundingClientRect().right;
             progress.style.width = progress.getBoundingClientRect().width + dif + "px";
-            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)";
+            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
             let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
             value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
@@ -56,7 +56,7 @@ class ScrollerPicker extends HTMLElement {
         });
 
         bar.addEventListener("mouseenter", (_) => {
-            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)";
+            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
             let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
             value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
@@ -79,7 +79,7 @@ class ScrollerPicker extends HTMLElement {
 
                 let dif = e.pageX - progress.getBoundingClientRect().right;
                 progress.style.width = progress.getBoundingClientRect().width + dif + "px";
-                value.style.transform = "translate(" + (progress.getBoundingClientRect().width - 20) + "px, -32px)";
+                value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
                 let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
                 this.pourcent = pourcent;
                 value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);

@@ -27,7 +27,9 @@
 .value {
     position: absolute;
     height: 26px;
-    width: 37px;
+    width: fit-content;
+    padding-right: 4px;
+    padding-left: 4px;
     background: var(--background);
     border-radius: 4px;
     transition: opacity;

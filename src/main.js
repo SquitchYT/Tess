@@ -69,6 +69,8 @@ let config, colors;
         config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf(".") + 1);
     }
 
+    config.bufferSize = config?.bufferSize ? config.bufferSize : 4000
+
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
         colors = JSON.parse(file);

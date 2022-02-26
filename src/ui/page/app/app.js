@@ -395,10 +395,11 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             fontSize: fontSize,
             cursorBlink: (config.cursorBlink == "true"),
             fontFamily: (config?.terminalFonts) ? config?.terminalFonts : "Consolas, courier-new, courier, monospace",
-            rendererType: config?.experimentalRendererType ? config.experimentalRendererType : "canvas"
+            rendererType: config?.experimentalRendererType ? config.experimentalRendererType : "canvas",
+            scrollback: config.bufferSize
         });
         term.loadAddon(fitAddon);
-        term.loadAddon(new WebLinksAddon(("click", (e, url) => {
+        term.loadAddon(new WebLinksAddon(("click", (_, url) => {
             shell.openExternal(url);
         })));
 
@@ -742,7 +743,7 @@ function updateTerminalApparence() {
             if (config.experimentalFontLigature == "true") {
                 el.term.loadAddon(el.ligatureAddon)
             } else {
-                el.ligatureAddon.dispose()
+                el.ligatureAddon.dispose();
             }
 
             el.term.setOption("theme", colors.terminal.theme);
@@ -750,6 +751,7 @@ function updateTerminalApparence() {
             el.term.setOption("cursorStyle", config.cursorStyle);
             el.term.setOption("cursorBlink", (config.cursorBlink == "true"));
             el.term.setOption("fontFamily", config.terminalFonts);
+            el.term.setOption("scrollback", config.bufferSize);
         }
     });
 
