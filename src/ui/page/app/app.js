@@ -129,7 +129,7 @@ ipc.on("pty-data", (e, data) => {
             let tab = document.querySelector(".tab-" + data.index);
             if (data.processName != "" && !tab.hasAttribute("profil-named")) {
                 let process = data.processName.split("/");
-                tab.innerHTML = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
+                tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
             }
         } 
     });
@@ -140,7 +140,7 @@ ipc.on("rename-tab", (_, data) => {
         if (el.index === data.index) {
             let tab = document.querySelector(".tab-" + data.index);
             if (!tab.hasAttribute("profil-named")) {
-                tab.innerHTML = data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1);
+                tab.textContent = data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1);
             }
         } 
     });
@@ -302,7 +302,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         }
     });
 
-    tab_link.innerHTML = name;
+    tab_link.textContent = name;
     tab_link.classList.add("tab-link", "tab-" + index, index);
     if (!processNamed) { tab_link.setAttribute("profil-named", "true"); }
 
