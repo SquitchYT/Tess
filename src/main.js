@@ -209,6 +209,7 @@ function openWindow(config, colors) {
         blurType: config.background,
         blurGnomeSigma: 100,
         blurCornerRadius: 0,
+        backgroundColor: colors.terminal.theme.background,
         vibrancy: {
             theme: bgColor.hexa,
             effect: config.background,
