@@ -9,10 +9,6 @@ $packageArgs = @{
   file         = $fileLocation
   softwareName  = 'tess*'
 
-  checksum      = '{{ CHECKSUM }}'
-  checksumType  = 'sha256'
-  checksum64    = '{{ CHECKSUM }}'
-  checksumType64= 'sha256'
   silentArgs   = '/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP-'
   validExitCodes= @(0)
 }

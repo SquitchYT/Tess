@@ -288,7 +288,7 @@ shortcutAddBtn.addEventListener("click", () => {
     });
     profils = profils.substring(0, profils.length - 1);
 
-    let shortcutId = 0;
+    let shortcutId = 1;
     config.shortcut.forEach((el) => {
         shortcutId += el.id;
     });
@@ -681,9 +681,12 @@ function loadShortcut() {
 }
 
 function saveUpdate() {
+    console.log(config)
     fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
         if (!err) {
             ipcRenderer.send("reloadConfig");
+        } else {
+            console.log(err)
         }
     });
 }
