@@ -41,8 +41,7 @@ class ScrollerPicker extends HTMLElement {
             progress.style.transition = "none";
             this.mouseDown = true;
             value.classList.add("visible");
-            let dif = e.pageX - progress.getBoundingClientRect().right;
-            progress.style.width = progress.getBoundingClientRect().width + dif + "px";
+            progress.style.width = progress.getBoundingClientRect().width + (e.pageX - progress.getBoundingClientRect().right) + "px";
             value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
             let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
@@ -56,10 +55,10 @@ class ScrollerPicker extends HTMLElement {
         });
 
         bar.addEventListener("mouseenter", (_) => {
-            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
             let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
             value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
+            value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
             this.showValueTimeout = setTimeout(() => {
                 value.classList.add("visible");
             }, 120)
@@ -77,8 +76,7 @@ class ScrollerPicker extends HTMLElement {
                 clearTimeout(this.callbackTimeout);
                 clearTimeout(this.hideValueTimeout);
 
-                let dif = e.pageX - progress.getBoundingClientRect().right;
-                progress.style.width = progress.getBoundingClientRect().width + dif + "px";
+                progress.style.width = progress.getBoundingClientRect().width + (e.pageX - progress.getBoundingClientRect().right) + "px";
                 value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
                 let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
                 this.pourcent = pourcent;

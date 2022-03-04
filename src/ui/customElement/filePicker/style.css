@@ -15,32 +15,38 @@
     width: 100%;
     border-radius: 4px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .display-area {
     font-size: 15px;
-    width: 100%;
+    width: calc(100% - 18px);
     display: flex;
-    align-items: center;
     height: 100%;
-    white-space: nowrap;
+    align-items: center;
+    white-space: normal;
     overflow-x: hidden;
     padding-left: 9px;
 }
 
 .element:hover .edit-icon {
-    display: flex;
+    opacity: 1;
 }
 
 .edit-icon {
-    display: none;
+    opacity: 0;
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 36px;
     height: 100%;
-    box-shadow: -10px 0px 9px -5px var(--background);
+    box-shadow: -10px 0px 10px -5px var(--background);
+    transition: all 140ms ease-in-out;
+    position: absolute;
+    background: var(--background);
+    right: 0;
+    border-radius: 0 4px 4px 0;
 }
 
 .edit-icon:hover {
