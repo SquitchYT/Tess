@@ -27,6 +27,48 @@ class OsInfomations{
         return this._homedir;
     }
 
+    get titleBarButtonOrder() {
+        // c: Close
+        // m: Expand / Minimize
+        // r: Reduce (in taskbar)
+        let buttonOrder = ""
+
+        switch (this._wm) {
+            case "X-Cinnamon":
+                let temp = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
+                temp = temp.split(":")
+                temp[0].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "lc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "lm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "lr"
+                            break;
+                    }
+                })
+                temp[1].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "rc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "rm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "rr"
+                            break;
+                    }
+                })
+                break;
+        }
+
+        return buttonOrder.match(/.{2}/g).reverse().join("")
+    }
+
     get closeTitleBarButton() {
         let close_button = document.createElement('div');
 
@@ -72,7 +114,7 @@ class OsInfomations{
             close_button.style.height = "18px";
             close_button.style.width = "18px";
             close_button.style.position = "relative";
-            close_button.style.marginLeft = "8px";
+            close_button.style.marginLeft = "10px";
             close_button.classList.add("close-cinnamon")
         }
 
@@ -141,7 +183,7 @@ class OsInfomations{
             expand_reduce_button.style.height = "18px";
             expand_reduce_button.style.width = "18px";
             expand_reduce_button.style.position = "relative";
-            expand_reduce_button.style.marginLeft = "8px";
+            expand_reduce_button.style.marginLeft = "10px";
             expand_reduce_button.classList.add("maximize-cinnamon")
 
             expand_reduce_button.addEventListener("click", () => {
@@ -233,7 +275,7 @@ class OsInfomations{
             minimize_button.style.height = "18px";
             minimize_button.style.width = "18px";
             minimize_button.style.position = "relative";
-            minimize_button.style.marginLeft = "8px";
+            minimize_button.style.marginLeft = "10px";
             minimize_button.classList.add("minimize-cinnamon");
         }
 
@@ -250,8 +292,10 @@ class OsInfomations{
         switch (this._wm) {
             case "X-Cinnamon":
                 currentTheme = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences theme").toString().trim().replaceAll("'", "");
+                break;
             case "Budgie:GNOME":
                 currentTheme = Child_Proc.execSync("gsettings get org.gnome.desktop.wm.preferences theme").toString().trim().replaceAll("'", "");
+                break;
         }
 
         return currentTheme
@@ -279,7 +323,8 @@ class OsInfomations{
                     fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
                     supportCustomTitleBar = true;
                     break;
-                case "X-Cinnamon", "Budgie:GNOME":
+                case "X-Cinnamon":
+                case "Budgie:GNOME":
                     let theme = this.currentWindowTheme;
                     
                     let theme_location = undefined;
@@ -357,8 +402,8 @@ class OsInfomations{
                     break;
             }
 
-        } catch (e) {
-            console.log(e)
+        } catch (_) {
+            //console.log(e)
             supportCustomTitleBar = false;
         } finally {
             return supportCustomTitleBar

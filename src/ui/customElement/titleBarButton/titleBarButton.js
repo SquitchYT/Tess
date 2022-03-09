@@ -33,9 +33,23 @@ class TitleBarButton extends HTMLElement {
                     this.shadow.appendChild(linkElem);
                 }
                 
-                a.appendChild(systemData.closeTitleBarButton);
-                a.appendChild(systemData.expandTitleBarButton);
-                a.appendChild(systemData.minimizeTitleBarButton);
+                let test = systemData.titleBarButtonOrder
+                for (let index = 0; index < test.length; index+=2) {
+                    if (test[index] == "r") {
+                        switch (test[index+1]) {
+                            case "c":
+                                a.appendChild(systemData.closeTitleBarButton);
+                                break;
+                            case "m":
+                                a.appendChild(systemData.expandTitleBarButton);
+                                break;
+                            case "r":
+                                a.appendChild(systemData.minimizeTitleBarButton);
+                                break;
+                        }
+                    }
+                    
+                }
             }
         }
 
