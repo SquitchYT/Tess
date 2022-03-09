@@ -32,10 +32,42 @@ class OsInfomations{
         // m: Expand / Minimize
         // r: Reduce (in taskbar)
         let buttonOrder = ""
+        let temp = "";
 
         switch (this._wm) {
             case "X-Cinnamon":
-                let temp = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
+                temp = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
+                temp = temp.split(":")
+                temp[0].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "lc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "lm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "lr"
+                            break;
+                    }
+                })
+                temp[1].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "rc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "rm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "rr"
+                            break;
+                    }
+                })
+                break;
+            
+            case "KDE":
+                temp = Child_Proc.execSync("gsettings get org.gnome.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
                 temp = temp.split(":")
                 temp[0].split(",").forEach((el) => {
                     switch (el) {

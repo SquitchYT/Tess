@@ -12,7 +12,7 @@
     background: url("/usr/share/themes/Breeze-Dark/assets/titlebutton-close-active@2.png");
 }
 .minimize-button-KDE {
-    background: url("/usr/share/themes/Breeze-Dark/assets/Breeze-minimize-symbolic.svg");
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-minimize-symbolic.svg");
     background-size: cover !important;
 }
 .minimize-button-KDE:hover {
