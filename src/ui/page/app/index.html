@@ -5,7 +5,9 @@
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="../../../../node_modules/xterm/css/xterm.css">
         <link rel="stylesheet" href="quick-menu.css">
-        <script src="../../customElement/titleBarButton/titleBarButton.js"></script>
+        <link rel="stylesheet" href="titleBarButton.css">
+        <link rel="stylesheet" href="KDE-titlebar.css">
+        <link rel="stylesheet" href="cinnamon-titlebar.css">
         <title>Tess - Terminal</title>
     </head>
     <body>
@@ -28,16 +30,13 @@
                         <span class="shortcut">CTRL + M</span>
                     </div>-->
                 </div>
-
-
-                <div class="separator">
-
-                </div>
+                <div class="separator"></div>
                 <div class="quick-menu-other"></div>
                 <div class="no-profil-menu hide" id="quick-no-other-shell">Create a new profil in the config page!</div>
             </div>
         </div>
         <div class="tabs topbar">
+            <div class="buttons" id="titlebar-button-left"></div>
             <div class="tabs-panel">
                 <div class="tabs-tab" id="test">
                     <div class="more end-order" id="new-tab">
@@ -52,7 +51,7 @@
                     </div>
                 </div>
             </div>
-            <title-bar-button></title-bar-button>
+            <div class="buttons" id="titlebar-button-right"></div>
         </div>
         <div class="terminals-before">
             <div class="terminals" id="terminals">

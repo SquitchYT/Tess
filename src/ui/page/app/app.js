@@ -147,11 +147,35 @@ ipc.on("rename-tab", (_, data) => {
 });
 
 ipc.on("loaded", (_, data) => {
+    if (osData.os != "win32" && osData.supportCustomTitleBar) {
+        setTimeout(() => {
+            let rightButtons = document.getElementById("titlebar-button-right");
+            let leftButtons = document.getElementById("titlebar-button-left");            
+            let buttonOrder = osData.titleBarButtonOrder;
+
+            for (let index = 0; index < buttonOrder.length; index+=2) {
+                let el = buttonOrder[index] == "r" ? rightButtons : leftButtons;
+                el.style.paddingRight = "5px";
+                switch (buttonOrder[index+1]) {
+                    case "c":
+                        el.appendChild(osData.closeTitleBarButton);
+                        break;
+                    case "m":
+                        el.appendChild(osData.expandTitleBarButton);
+                        break;
+                    case "r":
+                        el.appendChild(osData.minimizeTitleBarButton);
+                        break;
+                }
+            }
+        }, 0)
+    } else if (osData.os == "win32") { document.getElementById("titlebar-button-right").style.width = "156px"; }
+
     config = data.config;
     colors = data.colors;
     let loadOptions = data.loadOptions;
 
-    previousBackgroundStyle = config.background
+    previousBackgroundStyle = config.background;
 
     HandleShortcut();
 

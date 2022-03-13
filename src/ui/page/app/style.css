@@ -98,6 +98,11 @@ body {
     transition: all 100ms linear;
 }
 
+.close-button svg {
+    height: 12px;
+    width: 12px;
+}
+
 .tab:hover .close-button {
     visibility: visible;
 }
@@ -224,11 +229,6 @@ iframe {
     padding: 0;
     margin: 0;
     overflow: hidden;
-}
-
-svg {
-    height: 12px;
-    width: 12px;
 }
 
 .overAll {

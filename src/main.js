@@ -183,8 +183,8 @@ function openWindow(config, colors) {
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
     let needFrame = !(osData.wm == "win" || osData.supportCustomTitleBar);
-    let needBlur = (config.background == "acrylic" || config.background == "blurbehind") ? true : false;
-    let needTransparent = (config.background == "transparent" || needBlur) ? true : false;
+    let needBlur = (config.background == "acrylic" || config.background == "blurbehind");
+    let needTransparent = (config.background == "transparent" || needBlur);
 
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
     const appwidth = width - (width >> 2);
@@ -221,10 +221,10 @@ function openWindow(config, colors) {
             color: colors.app.topBar,
             symbolColor: colors.app.textColor
         },
-        show: osData.os == "win32" ? false : true
+        show: !(osData.os == "win32")
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
