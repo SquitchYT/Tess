@@ -65,7 +65,6 @@ class OsInfomations{
                     }
                 })
                 break;
-            
             case "KDE":
                 temp = Child_Proc.execSync("gsettings get org.gnome.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
                 temp = temp.split(":")
@@ -96,9 +95,39 @@ class OsInfomations{
                     }
                 })
                 break;
-
             case "Budgie:GNOME":
                 temp = Child_Proc.execSync("gsettings get com.solus-project.budgie-wm button-layout").toString().trim().replaceAll("'", "");
+                temp = temp.split(":")
+                temp[0].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "lc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "lm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "lr"
+                            break;
+                    }
+                })
+                temp[1].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "rc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "rm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "rr"
+                            break;
+                    }
+                })
+                break;
+            case "MATE":
+                temp = Child_Proc.execSync("gsettings get org.mate.Marco.general button-layout").toString().trim().replaceAll("'", "");
+                console.log("MATTTTE", temp)
                 temp = temp.split(":")
                 temp[0].split(",").forEach((el) => {
                     switch (el) {
@@ -139,7 +168,7 @@ class OsInfomations{
             close_button.style.width = "18px";
             close_button.style.height = "18px";
             close_button.classList.add('close-button-KDE', "icon-KDE");
-        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME") {
+        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME" || this._wm == "MATE") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["close"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -208,7 +237,7 @@ class OsInfomations{
                     }
                 })
             })
-        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME") {
+        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME" || this._wm == "MATE") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["maximize"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -301,7 +330,7 @@ class OsInfomations{
             minimize_button.style.width = "18px";
             minimize_button.style.height = "18px";
             minimize_button.classList.add("minimize-button-KDE", "icon-KDE");
-        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME") {
+        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME" || this._wm == "MATE") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["minimize"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -359,6 +388,9 @@ class OsInfomations{
             case "Budgie:GNOME":
                 currentTheme = Child_Proc.execSync("gsettings get org.gnome.desktop.interface gtk-theme").toString().trim().replaceAll("'", "");
                 break;
+            case "MATE":
+                currentTheme = Child_Proc.execSync("gsettings get org.mate.Marco.general theme").toString().trim().replaceAll("'", "");
+                break;
         }
 
         return currentTheme
@@ -366,6 +398,7 @@ class OsInfomations{
 
     get supportCustomTitleBar() {
         let supportCustomTitleBar = false;
+        console.log(this.wm)
         try {
             switch (this._wm) {
                 case "KDE":
@@ -388,8 +421,8 @@ class OsInfomations{
                     break;
                 case "X-Cinnamon":
                 case "Budgie:GNOME":
+                case "MATE":
                     let theme = this.currentWindowTheme;
-                    console.log(theme)
                     
                     let theme_location = undefined;
                     let metacity_theme_file;
@@ -398,12 +431,8 @@ class OsInfomations{
                         metacity_theme_file = fs.readFileSync("/usr/share/themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
                         theme_location = "/usr/share/themes/" + theme + "/metacity-1/";
                     } catch {
-                        try {
-                            metacity_theme_file = fs.readFileSync("/home/clement/.themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
-                            theme_location = "/home/clement/.themes/" + theme + "/metacity-1";
-                        } catch (e) {
-                            console.log(e)
-                        }
+                        metacity_theme_file = fs.readFileSync(this.homeDir + "/.themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
+                        theme_location = this.homeDir + "/.themes/" + theme + "/metacity-1";
                     }
 
                     let metacity_theme = new XMLParser({ignoreAttributes: false, attributeNamePrefix : "@_"}).parse(metacity_theme_file)
