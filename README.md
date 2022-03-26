@@ -4,6 +4,7 @@
   <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Debian"/></a>
   <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Fedora-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Fedora"/></a>
   <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows"></a>
+  <br>
   <a href="https://community.chocolatey.org/packages/tess/"><img src="https://img.shields.io/static/v1?style=for-the-badge&message=Chocolatey&color=222222&logo=Chocolatey&logoColor=80B5E3&label=" alt="Chocolatey"></a>
   <a href="https://snapcraft.io/tess"><img src="https://img.shields.io/badge/snapcraft-222222?style=for-the-badge&logo=snapcraft&logoColor=#82BEA0" alt="Snapcraft"></a>
   <br>
