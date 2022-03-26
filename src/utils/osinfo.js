@@ -96,6 +96,37 @@ class OsInfomations{
                     }
                 })
                 break;
+
+            case "Budgie:GNOME":
+                temp = Child_Proc.execSync("gsettings get com.solus-project.budgie-wm button-layout").toString().trim().replaceAll("'", "");
+                temp = temp.split(":")
+                temp[0].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "lc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "lm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "lr"
+                            break;
+                    }
+                })
+                temp[1].split(",").forEach((el) => {
+                    switch (el) {
+                        case "close":
+                            buttonOrder += "rc"
+                            break;
+                        case "maximize":
+                            buttonOrder += "rm"
+                            break;
+                        case "minimize":
+                            buttonOrder += "rr"
+                            break;
+                    }
+                })
+                break;
         }
 
         return buttonOrder.match(/.{2}/g).reverse().join("")
@@ -326,7 +357,7 @@ class OsInfomations{
                 currentTheme = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences theme").toString().trim().replaceAll("'", "");
                 break;
             case "Budgie:GNOME":
-                currentTheme = Child_Proc.execSync("gsettings get org.gnome.desktop.wm.preferences theme").toString().trim().replaceAll("'", "");
+                currentTheme = Child_Proc.execSync("gsettings get org.gnome.desktop.interface gtk-theme").toString().trim().replaceAll("'", "");
                 break;
         }
 
@@ -358,6 +389,7 @@ class OsInfomations{
                 case "X-Cinnamon":
                 case "Budgie:GNOME":
                     let theme = this.currentWindowTheme;
+                    console.log(theme)
                     
                     let theme_location = undefined;
                     let metacity_theme_file;
@@ -369,7 +401,9 @@ class OsInfomations{
                         try {
                             metacity_theme_file = fs.readFileSync("/home/clement/.themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
                             theme_location = "/home/clement/.themes/" + theme + "/metacity-1";
-                        } catch {}
+                        } catch (e) {
+                            console.log(e)
+                        }
                     }
 
                     let metacity_theme = new XMLParser({ignoreAttributes: false, attributeNamePrefix : "@_"}).parse(metacity_theme_file)
@@ -435,7 +469,7 @@ class OsInfomations{
             }
 
         } catch (_) {
-            //console.log(e)
+            console.log(_)
             supportCustomTitleBar = false;
         } finally {
             return supportCustomTitleBar
