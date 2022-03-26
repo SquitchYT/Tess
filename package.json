@@ -2,6 +2,28 @@
   "name": "tess",
   "version": "0.5.4",
   "description": "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology",
+  "license": "Mozilla Public License 2.0",
+  "authors": [
+		{
+			"name": "Squitch",
+			"email": "contact@squitch.fr",
+			"url": "https://squitch.fr"
+		}
+	],
+  "keywords": [
+    "terminal",
+    "nodejs",
+    "bash",
+    "shell",
+    "xtermjs",
+    "node-pty",
+    "powershell",
+    "electron",
+    "electronjs",
+    "gui",
+    "application"
+  ],
+  "repository": "github:SquitchYT/Tess",
   "main": "src/main.js",
   "scripts": {
     "test": "electron .",
@@ -10,20 +32,6 @@
     "build-appimage": "electron-builder --linux appimage --publish=never",
     "build-win-portable": "electron-builder --win portable"
   },
-  "keywords": [
-    "terminal",
-    "nodejs",
-    "bash",
-    "shell",
-    "xtermjs",
-    "node-pty",
-    "powershell"
-  ],
-  "author": {
-    "name": "squitch",
-    "email": "contact.squitch@gmail.com"
-  },
-  "license": "ISC",
   "dependencies": {
     "electron-acrylic-window": "^0.5.11",
     "fast-xml-parser": "^4.0.1",
