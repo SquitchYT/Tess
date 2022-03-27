@@ -447,13 +447,13 @@ app.on("ready", () => {
     }
 });
 
-app.on("window-all-closed", function() {
+app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
         app.quit();
     }
 });
 
-app.on("activate", function() {
+app.on("activate", () => {
     if (mainWindow == null) {
         openWindow();
     }
@@ -471,11 +471,12 @@ ipc.on("close-terminal", (e, data) => {
 });
 
 ipc.on("close", () => {
-    if (mainWindow != undefined) {
+    /*if (mainWindow != undefined) {
         mainWindow.close();
     } else {
-        app.quit();
-    }
+        
+    }*/
+    app.quit();
 });
 
 ipc.on("minimize", () => {
@@ -524,7 +525,6 @@ ipc.on("reload", () => {
     if (osData.os == "win32") { 
         app.relaunch();
         mainWindow.close();
-        //app.exit();
     } else {
         Child_Proc.exec("tess");
         mainWindow.close();

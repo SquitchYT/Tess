@@ -31,11 +31,12 @@ class OsInfomations{
         // c: Close
         // m: Expand / Minimize
         // r: Reduce (in taskbar)
-        let buttonOrder = ""
+        let buttonOrder = "rrrmrc"
         let temp = "";
 
         switch (this._wm) {
             case "X-Cinnamon":
+                buttonOrder = ""
                 temp = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
                 temp = temp.split(":")
                 temp[0].split(",").forEach((el) => {
@@ -66,6 +67,7 @@ class OsInfomations{
                 })
                 break;
             case "KDE":
+                buttonOrder = ""
                 temp = Child_Proc.execSync("gsettings get org.gnome.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
                 temp = temp.split(":")
                 temp[0].split(",").forEach((el) => {
@@ -96,6 +98,7 @@ class OsInfomations{
                 })
                 break;
             case "Budgie:GNOME":
+                buttonOrder = ""
                 temp = Child_Proc.execSync("gsettings get com.solus-project.budgie-wm button-layout").toString().trim().replaceAll("'", "");
                 temp = temp.split(":")
                 temp[0].split(",").forEach((el) => {
@@ -126,6 +129,7 @@ class OsInfomations{
                 })
                 break;
             case "MATE":
+                buttonOrder = ""
                 temp = Child_Proc.execSync("gsettings get org.mate.Marco.general button-layout").toString().trim().replaceAll("'", "");
                 console.log("MATTTTE", temp)
                 temp = temp.split(":")
@@ -397,109 +401,102 @@ class OsInfomations{
     }
 
     get supportCustomTitleBar() {
-        let supportCustomTitleBar = false;
-        console.log(this.wm)
+        let theme = this.currentWindowTheme;
+        let supportCustomTitleBar = false; 
+
         try {
-            switch (this._wm) {
-                case "KDE":
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-symbolic.svg");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-hover-symbolic.svg");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-active-symbolic.svg");
-        
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-symbolic.svg");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-hover-symbolic.svg");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-active-symbolic.svg");
-        
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-symbolic.svg");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-hover-symbolic.svg");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-active-symbolic.svg");
-        
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-active@2.png");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-hover@2.png");
-                    fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
-                    supportCustomTitleBar = true;
-                    break;
-                case "X-Cinnamon":
-                case "Budgie:GNOME":
-                case "MATE":
-                    let theme = this.currentWindowTheme;
-                    
-                    let theme_location = undefined;
-                    let metacity_theme_file;
+            let theme_location = undefined;
+            let metacity_theme_file;
 
-                    try {
-                        metacity_theme_file = fs.readFileSync("/usr/share/themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
-                        theme_location = "/usr/share/themes/" + theme + "/metacity-1/";
-                    } catch {
-                        metacity_theme_file = fs.readFileSync(this.homeDir + "/.themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
-                        theme_location = this.homeDir + "/.themes/" + theme + "/metacity-1";
-                    }
+            try {
+                metacity_theme_file = fs.readFileSync("/usr/share/themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
+                theme_location = "/usr/share/themes/" + theme + "/metacity-1/";
+            } catch {
+                metacity_theme_file = fs.readFileSync(this.homeDir + "/.themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
+                theme_location = this.homeDir + "/.themes/" + theme + "/metacity-1";
+            }
 
-                    let metacity_theme = new XMLParser({ignoreAttributes: false, attributeNamePrefix : "@_"}).parse(metacity_theme_file)
+            let metacity_theme = new XMLParser({ignoreAttributes: false, attributeNamePrefix : "@_"}).parse(metacity_theme_file)
 
-                    let titlebar_buttons = {
-                        close: {
-                            normal: [],
-                            prelight: [],
-                            pressed: []
-                        },
-                        maximize: {
-                            normal: [],
-                            prelight: [],
-                            pressed: []
-                        },
-                        minimize: {
-                            normal: [],
-                            prelight: [],
-                            pressed: []
-                        },
-                        unmaximize: {
-                            normal: [],
-                            prelight: [],
-                            pressed: []
-                        }
-                    }
+            let titlebar_buttons = {
+                close: {
+                    normal: [],
+                    prelight: [],
+                    pressed: []
+                },
+                maximize: {
+                    normal: [],
+                    prelight: [],
+                    pressed: []
+                },
+                minimize: {
+                    normal: [],
+                    prelight: [],
+                    pressed: []
+                },
+                unmaximize: {
+                    normal: [],
+                    prelight: [],
+                    pressed: []
+                }
+            }
 
-                    let windowMetacityName = this.getTestToDefine(metacity_theme)
-                    let name_to_find = [windowMetacityName[0] + "*close", windowMetacityName[0] + "*maximize", windowMetacityName[0] + "*minimize", windowMetacityName[1] + "*maximize"]
+            let windowMetacityName = this.getTestToDefine(metacity_theme)
+            let name_to_find = [windowMetacityName[0] + "*close", windowMetacityName[0] + "*maximize", windowMetacityName[0] + "*minimize", windowMetacityName[1] + "*maximize"]
 
-                    name_to_find.forEach((current_name_to_find) => {
-                        metacity_theme.metacity_theme.frame_style.forEach((el) => {
-                            if (el["@_name"] == current_name_to_find.split("*")[0].replaceAll("-", "_")) {
-                                el.button.forEach((el) => {
-                                    let action_to_get = ["normal", "prelight", "pressed"]
-                                    if (el["@_function"] == current_name_to_find.split("*")[1] && action_to_get.includes(el["@_state"])) {
-                                        let current_icon_type = current_name_to_find.startsWith(windowMetacityName[0]) ? el["@_function"] : "unmaximize"
-                                        let current_icon_mode = el["@_state"]
-                                        metacity_theme.metacity_theme.draw_ops.forEach((draw_ops_el) => {
-                                            if (draw_ops_el["@_name"] == el["@_draw_ops"]) {
-                                                let images = draw_ops_el.image
-                    
-                                                if (Array.isArray(images)) {
-                                                    images.forEach((el) => {
-                                                        let name_to_to_define = this.valueFromConstantMetacity(el["@_colorize"], metacity_theme)
-                                                        titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  el["@_filename"], colorize: name_to_to_define.color, shade: name_to_to_define.shade})
-                                                    })
-                                                } else {
-                                                    let name_to_to_define = this.valueFromConstantMetacity(images["@_colorize"], metacity_theme)
-                                                    titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  images["@_filename"], colorize: name_to_to_define.color, shade: name_to_to_define.shade})
-                                                }
-                                            }
-                                        })
+            name_to_find.forEach((current_name_to_find) => {
+                metacity_theme.metacity_theme.frame_style.forEach((el) => {
+                    if (el["@_name"] == current_name_to_find.split("*")[0].replaceAll("-", "_")) {
+                        el.button.forEach((el) => {
+                            let action_to_get = ["normal", "prelight", "pressed"]
+                            if (el["@_function"] == current_name_to_find.split("*")[1] && action_to_get.includes(el["@_state"])) {
+                                let current_icon_type = current_name_to_find.startsWith(windowMetacityName[0]) ? el["@_function"] : "unmaximize"
+                                let current_icon_mode = el["@_state"]
+                                metacity_theme.metacity_theme.draw_ops.forEach((draw_ops_el) => {
+                                    if (draw_ops_el["@_name"] == el["@_draw_ops"]) {
+                                        let images = draw_ops_el.image
+            
+                                        if (Array.isArray(images)) {
+                                            images.forEach((el) => {
+                                                let name_to_to_define = this.valueFromConstantMetacity(el["@_colorize"], metacity_theme)
+                                                titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  el["@_filename"], colorize: name_to_to_define.color, shade: name_to_to_define.shade})
+                                            })
+                                        } else {
+                                            let name_to_to_define = this.valueFromConstantMetacity(images["@_colorize"], metacity_theme)
+                                            titlebar_buttons[current_icon_type][current_icon_mode].push({filename: theme_location + "/" +  images["@_filename"], colorize: name_to_to_define.color, shade: name_to_to_define.shade})
+                                        }
                                     }
                                 })
                             }
                         })
-                    })
+                    }
+                })
+            })
 
-                    this.titlebar_buttons = titlebar_buttons;
-                    supportCustomTitleBar = true;
-                    break;
+            this.titlebar_buttons = titlebar_buttons;
+            supportCustomTitleBar = true;
+
+        } catch {
+            if (this._wm == "KDE") {
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-symbolic.svg");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-hover-symbolic.svg");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-active-symbolic.svg");
+    
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-symbolic.svg");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-hover-symbolic.svg");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximized-active-symbolic.svg");
+    
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-symbolic.svg");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-hover-symbolic.svg");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-minimize-active-symbolic.svg");
+    
+                fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-active@2.png");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-hover@2.png");
+                fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
+                supportCustomTitleBar = true;
+            } else {
+                // TODO for adwaita
             }
-
-        } catch (_) {
-            console.log(_)
-            supportCustomTitleBar = false;
         } finally {
             return supportCustomTitleBar
         }
