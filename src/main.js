@@ -37,8 +37,7 @@ const net = require("net");
 
 const Color = require("./utils/color");
 
-const OsInfomations = require("./utils/osinfo");
-const osData = new OsInfomations();
+const osData = new (require("./utils/osinfo"))();
 
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
 const path = require("path");
@@ -100,7 +99,6 @@ let workers = [];
 let mainWindow;
 let shells = [];
 
-//Modifier getting with args
 let customWorkdir;
 let customCommand;
 let newTab;
@@ -148,7 +146,6 @@ if (osData.os == "win32" && config.background != "transparent" && config.backgro
 
 if (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind" && osData.os != "win32") {
     app.commandLine.appendSwitch("disable-gpu");
-
 }
 
 if (osData.os == "linux") { app.commandLine.appendSwitch("no-sandbox"); }
@@ -224,7 +221,7 @@ function openWindow(config, colors) {
         show: !(osData.os == "win32")
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
@@ -238,7 +235,7 @@ function openWindow(config, colors) {
         }, 150);
     });
 
-    mainWindow.on("did-finish-load", () => {
+    mainWindow.on("did-finish-load", () => { // Replace by event after theme loaded
         mainWindow.show();
     })
 
@@ -254,21 +251,6 @@ function openWindow(config, colors) {
         profil: (launchProfil) ? launchProfil : profilToLaunch,
         workdir: customWorkdir,
         customCommand: customCommand
-    }
-
-    if (osData.os == "win32") {
-        app.on('browser-window-focus', () => {
-            try {
-                mainWindow.webContents.send("focus");
-            } catch (_) { }
-        })
-        app.on('browser-window-blur', (e, win) => {
-            if (!win.webContents.isDevToolsFocused()) {
-                try {
-                    mainWindow.webContents.send("unfocus");
-                } catch (_) { }
-            }
-        })
     }
 
     mainWindow.on("ready-to-show", () => {
@@ -371,7 +353,7 @@ ipc.on("new-term", (e, data) => {
         try {
             mainWindow.webContents.send("resize");
         } catch (_) { }
-    }, 175);
+    }, 170);
 });
 
 ipc.on("terminal-data", (e, data) => {
@@ -433,9 +415,7 @@ app.on("ready", () => {
                     }
                 })
             }
-        }(0);
-
-        
+        }();
     } else {
         if (needTransparent && osData.os != "win32") {
             setTimeout(() => {
@@ -449,17 +429,17 @@ app.on("ready", () => {
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
-        app.quit();
+        app.exit();
     }
 });
 
-app.on("activate", () => {
+/*app.on("activate", () => {
     if (mainWindow == null) {
         openWindow();
     }
-});
+});*/
 
-ipc.on("close-terminal", (e, data) => {
+ipc.on("close-terminal", (_, data) => {
     let y = 0;
     shells.forEach((el) => {
         if (el.index == data) {
@@ -471,12 +451,7 @@ ipc.on("close-terminal", (e, data) => {
 });
 
 ipc.on("close", () => {
-    /*if (mainWindow != undefined) {
-        mainWindow.close();
-    } else {
-        
-    }*/
-    app.quit();
+    mainWindow.close();
 });
 
 ipc.on("minimize", () => {
@@ -488,6 +463,7 @@ ipc.on("reduce-expand", (e, _) => {
     maximized ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
         BrowserWindow.getFocusedWindow().webContents.send("resize");
+        e.reply("reduced-expanded", !maximized)
     }, 400);
 
     if (osData.os == "win32") {
@@ -495,8 +471,6 @@ ipc.on("reduce-expand", (e, _) => {
             mainWindow.webContents.send("app-reduced-expanded", !maximized);
         } catch (_) { }
     }
-
-    e.reply("reduced-expanded", !maximized)
 });
 
 ipc.on("resize", (_, data) => {
@@ -584,7 +558,7 @@ function reloadConfig() {
 }
 
 ipc.on("debug", (_, data) => {
-    console.log("DEBUG: " + data);
+    console.log("[DEBUG] " + data);
 });
 
 ipc.on("openFileDialog", (e, data) => {
@@ -652,15 +626,13 @@ function updateJumpMenu () {
         {
             type: "custom",
             name: "Page",
-            items: [
-                {
-                    type: "task",
-                    title: "Config Page",
-                    description: "Open config page on a new tab",
-                    program: process.execPath,
-                    args: "--newtab --launch-page=Config"
-                }
-            ]
+            items: [{
+                type: "task",
+                title: "Config Page",
+                description: "Open config page on a new tab",
+                program: process.execPath,
+                args: "--newtab --launch-page=Config"
+            }]
         }
     ])
 }

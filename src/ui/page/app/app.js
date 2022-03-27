@@ -79,18 +79,6 @@ function closeQuickAccessMenu() {
     quickMenuInner.classList.remove("pointer-event");
 }
 
-ipc.on("focus", () => {
-    document.querySelectorAll(".app-button").forEach((el) => {
-        el.classList.remove("app-button-unfocus")
-    })
-})
-
-ipc.on("unfocus", () => {
-    document.querySelectorAll(".app-button").forEach((el) => {
-        el.classList.add("app-button-unfocus")
-    })
-})
-
 const shortcutAction = ["Close", "Copy", "Paste", "OpenShell"];
 const CustomPage = [
     {
@@ -103,9 +91,7 @@ const CustomPage = [
 let cols;
 let rows;
 let terminalsList = [];
-let n = 0;
-let index = 0;
-
+let [n, index, tabOrderToAdd] = [0, 0, 0]
 let config;
 let colors;
 
@@ -113,16 +99,13 @@ let fontSize;
 let shortcut = [];
 let canShortcut = true;
 
-let tabOrderToAdd = 0;
-
 let maxIndex = 1;
 
-ipc.on("shortcutStateUpdate", (e, state) => {
+ipc.on("shortcutStateUpdate", (_, state) => {
     canShortcut = state;
 });
 
-
-ipc.on("pty-data", (e, data) => {
+ipc.on("pty-data", (_, data) => {
     terminalsList.forEach((el) => {
         if (el.index === data.index) {
             el.term.write(data.data);
@@ -382,9 +365,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         let page = document.createElement("iframe");
         page.setAttribute("src", "../config/config.html");
         page.setAttribute("nodeintegration", "");
-        termDiv.appendChild(page);
-
         page.classList.add("iframe");
+        termDiv.appendChild(page);
 
         page.addEventListener("load", () => {
             let iFrameWindow = page.contentWindow;
@@ -578,8 +560,6 @@ function Close(index) {
                 terminalsList.splice(y - 1, 1);
             }
         });
-    
-        
     
         return false;
     } catch (_) {
