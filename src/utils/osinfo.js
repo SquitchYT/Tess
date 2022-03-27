@@ -9,6 +9,7 @@ class OsInfomations{
         this._os = process.platform;
         this._wm = Child_Proc.execSync("echo $XDG_CURRENT_DESKTOP").toString().trim();
         this._homedir = os.homedir();
+        this._theme_mode = undefined;
     }
 
     get os(){
@@ -67,6 +68,7 @@ class OsInfomations{
                 })
                 break;
             case "KDE":
+            case "Unity":
                 buttonOrder = ""
                 temp = Child_Proc.execSync("gsettings get org.gnome.desktop.wm.preferences button-layout").toString().trim().replaceAll("'", "");
                 temp = temp.split(":")
@@ -168,11 +170,11 @@ class OsInfomations{
     get closeTitleBarButton() {
         let close_button = document.createElement('div');
 
-        if (this._wm == "KDE") {
+        if (this._theme_mode == "breeze") {
             close_button.style.width = "18px";
             close_button.style.height = "18px";
             close_button.classList.add('close-button-KDE', "icon-KDE");
-        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME" || this._wm == "MATE") {
+        } else if (this._theme_mode == "metacity") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["close"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -207,11 +209,21 @@ class OsInfomations{
                 })
             }
 
-            close_button.style.height = "18px";
-            close_button.style.width = "18px";
+            if (this.wm == "Unity") {
+                close_button.style.height = "22px";
+                close_button.style.width = "22px";
+            } else {
+                close_button.style.height = "18px";
+                close_button.style.width = "18px";
+            }
+
             close_button.style.position = "relative";
             close_button.style.marginLeft = "10px";
             close_button.classList.add("close-cinnamon")
+        } else {
+            close_button.style.width = "22px";
+            close_button.style.height = "22px";
+            close_button.classList.add('close-button-adwaita', "icon-adwaita");
         }
 
         close_button.addEventListener("click", () => {
@@ -224,7 +236,7 @@ class OsInfomations{
     get expandTitleBarButton() {
         let expand_reduce_button = document.createElement("div");
 
-        if (this._wm == "KDE") {
+        if (this._theme_mode == "breeze") {
             expand_reduce_button.style.width = "20px";
             expand_reduce_button.style.height = "20px";
             expand_reduce_button.classList.add("expand-button-KDE", "icon-KDE");
@@ -241,7 +253,7 @@ class OsInfomations{
                     }
                 })
             })
-        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME" || this._wm == "MATE") {
+        } else if (this._theme_mode == "metacity") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["maximize"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -276,8 +288,14 @@ class OsInfomations{
                 })
             }
 
-            expand_reduce_button.style.height = "18px";
-            expand_reduce_button.style.width = "18px";
+            if (this.wm == "Unity") {
+                expand_reduce_button.style.height = "22px";
+                expand_reduce_button.style.width = "22px";
+            } else {
+                expand_reduce_button.style.height = "18px";
+                expand_reduce_button.style.width = "18px";
+            }
+
             expand_reduce_button.style.position = "relative";
             expand_reduce_button.style.marginLeft = "10px";
             expand_reduce_button.classList.add("maximize-cinnamon")
@@ -322,6 +340,23 @@ class OsInfomations{
                     }
                 })
             })
+        } else {
+            expand_reduce_button.style.width = "22px";
+            expand_reduce_button.style.height = "22px";
+            expand_reduce_button.classList.add("expand-button-adwaita", "icon-adwaita");
+
+            expand_reduce_button.addEventListener("click", () => {
+                ipc.send("reduce-expand");
+                ipc.on("reduced-expanded", (_, maximized) => {
+                    if (maximized) {
+                        expand_reduce_button.classList.remove("expand-button-adwaita")
+                        expand_reduce_button.classList.add("reduce-button-adwaita")
+                    } else {
+                        expand_reduce_button.classList.add("expand-button-adwaita")
+                        expand_reduce_button.classList.remove("reduce-button-adwaita")
+                    }
+                })
+            })
         }
 
         return expand_reduce_button
@@ -330,11 +365,11 @@ class OsInfomations{
     get minimizeTitleBarButton() {
         let minimize_button = document.createElement("div");
 
-        if (this._wm == "KDE") {
+        if (this._theme_mode == "breeze") {
             minimize_button.style.width = "18px";
             minimize_button.style.height = "18px";
             minimize_button.classList.add("minimize-button-KDE", "icon-KDE");
-        } else if (this._wm == "X-Cinnamon" || this._wm == "Budgie:GNOME" || this._wm == "MATE") {
+        } else if (this._theme_mode == "metacity") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["minimize"])) {
                 value.forEach((el, index) => {
                     let new_layer = document.createElement("div");
@@ -368,11 +403,21 @@ class OsInfomations{
                 })
             }
 
-            minimize_button.style.height = "18px";
-            minimize_button.style.width = "18px";
+            if (this.wm == "Unity") {
+                minimize_button.style.height = "22px";
+                minimize_button.style.width = "22px";
+            } else {
+                minimize_button.style.height = "18px";
+                minimize_button.style.width = "18px";
+            }
+
             minimize_button.style.position = "relative";
             minimize_button.style.marginLeft = "10px";
             minimize_button.classList.add("minimize-cinnamon");
+        } else {
+            minimize_button.style.width = "22px";
+            minimize_button.style.height = "22px";
+            minimize_button.classList.add("minimize-button-adwaita", "icon-adwaita");
         }
 
         minimize_button.addEventListener("click", () => {
@@ -390,6 +435,7 @@ class OsInfomations{
                 currentTheme = Child_Proc.execSync("gsettings get org.cinnamon.desktop.wm.preferences theme").toString().trim().replaceAll("'", "");
                 break;
             case "Budgie:GNOME":
+            case "Unity":
                 currentTheme = Child_Proc.execSync("gsettings get org.gnome.desktop.interface gtk-theme").toString().trim().replaceAll("'", "");
                 break;
             case "MATE":
@@ -403,7 +449,9 @@ class OsInfomations{
     get supportCustomTitleBar() {
         let theme = this.currentWindowTheme;
         let supportCustomTitleBar = false;
-        console.log("ddd:", theme)
+        console.log("ddd:", theme, "wm:", this.wm)
+
+        if (theme == undefined) { return; }
 
         try {
             let theme_location = undefined;
@@ -477,6 +525,8 @@ class OsInfomations{
 
             this.titlebar_buttons = titlebar_buttons;
             supportCustomTitleBar = true;
+            this._theme_mode = "metacity"
+            console.log(titlebar_buttons)
 
         } catch {
             console.log("metacity not found")
@@ -498,9 +548,11 @@ class OsInfomations{
                 fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close-hover@2.png");
                 fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
                 supportCustomTitleBar = true;
+                this._theme_mode = "breeze"
             } else {
-                // TODO for adwaita
-                console.log("adwaita search")
+                console.log("fallback to adwaita");
+                supportCustomTitleBar = true;
+                this._theme_mode = "adwaita"
             }
         } finally {
             return supportCustomTitleBar

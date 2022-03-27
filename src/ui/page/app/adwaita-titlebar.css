@@ -1,0 +1,47 @@
+.icon-adwaita {
+    margin-right: 6px;
+    margin-left: 6px;
+    background-position: center !important;
+    border-radius: 100%;
+    transition: background 100ms linear;
+}
+
+.close-button-adwaita {
+    background: url("../../../ressources/adwaita-icons/window-close-symbolic.svg");
+}
+.close-button-adwaita:hover {
+    background: url("../../../ressources/adwaita-icons/window-close-symbolic.svg") rgba(255, 255, 255, 0.045);
+}
+.close-button-adwaita:active {
+    background: url("../../../ressources/adwaita-icons/window-close-symbolic.svg") rgba(255, 255, 255, 0.07);
+}
+
+.minimize-button-adwaita {
+    background: url("../../../ressources/adwaita-icons/window-minimize-symbolic.svg");
+}
+.minimize-button-adwaita:hover {
+    background: url("../../../ressources/adwaita-icons/window-minimize-symbolic.svg") rgba(255, 255, 255, 0.045);
+}
+.minimize-button-adwaita:active {
+    background: url("../../../ressources/adwaita-icons/window-minimize-symbolic.svg") rgba(255, 255, 255, 0.07);
+}
+
+.expand-button-adwaita {
+    background: url("../../../ressources/adwaita-icons/window-maximize-symbolic.svg");
+}
+.expand-button-adwaita:hover {
+    background: url("../../../ressources/adwaita-icons/window-maximize-symbolic.svg") rgba(255, 255, 255, 0.045);
+}
+.expand-button-adwaita:active {
+    background: url("../../../ressources/adwaita-icons/window-maximize-symbolic.svg") rgba(255, 255, 255, 0.07);
+}
+
+.reduce-button-adwaita {
+    background: url("../../../ressources/adwaita-icons/window-restore-symbolic.svg");
+}
+.reduce-button-adwaita:hover {
+    background: url("../../../ressources/adwaita-icons/window-restore-symbolic.svg") rgba(255, 255, 255, 0.045);
+}
+.reduce-button-adwaita:active {
+    background: url("../../../ressources/adwaita-icons/window-restore-symbolic.svg") rgba(255, 255, 255, 0.07);
+}
