@@ -402,11 +402,13 @@ class OsInfomations{
 
     get supportCustomTitleBar() {
         let theme = this.currentWindowTheme;
-        let supportCustomTitleBar = false; 
+        let supportCustomTitleBar = false;
+        console.log("ddd:", theme)
 
         try {
             let theme_location = undefined;
             let metacity_theme_file;
+            console.log("metacity search...")
 
             try {
                 metacity_theme_file = fs.readFileSync("/usr/share/themes/" + theme + "/metacity-1/metacity-theme-3.xml").toString();
@@ -477,7 +479,9 @@ class OsInfomations{
             supportCustomTitleBar = true;
 
         } catch {
+            console.log("metacity not found")
             if (this._wm == "KDE") {
+                console.log("kde search")
                 fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-symbolic.svg");
                 fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-hover-symbolic.svg");
                 fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-active-symbolic.svg");
@@ -496,6 +500,7 @@ class OsInfomations{
                 supportCustomTitleBar = true;
             } else {
                 // TODO for adwaita
+                console.log("adwaita search")
             }
         } finally {
             return supportCustomTitleBar
