@@ -7,9 +7,7 @@ const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
 const Color = require("../../../utils/color");
 
-const topbar = document.querySelector(".topbar");
-
-topbar.addEventListener("dblclick", () => {
+document.querySelector(".tabs").addEventListener("dblclick", () => { // TODO: Fix dbclick not trigerred when `webkit-app-region: drag` is set in css
     if (osData.os == "win32") {
         ipc.send("reduce-expand");
     }
@@ -19,7 +17,6 @@ const tabs = document.querySelector(".tabs-tab");
 const terminals = document.querySelector(".terminals");
 const body = document.body;
 const root = document.documentElement;
-const target = document.getElementById("test");
 const osInformations = require("../../../utils/osinfo");
 const osData = new osInformations();
 
@@ -152,7 +149,7 @@ ipc.on("loaded", (_, data) => {
                 }
             }
         }, 0)
-    } else if (osData.os == "win32") { document.getElementById("titlebar-button-right").style.width = "156px"; }
+    } else if (osData.os == "win32") { document.getElementById("titlebar-button-right").style.width = "260px"; }
 
     config = data.config;
     colors = data.colors;
@@ -586,9 +583,9 @@ function Close(index) {
     }
 }
 
-target.addEventListener("wheel", event => {
+tabs.addEventListener("wheel", event => {
     event.preventDefault();
-    target.scrollLeft += event.deltaY;
+    tabs.scrollLeft += event.deltaY;
 });
 
 function ExecuteShortcut(e) {
@@ -715,12 +712,11 @@ function changeTabOrder(tab, tab_link) {
                 while (nextTab == null && i <= maxIndex) {
                     nextTab = document.querySelector(".tab[index='" + Number(Number(tab.getAttribute("index")) - i++) + "']");
                 }
-
-                let allTab = document.querySelectorAll(".tab");
     
                 tab.setAttribute("index", nextTab.getAttribute("index"));
                 nextTab.setAttribute("index", Number(tab.getAttribute("index")) + 1);
-    
+                
+                let allTab = document.querySelectorAll(".tab");
                 allTab.forEach((el) => {
                     el.style.order = el.getAttribute("index");
                 });
@@ -794,7 +790,6 @@ function checkIfCustomPage(pageName) {
     })
     return finded;
 }
-
 
 function onlyOnePage(pageName) {
     let onePage = false;

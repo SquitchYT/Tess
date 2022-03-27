@@ -3,6 +3,5 @@
     display: flex;
     align-items: center;
     flex-direction: row-reverse;
-    -webkit-app-region: no-drag;
     background: var(--tab-panel-background);
 }

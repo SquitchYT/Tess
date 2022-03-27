@@ -216,7 +216,8 @@ function openWindow(config, colors) {
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             color: colors.app.topBar,
-            symbolColor: colors.app.textColor
+            symbolColor: colors.app.textColor,
+            height: 30
         },
         show: !(osData.os == "win32")
     });
@@ -271,7 +272,7 @@ function openWindow(config, colors) {
 }
 
 
-ipc.on("new-term", (e, data) => {
+ipc.on("new-term", (_, data) => {
     let Command, prog, args;
 
     if (osData.os == "win32") {
@@ -292,14 +293,12 @@ ipc.on("new-term", (e, data) => {
         Command.shift()
         args = Command
     }
-    
     prog = getProcessPath(osData.os != "win32" ? prog.trim() : path.basename(prog.trim()))
 
-    if (prog == undefined && osData.os == "win32") { prog = getProcessPath("powershell.exe"); }
+    if (prog == undefined && osData.os == "win32") { prog = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"; }
     else if (prog == undefined && osData != "win32") { prog = "sh"; args = ["-c", "$SHELL"]; }
 
     let workdir = data.workdir
-
     let shell = pty.spawn(prog.trim(), args, {
         name: "xterm-color",
         cols: data.cols,
@@ -329,10 +328,11 @@ ipc.on("new-term", (e, data) => {
         if (osData.os == "win32") {
             !function updateTabName(pid) {
                 getProcessTree(pid, (tree) => {
-                    while(tree.children.length != 0) {
-                        tree = tree.children[0]
+                    if (tree?.children) {
+                        while(tree.children.length != 0) {
+                            tree = tree.children[0]
+                        }
                     }
-    
                     try {
                         mainWindow.webContents.send("rename-tab", {
                             index: data.index,
@@ -356,7 +356,7 @@ ipc.on("new-term", (e, data) => {
     }, 170);
 });
 
-ipc.on("terminal-data", (e, data) => {
+ipc.on("terminal-data", (_, data) => {
     shells.forEach((el) => {
         if (el.index == data.index) {
             el.shell.write(data.data);
@@ -433,12 +433,6 @@ app.on("window-all-closed", () => {
     }
 });
 
-/*app.on("activate", () => {
-    if (mainWindow == null) {
-        openWindow();
-    }
-});*/
-
 ipc.on("close-terminal", (_, data) => {
     let y = 0;
     shells.forEach((el) => {
@@ -453,24 +447,17 @@ ipc.on("close-terminal", (_, data) => {
 ipc.on("close", () => {
     mainWindow.close();
 });
-
 ipc.on("minimize", () => {
     BrowserWindow.getFocusedWindow().minimize();
 });
-
 ipc.on("reduce-expand", (e, _) => {
+    console.log("ddddd")
     let maximized = BrowserWindow.getFocusedWindow().isMaximized();
     maximized ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
         BrowserWindow.getFocusedWindow().webContents.send("resize");
         e.reply("reduced-expanded", !maximized)
     }, 400);
-
-    if (osData.os == "win32") {
-        try {
-            mainWindow.webContents.send("app-reduced-expanded", !maximized);
-        } catch (_) { }
-    }
 });
 
 ipc.on("resize", (_, data) => {
@@ -505,7 +492,7 @@ ipc.on("reload", () => {
     }
 });
 
-ipc.on("shortcut", (e, state) => {
+ipc.on("shortcut", (_, state) => {
     try {
         BrowserWindow.getFocusedWindow().webContents.send("shortcutStateUpdate", state);
     } catch (_) { }
@@ -659,17 +646,14 @@ function getProcessPath(process) {
         try {
             let result = Child_Proc.execSync(`C:\\Windows\\System32\\where.exe ${process}`, {stdio: "pipe"} ).toString();
             return(result.split("\n")[0])
-        } catch (_) {
-            return undefined
-        }
+        } catch (_) { }
     } else {
         try {
             let result = Child_Proc.execSync(`which ${process}`, {stdio: "pipe"}).toString();
             return result
-        } catch (_) {
-            return undefined
-        }
+        } catch (_) { }
     }
+    return undefined
 }
 
 ipc.on("focus", () => {
