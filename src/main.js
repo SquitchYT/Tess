@@ -90,10 +90,6 @@ if (osData.os == "win32") {
     updateJumpMenu();
 }
 
-if (osData.wm == "win" || customWMIntegration.includes(osData.wm)) {
-    console.log("custom Title Bar Integration is supported.")
-}
-
 let BrowserWindow;
 let workers = [];
 let mainWindow;
@@ -222,7 +218,7 @@ function openWindow(config, colors) {
         show: !(osData.os == "win32")
     });
 
-    //mainWindow.removeMenu();
+    mainWindow.removeMenu();
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;

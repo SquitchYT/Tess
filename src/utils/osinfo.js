@@ -451,8 +451,6 @@ class OsInfomations{
         let theme = this.currentWindowTheme;
         let supportCustomTitleBar = false;
 
-        if (theme == undefined) { return; }
-
         try {
             let theme_location = undefined;
             let metacity_theme_file;
@@ -524,7 +522,7 @@ class OsInfomations{
 
             this.titlebar_buttons = titlebar_buttons;
             supportCustomTitleBar = true;
-            this._theme_mode = "metacity"
+            this._theme_mode = "metacity";
         } catch {
             if (this._wm == "KDE") {
                 fs.readFileSync("/usr/share/themes/Breeze/assets/breeze-maximize-symbolic.svg");
