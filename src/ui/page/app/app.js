@@ -7,7 +7,7 @@ const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
 const Color = require("../../../utils/color");
 
-document.querySelector(".tabs").addEventListener("dblclick", () => { // TODO: Fix dbclick not trigerred when `webkit-app-region: drag` is set in css
+document.querySelector(".tabs").addEventListener("dblclick", () => { // TODO: Fix dbclick not trigerred when `webkit-app-region: drag` is set in css in windows
     if (osData.os == "win32") {
         ipc.send("reduce-expand");
     }
@@ -148,6 +148,9 @@ ipc.on("loaded", (_, data) => {
                         break;
                 }
             }
+
+            rightButtons.classList.add("no-drag");
+            leftButtons.classList.add("no-drag");
         }, 0)
     } else if (osData.os == "win32") { document.getElementById("titlebar-button-right").style.width = "260px"; }
 
@@ -639,7 +642,7 @@ function Copy() {
     return result;
 }
 
-ipc.on("newConfig", (e, data) => {
+ipc.on("newConfig", (_, data) => {
     config = data.config;
     colors =  JSON.parse(JSON.stringify(data.color));
     HandleShortcut();
@@ -695,11 +698,10 @@ function changeTabOrder(tab, tab_link) {
                     i++;
                 }
 
-                let allTab = document.querySelectorAll(".tab");
-    
                 tab.setAttribute("index", nextTab.getAttribute("index"));
                 nextTab.setAttribute("index", Number(tab.getAttribute("index")) - 1);
-    
+
+                let allTab = document.querySelectorAll(".tab");
                 allTab.forEach((el) => {
                     el.style.order = el.getAttribute("index");
                 });
@@ -741,7 +743,7 @@ function updateTerminalApparence() {
     terminalsList.forEach((el) => {
         if (el.type == "Terminal") {
             if (config.experimentalFontLigature == "true") {
-                el.term.loadAddon(el.ligatureAddon)
+                el.term.loadAddon(el.ligatureAddon);
             } else {
                 el.ligatureAddon.dispose();
             }
@@ -758,8 +760,8 @@ function updateTerminalApparence() {
     resize();
 }
 
-ipc.on("openNewPage", (e, data) => {
-    openNewPage(JSON.parse(data))
+ipc.on("openNewPage", (_, data) => {
+    openNewPage(JSON.parse(data));
 })
 
 function openNewPage(data) {

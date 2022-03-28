@@ -5,3 +5,7 @@
     flex-direction: row-reverse;
     background: var(--tab-panel-background);
 }
+
+.buttons.no-drag {
+    -webkit-app-region: no-drag;
+}

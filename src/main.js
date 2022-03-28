@@ -222,7 +222,7 @@ function openWindow(config, colors) {
         show: !(osData.os == "win32")
     });
 
-    mainWindow.removeMenu();
+    //mainWindow.removeMenu();
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
@@ -234,6 +234,11 @@ function openWindow(config, colors) {
                 mainWindow.webContents.send("resize");
             } catch (_) { }
         }, 150);
+
+        let maximized = BrowserWindow.getFocusedWindow().isMaximized();
+        try {
+            mainWindow.webContents.send("reduced-expanded", maximized);
+        } catch {}
     });
 
     mainWindow.on("did-finish-load", () => { // Replace by event after theme loaded
@@ -242,9 +247,7 @@ function openWindow(config, colors) {
 
     let profilToLaunch;
     config.profil.forEach((el) => {
-        if (el.name == config.defaultProfil) {
-            profilToLaunch = el;
-        }
+        if (el.name == config.defaultProfil) { profilToLaunch = el; }
     })
 
     let loadOptions = {
@@ -260,14 +263,13 @@ function openWindow(config, colors) {
                 config: config,
                 colors: colors,
                 loadOptions: loadOptions
-
             });
             if (osData.os == "win32") { mainWindow.webContents.send("app-reduced-expanded", mainWindow.isMaximized()); }
-        } catch (_) { }
+        } catch { }
     });
 
     mainWindow.on("will-move", () => {
-        if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize() }
+        if (BrowserWindow.getFocusedWindow().isMaximized()) { BrowserWindow.getFocusedWindow().unmaximize(); }
     })
 }
 
@@ -276,29 +278,29 @@ ipc.on("new-term", (_, data) => {
     let Command, prog, args;
 
     if (osData.os == "win32") {
-        Command = data.shell.split(".exe ")
+        Command = data.shell.split(".exe ");
 
-        prog = Command[0]
-        prog += (Command[0] != data.shell) ? ".exe" : ""
+        prog = Command[0];
+        prog += (Command[0] != data.shell) ? ".exe" : "";
 
         if (prog.trim() == data.shell.trim()) { // No args provided
-            args = []
+            args = [];
         } else {
-            Command.shift()
-            args = Command[0].split(" ")
+            Command.shift();
+            args = Command[0].split(" ");
         }
     } else {
         Command = data.shell.split(" ");
-        prog = Command[0]
-        Command.shift()
-        args = Command
+        prog = Command[0];
+        Command.shift();
+        args = Command;
     }
-    prog = getProcessPath(osData.os != "win32" ? prog.trim() : path.basename(prog.trim()))
+    prog = getProcessPath(osData.os != "win32" ? prog.trim() : path.basename(prog.trim()));
 
     if (prog == undefined && osData.os == "win32") { prog = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"; }
     else if (prog == undefined && osData != "win32") { prog = "sh"; args = ["-c", "$SHELL"]; }
 
-    let workdir = data.workdir
+    let workdir = data.workdir;
     let shell = pty.spawn(prog.trim(), args, {
         name: "xterm-color",
         cols: data.cols,
@@ -323,7 +325,7 @@ ipc.on("new-term", (_, data) => {
                 data: datas,
                 processName: osData.os == "win32" ? "" : shell.process
             });
-        } catch (_) { }
+        } catch { }
 
         if (osData.os == "win32") {
             !function updateTabName(pid) {
@@ -338,7 +340,7 @@ ipc.on("new-term", (_, data) => {
                             index: data.index,
                             name: tree.name,
                         });
-                    } catch (_) { }
+                    } catch { }
                 })
             }(shell.pid);
         }
@@ -352,7 +354,7 @@ ipc.on("new-term", (_, data) => {
     setTimeout(() => {
         try {
             mainWindow.webContents.send("resize");
-        } catch (_) { }
+        } catch { }
     }, 170);
 });
 
@@ -451,13 +453,13 @@ ipc.on("minimize", () => {
     BrowserWindow.getFocusedWindow().minimize();
 });
 ipc.on("reduce-expand", (e, _) => {
-    console.log("ddddd")
     let maximized = BrowserWindow.getFocusedWindow().isMaximized();
     maximized ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
-        BrowserWindow.getFocusedWindow().webContents.send("resize");
-        e.reply("reduced-expanded", !maximized)
-    }, 400);
+        try {
+            mainWindow.webContents.send("resize");
+        } catch {}
+    }, 300);
 });
 
 ipc.on("resize", (_, data) => {

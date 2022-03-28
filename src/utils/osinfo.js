@@ -243,16 +243,16 @@ class OsInfomations{
 
             expand_reduce_button.addEventListener("click", () => {
                 ipc.send("reduce-expand");
-                ipc.on("reduced-expanded", (_, maximized) => {
-                    if (maximized) {
-                        expand_reduce_button.classList.remove("expand-button-KDE")
-                        expand_reduce_button.classList.add("reduce-button-KDE")
-                    } else {
-                        expand_reduce_button.classList.add("expand-button-KDE")
-                        expand_reduce_button.classList.remove("reduce-button-KDE")
-                    }
-                })
-            })
+            });
+            ipc.on("reduced-expanded", (_, maximized) => {
+                if (maximized) {
+                    expand_reduce_button.classList.remove("expand-button-KDE")
+                    expand_reduce_button.classList.add("reduce-button-KDE")
+                } else {
+                    expand_reduce_button.classList.add("expand-button-KDE")
+                    expand_reduce_button.classList.remove("reduce-button-KDE")
+                }
+            });
         } else if (this._theme_mode == "metacity") {
             for (const [state_mode, value] of Object.entries(this.titlebar_buttons["maximize"])) {
                 value.forEach((el, index) => {
@@ -301,44 +301,45 @@ class OsInfomations{
             expand_reduce_button.classList.add("maximize-cinnamon")
 
             expand_reduce_button.addEventListener("click", () => {
-                ipc.send("reduce-expand");
-                ipc.on("reduced-expanded", (_, maximized) => {
-                    expand_reduce_button.innerHTML = "";
-                    
-                    for (const [state_mode, value] of Object.entries(this.titlebar_buttons[(!maximized ? "maximize" : "unmaximize")])) {
-                        value.forEach((el, index) => {
-                            let new_layer = document.createElement("div");
-                            new_layer.style.width = "100%";
-                            new_layer.style.height = "100%";
-                            new_layer.style.position = "absolute";
-                            new_layer.style.order = index;
-                            new_layer.style.display = "flex";
-                            new_layer.style.justifyContent = "center";
-                            new_layer.style.alignItems = "center";
-                            new_layer.classList.add("cinnamon-maximize-" + state_mode)
-        
-                            if (el.filename.endsWith(".svg")) {
-                                let svg_text = fs.readFileSync(el.filename).toString();
-        
-                                if (el.colorize) {
-                                    let regex = /#(?:[a-f\d]{3}){1,2}\b/g
-                                    svg_text = svg_text.replaceAll(regex, el.colorize);
-        
-                                }
-                                new_layer.innerHTML = svg_text;
-                            } else {
-                                new_layer.style.background = "url('" + el.filename + "')";
-                                new_layer.style.backgroundSize = "cover";
+                ipc.send("reduce-expand"); 
+            });
+            ipc.on("reduced-expanded", (_, maximized) => {
+                console.log("dddddddddhdjhffdhjfdkg");
+                expand_reduce_button.innerHTML = "";
+                
+                for (const [state_mode, value] of Object.entries(this.titlebar_buttons[(!maximized ? "maximize" : "unmaximize")])) {
+                    value.forEach((el, index) => {
+                        let new_layer = document.createElement("div");
+                        new_layer.style.width = "100%";
+                        new_layer.style.height = "100%";
+                        new_layer.style.position = "absolute";
+                        new_layer.style.order = index;
+                        new_layer.style.display = "flex";
+                        new_layer.style.justifyContent = "center";
+                        new_layer.style.alignItems = "center";
+                        new_layer.classList.add("cinnamon-maximize-" + state_mode)
+    
+                        if (el.filename.endsWith(".svg")) {
+                            let svg_text = fs.readFileSync(el.filename).toString();
+    
+                            if (el.colorize) {
+                                let regex = /#(?:[a-f\d]{3}){1,2}\b/g
+                                svg_text = svg_text.replaceAll(regex, el.colorize);
+    
                             }
+                            new_layer.innerHTML = svg_text;
+                        } else {
+                            new_layer.style.background = "url('" + el.filename + "')";
+                            new_layer.style.backgroundSize = "cover";
+                        }
 
-                            if (el.shade) {
-                                new_layer.style.filter = "brightness(" + el.shade + ")"
-                            }
-        
-                            expand_reduce_button.appendChild(new_layer)
-                        })
-                    }
-                })
+                        if (el.shade) {
+                            new_layer.style.filter = "brightness(" + el.shade + ")"
+                        }
+    
+                        expand_reduce_button.appendChild(new_layer)
+                    })
+                }
             })
         } else {
             expand_reduce_button.style.width = "22px";
@@ -347,15 +348,15 @@ class OsInfomations{
 
             expand_reduce_button.addEventListener("click", () => {
                 ipc.send("reduce-expand");
-                ipc.on("reduced-expanded", (_, maximized) => {
-                    if (maximized) {
-                        expand_reduce_button.classList.remove("expand-button-adwaita")
-                        expand_reduce_button.classList.add("reduce-button-adwaita")
-                    } else {
-                        expand_reduce_button.classList.add("expand-button-adwaita")
-                        expand_reduce_button.classList.remove("reduce-button-adwaita")
-                    }
-                })
+            })
+            ipc.on("reduced-expanded", (_, maximized) => {
+                if (maximized) {
+                    expand_reduce_button.classList.remove("expand-button-adwaita")
+                    expand_reduce_button.classList.add("reduce-button-adwaita")
+                } else {
+                    expand_reduce_button.classList.add("expand-button-adwaita")
+                    expand_reduce_button.classList.remove("reduce-button-adwaita")
+                }
             })
         }
 
