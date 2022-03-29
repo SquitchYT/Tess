@@ -208,21 +208,19 @@ class OsInfomations{
                     close_button.appendChild(new_layer)
                 })
             }
+            close_button.style.position = "relative";
+            close_button.style.marginLeft = "10px";
+            close_button.classList.add("close-cinnamon");
+            close_button.style.height = "18px";
+            close_button.style.width = "18px";
 
             if (this.wm == "Unity") {
                 close_button.style.height = "22px";
                 close_button.style.width = "22px";
-            } else {
-                close_button.style.height = "18px";
-                close_button.style.width = "18px";
             }
-
-            close_button.style.position = "relative";
-            close_button.style.marginLeft = "10px";
-            close_button.classList.add("close-cinnamon")
         } else {
-            close_button.style.width = "22px";
-            close_button.style.height = "22px";
+            close_button.style.width = "24px";
+            close_button.style.height = "24px";
             close_button.classList.add('close-button-adwaita', "icon-adwaita");
         }
 
@@ -304,7 +302,6 @@ class OsInfomations{
                 ipc.send("reduce-expand"); 
             });
             ipc.on("reduced-expanded", (_, maximized) => {
-                console.log("dddddddddhdjhffdhjfdkg");
                 expand_reduce_button.innerHTML = "";
                 
                 for (const [state_mode, value] of Object.entries(this.titlebar_buttons[(!maximized ? "maximize" : "unmaximize")])) {
@@ -342,8 +339,8 @@ class OsInfomations{
                 }
             })
         } else {
-            expand_reduce_button.style.width = "22px";
-            expand_reduce_button.style.height = "22px";
+            expand_reduce_button.style.width = "24px";
+            expand_reduce_button.style.height = "24px";
             expand_reduce_button.classList.add("expand-button-adwaita", "icon-adwaita");
 
             expand_reduce_button.addEventListener("click", () => {
@@ -416,8 +413,8 @@ class OsInfomations{
             minimize_button.style.marginLeft = "10px";
             minimize_button.classList.add("minimize-cinnamon");
         } else {
-            minimize_button.style.width = "22px";
-            minimize_button.style.height = "22px";
+            minimize_button.style.width = "24px";
+            minimize_button.style.height = "24px";
             minimize_button.classList.add("minimize-button-adwaita", "icon-adwaita");
         }
 

@@ -223,18 +223,17 @@ function openWindow(config, colors) {
     mainWindow.on("closed", () => {
         mainWindow = null;
     });
-    mainWindow.on("resize",() =>{
+    mainWindow.on("resize",() => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             try {
                 mainWindow.webContents.send("resize");
-            } catch (_) { }
+                
+            } catch {}
+            try {
+                mainWindow.webContents.send("reduced-expanded", mainWindow.isMaximized());
+            } catch {}
         }, 150);
-
-        let maximized = BrowserWindow.getFocusedWindow().isMaximized();
-        try {
-            mainWindow.webContents.send("reduced-expanded", maximized);
-        } catch {}
     });
 
     mainWindow.on("did-finish-load", () => { // Replace by event after theme loaded
