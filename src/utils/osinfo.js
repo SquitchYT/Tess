@@ -10,6 +10,7 @@ class OsInfomations{
         this._wm = Child_Proc.execSync("echo $XDG_CURRENT_DESKTOP").toString().trim();
         this._homedir = os.homedir();
         this._theme_mode = undefined;
+        this._supported_titlebar_buttons_wm = ["X-Cinnamon", "Unity", "KDE", "MATE", "Budgie:GNOME"]
     }
 
     get os(){
@@ -539,7 +540,7 @@ class OsInfomations{
                 fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
                 supportCustomTitleBar = true;
                 this._theme_mode = "breeze"
-            } else {
+            } else if (this._supported_titlebar_buttons_wm.contains(this._wm)) {
                 supportCustomTitleBar = true;
                 this._theme_mode = "adwaita"
             }

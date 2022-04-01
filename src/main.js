@@ -447,7 +447,7 @@ ipc.on("close", () => {
 ipc.on("minimize", () => {
     BrowserWindow.getFocusedWindow().minimize();
 });
-ipc.on("reduce-expand", (e, _) => {
+ipc.on("reduce-expand", () => {
     let maximized = BrowserWindow.getFocusedWindow().isMaximized();
     maximized ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
