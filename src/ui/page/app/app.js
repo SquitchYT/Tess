@@ -42,7 +42,7 @@ quickDefault.addEventListener("click", () => {
     openDefaultProfil();
 })
 quickConfig.addEventListener("click", () => {
-    CreateNewTerminal("Config", "Config", "../../../ressources/img/gear.svg");
+    CreateNewTerminal("Config", "Config", "../../../ressources/img/gear.png");
 })
 
 dropDownArrow.addEventListener("mouseover", () => {
@@ -81,7 +81,7 @@ const CustomPage = [
     {
         name: "Config",
         onePage: true,
-        icon: "../../../ressources/img/gear.svg"
+        icon: "../../../ressources/img/gear.png"
     }
 ];
 
@@ -376,6 +376,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     let logo = document.createElement("img");
     logo.src = (icon != "Default") ? icon : "../../../ressources/img/default.png";
     logo.classList.add("logo");
+
 
     tab.append(logo, tab_link, close_button)
     tabs.appendChild(tab);
