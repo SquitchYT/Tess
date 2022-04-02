@@ -466,7 +466,6 @@ function loadConfig() {
     // Load all theme inside menu
     fs.readdir(osData.homeDir + "/Applications/tess/config/theme", (err, files) => {
         if (err) {
-            console.log(err);
             return
         }
 
@@ -681,12 +680,9 @@ function loadShortcut() {
 }
 
 function saveUpdate() {
-    console.log(config)
     fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
         if (!err) {
             ipcRenderer.send("reloadConfig");
-        } else {
-            console.log(err)
         }
     });
 }

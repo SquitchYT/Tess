@@ -112,14 +112,26 @@ ipc.on("pty-data", (_, data) => {
                 tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
             }
 
-            const progress_regex = /\s\d+%/
-            if (progress_regex.exec(data.data)) {
-                document.querySelector(".tab-all-" + data.index).classList.add("in-progress");
-                document.querySelector(".progress-tab-" + data.index).classList.add("progress");
-                document.querySelector(".progress-tab-" + data.index).style.background = `linear-gradient(to right, var(--general-text-color) ${progress_regex.exec(data.data)[0].trim()}, var(--tab-inactive-background) ${progress_regex.exec(data.data)[0].trim()})`;
+            let terminalBuffer = el.term.buffer.active;
+            if (terminalBuffer.type != "normal") {
+                return;
+            }
+
+            let bufferString = "";
+            for (let index = 0; index < el.term.rows; index++) {
+                bufferString += terminalBuffer.getLine(terminalBuffer.viewportY + index)?.translateToString();
+            }
+            
+            let progress_value = bufferString.match(/\s\d+%/g)?.pop();
+            tab = document.querySelector(".tab-all-" + data.index);      
+            let tabProgressBar =  document.querySelector(".progress-tab-" + data.index);
+            if (progress_value && progress_value.trim() != "100%") {
+                tab.classList.add("in-progress");
+                tabProgressBar.classList.add("progress");
+                tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value.trim()}, var(--tab-inactive-background) ${progress_value.trim()})`;
             } else {
-                document.querySelector(".tab-all-" + data.index).classList.remove("in-progress");
-                document.querySelector(".progress-tab-" + data.index).classList.remove("progress");
+                tab.classList.remove("in-progress");
+                tabProgressBar.classList.remove("progress");
             }
         } 
     });
@@ -166,8 +178,6 @@ ipc.on("loaded", (_, data) => {
 
     config = data.config;
     colors = data.colors;
-    let loadOptions = data.loadOptions;
-
     previousBackgroundStyle = config.background;
 
     HandleShortcut();
@@ -203,7 +213,7 @@ ipc.on("loaded", (_, data) => {
 
     body.style.color = colors.app.textColor;
 
-    openNewPage(loadOptions);
+    openNewPage(data.loadOptions);
 
     document.getElementById("new-tab").addEventListener("click", () => {
         openDefaultProfil();
@@ -248,7 +258,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
 
     closeQuickAccessMenu();
 
-    if (icon == undefined) { icon = "Default"; }
+    if (!icon) { icon = "Default"; }
 
     if (checkIfCustomPage(toStart)) {
         CustomPage.forEach((el) => {
@@ -553,11 +563,9 @@ function resize() {
 
 function Close(index) {
     closeQuickAccessMenu()
-    let te = document.querySelector(".terminal-" + index);
-    let ta = document.querySelector(".tab-all-" + index);
     try {
-        ta.remove();
-        te.remove();   
+        document.querySelector(".tab-all-" + index).remove();
+        document.querySelector(".terminal-" + index).remove();   
     } catch (err) {
         ipc.send("debug", err)
     }
@@ -688,9 +696,7 @@ ipc.on("newConfig", (_, data) => {
     updateQuickMenu();
 });
 
-ipc.on("resize", () => {
-    resize();
-});
+ipc.on("resize", resize);
 
 function changeTabOrder(tab, tab_link) {
     tab.setAttribute("mousedown", "false");
