@@ -112,6 +112,12 @@ ipc.on("pty-data", (_, data) => {
                 tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
             }
 
+            if (n != el.index) {
+                document.querySelector(".change-indicator-tab-" + data.index).classList.add("indicator");
+            } else {
+                document.querySelector(".change-indicator-tab-" + data.index).classList.remove("indicator");
+            }
+
             let terminalBuffer = el.term.buffer.active;
             if (terminalBuffer.type != "normal" || !config.experimentalProgressTracker) {
                 return;
@@ -275,6 +281,9 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     let progress_bar = document.createElement("div");
     progress_bar.classList.add("progress-tab-" + index);
     tab.appendChild(progress_bar);
+    let changeIndicator = document.createElement("div");
+    changeIndicator.classList.add("change-indicator-tab-" + index);
+    tab.appendChild(changeIndicator);
 
     maxIndex = index;
 
@@ -379,8 +388,10 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         focusTerm(tab_link.classList[2], tab);
     });
 
-    tab.addEventListener("animationstart", () => {
-        focusTerm(tab_link.classList[2], tab);
+    tab.addEventListener("animationstart", (e) => {
+        if (e.target != changeIndicator) {
+            focusTerm(tab_link.classList[2], tab);
+        }
     });
 
     let t;
@@ -525,6 +536,7 @@ function focusTerm(index, tab) {
     let termToView = document.querySelector(".terminal-" + index);
     termToView.classList.remove("hidden");
     termToView.classList.add("visible");
+    document.querySelector(".change-indicator-tab-" + index).classList.remove("indicator");
 
     n = index;
     setTimeout(() => {
