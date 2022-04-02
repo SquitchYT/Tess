@@ -113,7 +113,7 @@ ipc.on("pty-data", (_, data) => {
             }
 
             let terminalBuffer = el.term.buffer.active;
-            if (terminalBuffer.type != "normal") {
+            if (terminalBuffer.type != "normal" || !config.experimentalProgressTracker) {
                 return;
             }
 

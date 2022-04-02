@@ -47,8 +47,6 @@ if (osData.os == "win32") { getProcessTree = require("windows-process-tree").get
 
 let resizeTimeout;
 
-const customWMIntegration = ["KDE", "X-Cinnamon", "GNOME", "Budgie:GNOME"]; // Add other here
-
 let config, colors;
 !function LoadConfig() {
     try {
@@ -68,7 +66,8 @@ let config, colors;
         config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf(".") + 1);
     }
 
-    config.bufferSize = config?.bufferSize ? config.bufferSize : 4000
+    config.bufferSize = config?.bufferSize ? config.bufferSize : 4000;
+    config.experimentalProgressTracker = config?.experimentalProgressTracker ? config.experimentalProgressTracker == "true" : false;
 
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
@@ -533,6 +532,8 @@ function reloadConfig() {
             console.log(err)
         });
     }
+
+    config.experimentalProgressTracker = config?.experimentalProgressTracker ? config.experimentalProgressTracker == "true" : false;
 
     colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background
 
