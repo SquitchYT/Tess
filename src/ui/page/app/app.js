@@ -111,6 +111,16 @@ ipc.on("pty-data", (_, data) => {
                 let process = data.processName.split("/");
                 tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
             }
+
+            const progress_regex = /\s\d+%/
+            if (progress_regex.exec(data.data)) {
+                document.querySelector(".tab-all-" + data.index).classList.add("in-progress");
+                document.querySelector(".progress-tab-" + data.index).classList.add("progress");
+                document.querySelector(".progress-tab-" + data.index).style.background = `linear-gradient(to right, var(--general-text-color) ${progress_regex.exec(data.data)[0].trim()}, var(--tab-inactive-background) ${progress_regex.exec(data.data)[0].trim()})`;
+            } else {
+                document.querySelector(".tab-all-" + data.index).classList.remove("in-progress");
+                document.querySelector(".progress-tab-" + data.index).classList.remove("progress");
+            }
         } 
     });
 });
@@ -252,6 +262,9 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     tab.classList.add("tab", "tab-all-" + index, "tab-active");
     tab.setAttribute("index", index + 1);
     tab.style.order = index + 1;
+    let progress_bar = document.createElement("div");
+    progress_bar.classList.add("progress-tab-" + index);
+    tab.appendChild(progress_bar);
 
     maxIndex = index;
 

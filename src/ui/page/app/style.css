@@ -53,6 +53,7 @@ body {
     -webkit-app-region: no-drag;
     color: var(--tab-text-color);
     transition: background 75ms linear;
+    position: relative;
 }
 
 .tab:hover {
@@ -245,4 +246,17 @@ iframe {
 
 #show-all-shell {
     margin-right: 4px;
+}
+
+.progress {
+    height: 4px;
+    width: 62%;
+    position: absolute;
+    top: 23px;
+    margin-left: 22%;
+    border-radius: 10px;
+}
+
+.tab.in-progress .tab-link {
+    transform: translateY(-3px);
 }
