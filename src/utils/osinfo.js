@@ -540,7 +540,7 @@ class OsInfomations{
                 fs.readFileSync("/usr/share/themes/Breeze/assets/titlebutton-close@2.png");
                 supportCustomTitleBar = true;
                 this._theme_mode = "breeze"
-            } else if (this._supported_titlebar_buttons_wm.contains(this._wm)) {
+            } else if (this._supported_titlebar_buttons_wm.includes(this._wm)) {
                 supportCustomTitleBar = true;
                 this._theme_mode = "adwaita"
             }
