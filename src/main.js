@@ -220,7 +220,7 @@ function openWindow(config, colors) {
     });
 
     mainWindow.removeMenu();
-    mainWindow.openDevTools()
+    //mainWindow.openDevTools()
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;

@@ -22,6 +22,7 @@ const body = document.body;
 const root = document.documentElement;
 const osInformations = require("../../../utils/osinfo");
 const osData = new osInformations();
+let configUpdated = false;
 
 const dropDownArrow = document.getElementById("show-all-shell");
 const quickAccessMenu = document.querySelector(".quick-menu");
@@ -381,11 +382,14 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             } else {
                 let result = showPopup("Process running", "Are you sure to close this tab while a process is running?");
                 result.then(() => {
-                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                        if (!err) {
-                            ipc.send("reloadConfig");
-                        }
-                    });
+                    if (configUpdated) {
+                        configUpdated = false;
+                        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                            if (!err) {
+                                ipc.send("reloadConfig");
+                            }
+                        });
+                    }
                     ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
                 }).catch(() => {
                     focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
@@ -675,11 +679,14 @@ function ExecuteShortcut(e) {
                         } else {
                             let popup = showPopup("Process running", "Are you sure to close this tab while a process is running?");
                             popup.then(() => {
-                                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                                    if (!err) {
-                                        ipc.send("reloadConfig");
-                                    }
-                                });
+                                if (configUpdated) {
+                                    configUpdated = false;
+                                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                                        if (!err) {
+                                            ipc.send("reloadConfig");
+                                        }
+                                    });
+                                }
                                 ipc.send("close-terminal", currentTabIndex);
                             }).catch(() => {
                                 focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
@@ -963,40 +970,61 @@ function showPopup(title, text) {
     });
 
     return new Promise((resolve, reject) => {
-        document.querySelector(".cancel").addEventListener("click", () => {
-            document.querySelector(".popup").classList.add("hidden");
-            //document.querySelector(".cancel").removeEventListener("click");
-            reject();
-        })
-        document.querySelector(".valid").addEventListener("click", () => {
-            document.querySelector(".popup").classList.add("hidden");
-            //document.querySelector(".popup").removeEventListener("click");
-            config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
-            resolve();
-        })
-        document.addEventListener("keydown", (e) => {
+        let documentKeyEvent = (e) => {
             if (e.code == "Tab" || e.code == "Escape") {
                 document.querySelector(".popup").classList.add("hidden");
-                //document.removeEventListener("keydown");
+                document.removeEventListener("keydown", documentKeyEvent);
+                document.querySelector(".cancel").removeEventListener("click", popupCancelEvent);
+                document.querySelector(".valid").removeEventListener("click", popupValidEvent);
                 reject();
             } else if (e.code == "Enter") {
                 document.querySelector(".popup").classList.add("hidden");
+                if (checkbox.hasAttribute("checked")) {
+                    configUpdated = true;
+                }
                 config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
-                //document.removeEventListener("keydown");
+                document.removeEventListener("keydown", documentKeyEvent);
+                document.querySelector(".cancel").removeEventListener("click", popupCancelEvent);
+                document.querySelector(".valid").removeEventListener("click", popupValidEvent);
                 resolve();
             }
-        })
+        }
+        let popupValidEvent = () => {
+            document.querySelector(".popup").classList.add("hidden");
+            document.querySelector(".valid").removeEventListener("click", popupCancelEvent);
+            document.querySelector(".cancel").removeEventListener("click", popupValidEvent);
+            document.removeEventListener("keydown", documentKeyEvent);
+            if (checkbox.hasAttribute("checked")) {
+                configUpdated = true;
+            }
+            config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
+            resolve();
+        }
+        let popupCancelEvent = () => {
+            document.querySelector(".popup").classList.add("hidden");
+            document.querySelector(".cancel").removeEventListener("click", popupCancelEvent);
+            document.querySelector(".valid").removeEventListener("click", popupValidEvent);
+            document.removeEventListener("keydown", documentKeyEvent);
+            reject();
+        }
+
+        document.querySelector(".cancel").addEventListener("click", popupCancelEvent)
+        document.querySelector(".valid").addEventListener("click", popupValidEvent)
+        document.addEventListener("keydown", documentKeyEvent)
     })
 }
 
 ipc.on("confirmClosingAll", () => {
     if (terminalsList.length > 1) {
         showPopup("Close all", "Are you sure you want to close all tabs").then(() => {
-            fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                if (!err) {
-                    ipc.send("reloadConfig");
-                }
-            });
+            if (configUpdated) {
+                configUpdated = false;
+                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                    if (!err) {
+                        ipc.send("reloadConfig");
+                    }
+                });
+            }
             ipc.send("closeAll");
         }).catch(() => {
             focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
@@ -1008,11 +1036,14 @@ ipc.on("confirmClosingAll", () => {
         } else {
             let popup = showPopup("Process running", "Are you sure to close this tab while a process is running?");
             popup.then(() => {
-                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                    if (!err) {
-                        ipc.send("reloadConfig");
-                    }
-                });
+                if (configUpdated) {
+                    configUpdated = false;
+                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                        if (!err) {
+                            ipc.send("reloadConfig");
+                        }
+                    });
+                }
                 ipc.send("close-terminal", currentTabIndex);
             }).catch(() => {
                 focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
