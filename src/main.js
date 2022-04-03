@@ -220,7 +220,7 @@ function openWindow(config, colors) {
     });
 
     mainWindow.removeMenu();
-    //mainWindow.openDevTools()
+    mainWindow.openDevTools()
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
@@ -443,7 +443,13 @@ ipc.on("close-terminal", (_, data) => {
 });
 
 ipc.on("close", () => {
-    mainWindow.close();
+    if (!config.experimentalShowCloseWarningPopup) {
+        mainWindow.close();
+    } else {
+        try {
+            mainWindow.webContents.send("confirmClosingAll");
+        } catch {}
+    }
 });
 ipc.on("minimize", () => {
     BrowserWindow.getFocusedWindow().minimize();
@@ -658,4 +664,8 @@ function getProcessPath(process) {
 
 ipc.on("focus", () => {
     mainWindow.show();
+})
+
+ipc.on("closeAll", () => {
+    mainWindow.close()
 })

@@ -629,7 +629,7 @@ function Close(index) {
         terminalsList.splice(y - 1, 1);
     } finally {
         if (terminalsList.length === 0) {
-            ipc.send("close");
+            ipc.send("closeAll");
         } else if (currentTabIndex == index){
             let i = {
                 index: 0,
@@ -923,7 +923,7 @@ function updateQuickMenu() {
             div.classList.add("quick-menu-other-item");
             let img = document.createElement("img");
             img.src = el.icon != "Default" ? el.icon : "../../../ressources/img/default.png";
-            div.appendChild(img)
+            div.appendChild(img);
 
             div.addEventListener("click", () => {
                 CreateNewTerminal(el.programm, el.name, el.icon, undefined, (el.processName != undefined && (el.processName == "true" || el.processName == "false") ? el.processName == "true" : true))
@@ -965,23 +965,58 @@ function showPopup(title, text) {
     return new Promise((resolve, reject) => {
         document.querySelector(".cancel").addEventListener("click", () => {
             document.querySelector(".popup").classList.add("hidden");
+            //document.querySelector(".cancel").removeEventListener("click");
             reject();
         })
         document.querySelector(".valid").addEventListener("click", () => {
             document.querySelector(".popup").classList.add("hidden");
-            console.log(checkbox.hasAttribute("checked"))
+            //document.querySelector(".popup").removeEventListener("click");
             config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
             resolve();
         })
         document.addEventListener("keydown", (e) => {
             if (e.code == "Tab" || e.code == "Escape") {
                 document.querySelector(".popup").classList.add("hidden");
+                //document.removeEventListener("keydown");
                 reject();
             } else if (e.code == "Enter") {
                 document.querySelector(".popup").classList.add("hidden");
                 config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
+                //document.removeEventListener("keydown");
                 resolve();
             }
         })
     })
 }
+
+ipc.on("confirmClosingAll", () => {
+    if (terminalsList.length > 1) {
+        showPopup("Close all", "Are you sure you want to close all tabs").then(() => {
+            fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                if (!err) {
+                    ipc.send("reloadConfig");
+                }
+            });
+            ipc.send("closeAll");
+        }).catch(() => {
+            focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
+        })
+    } else {
+        let tab_link = document.querySelector(".tab-" + currentTabIndex);
+        if (processExcludedFromWarningAlert.includes(tab_link.getAttribute("currentProcess").toLowerCase()) || tab_link.getAttribute("currentProcess") == tab_link.getAttribute("initialProcess")){
+            ipc.send("close-terminal", currentTabIndex);
+        } else {
+            let popup = showPopup("Process running", "Are you sure to close this tab while a process is running?");
+            popup.then(() => {
+                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                    if (!err) {
+                        ipc.send("reloadConfig");
+                    }
+                });
+                ipc.send("close-terminal", currentTabIndex);
+            }).catch(() => {
+                focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
+            })
+        }
+    }
+})
