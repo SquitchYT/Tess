@@ -2,6 +2,7 @@ const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const { WebLinksAddon } = require("xterm-addon-web-links");
 const { LigaturesAddon } = require("xterm-addon-ligatures");
+const fs = require("fs");
 
 const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 
@@ -12,6 +13,8 @@ document.querySelector(".tabs").addEventListener("dblclick", () => { // TODO: Fi
         ipc.send("reduce-expand");
     }
 });
+
+const processExcludedFromWarningAlert = ["fish", "sh", "bash", "zsh"]
 
 const tabs = document.querySelector(".tabs-tab");
 const terminals = document.querySelector(".terminals");
@@ -37,6 +40,12 @@ const quickMenuShellBox = document.querySelector(".quick-menu-other");
 const quickMenuNoOtherShell = document.getElementById("quick-no-other-shell")
 
 let previousBackgroundStyle = undefined;
+
+let checkbox = document.querySelector(".checkbox");
+
+document.querySelector(".checkbox-button").addEventListener("mousedown", () => {
+    checkbox.toggleAttribute("checked");
+})
 
 quickDefault.addEventListener("click", () => {
     openDefaultProfil();
@@ -88,7 +97,7 @@ const CustomPage = [
 let cols;
 let rows;
 let terminalsList = [];
-let [n, index, tabOrderToAdd] = [0, 0, 0]
+let [currentTabIndex, index, tabOrderToAdd] = [0, 0, 0]
 let config;
 let colors;
 
@@ -107,22 +116,22 @@ ipc.on("pty-data", (_, data) => {
         if (el.index === data.index) {
             el.term.write(data.data);
             let tab = document.querySelector(".tab-" + data.index);
+            let process = data.processName.split("/");
             if (data.processName != "" && !tab.hasAttribute("profil-named")) {
-                let process = data.processName.split("/");
                 tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
             }
+            if (!tab.hasAttribute("initialProcess")) {
+                tab.setAttribute("initialProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
+            }
+            tab.setAttribute("currentProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
 
-            if (n != el.index) {
+            if (currentTabIndex != el.index) {
                 document.querySelector(".change-indicator-tab-" + data.index).classList.add("indicator");
             } else {
                 document.querySelector(".change-indicator-tab-" + data.index).classList.remove("indicator");
             }
 
             let terminalBuffer = el.term.buffer.active;
-            if (terminalBuffer.type != "normal" || !config.experimentalProgressTracker) {
-                return;
-            }
-
             let bufferString = "";
             for (let index = 0; index < el.term.rows; index++) {
                 bufferString += terminalBuffer.getLine(terminalBuffer.viewportY + index)?.translateToString();
@@ -131,7 +140,7 @@ ipc.on("pty-data", (_, data) => {
             let progress_value = bufferString.match(/\s\d+%/g)?.pop();
             tab = document.querySelector(".tab-all-" + data.index);      
             let tabProgressBar =  document.querySelector(".progress-tab-" + data.index);
-            if (progress_value && progress_value.trim() != "100%") {
+            if (progress_value && progress_value.trim() != "100%" && terminalBuffer.type == "normal" && config.experimentalProgressTracker) {
                 tab.classList.add("in-progress");
                 tabProgressBar.classList.add("progress");
                 tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value.trim()}, var(--tab-inactive-background) ${progress_value.trim()})`;
@@ -144,6 +153,7 @@ ipc.on("pty-data", (_, data) => {
 });
 
 ipc.on("rename-tab", (_, data) => {
+    console.log(data.name);
     terminalsList.forEach((el) => {
         if (el.index === data.index) {
             let tab = document.querySelector(".tab-" + data.index);
@@ -216,6 +226,7 @@ ipc.on("loaded", (_, data) => {
     root.style.setProperty("--tab-text-size", colors?.app?.text?.size ? colors?.app?.tab?.text?.size + "px ": "12px");
     root.style.setProperty("--general-text-color", colors.app.textColor);
     root.style.setProperty("--tab-hover", colors.app.backgroundHover);
+    root.style.setProperty("--popup-valid-color", colors.app.primary);
 
     body.style.color = colors.app.textColor;
 
@@ -360,7 +371,26 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         if (t.type == "Page") {
             Close(close_button.getAttribute("close-button-number"));
         } else {
-            ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
+            if (!config.experimentalShowCloseWarningPopup) {
+                ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
+                return
+            }
+            
+            if (processExcludedFromWarningAlert.includes(tab_link.getAttribute("currentProcess").toLowerCase()) || tab_link.getAttribute("currentProcess") == tab_link.getAttribute("initialProcess")){
+                ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
+            } else {
+                let result = showPopup("Process running", "Are you sure to close this tab while a process is running?");
+                result.then(() => {
+                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                        if (!err) {
+                            ipc.send("reloadConfig");
+                        }
+                    });
+                    ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
+                }).catch(() => {
+                    focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
+                })
+            }
         }
 
         let tabs = document.querySelectorAll(".tab");
@@ -376,7 +406,6 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     let logo = document.createElement("img");
     logo.src = (icon != "Default") ? icon : "../../../ressources/img/default.png";
     logo.classList.add("logo");
-
 
     tab.append(logo, tab_link, close_button)
     tabs.appendChild(tab);
@@ -460,7 +489,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
 
         term.onData((e) => {
             ipc.send("terminal-data", {
-                index: n,
+                index: currentTabIndex,
                 data: e
             });
         });
@@ -470,7 +499,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             event.stopPropagation();
 
             ipc.send("terminal-data", {
-                index: n,
+                index: currentTabIndex,
                 data: event.dataTransfer.files[0].path
             })
         });
@@ -508,12 +537,11 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
         };
     }
 
-    n = index;
+    currentTabIndex = index;
     index++;
     terminals.appendChild(termDiv);
     terminalsList.push(t);
 }
-
 
 function focusTerm(index, tab) {
     let terms = document.getElementsByClassName("terms");
@@ -539,7 +567,7 @@ function focusTerm(index, tab) {
     termToView.classList.add("visible");
     document.querySelector(".change-indicator-tab-" + index).classList.remove("indicator");
 
-    n = index;
+    currentTabIndex = index;
     setTimeout(() => {
         termToView.click();
         terminalsList.forEach((el) => {
@@ -602,7 +630,7 @@ function Close(index) {
     } finally {
         if (terminalsList.length === 0) {
             ipc.send("close");
-        } else if (n == index){
+        } else if (currentTabIndex == index){
             let i = {
                 index: 0,
                 dif: Infinity
@@ -615,7 +643,7 @@ function Close(index) {
             });
             focusTerm(i.index, document.querySelector(".tab-all-" + i.index));
         } else {
-            focusTerm(n, document.querySelector(".tab-all-" + n));
+            focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex));
         }
     }
 }
@@ -632,7 +660,36 @@ function ExecuteShortcut(e) {
         if (e.ctrlKey == el.ctrl && e.shiftKey == el.shift && e.altKey == el.alt && e.key.toUpperCase() == el.key && e.type == "keydown" && !shortcut_executed) {
             shortcut_executed = true;
             if (shortcutAction.includes(el.action)) {
-                result = window[el.action](n);
+                if (el.action != "Close") {
+                    result = window[el.action](currentTabIndex);
+                } else {
+                    if (!config.experimentalShowCloseWarningPopup) {
+                        ipc.send("close-terminal", currentTabIndex);
+                        return
+                    }
+
+                    let tab_link = document.querySelector(".tab-" + currentTabIndex);
+                    try {
+                        if (processExcludedFromWarningAlert.includes(tab_link.getAttribute("currentProcess").toLowerCase()) || tab_link.getAttribute("currentProcess") == tab_link.getAttribute("initialProcess")){
+                            ipc.send("close-terminal", currentTabIndex);
+                        } else {
+                            let popup = showPopup("Process running", "Are you sure to close this tab while a process is running?");
+                            popup.then(() => {
+                                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
+                                    if (!err) {
+                                        ipc.send("reloadConfig");
+                                    }
+                                });
+                                ipc.send("close-terminal", currentTabIndex);
+                            }).catch(() => {
+                                focusTerm(currentTabIndex, document.querySelector(".tab-all-" + currentTabIndex))
+                            })
+                        }
+                        result = false;
+                    } catch {
+                        result = window[el.action](currentTabIndex);
+                    }
+                }
             } else {
                 if (checkIfCustomPage(el.action)) {
                     CreateNewTerminal(el.action, el.action);
@@ -654,9 +711,9 @@ function ExecuteShortcut(e) {
 // eslint-disable-next-line no-unused-vars
 function Paste() {
     terminalsList.forEach((el) => {
-        if (el.index == n) {
+        if (el.index == currentTabIndex) {
             ipc.send("terminal-data", {
-                index: n,
+                index: currentTabIndex,
                 data: clipboard.readFindText()
             });
         }
@@ -668,7 +725,7 @@ function Paste() {
 function Copy() {
     let result = true;
     terminalsList.forEach((el) => {
-        if (el.index == n && el.term.getSelection() != "") {
+        if (el.index == currentTabIndex && el.term.getSelection() != "") {
             clipboard.writeText(el.term.getSelection());
             result = false;
         }
@@ -892,4 +949,39 @@ function updateQuickMenu() {
         default:
             root.style.setProperty("--col-count", 3);
     }
+}
+
+function showPopup(title, text) {
+    document.querySelector(".popup").classList.remove("hidden");
+    document.querySelector(".title").innerText = title;
+    document.querySelector(".description").innerText = text;
+
+    terminalsList.forEach((el) => {
+        if (el.type == "Terminal") {
+            el.term.blur()
+        }
+    });
+
+    return new Promise((resolve, reject) => {
+        document.querySelector(".cancel").addEventListener("click", () => {
+            document.querySelector(".popup").classList.add("hidden");
+            reject();
+        })
+        document.querySelector(".valid").addEventListener("click", () => {
+            document.querySelector(".popup").classList.add("hidden");
+            console.log(checkbox.hasAttribute("checked"))
+            config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
+            resolve();
+        })
+        document.addEventListener("keydown", (e) => {
+            if (e.code == "Tab" || e.code == "Escape") {
+                document.querySelector(".popup").classList.add("hidden");
+                reject();
+            } else if (e.code == "Enter") {
+                document.querySelector(".popup").classList.add("hidden");
+                config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
+                resolve();
+            }
+        })
+    })
 }

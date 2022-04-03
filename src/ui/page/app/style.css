@@ -16,6 +16,8 @@
 
     --tab-text-color: #000;
     --tab-text-size: 15px;
+    --popup-valid-color: rgb(230, 0, 0);
+    --popup-valid-color-hover: rgb(241, 56, 56);
 }
 
 body {
@@ -269,7 +271,7 @@ iframe {
     left: 22px;
     height: 8px;
     width: 8px;
-    animation: pulse 2.4s infinite;
+    animation: pulse 2.2s infinite;
 }
 
 @keyframes pulse {
@@ -278,13 +280,125 @@ iframe {
 		box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
 	}
 
-	40% {
+	35% {
 		transform: scale(1);
 		box-shadow: 0 0 0 4px rgba(255, 255, 255, 0);
 	}
 
-	70% {
+	65% {
 		transform: scale(0.95);
 		box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
 	}
+}
+
+.popup {
+    width: 100vw;
+    height: 100vh;
+    z-index: 1000000;
+    position: absolute;
+    backdrop-filter: blur(1px) grayscale(15%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.popup-inner:focus {
+    border: 2px blue solid;
+}
+
+.popup-inner {
+    width: 290px;
+    height: 140px;
+    background: var(--tab-active-background);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 18px;
+    flex-direction: column;
+    padding-bottom: 10px;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.35);
+    padding-right: 14px;
+    padding-left: 12px;
+}
+
+.popup-inner > div {
+    display: flex;
+    width: 100%;
+    justify-self: flex-end;
+    justify-content: flex-end;
+}
+
+.popup-inner .title {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+.popup-inner .description {
+    height: 100%;
+    font-size: 13px;
+    text-align: center;
+    width: 82%;
+}
+
+.popup-button {
+    padding-left: 14px;
+    padding-right: 14px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 120ms ease;
+    user-select: none;
+    font-size: 15px;
+    margin-left: 10px;
+}
+.popup-button:hover {
+    filter: brightness(1.1);
+}
+
+.cancel {
+    background: var(--tab-panel-background);
+}
+.valid {
+    background: var(--popup-valid-color);
+    color: var(--tab-inactive-background);
+}
+
+.checkbox-button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox-button > span {
+    font-size: 12px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox {
+    height: 16px;
+    width: 16px;
+    background: var(--tab-panel-background);
+    color: var(--tab-panel-background);
+    margin-right: 5px;
+    border-radius: 4px;
+}
+
+.checkbox[checked] {
+    background: var(--popup-valid-color);
+}
+
+.checkbox[checked]::after {
+    content: "✓";
+    height: 100%;
+    width: 100%;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

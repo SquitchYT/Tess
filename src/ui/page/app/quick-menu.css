@@ -12,7 +12,7 @@
     top: 30px;
     width: auto;
     height: auto;
-    z-index: 100000000;
+    z-index: 10000000;
     visibility: hidden;
     padding-top: 12px;
     transform: translateY(-30px);

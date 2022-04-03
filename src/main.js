@@ -67,7 +67,8 @@ let config, colors;
     }
 
     config.bufferSize = config?.bufferSize ? config.bufferSize : 4000;
-    config.experimentalProgressTracker = config?.experimentalProgressTracker ? config.experimentalProgressTracker == "true" : false;
+    config.experimentalProgressTracker = config?.experimentalProgressTracker?.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
+    config.experimentalShowCloseWarningPopup = config?.experimentalShowCloseWarningPopup?.toString() ? config.experimentalShowCloseWarningPopup.toString() == "true" : false;
 
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
@@ -83,6 +84,7 @@ let config, colors;
     }
 
     colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
+    colors.app.primary = colors?.app?.primary ? colors.app.primary : colors.terminal.theme.blue;
 }();
 
 if (osData.os == "win32") {
@@ -218,6 +220,7 @@ function openWindow(config, colors) {
     });
 
     mainWindow.removeMenu();
+    //mainWindow.openDevTools()
     mainWindow.loadFile("./src/ui/page/app/index.html");
     mainWindow.on("closed", () => {
         mainWindow = null;
@@ -227,7 +230,6 @@ function openWindow(config, colors) {
         resizeTimeout = setTimeout(() => {
             try {
                 mainWindow.webContents.send("resize");
-                
             } catch {}
             try {
                 mainWindow.webContents.send("reduced-expanded", mainWindow.isMaximized());
