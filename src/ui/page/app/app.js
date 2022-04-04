@@ -127,7 +127,11 @@ ipc.on("pty-data", (_, data) => {
             tab.setAttribute("currentProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
 
             let pingElement = document.querySelector(".change-indicator-tab-" + data.index);
-            if (currentTabIndex != el.index) { pingElement.classList.add("indicator"); } else { pingElement.classList.remove("indicator"); }
+            if (config.experimentalShowProcessUpdateIndicator && currentTabIndex != el.index) {
+                pingElement.classList.add("indicator");
+            } else {
+                pingElement.classList.remove("indicator");
+            }
             
             let tabProgressBar =  document.querySelector(".progress-tab-" + data.index);
             if (config.experimentalProgressTracker) {
@@ -964,9 +968,9 @@ function updateQuickMenu() {
 }
 
 function showPopup(title, text) {
-    let cancelButton = document.querySelector(".cancel");
-    let validButton = document.querySelector(".valid");
-    let popup = document.querySelector(".popup")
+    let cancelButton = document.getElementById("popupCancel");
+    let validButton = document.getElementById("popupValid");
+    let popup = document.getElementById("popup")
 
     popup.classList.remove("hidden");
     document.querySelector(".title").innerText = title;

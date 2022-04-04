@@ -69,6 +69,7 @@ let config, colors;
     config.bufferSize = config?.bufferSize ? config.bufferSize : 4000;
     config.experimentalProgressTracker = config?.experimentalProgressTracker?.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
     config.experimentalShowCloseWarningPopup = config?.experimentalShowCloseWarningPopup?.toString() ? config.experimentalShowCloseWarningPopup.toString() == "true" : false;
+    config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
 
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
@@ -542,6 +543,7 @@ function reloadConfig() {
     }
 
     config.experimentalProgressTracker = config?.experimentalProgressTracker ? config.experimentalProgressTracker == "true" : false;
+    config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
 
     colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background
 
