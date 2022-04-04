@@ -126,25 +126,31 @@ ipc.on("pty-data", (_, data) => {
             }
             tab.setAttribute("currentProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
 
-            if (currentTabIndex != el.index) {
-                document.querySelector(".change-indicator-tab-" + data.index).classList.add("indicator");
-            } else {
-                document.querySelector(".change-indicator-tab-" + data.index).classList.remove("indicator");
-            }
-
-            let terminalBuffer = el.term.buffer.active;
-            let bufferString = "";
-            for (let index = 0; index < el.term.rows; index++) {
-                bufferString += terminalBuffer.getLine(terminalBuffer.viewportY + index)?.translateToString();
-            }
+            let pingElement = document.querySelector(".change-indicator-tab-" + data.index);
+            if (currentTabIndex != el.index) { pingElement.classList.add("indicator"); } else { pingElement.classList.remove("indicator"); }
             
-            let progress_value = bufferString.match(/\s\d+%/g)?.pop();
-            tab = document.querySelector(".tab-all-" + data.index);      
             let tabProgressBar =  document.querySelector(".progress-tab-" + data.index);
-            if (progress_value && progress_value.trim() != "100%" && terminalBuffer.type == "normal" && config.experimentalProgressTracker) {
-                tab.classList.add("in-progress");
-                tabProgressBar.classList.add("progress");
-                tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value.trim()}, var(--tab-inactive-background) ${progress_value.trim()})`;
+            if (config.experimentalProgressTracker) {
+                let terminalBuffer = el.term.buffer.active;
+                if (terminalBuffer.type != "normal") {
+                    tab.classList.remove("in-progress");
+                    tabProgressBar.classList.remove("progress");
+                    return;
+                }
+                let bufferString = "";
+                for (let index = 0; index < el.term.rows; index++) {
+                    bufferString += terminalBuffer.getLine(terminalBuffer.viewportY + index)?.translateToString();
+                }
+                let progress_value = bufferString.match(/\s\d+%/g)?.pop();
+                tab = document.querySelector(".tab-all-" + data.index);      
+                if (progress_value && progress_value.trim() != "100%") {
+                    tab.classList.add("in-progress");
+                    tabProgressBar.classList.add("progress");
+                    tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value.trim()}, var(--tab-inactive-background) ${progress_value.trim()})`;
+                } else {
+                    tab.classList.remove("in-progress");
+                    tabProgressBar.classList.remove("progress");
+                }
             } else {
                 tab.classList.remove("in-progress");
                 tabProgressBar.classList.remove("progress");
@@ -154,7 +160,6 @@ ipc.on("pty-data", (_, data) => {
 });
 
 ipc.on("rename-tab", (_, data) => {
-    console.log(data.name);
     terminalsList.forEach((el) => {
         if (el.index === data.index) {
             let tab = document.querySelector(".tab-" + data.index);
@@ -959,7 +964,11 @@ function updateQuickMenu() {
 }
 
 function showPopup(title, text) {
-    document.querySelector(".popup").classList.remove("hidden");
+    let cancelButton = document.querySelector(".cancel");
+    let validButton = document.querySelector(".valid");
+    let popup = document.querySelector(".popup")
+
+    popup.classList.remove("hidden");
     document.querySelector(".title").innerText = title;
     document.querySelector(".description").innerText = text;
 
@@ -972,27 +981,27 @@ function showPopup(title, text) {
     return new Promise((resolve, reject) => {
         let documentKeyEvent = (e) => {
             if (e.code == "Tab" || e.code == "Escape") {
-                document.querySelector(".popup").classList.add("hidden");
+                popup.classList.add("hidden");
                 document.removeEventListener("keydown", documentKeyEvent);
-                document.querySelector(".cancel").removeEventListener("click", popupCancelEvent);
-                document.querySelector(".valid").removeEventListener("click", popupValidEvent);
+                cancelButton.removeEventListener("click", popupCancelEvent);
+                validButton.removeEventListener("click", popupValidEvent);
                 reject();
             } else if (e.code == "Enter") {
-                document.querySelector(".popup").classList.add("hidden");
+                popup.classList.add("hidden");
                 if (checkbox.hasAttribute("checked")) {
                     configUpdated = true;
                 }
                 config.experimentalShowCloseWarningPopup = !checkbox.hasAttribute("checked");
                 document.removeEventListener("keydown", documentKeyEvent);
-                document.querySelector(".cancel").removeEventListener("click", popupCancelEvent);
-                document.querySelector(".valid").removeEventListener("click", popupValidEvent);
+                cancelButton.removeEventListener("click", popupCancelEvent);
+                validButton.removeEventListener("click", popupValidEvent);
                 resolve();
             }
         }
         let popupValidEvent = () => {
-            document.querySelector(".popup").classList.add("hidden");
-            document.querySelector(".valid").removeEventListener("click", popupCancelEvent);
-            document.querySelector(".cancel").removeEventListener("click", popupValidEvent);
+            popup.classList.add("hidden");
+            validButton.removeEventListener("click", popupCancelEvent);
+            cancelButton.removeEventListener("click", popupValidEvent);
             document.removeEventListener("keydown", documentKeyEvent);
             if (checkbox.hasAttribute("checked")) {
                 configUpdated = true;
@@ -1001,15 +1010,15 @@ function showPopup(title, text) {
             resolve();
         }
         let popupCancelEvent = () => {
-            document.querySelector(".popup").classList.add("hidden");
-            document.querySelector(".cancel").removeEventListener("click", popupCancelEvent);
-            document.querySelector(".valid").removeEventListener("click", popupValidEvent);
+            popup.classList.add("hidden");
+            cancelButton.removeEventListener("click", popupCancelEvent);
+            validButton.removeEventListener("click", popupValidEvent);
             document.removeEventListener("keydown", documentKeyEvent);
             reject();
         }
 
-        document.querySelector(".cancel").addEventListener("click", popupCancelEvent)
-        document.querySelector(".valid").addEventListener("click", popupValidEvent)
+        cancelButton.addEventListener("click", popupCancelEvent)
+        validButton.addEventListener("click", popupValidEvent)
         document.addEventListener("keydown", documentKeyEvent)
     })
 }
