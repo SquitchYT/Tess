@@ -542,7 +542,7 @@ function reloadConfig() {
         });
     }
 
-    config.experimentalProgressTracker = config?.experimentalProgressTracker ? config.experimentalProgressTracker == "true" : false;
+    config.experimentalProgressTracker = config?.experimentalProgressTracker.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
     config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
 
     colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background

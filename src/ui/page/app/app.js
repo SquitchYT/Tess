@@ -132,8 +132,9 @@ ipc.on("pty-data", (_, data) => {
             } else {
                 pingElement.classList.remove("indicator");
             }
-            
-            let tabProgressBar =  document.querySelector(".progress-tab-" + data.index);
+
+            tab = document.querySelector(".tab-all-" + data.index);  
+            let tabProgressBar = document.querySelector(".progress-tab-" + data.index);
             if (config.experimentalProgressTracker) {
                 let terminalBuffer = el.term.buffer.active;
                 if (terminalBuffer.type != "normal") {
@@ -145,8 +146,7 @@ ipc.on("pty-data", (_, data) => {
                 for (let index = 0; index < el.term.rows; index++) {
                     bufferString += terminalBuffer.getLine(terminalBuffer.viewportY + index)?.translateToString();
                 }
-                let progress_value = bufferString.match(/\s\d+%/g)?.pop();
-                tab = document.querySelector(".tab-all-" + data.index);      
+                let progress_value = bufferString.match(/\s\d+%/g)?.pop();    
                 if (progress_value && progress_value.trim() != "100%") {
                     tab.classList.add("in-progress");
                     tabProgressBar.classList.add("progress");
