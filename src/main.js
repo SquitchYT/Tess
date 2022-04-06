@@ -19,7 +19,7 @@ const argv = yargs.options({
         alias: "cd",
         describe: "Default directory for the new tab"
     }
-}).parse(process.argv, (_, __, output) => {
+}).locale("en").parse(process.argv, (_, __, output) => {
     if (output) {
       output = output.replace(/\[.*?\]/g, '');
       console.log(output);
@@ -545,10 +545,15 @@ function reloadConfig() {
     config.experimentalProgressTracker = config?.experimentalProgressTracker.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
     config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
 
-    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background
+    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
 
     if (osData.os == "win32") {
         updateJumpMenu();
+        mainWindow.setTitleBarOverlay({
+            color: colors.app.topBar,
+            symbolColor: colors.app.textColor,
+            height: 30
+        })
     }
 }
 

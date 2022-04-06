@@ -2,19 +2,11 @@ const { Terminal } = require("xterm");
 const { FitAddon } = require("xterm-addon-fit");
 const { WebLinksAddon } = require("xterm-addon-web-links");
 const { LigaturesAddon } = require("xterm-addon-ligatures");
+const { ipcRenderer : ipc, clipboard, shell } = require("electron");
+const Color = require("../../../utils/color");
 const fs = require("fs");
 
-const { ipcRenderer : ipc, clipboard, shell } = require("electron");
-
-const Color = require("../../../utils/color");
-
-document.querySelector(".tabs").addEventListener("dblclick", () => { // TODO: Fix dbclick not trigerred when `webkit-app-region: drag` is set in css in windows
-    if (osData.os == "win32") {
-        ipc.send("reduce-expand");
-    }
-});
-
-const processExcludedFromWarningAlert = ["fish", "sh", "bash", "zsh"]
+const processExcludedFromWarningAlert = ["fish", "sh", "bash", "zsh"]; //TODO Add Option for that
 
 const tabs = document.querySelector(".tabs-tab");
 const terminals = document.querySelector(".terminals");
@@ -118,13 +110,15 @@ ipc.on("pty-data", (_, data) => {
             el.term.write(data.data);
             let tab = document.querySelector(".tab-" + data.index);
             let process = data.processName.split("/");
-            if (data.processName != "" && !tab.hasAttribute("profil-named")) {
-                tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
+            if (data.processName != "") {
+                if (!tab.hasAttribute("profil-named")) {
+                    tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
+                }
+                if (!tab.hasAttribute("initialProcess")) {
+                    tab.setAttribute("initialProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
+                }
+                tab.setAttribute("currentProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
             }
-            if (!tab.hasAttribute("initialProcess")) {
-                tab.setAttribute("initialProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
-            }
-            tab.setAttribute("currentProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
 
             let pingElement = document.querySelector(".change-indicator-tab-" + data.index);
             if (config.experimentalShowProcessUpdateIndicator && currentTabIndex != el.index) {
@@ -169,6 +163,11 @@ ipc.on("rename-tab", (_, data) => {
             let tab = document.querySelector(".tab-" + data.index);
             if (!tab.hasAttribute("profil-named")) {
                 tab.textContent = data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1);
+
+                if (!tab.hasAttribute("initialProcess")) {
+                    tab.setAttribute("initialProcess", data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1));
+                }
+                tab.setAttribute("currentProcess",  data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1));
             }
         } 
     });
