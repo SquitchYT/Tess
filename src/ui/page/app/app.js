@@ -6,7 +6,7 @@ const { ipcRenderer : ipc, clipboard, shell } = require("electron");
 const Color = require("../../../utils/color");
 const fs = require("fs");
 
-const processExcludedFromWarningAlert = ["fish", "sh", "bash", "zsh"]; //TODO Add Option for that
+let processExcludedFromWarningAlert = [];
 
 const tabs = document.querySelector(".tabs-tab");
 const terminals = document.querySelector(".terminals");
@@ -204,6 +204,7 @@ ipc.on("loaded", (_, data) => {
     config = data.config;
     colors = data.colors;
     previousBackgroundStyle = config.background;
+    processExcludedFromWarningAlert = config.experimentalPopupExclusionList.replaceAll(" ", "").split(",");
 
     HandleShortcut();
 
@@ -777,6 +778,7 @@ ipc.on("newConfig", (_, data) => {
     
     body.style.color = colors.app.textColor;
     fontSize = (config?.terminalFontSize) ? config.terminalFontSize : 14;
+    processExcludedFromWarningAlert = config.experimentalPopupExclusionList.replaceAll(" ", "").split(",");
     updateTerminalApparence();
     updateQuickMenu();
 });

@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.forEach((el) => {
             el.classList.remove("no-transition");
         });
-    }, 250);
+    }, 240);
 });
 
 menuIcon.addEventListener("click", () => {
@@ -524,15 +524,15 @@ function loadConfig() {
     });
 
     inputs.forEach((el) => {
-        let timeout;
         el.value = config[el.getAttribute("parameters")];
+        console.log(el, config[el.getAttribute("parameters")])
         el.addEventListener("input", () => {
+            let timeout;
             clearTimeout(timeout);
-
             timeout = setTimeout(() => {
                 config[el.getAttribute("parameters")] = el.value;
                 saveUpdate();
-            }, 150)
+            }, 140)
         })
     })
 
@@ -562,11 +562,7 @@ function loadConfig() {
                 newPluginSwitchOptions.appendChild(description);
     
                 let switchButton = document.createElement("switch-button");
-                switchButton.setAttribute("state", false);
-                
-                if (config.plugin.includes(plugin)) {
-                    switchButton.setAttribute("state", true);
-                }
+                switchButton.setAttribute("state", config.plugin.includes(plugin));
     
                 switchButton.addEventListener("updatedValue", () => {
                     if (switchButton.getAttribute("state") == "true") {
@@ -630,8 +626,7 @@ function loadShortcut() {
         shortcutList.push(el.id);
     });
 
-    let validIcon = document.querySelectorAll(".valid-icon");
-    validIcon.forEach((el) => {
+    document.querySelectorAll(".valid-icon").forEach((el) => {
         el.addEventListener("click", () => {
             if (document.querySelector("drop-down-menu[shortcut-id='" + el.getAttribute("shortcut-id") + "'").getAttribute("selected-value") != undefined && document.querySelector("shortcut-picker[shortcut-id='" + el.getAttribute("shortcut-id") + "'").getAttribute("selected-value") != undefined) {
                 el.classList.add("hidden");
@@ -649,8 +644,7 @@ function loadShortcut() {
         });
     });
 
-    let editIcon = document.querySelectorAll(".edit-icon");
-    editIcon.forEach((el) => {
+    document.querySelectorAll(".edit-icon").forEach((el) => {
         el.addEventListener("click", () => {
             el.classList.add("hidden");
             document.querySelector(".valid-icon[shortcut-id='" + el.getAttribute("shortcut-id") + "'").classList.remove("hidden");
@@ -659,8 +653,7 @@ function loadShortcut() {
         });
     });
 
-    let deleteIcon = document.querySelectorAll(".trash-icon");
-    deleteIcon.forEach((el) => {
+    document.querySelectorAll(".trash-icon").forEach((el) => {
         el.addEventListener("click", () => {
             let shortcutLine = document.querySelector("div[shortcut-id='" + el.getAttribute("shortcut-id") + "'");
             shortcutSection.removeChild(shortcutLine);

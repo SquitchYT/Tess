@@ -505,7 +505,7 @@ h3 {
 }
 
 .shortcutAddButton {
-    width: 15.5em;
+    width: 15.25em;
     height: 100%;
     border: 2px solid var(--item-textcolor);
     color: var(--item-textcolor);
@@ -515,13 +515,13 @@ h3 {
     justify-content: center;
     align-items: center;
     user-select: none;
-    border-radius: 400px;
-    transition: 0.4s;
+    border-radius: 100px;
+    transition: 340ms ease;
     cursor: pointer;
 }
 
 .shortcutAddButton:hover {
-    box-shadow: inset 15.5em 0 0 0 var(--item-textcolor);
+    box-shadow: inset 15.25em 0 0px 0px var(--item-textcolor);
     color: var(--item-background);
 }
 
