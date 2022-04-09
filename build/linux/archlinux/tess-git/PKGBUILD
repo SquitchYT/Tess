@@ -35,6 +35,7 @@ package() {
   cd cli
   cmake . -B build
   make -C build
+  strip build/tess-cli
   install -Dm755 build/tess-cli -t "${pkgdir}/usr/bin/"
 
   npm install

@@ -72,6 +72,7 @@ jobs:
   #         cd cli
   #         cmake . -B build
   #         make -C build
+  #         strip build/tess-cli
   #         cp build/tess-cli ../build/linux/debian//tess/usr/bin/
   #         cd ../
   #         printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./build/linux/debian/tess/DEBIAN/control
@@ -220,6 +221,7 @@ jobs:
   #         cd cli
   #         cmake . -B build
   #         make -C build
+  #         strip build/tess-cli
   #         cd ../
           
   #         cp cli/build/tess-cli ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli

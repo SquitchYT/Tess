@@ -32,6 +32,7 @@ parts:
         cp -ar dist/linux-unpacked/* $SNAPCRAFT_PART_INSTALL/opt/tess/
         cd cli && cmake . -B build
         cd build && cmake --build .
+        strip tess-cli
         mkdir -p $SNAPCRAFT_PART_INSTALL/opt/tess-cli || true
         cp -ar ./tess-cli $SNAPCRAFT_PART_INSTALL/opt/tess-cli/
         cd ../../build/ressources/desktop
