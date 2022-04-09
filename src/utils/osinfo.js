@@ -210,7 +210,7 @@ class OsInfomations{
                 })
             }
             close_button.style.position = "relative";
-            close_button.style.marginLeft = "10px";
+            close_button.style.marginLeft = "11px";
             close_button.classList.add("close-cinnamon");
             close_button.style.height = "18px";
             close_button.style.width = "18px";
@@ -296,7 +296,7 @@ class OsInfomations{
             }
 
             expand_reduce_button.style.position = "relative";
-            expand_reduce_button.style.marginLeft = "10px";
+            expand_reduce_button.style.marginLeft = "11px";
             expand_reduce_button.classList.add("maximize-cinnamon")
 
             expand_reduce_button.addEventListener("click", () => {
@@ -411,7 +411,7 @@ class OsInfomations{
             }
 
             minimize_button.style.position = "relative";
-            minimize_button.style.marginLeft = "10px";
+            minimize_button.style.marginLeft = "11px";
             minimize_button.classList.add("minimize-cinnamon");
         } else {
             minimize_button.style.width = "24px";

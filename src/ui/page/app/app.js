@@ -174,7 +174,7 @@ ipc.on("rename-tab", (_, data) => {
 });
 
 ipc.on("loaded", (_, data) => {
-    if (osData.os != "win32" && osData.supportCustomTitleBar) {
+    if (data.config.experimentalCustomTitleBar && osData.supportCustomTitleBar) {
         setTimeout(() => {
             let rightButtons = document.getElementById("titlebar-button-right");
             let leftButtons = document.getElementById("titlebar-button-left");            

@@ -71,6 +71,7 @@ let config, colors;
     config.experimentalShowCloseWarningPopup = config?.experimentalShowCloseWarningPopup?.toString() ? config.experimentalShowCloseWarningPopup.toString() == "true" : false;
     config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
     config.experimentalPopupExclusionList = config?.experimentalPopupExclusionList ? config.experimentalPopupExclusionList : "fish, bash, zsh, powershell, cmd";
+    config.experimentalCustomTitleBar = config?.experimentalCustomTitleBar?.toString() ? config.experimentalCustomTitleBar.toString() == "true" : false;
 
     try {
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
@@ -178,7 +179,7 @@ function openWindow(config, colors) {
 
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
-    let needFrame = !(osData.wm == "win" || osData.supportCustomTitleBar);
+    let needFrame = !(config.experimentalCustomTitleBar && osData.supportCustomTitleBar);
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind");
     let needTransparent = (config.background == "transparent" || needBlur);
 
