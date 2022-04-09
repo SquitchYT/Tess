@@ -42,7 +42,7 @@
     width: 36px;
     height: 100%;
     box-shadow: -10px 0px 10px -5px var(--background);
-    transition: all 140ms ease-in-out;
+    transition: all 120ms ease-in-out;
     position: absolute;
     background: var(--background);
     right: 0;

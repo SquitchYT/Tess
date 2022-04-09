@@ -446,6 +446,10 @@ class OsInfomations{
     }
 
     get supportCustomTitleBar() {
+        if (this._os == "win32") {
+            return true;
+        }
+
         let theme = this.currentWindowTheme;
         let supportCustomTitleBar = false;
 

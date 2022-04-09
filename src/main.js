@@ -39,6 +39,8 @@ const Color = require("./utils/color");
 
 const osData = new (require("./utils/osinfo"))();
 
+let useCustomTitleBarIntegration = false;
+
 const { app, ipcMain : ipc, screen, dialog } = require("electron");
 const path = require("path");
 
@@ -179,9 +181,10 @@ function openWindow(config, colors) {
 
     let bgColor = new Color(colors.terminal.theme.background, config.transparencyValue);
 
-    let needFrame = !(config.experimentalCustomTitleBar && osData.supportCustomTitleBar);
     let needBlur = (config.background == "acrylic" || config.background == "blurbehind");
     let needTransparent = (config.background == "transparent" || needBlur);
+    let needFrame = !((config.experimentalCustomTitleBar && osData.supportCustomTitleBar) || (osData.os == "win32" && needTransparent));
+    useCustomTitleBarIntegration = !needFrame
 
     const { width, height } = screen.getPrimaryDisplay().workAreaSize;
     const appwidth = width - (width >> 2);
@@ -213,7 +216,7 @@ function openWindow(config, colors) {
             useCustomWindowRefreshMethod: true,
             disableOnBlur: (config.disableOnBlur != undefined ? config.disableOnBlur == "true" : true)
         },
-        titleBarStyle: 'hidden',
+        titleBarStyle: !needFrame ? 'hidden' : false,
         titleBarOverlay: {
             color: colors.app.topBar,
             symbolColor: colors.app.textColor,
@@ -551,11 +554,13 @@ function reloadConfig() {
 
     if (osData.os == "win32") {
         updateJumpMenu();
-        mainWindow.setTitleBarOverlay({
-            color: colors.app.topBar,
-            symbolColor: colors.app.textColor,
-            height: 30
-        })
+        if (useCustomTitleBarIntegration) {
+            mainWindow.setTitleBarOverlay({
+                color: colors.app.topBar,
+                symbolColor: colors.app.textColor,
+                height: 30
+            })
+        }
     }
 }
 

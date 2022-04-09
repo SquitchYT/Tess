@@ -49,12 +49,6 @@ body {
     text-align: center;
 }
 
-.return-arrow {
-    height: 19px;
-    width: 19px;
-    color: var(--item-textcolor);
-}
-
 .page {
     width: 100vw;
     display: flex;
@@ -362,13 +356,6 @@ h2 {
     background: var(--item-background-hover);
 }
 
-h3 {
-    width: 96%;
-    margin-bottom: 0;
-    font-size: 17px;
-    color: var(--item-textcolor);
-}
-
 .config-props{
     display: flex;
     flex-direction: row;
@@ -436,10 +423,6 @@ h3 {
 
 .valid-icon {
     color: var(--item-green);
-}
-
-.hidden {
-    display: none;
 }
 
 [disable] {
