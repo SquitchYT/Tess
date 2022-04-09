@@ -75,7 +75,9 @@ jobs:
   #         strip build/tess-cli
   #         cp build/tess-cli ../build/linux/debian//tess/usr/bin/
   #         cd ../
-  #         printf "Package: Tess\nVersion: ${VERSION}\nArchitecture: all\nEssential: no\nPriority: optional\nDepends: npm,nodejs\nMaintainer: Squitch\nDescription: Tess is a simple terminal for a modern age\n" > ./build/linux/debian/tess/DEBIAN/control
+  #         sed -i "s/{{ DATE }}/$(date -R)/g" ./build/linux/debian/tess/DEBIAN/control
+  #         sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/debian/tess/DEBIAN/control
+  
   #         cd ./build/linux/debian/
   #         sudo chmod 755 tess/DEBIAN/postinst 
   #         dpkg-deb --build tess
