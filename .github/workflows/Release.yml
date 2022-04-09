@@ -456,4 +456,4 @@ jobs:
       - name: Building Package
         run: |
           cd .\build\windows\winget\
-          ..\..\..\wingetcreate.exe update -v ${{ steps.get_release.outputs.tag_name }} --urls https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe Squitch.Tess
+          ..\..\..\wingetcreate.exe update --urls https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe --version ${{ steps.get_release.outputs.tag_name }} Squitch.Tess
