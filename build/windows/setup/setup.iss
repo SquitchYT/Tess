@@ -32,6 +32,7 @@ Root: HKCR; SubKey: "exefile\shell\Tess\command"; ValueType: string; ValueName: 
 
 [Icons]
 Name: "{userdesktop}\Tess"; Filename: "{app}\tess.exe"
+Name: "{group}\Tess"; Filename: "{app}\tess.exe";
 
 [Code]
 procedure RemovePath(Path: string);
