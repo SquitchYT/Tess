@@ -5,6 +5,7 @@ project(tess-cli)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(BUILD_SHARED_LIBS False)
+set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/appicon.rc")
 
 add_definitions("-lpthread")
 
@@ -12,7 +13,7 @@ if (UNIX)
     set(CMAKE_CXX_FLAGS "-O0 -Wall -Wextra")
 endif (UNIX)
 
-add_executable(tess-cli main.cpp)
+add_executable(tess-cli main.cpp ${APP_ICON_RESOURCE_WINDOWS})
 
 add_subdirectory(Utils)
 add_subdirectory(Lib)
