@@ -428,15 +428,12 @@ jobs:
   #         choco push .\tess.0.5.4.nupkg --source https://push.chocolatey.org/
 
   Winget:
-    name: Creating Chocolatey Package
+    name: Creating Winget Package
     needs: Windows
     runs-on: windows-latest
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
-        
-      - name: Installing MSVC
-        uses: ilammy/msvc-dev-cmd@v1
       
       - name: Get release
         id: get_release
@@ -448,7 +445,8 @@ jobs:
         run: |
           Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
           ./cmake-setup.msi /silent
-          winget -?
+          Invoke-WebRequest https://github.com/microsoft/winget-create/releases/download/v1.0.3.0/wingetcreate.exe -O wingetcreate.exe
+          wingetcreate
 
 
       # - name: Building App
