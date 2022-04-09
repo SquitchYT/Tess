@@ -426,10 +426,12 @@ jobs:
   #         cd ../../chocolatey
   #         $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
   #         get-content tools\chocolateyinstall.ps1 | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/chocolateyinstall.ps1
+  #         get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }} > tess.nuspec
 
   #         choco pack
   #         choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
-  #         choco push .\tess.0.5.4.nupkg --source https://push.chocolatey.org/
+  #         choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/
+  
 
   Winget:
     name: Creating Winget Package
