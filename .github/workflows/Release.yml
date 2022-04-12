@@ -474,20 +474,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Generating DEBIAN Package    
+      - name: Preparing Snap  
+        # run: |
+        #   sudo apt install snapd
+        #   sudo apt remove lxd lxd-client
+        #   sudo snap install snapcraft --classic
+        #   sudo snap refresh lxd
+        #   sudo lxd init --auto
+
         run: |
-          sudo apt install snapd
-          sudo apt remove lxd lxd-client
-          sudo snap install snapcraft --classic
-          sudo snap refresh lxd
-          sudo lxd init --auto
 
           cd ./build/linux
           wget https://github.com/SquitchYT/Tess/archive/refs/tags/${VERSION}.zip -O Tess.zip
           sed -i "s/{{ VERSION }}/${VERSION}/g" ./snap/snapcraft.yaml
-          snapcraft build --use-lxd
-
-          ls
-          ls ./snap
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
+
+
+      - name: Building Snap 
+        uses: snapcore/action-build@v1
