@@ -477,8 +477,8 @@ jobs:
       - name: Generating DEBIAN Package    
         run: |
           cd ./build/linux
-          wget https://github.com/SquitchYT/Tess/archive/refs/tags/${version}.zip -O Tess.zip
-          sed -i "s/{{ VERSION }}/${version}/g" ./snap/snapcraft.yaml
+          wget https://github.com/SquitchYT/Tess/archive/refs/tags/${VERSION}.zip -O Tess.zip
+          sed -i "s/{{ VERSION }}/${VERSION}/g" ./snap/snapcraft.yaml
           snapcraft build
 
           ls
