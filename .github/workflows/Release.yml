@@ -477,6 +477,7 @@ jobs:
       - name: Generating DEBIAN Package    
         run: |
           sudo apt install snapd
+          sudo apt remove lxd lxd-client
           sudo snap install snapcraft --classic
           sudo snap install lxd
           sudo lxd init --auto
