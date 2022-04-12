@@ -478,13 +478,13 @@ jobs:
         run: |
           sudo apt install snapd
           sudo snap install snapcraft --classic
-          sudo snap install multipass
-          multipass launch
+          sudo snap install lxd
+          sudo lxd init --auto
 
           cd ./build/linux
           wget https://github.com/SquitchYT/Tess/archive/refs/tags/${VERSION}.zip -O Tess.zip
           sed -i "s/{{ VERSION }}/${VERSION}/g" ./snap/snapcraft.yaml
-          snapcraft build
+          snapcraft build --use-lxd
 
           ls
           ls ./snap
