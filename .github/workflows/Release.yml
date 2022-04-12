@@ -476,12 +476,17 @@ jobs:
 
       - name: Preparing Snap  
         run: |
-          cp ./build/linux/snap/snapcraft.yml ./
+          cp ./build/linux/snap/snapcraft.yaml ./
           wget https://github.com/SquitchYT/Tess/archive/refs/tags/${VERSION}.zip -O Tess.zip
           sed -i "s/{{ VERSION }}/${VERSION}/g" ./snapcraft.yaml
         env:
           VERSION: ${{ steps.get_release.outputs.tag_name }}
 
-
       - name: Building Snap 
         uses: snapcore/action-build@v1
+
+      - name: test 
+        run: |
+          ls
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
