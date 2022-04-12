@@ -1,6 +1,6 @@
 name: tess
 base: core20
-version: '0.5.4'
+version: '{{ VERSION }}'
 summary: "Tess Terminal"
 description: "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology."
 grade: stable
