@@ -27,7 +27,7 @@ parts:
         apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
         apt update && apt install -y cmake nodejs
         npm config set unsafe-perm true
-        cd Tess-dev && npm i && npm run build
+        cd Tess-{{ VERSION }} && npm i && npm run build
         mkdir -p $SNAPCRAFT_PART_INSTALL/opt/tess || true
         cp -ar dist/linux-unpacked/* $SNAPCRAFT_PART_INSTALL/opt/tess/
         cd cli && cmake . -B build
