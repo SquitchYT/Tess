@@ -484,9 +484,13 @@ jobs:
 
       - name: Building Snap 
         uses: snapcore/action-build@v1
+        id: build
 
-      - name: test 
+      - name: Publishing Snap 
         run: |
-          ls
+          echo ${SNAP_LOGIN} > login.txt
+          snapcraft login --with login.txt
+          snapcraft upload ${SNAP_PATH}
         env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
+          SNAP_LOGIN: ${{ secrets.SNAPCRAFT_LOGIN }}
+          SNAP_PATH: ${{ steps.build.outputs.snap }}
