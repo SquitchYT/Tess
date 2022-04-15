@@ -3,8 +3,8 @@
 
 # Tess
 
-***Hackable*** *, **Simple**, **Rapid** &* ***Beautiful*** <br>
-*terminal for the new era of technology.*
+**Hackable, Simple, Rapid & Beautiful** <br>
+**terminal for the new era of technology.**
 
 <br>
 
