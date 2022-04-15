@@ -1,5 +1,12 @@
-<h1 align="center">Tess</h1>
-<div align="center">
+
+<div align = center>
+
+# Tess
+
+***Hackable*** *, **Simple**, **Rapid** &* ***Beautiful*** <br>
+*terminal for the new era of technology.*
+
+<br>
 
 [![Badge Arch]][Arch]
 [![Badge Debian]][Releases]
@@ -18,14 +25,11 @@
 [![Badge Discord]][Discord]
 [![Badge Twitter]][Twitter]
 
-</div>
-<h3 align="center">
-    <strong>Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology. </strong>
-</h3>
+<br>
 
-<h5 align="center">
-    <strong>Check the <a href="https://github.com/SquitchYT/Tess/wiki/">Wiki</a> to know how to use Tess</strong>
-</h5>
+*Check the **[Wiki]** on how to use* ***Tess***
+
+</div>
 
 
 ## Installation
@@ -81,9 +85,11 @@
 [Discord]: https://tessapp.dev/discord
 [Twitter]: https://tessapp.dev/twitter
 
-[Tess]: https://github.com/SquitchYT/tess
-[License]: https://github.com/SquitchYT/Tess/blob/main/LICENSE
 [Preview]: preview/preview1.png
+[License]: LICENSE
+
+[Wiki]: https://github.com/SquitchYT/Tess/wiki/
+[Tess]: https://github.com/SquitchYT/tess
 
 
 <!-------------------------------{ Installations }----------------------------->
