@@ -1,15 +1,13 @@
 {
   "name": "tess",
-  "version": "0.5.4",
+  "version": "0.6.0",
   "description": "Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology",
   "license": "Mozilla Public License 2.0",
-  "authors": [
-    {
-      "name": "Squitch",
-      "email": "contact@squitch.fr",
-      "url": "https://squitch.fr"
-    }
-  ],
+  "author": {
+    "name": "Squitch",
+    "email": "contact@squitch.fr",
+    "url": "https://squitch.fr"
+  },
   "keywords": [
     "terminal",
     "nodejs",
@@ -47,7 +45,7 @@
   },
   "devDependencies": {
     "electron": "^17.4.0",
-    "electron-builder": "^22.14.5",
+    "electron-builder": "^22.5.1",
     "eslint": "^7.30.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.23.4"
