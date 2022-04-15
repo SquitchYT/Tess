@@ -336,7 +336,7 @@ jobs:
           cd build/windows/setup
           iscc setup.iss
           cd Output
-          mv tess-0.5.4-setup.exe tess-setup.exe
+          mv tess-0.6.0-setup.exe tess-setup.exe
           
       - name: Get release
         id: get_release
@@ -383,7 +383,7 @@ jobs:
           cp .\tess-cli.exe ../../../dist/win-unpacked/
           cd ../../../
           cd dist
-          cp '.\tess 0.5.4.exe' ./win-unpacked
+          cp '.\tess 0.6.0.exe' ./win-unpacked
           
       - name: Packaging App
         run: |
@@ -447,7 +447,7 @@ jobs:
           cd build/windows/setup
           iscc setup.iss
           cd Output
-          mv tess-0.5.4-setup.exe tess-setup.exe
+          mv tess-0.6.0-setup.exe tess-setup.exe
 
       - name: Creating Chocolatey Package
         run: |

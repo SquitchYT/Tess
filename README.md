@@ -39,6 +39,8 @@
 **Snap package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#snapcraft)
 <br>
 **Chocolatey package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#chocolatey)
+<br>
+**Winget Package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#winget)
 
 
 
