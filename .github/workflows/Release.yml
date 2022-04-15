@@ -176,76 +176,76 @@ jobs:
           asset_name: tess-git-x86_64.pkg.tar.zst
           asset_content_type: application/octet-stream
           
-  # RPM_Package:
-  #   name: Creating RPM Package
-  #   needs: Linux
-  #   runs-on: ubuntu-latest
-  #   container:
-  #     image: fedora:latest
+  RPM_Package:
+    name: Creating RPM Package
+    needs: Linux
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
     
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-  #     - name: Get release
-  #       id: get_release
-  #       uses: bruceadams/get-release@v1.2.2
-  #       env:
-  #         GITHUB_TOKEN: ${{ github.token }}
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
-  #     - name: Generating RPM Package    
-  #       run: |
-  #         dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git openssl-devel -y
+      - name: Generating RPM Package    
+        run: |
+          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git openssl-devel -y
           
-  #         mkdir -p ./build/linux/rhel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          mkdir -p ./build/linux/rhel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
           
-  #         sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/rhel/rpmbuild/SPECS/tess.spec
+          sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/rhel/rpmbuild/SPECS/tess.spec
 
-  #         mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app
-  #         mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli
-  #         mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1
           
-  #         cp ./build/ressources/desktop/tess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
-  #         cp ./build/ressources/desktop/open-app-in-tess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
-  #         cp ./build/ressources/desktop/open-tess-here.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
-  #         cp ./build/ressources/icon/icon.png ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp ./build/ressources/desktop/tess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp ./build/ressources/desktop/open-app-in-tess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp ./build/ressources/desktop/open-tess-here.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+          cp ./build/ressources/icon/icon.png ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
           
-  #         mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
-  #         mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
+          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
 
-  #         cp -r ./build/ressources/man/fr/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
-  #         cp -r ./build/ressources/man/en/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
+          cp -r ./build/ressources/man/fr/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
+          cp -r ./build/ressources/man/en/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
           
-  #         npm install
-  #         npm run build
-  #         cp -r dist/linux-unpacked/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app/
+          npm install
+          npm run build
+          cp -r dist/linux-unpacked/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app/
           
-  #         cd cli
-  #         cmake . -B build
-  #         make -C build
-  #         strip build/tess-cli
-  #         cd ../
+          cd cli
+          cmake . -B build
+          make -C build
+          strip build/tess-cli
+          cd ../
           
-  #         cp cli/build/tess-cli ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
+          cp cli/build/tess-cli ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
                   
-  #         cd ./build/linux/rhel/rpmbuild/SOURCES
-  #         tar zcvf tess.tar.gz ./*
-  #         cd ../
+          cd ./build/linux/rhel/rpmbuild/SOURCES
+          tar zcvf tess.tar.gz ./*
+          cd ../
           
-  #         rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
+          rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
           
-  #       env:
-  #         VERSION: ${{ steps.get_release.outputs.tag_name }}
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
         
-  #     - name: Upload release binary
-  #       uses: actions/upload-release-asset@v1.0.2
-  #       env:
-  #         GITHUB_TOKEN: ${{ github.token }}
-  #       with:
-  #         upload_url: ${{ steps.get_release.outputs.upload_url }}
-  #         asset_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
-  #         asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
-  #         asset_content_type: application/octet-stream
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
+          asset_content_type: application/octet-stream
           
           
   # AUR_Package_tess-git:
