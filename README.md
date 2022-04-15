@@ -44,10 +44,10 @@
 
 ## Preview
 <p align=center>
-  <img width="460" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview1.png" alt="Preview1">
-  <img width="460" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview3.png" alt="Preview1">
-  <img width="460" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview2.png" alt="Preview1">
-  <img width="460" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview4.png" alt="Preview1">
+  <img width="450" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview1.png" alt="Preview1">
+  <img width="450" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview3.png" alt="Preview1">
+  <img width="450" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview2.png" alt="Preview1">
+  <img width="450" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview4.png" alt="Preview1">
 </p>
 
 ## Contributors
