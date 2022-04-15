@@ -33,7 +33,9 @@
 
 
 ## Installation
-### Install from packages
+
+### Packages
+
 **ArchLinux**: [Wiki link][Install Arch]
 <br>
 **Debian / Ubuntu**: [Wiki link][Install Debian]
@@ -46,18 +48,18 @@
 <br>
 **Chocolatey package**: [Wiki link][Install Chocolatey]
 <br>
-**Winget Package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#winget)
+**Winget Package**: [Wiki link][Install Winget]
 
 
 
 ## Preview
 
-<p align=center>
-  <img width="400" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview1.png" alt="Preview1">
-  <img width="400" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview3.png" alt="Preview1">
-  <img width="400" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview2.png" alt="Preview1">
-  <img width="400" src="https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview4.png" alt="Preview1">
-</p>
+<div align = center>
+    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview1.png alt = Preview1>
+    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview3.png alt = Preview2>
+    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview2.png alt = Preview3>
+    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview4.png alt = Preview4>
+</div>
 
 
 ## Contributors
@@ -100,7 +102,7 @@
 [Install Fedora]: https://github.com/SquitchYT/Tess/wiki/Installation#redhat-fedora
 [Install Debian]: https://github.com/SquitchYT/Tess/wiki/Installation#debian-ubuntu
 [Install Arch]: https://github.com/SquitchYT/Tess/wiki/Installation#archlinux
-
+[Install Winget]: https://github.com/SquitchYT/Tess/wiki/Installation#winget
 
 <!-------------------------------{ Contributors }------------------------------>
 
