@@ -3,14 +3,18 @@
   <a href="https://aur.archlinux.org/packages/tess-git/"><img src="https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white" alt="Arch Linux"/></a>
   <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white" alt="Debian"/></a>
   <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Fedora-294172?style=for-the-badge&logo=fedora&logoColor=white" alt="Fedora"/></a>
-<a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows"/></a>
+  <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Windows"></a>
+  <br>
+  <a href="https://community.chocolatey.org/packages/tess/"><img src="https://img.shields.io/static/v1?style=for-the-badge&message=Chocolatey&color=222222&logo=Chocolatey&logoColor=80B5E3&label=" alt="Chocolatey"></a>
+  <a href="https://snapcraft.io/tess"><img src="https://img.shields.io/badge/snapcraft-222222?style=for-the-badge&logo=snapcraft&logoColor=#82BEA0" alt="Snapcraft"></a>
+  <a href="https://github.com/SquitchYT/Tess/releases/latest/"><img src="https://img.shields.io/badge/Winget-0078D6?style=for-the-badge&logo=Windows Terminal&logoColor=white" alt="Windows"></a>
   <br>
   <a href="https://developer.mozilla.org/fr/docs/Web/JavaScript"><img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JS"/></a>
   <a href="https://isocpp.org/"><img src="https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white" alt="C++"/></a>
   <a href="https://nodejs.org/en/"><img src="https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node-dot-js&logoColor=white" alt="NodeJS"/></a>
   <a href="https://www.electronjs.org/"><img src="https://img.shields.io/badge/Electron-2B2E3A?style=for-the-badge&logo=electron&logoColor=9FEAF9" alt="Electron"/></a>
   <br>
-  <a href="https://discord.com/invite/e3Dz5gwMfu"><img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/></a>
+  <a href="https://tessapp.dev/discord"><img src="https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"/></a>
   <a href="https://tessapp.dev/twitter"><img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" alt="Twitter"/></a>
 </p>
 <h3 align="center">
@@ -22,7 +26,6 @@
 </h5>
 
 
-
 ## Installation
 ### Install from packages
 **ArchLinux**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#archlinux)
@@ -32,8 +35,11 @@
 **Fedora / RedHat**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#redhat-fedora)
 <br>
 **Windows**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#windows)
-<!--
-**Snap package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#snap)-->
+<br>
+**Snap package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#snapcraft)
+<br>
+**Chocolatey package**: [Wiki link](https://github.com/SquitchYT/Tess/wiki/Installation#chocolatey)
+
 
 
 ## Preview

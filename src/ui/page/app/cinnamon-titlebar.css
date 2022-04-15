@@ -1,0 +1,29 @@
+.minimize-cinnamon .cinnamon-minimize-prelight, .cinnamon-minimize-pressed {
+    display: none !important;
+}
+.minimize-cinnamon:hover .cinnamon-minimize-prelight {
+    display: flex !important;
+}
+.minimize-cinnamon:active .cinnamon-minimize-pressed {
+    display: flex !important;
+}
+
+.close-cinnamon .cinnamon-close-prelight, .cinnamon-close-pressed {
+    display: none !important;
+}
+.close-cinnamon:hover .cinnamon-close-prelight {
+    display: flex !important;
+}
+.close-cinnamon:active .cinnamon-close-pressed {
+    display: flex !important;
+}
+
+.maximize-cinnamon .cinnamon-maximize-prelight, .cinnamon-maximize-pressed {
+    display: none !important;
+}
+.maximize-cinnamon:hover .cinnamon-maximize-prelight {
+    display: flex !important;
+}
+.maximize-cinnamon:active .cinnamon-maximize-pressed {
+    display: flex !important;
+}

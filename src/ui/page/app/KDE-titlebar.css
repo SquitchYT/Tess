@@ -1,0 +1,43 @@
+.icon-KDE {
+    margin-left: 6px;
+}
+.close-button-KDE {
+    background: url("/usr/share/themes/Breeze-Dark/assets/titlebutton-close@2.png");
+    background-size: cover !important;
+}
+.close-button-KDE:hover {
+    background: url("/usr/share/themes/Breeze-Dark/assets/titlebutton-close-hover@2.png");
+}
+.close-button-KDE:active {
+    background: url("/usr/share/themes/Breeze-Dark/assets/titlebutton-close-active@2.png");
+}
+.minimize-button-KDE {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-minimize-symbolic.svg");
+    background-size: cover !important;
+}
+.minimize-button-KDE:hover {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-minimize-hover-symbolic.svg");
+}
+.minimize-button-KDE:active {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-minimize-active-symbolic.svg");
+}
+.expand-button-KDE {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-maximize-symbolic.svg");
+    background-size: cover !important;
+}
+.expand-button-KDE:hover {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-maximize-hover-symbolic.svg");
+}
+.expand-button-KDE:active {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-maximize-active-symbolic.svg");
+}
+.reduce-button-KDE {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-maximized-symbolic.svg");
+    background-size: cover !important;
+}
+.reduce-button-KDE:hover {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-maximized-hover-symbolic.svg");
+}
+.reduce-button-KDE:active {
+    background: url("/usr/share/themes/Breeze-Dark/assets/breeze-maximized-active-symbolic.svg");
+}

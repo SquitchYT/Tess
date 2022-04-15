@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="../../../../node_modules/xterm/css/xterm.css">
+        <link rel="stylesheet" href="quick-menu.css">
+        <link rel="stylesheet" href="titleBarButton.css">
+        <link rel="stylesheet" href="KDE-titlebar.css">
+        <link rel="stylesheet" href="cinnamon-titlebar.css">
+        <link rel="stylesheet" href="adwaita-titlebar.css">
+        <title>Tess - Terminal</title>
+    </head>
+    <body>
+        <div class="popup hidden" id="popup">
+            <div class="popup-inner">
+                <span class="title">Title</span>
+                <span class="description">Description</span>
+                <div>
+                    <div class="checkbox-button">
+                        <div class="checkbox"></div>
+                        <span>Don't show again</span>
+                    </div>
+                    <div class="cancel popup-button" id="popupCancel">Cancel</div>
+                    <div class="valid popup-button" id="popupValid">Close</div>
+                </div>
+            </div>
+        </div>
+        <div class="quick-menu">
+            <div class="inner-quick-menu">
+                <div class="quick-menu-main">
+                    <div class="quick-menu-main-item" id="quick-default">
+                        <img src="../../../ressources/img/default.png" id="quick-default-icon">
+                        <span class="name" id="quick-default-name">Default Shell</span>
+                        <span class="shortcut" id="quick-default-shortcut">CTRL + T</span>
+                    </div>
+                    <div class="quick-menu-main-item" id="quick-config">
+                        <img src="../../../ressources/img/gear.png">
+                        <span class="name">Config</span>
+                        <span class="shortcut" id="quick-config-shortcut">CTRL + P</span>
+                    </div>
+                    <!--<div class="quick-menu-main-item" id="quick-market">
+                        <img src="../../../ressources/img/default.png">
+                        <span class="name">Marketplace</span>
+                        <span class="shortcut">CTRL + M</span>
+                    </div>-->
+                </div>
+                <div class="separator"></div>
+                <div class="quick-menu-other"></div>
+                <div class="no-profil-menu hide" id="quick-no-other-shell">Create a new profil in the config page!</div>
+            </div>
+        </div>
+        <div class="tabs">
+            <div class="buttons" id="titlebar-button-left"></div>
+            <div class="tabs-panel">
+                <div class="tabs-tab">
+                    <div class="more end-order" id="new-tab">
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="more end-order" id="show-all-shell">
+                        <svg class="drop-down-arrow" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons" id="titlebar-button-right"></div>
+        </div>
+        <div class="terminals-before">
+            <div class="terminals" id="terminals">
+            </div>
+        </div>
+        <script src="app.js"></script>
+    </body>
+</html>

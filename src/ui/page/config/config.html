@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Configuration</title>
+        <script src="../../customElement/switchButton/switchButton.js"></script>
+        <script src="../../customElement//dropDown/dropDown.js"></script>
+        <script src="../../customElement/scroller-picker/scrollerPicker.js"></script>
+        <script src="../../customElement/shortcutPicker/shortcutPicker.js"></script>
+        <script src="../../customElement/filePicker/filePicker.js"></script>
+        <script src="./config.js" defer></script>
+        <link rel="stylesheet" href="./config.css">
+    </head>
+    <body>
+        <div class="left-side-menu no-transition menu-hidden" id="left-side-menu">
+            <div class="icon menu-icon-close" id="menu-icon">
+                <svg class="icon" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="left-side-menu-items">
+                <h2 class="left-side-menu-title">Settings</h2>
+                <div class="link selected-page" link="apparence-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v11a3 3 0 106 0V4a2 2 0 00-2-2H4zm1 14a1 1 0 100-2 1 1 0 000 2zm5-1.757l4.9-4.9a2 2 0 000-2.828L13.485 5.1a2 2 0 00-2.828 0L10 5.757v8.486zM16 18H9.071l6-6H16a2 2 0 012 2v2a2 2 0 01-2 2z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Appearance</span>
+                </div>
+                <div class="link" link="terminal-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5zm3.293 1.293a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L7.586 10 5.293 7.707a1 1 0 010-1.414zM11 12a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Terminal</span>
+                </div>
+                <div class="link" link="plugin-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM14 11a1 1 0 011 1v1h1a1 1 0 110 2h-1v1a1 1 0 11-2 0v-1h-1a1 1 0 110-2h1v-1a1 1 0 011-1z" />
+                    </svg>
+                    <span class="link-name">Extensions</span>
+                </div>
+                <div class="link" link="shortcut-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Shortcut</span>
+                </div>
+                <div class="link" link="experimental-page">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7 2a1 1 0 00-.707 1.707L7 4.414v3.758a1 1 0 01-.293.707l-4 4C.817 14.769 2.156 18 4.828 18h10.343c2.673 0 4.012-3.231 2.122-5.121l-4-4A1 1 0 0113 8.172V4.414l.707-.707A1 1 0 0013 2H7zm2 6.172V4h2v4.172a3 3 0 00.879 2.12l1.027 1.028a4 4 0 00-2.171.102l-.47.156a4 4 0 01-2.53 0l-.563-.187a1.993 1.993 0 00-.114-.035l1.063-1.063A3 3 0 009 8.172z" clip-rule="evenodd" />
+                    </svg>
+                    <span class="link-name">Experimental Features</span>
+                </div>
+                <br>
+                <div class="profil-create">
+                    <svg class="link-icon" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
+                    </svg>
+                    <span class="link-name">Create</span>
+                </div>
+            </div>
+            <div class="left-side-menu-bottom">
+                <div class="left-side-menu-link">
+                    <span link="https://discord.gg/e3Dz5gwMfu">Discord</span>
+                    <span link="https://github.com/SquitchYT/Tess">GitHub</span>
+                </div>
+                <div class="left-side-menu-icon">
+                    <div class="reload-require invisible">
+                        <svg viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="page no-transition" id="apparence-page">
+            <div class="page-header">
+                <span class="page-title">Appearances</span>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Theme</span>
+                        <span class="details">The theme of the terminal</span>
+                    </div>
+                    <drop-down-menu input-list="default" selected-value="default" parameters="theme"></drop-down-menu>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Bring App Front</span>
+                        <span class="details">Bring app to front on new tab</span>
+                    </div>
+                    <switch-button parameters="bringAppToFront"></switch-button>
+                </div>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Background type</span>
+                        <span class="details">Style of the application background</span>
+                    </div>
+                    <drop-down-menu input-list="full;transparent;image;acrylic;blurbehind" selected-value="full" parameters="background" name="background-type" reloadRequire></drop-down-menu>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Terminal transparency</span>
+                        <span class="details">Changes the transparency of terminal when the background type is set to transparent</span>
+                    </div>
+                    <scroller-picker min-value=0 max-value=100 suffix="%" parameters="transparencyValue" reloadRequire></scroller-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Image link</span>
+                        <span class="details">Change background image when the background type is set to image</span>
+                    </div>
+                    <file-picker reloadRequire parameters="imageLink"></file-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Image blur</span>
+                        <span class="details">Changes the blur of the image when the background type is set to image</span>
+                    </div>
+                    <scroller-picker min-value=0 max-value=20 suffix="px" parameters="imageBlur" reloadRequire></scroller-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Dim Background on Blur</span>
+                        <span class="details">Dim the background on unfocus in windows. Only with acrylic and blurbehind</span>
+                    </div>
+                    <switch-button parameters="disableOnBlur" reloadRequire></switch-button>
+                </div>
+            </div>
+        </section>
+
+        <section class="page no-transition hidden-page plugin" id="plugin-page">
+            <div class="page-header">
+                <span class="page-title">Plugins</span>
+            </div>
+            <span class="no-plugin hidden">
+                Sorry, It look like your haven't installed plugin
+            </span>
+        </section>
+
+        <section class="page no-transition hidden-page" id="terminal-page">
+            <div class="page-header">
+                <span class="page-title">Terminal</span>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Cursor</span>
+                        <span class="details">Terminal cursor</span>
+                    </div>
+                    <drop-down-menu input-list="bar;block;underline" selected-value="block", parameters="cursorStyle"></drop-down-menu>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Cursor blink</span>
+                        <span class="details">Defines whether the cursor is blinking.</span>
+                    </div>
+                    <switch-button parameters="cursorBlink"></switch-button>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Font size</span>
+                        <span class="details">Defines the text size of the terminal.</span>
+                    </div>
+                    <scroller-picker min-value=10 max-value=20 suffix="px" parameters="terminalFontSize"></scroller-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Fonts</span>
+                        <span class="details">Defines the font used in the terminal. Separated by a colon</span>
+                    </div>
+                    <input parameters="terminalFonts" class="input-config">
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Buffer Size</span>
+                        <span class="details">Defines the number of line in the terminal buffer. An higher value may increase RAM use</span>
+                    </div>
+                    <scroller-picker min-value=200 max-value=20000 suffix="" parameters="bufferSize"></scroller-picker>
+                </div>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Default Profile</span>
+                        <span class="details">Default terminal profile</span>
+                    </div>
+                    <drop-down-menu input-list="default" selected-value="default" parameters="defaultProfil"></drop-down-menu>
+                </div>
+            </div>
+        </section>
+
+        <section class="page no-transition hidden-page shortcut" id="shortcut-page">
+            <div class="page-header">
+                <span class="page-title">Shortcut</span>
+            </div>
+            <div class="shortcutAddDiv">
+                <div class="shortcutAddButton">Create shortcut</div>
+            </div>
+        </section>
+
+        <section class="page no-transition hidden-page" id="profil-page">
+            <div class="page-header">
+                <span class="page-title">Profil Update</span>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Name</span>
+                        <span class="details">The name of the profil</span>
+                    </div>
+                    <input class="profil-name" type="text">
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Icon</span>
+                        <span class="details">The icon of the profil</span>
+                    </div>
+                    <file-picker class="profil-icon" type="profil-input"></file-picker>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Command</span>
+                        <span class="details">Command to execute when the profil is launched</span>
+                    </div>
+                    <input class="profil-command" type="text">
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Process Name</span>
+                        <span class="details">Display the current process name inside the tab</span>
+                    </div>
+                    <switch-button state=false class="profil-process-name"></switch-button>
+                </div>
+            </div>
+        </section>
+
+        <section class="page no-transition hidden-page" id="experimental-page">
+            <div class="page-header">
+                <span class="page-title">Experimental Features</span>
+            </div>
+            <div class="config-group">
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Font Ligature</span>
+                        <span class="details">Enable font ligature inside the terminal</span>
+                    </div>
+                    <switch-button parameters="experimentalFontLigature"></switch-button>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Renderer Mode</span>
+                        <span class="details">Change the render mode for the terminal. May impact the performance or cause display bug</span>
+                    </div>
+                    <drop-down-menu input-list="canvas;dom" selected-value="canvas" parameters="experimentalRendererType" reloadRequire></drop-down-menu>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Progress Tracking</span>
+                        <span class="details">Enable progress tracking for processes</span>
+                    </div>
+                    <switch-button parameters="experimentalProgressTracker"></switch-button>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Tab's Close Warning Popup</span>
+                        <span class="details">Enable warning popup when closing one tab with running process</span>
+                    </div>
+                    <switch-button parameters="experimentalShowCloseWarningPopup"></switch-button>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Process Updade Ping</span>
+                        <span class="details">Enable ping indicator for process whith unreaded text</span>
+                    </div>
+                    <switch-button parameters="experimentalShowProcessUpdateIndicator"></switch-button>
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Close Popup Exclusion List</span>
+                        <span class="details">This process will be omited when checking if process is running when closing tab</span>
+                    </div>
+                    <input parameters="experimentalPopupExclusionList" type="text" class="input-config">
+                </div>
+                <div class="config-props">
+                    <div class="description">
+                        <span class="title">Use Custom TitleBar</span>
+                        <span class="details">Enable custom titlebar</span>
+                    </div>
+                    <switch-button parameters="experimentalCustomTitleBar" reloadRequire></switch-button>
+                </div>
+            </div>
+        </section>
+    </body>
+</html> 

@@ -1,8 +1,0 @@
-Package: Tess
-Version: 0.4.3
-Architecture: all
-Essential: no
-Priority: optional
-Depends: npm,nodejs
-Maintainer: Squitch
-Description: Tess is a simple terminal for a modern age

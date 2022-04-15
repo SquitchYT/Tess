@@ -1,0 +1,16 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=KonqPopupMenu/Plugin
+MimeType=application/*;
+Actions=OpenAppInTess;OpenAppInTessNewWindow;
+X-KDE-AuthorizeAction=shell_access
+
+[Desktop Action OpenAppInTess]
+Name=Execute App in Tess in a New Tab
+Exec=/usr/bin/tess --e %f --newtab
+Icon=/usr/share/pixmaps/tess.png
+
+[Desktop Action OpenAppInTessNewWindow]
+Name=Execute App in Tess in a New Window
+Exec=/usr/bin/tess --e %f
+Icon=/usr/share/pixmaps/tess.png
