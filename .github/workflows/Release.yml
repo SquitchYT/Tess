@@ -246,6 +246,16 @@ jobs:
           asset_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
           asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
           asset_content_type: application/octet-stream
+
+      - name: Deploy to server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SOURCE: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+          TARGET: ${{ secrets.REMOTE_TARGET_RPM }}/tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
           
           
   # AUR_Package_tess-git:
