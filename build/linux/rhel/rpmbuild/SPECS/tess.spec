@@ -4,7 +4,7 @@ Release:        0
 Summary:        Tess is an terminal emulator
 License:        MPL-2.0
 Source0:        tess.tar.gz
-URL             https://tessapp.dev
+URL:            https://tessapp.dev
 %%description
 Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology.
 %%global debug_package %%{nil}
