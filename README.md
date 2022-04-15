@@ -11,17 +11,14 @@
 [![Badge Arch]][Arch]
 [![Badge Debian]][Releases]
 [![Badge Fedora]][Releases]
-[![Badge Windows]][Releases]
-
+[![Badge Windows]][Releases] <br>
 [![Badge Chocolatey]][Arch]
 [![Badge Snapcraft]][Snapcraft]
-[![Badge Winget]][Releases]
-
+[![Badge Winget]][Releases] <br>
 [![Badge JavaScript]][JavaScript]
 [![Badge C++]][C++]
 [![Badge NodeJS]][NodeJS]
-[![Badge Electron]][Electron]
-
+[![Badge Electron]][Electron] <br>
 [![Badge Discord]][Discord]
 [![Badge Twitter]][Twitter]
 
