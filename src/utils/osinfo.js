@@ -10,7 +10,7 @@ class OsInfomations{
         this._wm = Child_Proc.execSync("echo $XDG_CURRENT_DESKTOP").toString().trim();
         this._homedir = os.homedir();
         this._theme_mode = undefined;
-        this._supported_titlebar_buttons_wm = ["X-Cinnamon", "Unity", "KDE", "MATE", "Budgie:GNOME"]
+        this._supported_titlebar_buttons_wm = ["X-Cinnamon", "Unity", "KDE", "MATE", "Budgie:GNOME", "GNOME"]
     }
 
     get os(){
