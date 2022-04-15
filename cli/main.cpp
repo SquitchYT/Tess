@@ -15,7 +15,7 @@ void exit_handler() {
 }
 
 void print_help() {
-    std::cout << "TessCLI - 0.5.4" << std::endl;
+    std::cout << "TessCLI - 0.6" << std::endl;
     std::cout << "   --help          Show this help." << std::endl;
     std::cout << "   -S, --save      Install the given extensions." << std::endl;
     std::cout << "   -R, --remove    Remove the given extensions." << std::endl;
