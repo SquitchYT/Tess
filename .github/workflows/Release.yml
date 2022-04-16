@@ -456,37 +456,37 @@ jobs:
           cd ../../chocolatey
           $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
           get-content tools\chocolateyinstall.ps1 | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/chocolateyinstall.ps1
-          get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }} > tess.nuspec
+          get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }}} > tess.nuspec
 
           choco pack
           choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
           choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/
   
 
-  Winget:
-    name: Creating Winget Package
-    needs: Inno_Setup_App
-    runs-on: windows-latest
-    steps:
-      - name: Downloading Files
-        uses: actions/checkout@v2
+  # Winget:
+  #   name: Creating Winget Package
+  #   needs: Inno_Setup_App
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Downloading Files
+  #       uses: actions/checkout@v2
       
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+  #     - name: Get release
+  #       id: get_release
+  #       uses: bruceadams/get-release@v1.2.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
      
-      - name: Installing Make Dependencies
-        run: |
-          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
-          ./cmake-setup.msi /silent
-          Invoke-WebRequest https://github.com/microsoft/winget-create/releases/download/v1.0.3.0/wingetcreate.exe -O wingetcreate.exe
+  #     - name: Installing Make Dependencies
+  #       run: |
+  #         Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
+  #         ./cmake-setup.msi /silent
+  #         Invoke-WebRequest https://github.com/microsoft/winget-create/releases/download/v1.0.3.0/wingetcreate.exe -O wingetcreate.exe
 
-      - name: Building Package
-        run: |
-          cd .\build\windows\winget\
-          ..\..\..\wingetcreate.exe update --urls https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe --version ${{ steps.get_release.outputs.tag_name }} Squitch.Tess
+  #     - name: Building Package
+  #       run: |
+  #         cd .\build\windows\winget\
+  #         ..\..\..\wingetcreate.exe update --urls https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe --version ${{ steps.get_release.outputs.tag_name }} Squitch.Tess
 
 
 
