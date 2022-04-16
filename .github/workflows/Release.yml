@@ -13,21 +13,21 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
           
-        - name: Installing dependencies
-          run: |
-            sudo apt install npm libcurl4-openssl-dev cmake git
+        # - name: Installing dependencies
+        #   run: |
+        #     sudo apt install npm libcurl4-openssl-dev cmake git
         
-        - name: Checking Tess Compilation
-          run: |
-            npm install
-            npm run build
+        # - name: Checking Tess Compilation
+        #   run: |
+        #     npm install
+        #     npm run build
             
-        - name: Checking Tess-cli Compilation
-          run: |
-            cd cli
-            cmake . -B build
-            cd build && make
-            ./tess-cli -S --theme default
+        # - name: Checking Tess-cli Compilation
+        #   run: |
+        #     cd cli
+        #     cmake . -B build
+        #     cd build && make
+        #     ./tess-cli -S --theme default
 
   Linux:
     needs: Check
@@ -94,24 +94,24 @@ jobs:
           asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
           asset_content_type: application/octet-stream
           
-      - name: Deploy to server
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          SOURCE: ./build/linux/debian/tess.deb
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
+      # - name: Deploy to server
+      #   uses: easingthemes/ssh-deploy@main
+      #   env:
+      #     SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+      #     SOURCE: ./build/linux/debian/tess.deb
+      #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+      #     REMOTE_USER: ${{ secrets.REMOTE_USER }}
+      #     REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+      #     TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
           
-      - name: Update apt repository
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.REMOTE_PORT }}
-          script: ${{ secrets.REMOTE_DEPLOY }}
+      # - name: Update apt repository
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.REMOTE_HOST }}
+      #     username: ${{ secrets.REMOTE_USER }}
+      #     key: ${{ secrets.SERVER_SSH_KEY }}
+      #     port: ${{ secrets.REMOTE_PORT }}
+      #     script: ${{ secrets.REMOTE_DEPLOY }}
 
 
   AppImage:
@@ -249,7 +249,7 @@ jobs:
 
       - name: Deploy to server
         uses: wlixcc/SFTP-Deploy-Action@v1.0
-        with:
+         with:
           server: ${{ secrets.REMOTE_HOST }}
           username: ${{ secrets.REMOTE_USER }}
           port: ${{ secrets.REMOTE_PORT }}
@@ -277,29 +277,29 @@ jobs:
 
 
 
-  AUR_Package_tess-git:
-    name: Updating AUR Tess-git Package
-    needs: Linux
-    runs-on: ubuntu-latest
-    steps:
-      - name: Downloading Files
-        uses: actions/checkout@v2
+  # AUR_Package_tess-git:
+  #   name: Updating AUR Tess-git Package
+  #   needs: Linux
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Downloading Files
+  #       uses: actions/checkout@v2
       
-      - name: Update PKGBUILD
-        uses: 2m/arch-pkgbuild-builder@v1.16
-        with:
-          target: 'pkgbuild'
-          pkgname: 'build/linux/archlinux/tess-git'
+  #     - name: Update PKGBUILD
+  #       uses: 2m/arch-pkgbuild-builder@v1.16
+  #       with:
+  #         target: 'pkgbuild'
+  #         pkgname: 'build/linux/archlinux/tess-git'
           
-      - name: Update AUR Package
-        uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
-        with:
-          pkgname: tess-git
-          pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
-          commit_username: ${{ secrets.AUR_USERNAME }}
-          commit_email: ${{ secrets.AUR_EMAIL }}
-          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-          commit_message: Update AUR package
+  #     - name: Update AUR Package
+  #       uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
+  #       with:
+  #         pkgname: tess-git
+  #         pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
+  #         commit_username: ${{ secrets.AUR_USERNAME }}
+  #         commit_email: ${{ secrets.AUR_EMAIL }}
+  #         ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+  #         commit_message: Update AUR package
           
 
   Inno_Setup_App:
