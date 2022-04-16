@@ -45,54 +45,54 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
     
-  DEB_Package:
-    name: Creating Debian Package
-    needs: Linux
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  # DEB_Package:
+  #   name: Creating Debian Package
+  #   needs: Linux
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+  #     - name: Get release
+  #       id: get_release
+  #       uses: bruceadams/get-release@v1.2.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Generating DEBIAN Package    
-        run: |
-          sudo apt-get install libcurl4-openssl-dev cmake git
-          mkdir -p ./build/linux/debian/tess/usr/lib/tess/
-          mkdir -p ./build/linux/debian/tess/usr/bin
+  #     - name: Generating DEBIAN Package    
+  #       run: |
+  #         sudo apt-get install libcurl4-openssl-dev cmake git
+  #         mkdir -p ./build/linux/debian/tess/usr/lib/tess/
+  #         mkdir -p ./build/linux/debian/tess/usr/bin
           
-          npm install
-          npm run build
-          cp -r dist/linux-unpacked/* ./build/linux/debian/tess/usr/lib/tess/
+  #         npm install
+  #         npm run build
+  #         cp -r dist/linux-unpacked/* ./build/linux/debian/tess/usr/lib/tess/
           
-          cd cli
-          cmake . -B build
-          make -C build
-          strip build/tess-cli
-          cp build/tess-cli ../build/linux/debian//tess/usr/bin/
-          cd ../
-          sed -i "s/{{ DATE }}/$(date -R)/g" ./build/linux/debian/tess/DEBIAN/control
-          sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/debian/tess/DEBIAN/control
+  #         cd cli
+  #         cmake . -B build
+  #         make -C build
+  #         strip build/tess-cli
+  #         cp build/tess-cli ../build/linux/debian//tess/usr/bin/
+  #         cd ../
+  #         sed -i "s/{{ DATE }}/$(date -R)/g" ./build/linux/debian/tess/DEBIAN/control
+  #         sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/debian/tess/DEBIAN/control
   
-          cd ./build/linux/debian/
-          sudo chmod 755 tess/DEBIAN/postinst 
-          dpkg-deb --build tess
-        env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
+  #         cd ./build/linux/debian/
+  #         sudo chmod 755 tess/DEBIAN/postinst 
+  #         dpkg-deb --build tess
+  #       env:
+  #         VERSION: ${{ steps.get_release.outputs.tag_name }}
         
-      - name: Upload release binary
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./build/linux/debian/tess.deb
-          asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
-          asset_content_type: application/octet-stream
+  #     - name: Upload release binary
+  #       uses: actions/upload-release-asset@v1.0.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #       with:
+  #         upload_url: ${{ steps.get_release.outputs.upload_url }}
+  #         asset_path: ./build/linux/debian/tess.deb
+  #         asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
+  #         asset_content_type: application/octet-stream
           
       # - name: Deploy to server
       #   uses: easingthemes/ssh-deploy@main
@@ -114,67 +114,67 @@ jobs:
       #     script: ${{ secrets.REMOTE_DEPLOY }}
 
 
-  AppImage:
-      name: Creating AppImage
-      needs: Linux
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
+  # AppImage:
+  #     name: Creating AppImage
+  #     needs: Linux
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - name: Checkout code
+  #         uses: actions/checkout@v2
 
-        - name: Get release
-          id: get_release
-          uses: bruceadams/get-release@v1.2.2
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
+  #       - name: Get release
+  #         id: get_release
+  #         uses: bruceadams/get-release@v1.2.2
+  #         env:
+  #           GITHUB_TOKEN: ${{ github.token }}
 
-        - name: Generating AppImage    
-          run: |
-            npm install && npm run build-appimage
+  #       - name: Generating AppImage    
+  #         run: |
+  #           npm install && npm run build-appimage
 
-        - name: Upload release binary
-          uses: actions/upload-release-asset@v1.0.2
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.get_release.outputs.upload_url }}
-            asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage
-            asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
-            asset_content_type: application/octet-stream
+  #       - name: Upload release binary
+  #         uses: actions/upload-release-asset@v1.0.2
+  #         env:
+  #           GITHUB_TOKEN: ${{ github.token }}
+  #         with:
+  #           upload_url: ${{ steps.get_release.outputs.upload_url }}
+  #           asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage
+  #           asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
+  #           asset_content_type: application/octet-stream
           
-  Pacman_Package:
-    name: Creating Pacman Package
-    needs: Linux
-    runs-on: ubuntu-latest
-    steps:
-      - name: Downloading Files
-        uses: actions/checkout@v2
+  # Pacman_Package:
+  #   name: Creating Pacman Package
+  #   needs: Linux
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Downloading Files
+  #       uses: actions/checkout@v2
         
-      - name: Update PKGBUILD
-        uses: 2m/arch-pkgbuild-builder@v1.16
-        with:
-          target: 'pkgbuild'
-          pkgname: 'build/linux/archlinux/tess-git'
+  #     - name: Update PKGBUILD
+  #       uses: 2m/arch-pkgbuild-builder@v1.16
+  #       with:
+  #         target: 'pkgbuild'
+  #         pkgname: 'build/linux/archlinux/tess-git'
           
-      - name: Renaming package
-        run : |
-          cd build/linux/archlinux/tess-git
-          mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+  #     - name: Renaming package
+  #       run : |
+  #         cd build/linux/archlinux/tess-git
+  #         mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
+  #     - name: Get release
+  #       id: get_release
+  #       uses: bruceadams/get-release@v1.2.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Upload release binary
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
-          asset_name: tess-git-x86_64.pkg.tar.zst
-          asset_content_type: application/octet-stream
+  #     - name: Upload release binary
+  #       uses: actions/upload-release-asset@v1.0.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #       with:
+  #         upload_url: ${{ steps.get_release.outputs.upload_url }}
+  #         asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
+  #         asset_name: tess-git-x86_64.pkg.tar.zst
+  #         asset_content_type: application/octet-stream
           
   RPM_Package:
     name: Creating RPM Package
