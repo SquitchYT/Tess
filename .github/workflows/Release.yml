@@ -465,7 +465,7 @@ jobs:
 
   Winget:
     name: Creating Winget Package
-    #needs: Inno_Setup_App
+    needs: Inno_Setup_App
     runs-on: windows-latest
     steps:
       - name: Downloading Files
