@@ -247,27 +247,27 @@ jobs:
           asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
           asset_content_type: application/octet-stream
 
-      - name: Deploy to server
-        uses: wlixcc/SFTP-Deploy-Action@v1.0
-        with:
-          server: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          port: ${{ secrets.REMOTE_PORT }}
-          ssh_private_key: ${{ secrets.SERVER_SSH_KEY }}
-          local_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
-          remote_path: ${{ secrets.REMOTE_TARGET_RPM }}/tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
-          args: '-o ConnectTimeout=5'
+      # - name: Deploy to server
+      #   uses: wlixcc/SFTP-Deploy-Action@v1.0
+      #   with:
+      #     server: ${{ secrets.REMOTE_HOST }}
+      #     username: ${{ secrets.REMOTE_USER }}
+      #     port: ${{ secrets.REMOTE_PORT }}
+      #     ssh_private_key: ${{ secrets.SERVER_SSH_KEY }}
+      #     local_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+      #     remote_path: ${{ secrets.REMOTE_TARGET_RPM }}/tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
+      #     args: '-o ConnectTimeout=5'
 
 
 
-      - name: Update RPM repository
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          port: ${{ secrets.REMOTE_PORT }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: ${{ secrets.RPM_UPDATE_SCRIPT }}
+      # - name: Update RPM repository
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.REMOTE_HOST }}
+      #     username: ${{ secrets.REMOTE_USER }}
+      #     port: ${{ secrets.REMOTE_PORT }}
+      #     key: ${{ secrets.SERVER_SSH_KEY }}
+      #     script: ${{ secrets.RPM_UPDATE_SCRIPT }}
           
           
 
