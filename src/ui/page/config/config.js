@@ -525,7 +525,6 @@ function loadConfig() {
 
     inputs.forEach((el) => {
         el.value = config[el.getAttribute("parameters")];
-        console.log(el, config[el.getAttribute("parameters")])
         el.addEventListener("input", () => {
             let timeout;
             clearTimeout(timeout);

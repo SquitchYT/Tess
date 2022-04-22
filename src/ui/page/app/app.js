@@ -112,12 +112,12 @@ ipc.on("pty-data", (_, data) => {
             let process = data.processName.split("/");
             if (data.processName != "") {
                 if (!tab.hasAttribute("profil-named")) {
-                    tab.textContent = process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1);
+                    tab.textContent = process[process.length - 1];
                 }
                 if (!tab.hasAttribute("initialProcess")) {
-                    tab.setAttribute("initialProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
+                    tab.setAttribute("initialProcess", process[process.length - 1]);
                 }
-                tab.setAttribute("currentProcess", process[process.length - 1][0].toUpperCase() + process[process.length - 1].slice(1));
+                tab.setAttribute("currentProcess", process[process.length - 1]);
             }
 
             let pingElement = document.querySelector(".change-indicator-tab-" + data.index);
@@ -162,12 +162,12 @@ ipc.on("rename-tab", (_, data) => {
         if (el.index === data.index) {
             let tab = document.querySelector(".tab-" + data.index);
             if (!tab.hasAttribute("profil-named")) {
-                tab.textContent = data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1);
+                tab.textContent = data.name.split(".exe")[0];
 
                 if (!tab.hasAttribute("initialProcess")) {
-                    tab.setAttribute("initialProcess", data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1));
+                    tab.setAttribute("initialProcess", data.name.split(".exe")[0]);
                 }
-                tab.setAttribute("currentProcess",  data.name.split(".exe")[0][0].toUpperCase() + data.name.split(".exe")[0].slice(1));
+                tab.setAttribute("currentProcess",  data.name.split(".exe")[0]);
             }
         } 
     });
@@ -273,7 +273,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
     if (onlyOnePage(toStart) && checkIfPageAlreadyOpened(toStart) && checkIfCustomPage(toStart)) 
     {
         terminalsList.forEach((el) => {
-            if (el?.customPage == toStart) {
+            if (el?.customPage?.toLowerCase() == toStart.toLowerCase()) {
                 let tab = document.querySelector(".tab-all-" + el.index);
                 focusTerm(el.index, tab);
             }
@@ -289,7 +289,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
 
     if (checkIfCustomPage(toStart)) {
         CustomPage.forEach((el) => {
-            if (el.name == toStart && el.icon) {
+            if (el.name.toLowerCase() == toStart.toLowerCase() && el.icon) {
                 icon = el.icon;
             }
         })
@@ -874,7 +874,7 @@ function openNewPage(data) {
     let inCustomPage = false;
     if (data.page) {
         CustomPage.forEach((el) => {
-            if (el.name == data.page) { inCustomPage = true; }
+            if (el.name.toLowerCase() == data.page) { inCustomPage = true; }
         })
     }
 
@@ -894,7 +894,7 @@ function openNewPage(data) {
 function checkIfCustomPage(pageName) {
     let finded = false;
     CustomPage.forEach((el) => {
-        if (pageName == el.name) { finded = true; }
+        if (pageName.toLowerCase() == el.name.toLowerCase()) { finded = true; }
     })
     return finded;
 }
@@ -902,7 +902,7 @@ function checkIfCustomPage(pageName) {
 function onlyOnePage(pageName) {
     let onePage = false;
     CustomPage.forEach((el) => {
-        if (pageName == el.name) { onePage = el.onePage == true; }
+        if (pageName.toLowerCase() == el.name.toLowerCase()) { onePage = el.onePage == true; }
     })
 
     return onePage;
@@ -911,7 +911,7 @@ function onlyOnePage(pageName) {
 function checkIfPageAlreadyOpened(pageName) {
     let finded = false;
     terminalsList.forEach((el) => {
-        if (el?.customPage == pageName) { finded = true; }
+        if (el?.customPage?.toLowerCase() == pageName.toLowerCase()) { finded = true; }
     })
     return finded;
 }

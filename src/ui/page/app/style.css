@@ -135,6 +135,7 @@ body {
     overflow : hidden;
     font-size: var(--tab-text-size);
     letter-spacing: 1px;
+    text-transform: capitalize;
 }
 
 .terminals {

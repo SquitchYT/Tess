@@ -118,15 +118,15 @@ if (argv.newtab) {
     newTab = true;
 }
 if (argv["launch-profil"]) {
-    launchProfil = argv["launch-profil"];
+    launchProfil = argv["launch-profil"].toLowerCase();
 }
 if (argv["launch-page"]) {
-    launchPage = argv["launch-page"];
+    launchPage = argv["launch-page"].toLowerCase();
 }
 if (launchProfil) {
     let finded = false;
     config.profil.forEach((el) => {
-        if (el.name == launchProfil) {
+        if (el.name.toLowerCase() == launchProfil) {
             launchProfil = el;
             finded = true;
         }
