@@ -7,6 +7,8 @@ AppVerName=Tess
 SetupIconFile="..\..\ressources\icon\icon.ico"
 UninstallDisplayIcon="{app}\tess.exe"
 DisableDirPage=yes
+AppPublisher=TessApp
+AppPublisherURL=http://www.tessapp.dev/
 
 [files]
 Source: ..\..\..\dist\win-unpacked\*; DestDir: "{app}"; Flags: recursesubdirs
