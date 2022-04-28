@@ -69,6 +69,7 @@ let config, colors;
     }
 
     config.bufferSize = config?.bufferSize ? config.bufferSize : 4000;
+    config.lineHeight = config?.lineHeight ? config.lineHeight : 1;
     config.experimentalProgressTracker = config?.experimentalProgressTracker?.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
     config.experimentalShowCloseWarningPopup = config?.experimentalShowCloseWarningPopup?.toString() ? config.experimentalShowCloseWarningPopup.toString() == "true" : false;
     config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;

@@ -479,7 +479,8 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             cursorBlink: (config.cursorBlink == "true"),
             fontFamily: (config?.terminalFonts) ? config?.terminalFonts : "Consolas, courier-new, courier, monospace",
             rendererType: config?.experimentalRendererType ? config.experimentalRendererType : "canvas",
-            scrollback: config.bufferSize
+            scrollback: config.bufferSize,
+            lineHeight: Number(config.lineHeight)
         });
         term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon(("click", (_, url) => {
@@ -860,6 +861,7 @@ function updateTerminalApparence() {
             el.term.setOption("cursorBlink", (config.cursorBlink == "true"));
             el.term.setOption("fontFamily", config.terminalFonts);
             el.term.setOption("scrollback", config.bufferSize);
+            el.term.setOption("lineHeight", config.lineHeight);
         }
     });
 
