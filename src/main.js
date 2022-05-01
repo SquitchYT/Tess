@@ -223,7 +223,7 @@ function openWindow(config, colors) {
             symbolColor: colors.app.textColor,
             height: 30
         },
-        show: !(osData.os == "win32")
+        show: false
     });
 
     mainWindow.removeMenu();
@@ -244,10 +244,6 @@ function openWindow(config, colors) {
         }, 150);
     });
 
-    mainWindow.on("did-finish-load", () => { // Replace by event after theme loaded
-        mainWindow.show();
-    })
-
     let profilToLaunch;
     config.profil.forEach((el) => {
         if (el.name == config.defaultProfil) { profilToLaunch = el; }
@@ -267,8 +263,9 @@ function openWindow(config, colors) {
                 colors: colors,
                 loadOptions: loadOptions
             });
-            if (osData.os == "win32") { mainWindow.webContents.send("app-reduced-expanded", mainWindow.isMaximized()); }
         } catch { }
+
+        //mainWindow.show()
     });
 
     mainWindow.on("will-move", () => {
@@ -311,7 +308,7 @@ ipc.on("new-term", (_, data) => {
         cwd:  (workdir) ? workdir : process.env.HOME,
         env: process.env
     });
-    
+    true
     shell.onExit(() => {
         try {
             mainWindow.webContents.send("close-tab", {
@@ -480,9 +477,8 @@ ipc.on("resize", (_, data) => {
 });
 
 ipc.on("load-end", () => {
-    let time2 = new Date().getTime();
-    let time = time2 - time1;
-    console.log(`\x1b[32m[SUCCESS]\x1b[0m Launched in ${time}ms`);
+    console.log(`\x1b[32m[SUCCESS]\x1b[0m Launched in ${new Date().getTime() - time1}ms`);
+    mainWindow.show()
 });
 
 ipc.on("get-theme", (e) => {
