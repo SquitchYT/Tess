@@ -229,16 +229,14 @@ function openWindow(config, colors) {
     mainWindow.removeMenu();
     //mainWindow.openDevTools()
     mainWindow.loadFile("./src/ui/page/app/index.html");
-    mainWindow.on("closed", () => {
+    /*mainWindow.on("closed", () => {
         mainWindow = null;
-    });
+    });*/
     mainWindow.on("resize",() => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             try {
                 mainWindow.webContents.send("resize");
-            } catch {}
-            try {
                 mainWindow.webContents.send("reduced-expanded", mainWindow.isMaximized());
             } catch {}
         }, 150);
@@ -308,7 +306,6 @@ ipc.on("new-term", (_, data) => {
         cwd:  (workdir) ? workdir : process.env.HOME,
         env: process.env
     });
-    true
     shell.onExit(() => {
         try {
             mainWindow.webContents.send("close-tab", {
@@ -355,7 +352,7 @@ ipc.on("new-term", (_, data) => {
         try {
             mainWindow.webContents.send("resize");
         } catch { }
-    }, 170);
+    }, 160);
 });
 
 ipc.on("terminal-data", (_, data) => {
@@ -459,8 +456,7 @@ ipc.on("minimize", () => {
     BrowserWindow.getFocusedWindow().minimize();
 });
 ipc.on("reduce-expand", () => {
-    let maximized = BrowserWindow.getFocusedWindow().isMaximized();
-    maximized ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
+    BrowserWindow.getFocusedWindow().isMaximized() ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
         try {
             mainWindow.webContents.send("resize");
