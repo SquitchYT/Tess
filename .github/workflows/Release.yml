@@ -8,7 +8,7 @@ on:
 
 jobs:
   Check:
-     runs-on: ubuntu-latest
+     runs-on: ubuntu-18.04
      steps:
         - name: Checkout code
           uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
 
   Linux:
     needs: Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
      
     steps:
       - name: Checkout code
@@ -39,7 +39,7 @@ jobs:
         
   Windows:
     needs: Check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
      
     steps:
       - name: Checkout code
@@ -48,7 +48,7 @@ jobs:
   DEB_Package:
     name: Creating Debian Package
     needs: Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -116,7 +116,7 @@ jobs:
   AppImage:
       name: Creating AppImage
       needs: Linux
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-18.04
       steps:
         - name: Checkout code
           uses: actions/checkout@v2
@@ -144,7 +144,7 @@ jobs:
   Pacman_Package:
     name: Creating Pacman Package
     needs: Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
@@ -194,7 +194,7 @@ jobs:
   RPM_Package:
     name: Creating RPM Package
     needs: Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     container:
       image: fedora:latest
     
@@ -285,7 +285,7 @@ jobs:
   Windows_Setup:
     name: Creating Windows Setup
     needs: Windows
-    runs-on: windows-latest
+    runs-on: windows-18.04
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
@@ -355,7 +355,7 @@ jobs:
   Chocolatey:
     name: Creating Chocolatey Package
     needs: Windows_Setup
-    runs-on: windows-latest
+    runs-on: windows-18.04
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
@@ -421,7 +421,7 @@ jobs:
   SNAP_Package:
     name: Creating Snap Package
     needs: Linux
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
