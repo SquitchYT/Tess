@@ -15,6 +15,7 @@ jobs:
           
         - name: Installing dependencies
           run: |
+            sudo apt update
             sudo apt install npm libcurl4-openssl-dev cmake git
         
         - name: Checking Tess Compilation
@@ -61,7 +62,8 @@ jobs:
 
       - name: Generating DEBIAN Package    
         run: |
-          sudo apt-get install libcurl4-openssl-dev cmake git
+          sudo apt update
+          sudo apt install libcurl4-openssl-dev cmake git
           mkdir -p ./build/linux/debian/tess/usr/lib/tess/
           mkdir -p ./build/linux/debian/tess/usr/bin
           
