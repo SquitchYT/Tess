@@ -300,7 +300,7 @@ ipc.on("new-term", (_, data) => {
 
     let workdir = data.workdir;
     let shell = pty.spawn(prog.trim(), args, {
-        name: "xterm-color",
+        name: "xterm-256color",
         cols: data.cols,
         rows: data.rows,
         cwd:  (workdir) ? workdir : process.env.HOME,
