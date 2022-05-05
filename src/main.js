@@ -108,7 +108,6 @@ let newTab;
 let launchProfil;
 let launchPage;
 
-// Optimizing this !!!
 if ((argv.workdir || argv.cd) || osData.os == "win32") {
     customWorkdir = (argv.workdir || argv.cd) || osData.homeDir;
 }
@@ -262,8 +261,6 @@ function openWindow(config, colors) {
                 loadOptions: loadOptions
             });
         } catch { }
-
-        //mainWindow.show()
     });
 
     mainWindow.on("will-move", () => {
