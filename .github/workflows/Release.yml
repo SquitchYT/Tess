@@ -321,6 +321,12 @@ jobs:
           mv tess-0.6.1-setup.exe tess-setup.exe
           cd ../../..
 
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
       - name: Building Portable
         run : |
           mkdir ./dist/tmp
@@ -329,12 +335,6 @@ jobs:
           cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
           cd dist/tmp
           Compress-Archive ./* tess-portable.zip
-          
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
           
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
