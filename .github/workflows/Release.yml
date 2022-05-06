@@ -323,9 +323,9 @@ jobs:
 
       - name: Building Portable
         run : |
-          npm run build-win-portable
           mkdir ./dist/tmp
           cp ./dist/win-unpacked/tess-cli.exe ./dist/tmp/
+          npm run build-win-portable
           cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
           cd dist/tmp
           Compress-Archive ./* tess-portable.zip
