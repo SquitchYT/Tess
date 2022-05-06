@@ -318,7 +318,7 @@ jobs:
           cd build/windows/setup
           iscc setup.iss
           cd Output
-          mv tess-0.6.0-setup.exe tess-setup.exe
+          mv tess-0.6.1-setup.exe tess-setup.exe
           cd ../../..
 
       - name: Building Portable
