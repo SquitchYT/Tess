@@ -12,6 +12,6 @@ and can be verified like this:
   - Use chocolatey utility 'checksum.exe'
 
   checksum type: 
-  checksum64: CE13083C122F596844C801127141EB83649CAE65F47F4933EB7F542307329040
+  checksum64: {{ CHECKSUM }}
 
 File 'LICENSE.txt' is obtained from <https://github.com/SquitchYT/Tess/blob/main/LICENSE>

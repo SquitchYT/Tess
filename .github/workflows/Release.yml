@@ -386,7 +386,7 @@ jobs:
           mv tess-setup.exe ../../chocolatey/tools/
           cd ../../chocolatey
           $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
-          get-content tools\chocolateyinstall.ps1 | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/chocolateyinstall.ps1
+          get-content tools/VERIFICATION.txt | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/VERIFICATION.txt
           get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }}} > tess.nuspec
 
           choco pack
