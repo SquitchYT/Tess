@@ -324,8 +324,10 @@ jobs:
       - name: Building Portable
         run : |
           npm run build-win-portable
-          cp .\tess-cli.exe ../../../dist/win-unpacked/
-          cd dist/win-unpacked
+          mkdir ./dist/tmp
+          cp ./dist/win-unpacked/tess-cli.exe ./dist/tmp/
+          cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
+          cd dist/tmp
           Compress-Archive ./* tess-portable.zip
           
       - name: Get release
@@ -350,7 +352,7 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:\a\Tess\Tess\dist\win-unpacked\tess-portable.zip
+          asset_path: D:\a\Tess\Tess\dist\tmp\tess-portable.zip
           asset_name: tess-portable.zip
           asset_content_type: application/octet-stream
 
