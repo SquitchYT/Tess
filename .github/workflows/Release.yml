@@ -327,20 +327,20 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Building Portable
-        run : |
-          mkdir ./dist/tmp
-          cd cli
-          cmake . -B build
-          cd build
-          cmake --build . --config Release
-          cd Release
-          cp .\tess-cli.exe ../../../dist/tmp/
-          cd ../../../
-          npm run build-win-portable
-          cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
-          cd dist/tmp
-          Compress-Archive ./* tess-portable.zip
+      # - name: Building Portable
+      #   run : |
+      #     mkdir ./dist/tmp
+      #     cd cli
+      #     cmake . -B build
+      #     cd build
+      #     cmake --build . --config Release
+      #     cd Release
+      #     cp .\tess-cli.exe ../../../dist/tmp/
+      #     cd ../../../
+      #     npm run build-win-portable
+      #     cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
+      #     cd dist/tmp
+      #     Compress-Archive ./* tess-portable.zip
           
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
@@ -352,15 +352,15 @@ jobs:
           asset_name: tess-setup.exe
           asset_content_type: application/octet-stream
 
-      - name: Upload release portable
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:\a\Tess\Tess\dist\tmp\tess-portable.zip
-          asset_name: tess-portable.zip
-          asset_content_type: application/octet-stream
+      # - name: Upload release portable
+      #   uses: actions/upload-release-asset@v1.0.2
+      #   env:
+      #     GITHUB_TOKEN: ${{ github.token }}
+      #   with:
+      #     upload_url: ${{ steps.get_release.outputs.upload_url }}
+      #     asset_path: D:\a\Tess\Tess\dist\tmp\tess-portable.zip
+      #     asset_name: tess-portable.zip
+      #     asset_content_type: application/octet-stream
 
   Chocolatey:
     name: Creating Chocolatey Package
@@ -386,13 +386,13 @@ jobs:
 
       - name: Getting Installer
         run: |
-          Invoke-WebRequest https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe -O build/windows/chocolatey/tools
+          Invoke-WebRequest https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe -O build/windows/
 
       - name: Creating Chocolatey Package
         run: |
-          cd build/windows/setup/Output
-          mv tess-setup.exe ../../chocolatey/tools/
-          cd ../../chocolatey
+          cd build/windows/
+          mv tess-setup.exe ./chocolatey/tools/
+          cd ./chocolatey
           $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
           get-content tools/VERIFICATION.txt | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/VERIFICATION.txt
           get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }}} > tess.nuspec
@@ -400,10 +400,8 @@ jobs:
           choco pack
           choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
 
-
-      # - name: test
-      #   run : |
-      #     choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/
+          
+      #choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/  
   
   # Winget:
   #   name: Creating Winget Package
