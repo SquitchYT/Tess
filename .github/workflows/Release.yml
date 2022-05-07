@@ -330,7 +330,13 @@ jobs:
       - name: Building Portable
         run : |
           mkdir ./dist/tmp
-          cp ./dist/win-unpacked/tess-cli.exe ./dist/tmp/
+          cd cli
+          cmake . -B build
+          cd build
+          cmake --build . --config Release
+          cd Release
+          cp .\tess-cli.exe ../../../dist/tmp/
+          cd ../../../
           npm run build-win-portable
           cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
           cd dist/tmp
@@ -380,7 +386,7 @@ jobs:
 
       - name: Getting Installer
         run: |
-          Invoke-WebRequest https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}}/tess-setup.exe -O build/windows/chocolatey/tools
+          Invoke-WebRequest https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe -O build/windows/chocolatey/tools
 
       - name: Creating Chocolatey Package
         run: |
