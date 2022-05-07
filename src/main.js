@@ -69,6 +69,7 @@ let config, colors;
     }
 
     config.bufferSize = config?.bufferSize ? config.bufferSize : 4000;
+    config.lineHeight = config?.lineHeight ? config.lineHeight : 1;
     config.experimentalProgressTracker = config?.experimentalProgressTracker?.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
     config.experimentalShowCloseWarningPopup = config?.experimentalShowCloseWarningPopup?.toString() ? config.experimentalShowCloseWarningPopup.toString() == "true" : false;
     config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
@@ -107,7 +108,6 @@ let newTab;
 let launchProfil;
 let launchPage;
 
-// Optimizing this !!!
 if ((argv.workdir || argv.cd) || osData.os == "win32") {
     customWorkdir = (argv.workdir || argv.cd) || osData.homeDir;
 }
@@ -118,15 +118,15 @@ if (argv.newtab) {
     newTab = true;
 }
 if (argv["launch-profil"]) {
-    launchProfil = argv["launch-profil"];
+    launchProfil = argv["launch-profil"].toLowerCase();
 }
 if (argv["launch-page"]) {
-    launchPage = argv["launch-page"];
+    launchPage = argv["launch-page"].toLowerCase();
 }
 if (launchProfil) {
     let finded = false;
     config.profil.forEach((el) => {
-        if (el.name == launchProfil) {
+        if (el.name.toLowerCase() == launchProfil) {
             launchProfil = el;
             finded = true;
         }
@@ -222,30 +222,24 @@ function openWindow(config, colors) {
             symbolColor: colors.app.textColor,
             height: 30
         },
-        show: !(osData.os == "win32")
+        show: false
     });
 
     mainWindow.removeMenu();
     //mainWindow.openDevTools()
     mainWindow.loadFile("./src/ui/page/app/index.html");
-    mainWindow.on("closed", () => {
+    /*mainWindow.on("closed", () => {
         mainWindow = null;
-    });
+    });*/
     mainWindow.on("resize",() => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             try {
                 mainWindow.webContents.send("resize");
-            } catch {}
-            try {
                 mainWindow.webContents.send("reduced-expanded", mainWindow.isMaximized());
             } catch {}
         }, 150);
     });
-
-    mainWindow.on("did-finish-load", () => { // Replace by event after theme loaded
-        mainWindow.show();
-    })
 
     let profilToLaunch;
     config.profil.forEach((el) => {
@@ -266,7 +260,6 @@ function openWindow(config, colors) {
                 colors: colors,
                 loadOptions: loadOptions
             });
-            if (osData.os == "win32") { mainWindow.webContents.send("app-reduced-expanded", mainWindow.isMaximized()); }
         } catch { }
     });
 
@@ -304,13 +297,12 @@ ipc.on("new-term", (_, data) => {
 
     let workdir = data.workdir;
     let shell = pty.spawn(prog.trim(), args, {
-        name: "xterm-color",
+        name: "xterm-256color",
         cols: data.cols,
         rows: data.rows,
         cwd:  (workdir) ? workdir : process.env.HOME,
         env: process.env
     });
-    
     shell.onExit(() => {
         try {
             mainWindow.webContents.send("close-tab", {
@@ -357,7 +349,7 @@ ipc.on("new-term", (_, data) => {
         try {
             mainWindow.webContents.send("resize");
         } catch { }
-    }, 170);
+    }, 160);
 });
 
 ipc.on("terminal-data", (_, data) => {
@@ -461,8 +453,7 @@ ipc.on("minimize", () => {
     BrowserWindow.getFocusedWindow().minimize();
 });
 ipc.on("reduce-expand", () => {
-    let maximized = BrowserWindow.getFocusedWindow().isMaximized();
-    maximized ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
+    BrowserWindow.getFocusedWindow().isMaximized() ? BrowserWindow.getFocusedWindow().unmaximize() : BrowserWindow.getFocusedWindow().maximize();
     setTimeout(() => {
         try {
             mainWindow.webContents.send("resize");
@@ -479,9 +470,8 @@ ipc.on("resize", (_, data) => {
 });
 
 ipc.on("load-end", () => {
-    let time2 = new Date().getTime();
-    let time = time2 - time1;
-    console.log(`\x1b[32m[SUCCESS]\x1b[0m Launched in ${time}ms`);
+    console.log(`\x1b[32m[SUCCESS]\x1b[0m Launched in ${new Date().getTime() - time1}ms`);
+    mainWindow.show()
 });
 
 ipc.on("get-theme", (e) => {

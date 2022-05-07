@@ -13,21 +13,22 @@ jobs:
         - name: Checkout code
           uses: actions/checkout@v2
           
-        # - name: Installing dependencies
-        #   run: |
-        #     sudo apt install npm libcurl4-openssl-dev cmake git
+        - name: Installing dependencies
+          run: |
+            sudo apt update
+            sudo apt install npm libcurl4-openssl-dev cmake git
         
-        # - name: Checking Tess Compilation
-        #   run: |
-        #     npm install
-        #     npm run build
+        - name: Checking Tess Compilation
+          run: |
+            npm install
+            npm run build
             
-        # - name: Checking Tess-cli Compilation
-        #   run: |
-        #     cd cli
-        #     cmake . -B build
-        #     cd build && make
-        #     ./tess-cli -S --theme default
+        - name: Checking Tess-cli Compilation
+          run: |
+            cd cli
+            cmake . -B build
+            cd build && make
+            ./tess-cli -S --theme default
 
   Linux:
     needs: Check
@@ -45,136 +46,152 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
     
-  # DEB_Package:
-  #   name: Creating Debian Package
-  #   needs: Linux
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
+  DEB_Package:
+    name: Creating Debian Package
+    needs: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-  #     - name: Get release
-  #       id: get_release
-  #       uses: bruceadams/get-release@v1.2.2
-  #       env:
-  #         GITHUB_TOKEN: ${{ github.token }}
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
-  #     - name: Generating DEBIAN Package    
-  #       run: |
-  #         sudo apt-get install libcurl4-openssl-dev cmake git
-  #         mkdir -p ./build/linux/debian/tess/usr/lib/tess/
-  #         mkdir -p ./build/linux/debian/tess/usr/bin
+      - name: Generating DEBIAN Package    
+        run: |
+          sudo apt update
+          sudo apt install libcurl4-openssl-dev cmake git
+          mkdir -p ./build/linux/debian/tess/usr/lib/tess/
+          mkdir -p ./build/linux/debian/tess/usr/bin
           
-  #         npm install
-  #         npm run build
-  #         cp -r dist/linux-unpacked/* ./build/linux/debian/tess/usr/lib/tess/
+          npm install
+          npm run build
+          cp -r dist/linux-unpacked/* ./build/linux/debian/tess/usr/lib/tess/
           
-  #         cd cli
-  #         cmake . -B build
-  #         make -C build
-  #         strip build/tess-cli
-  #         cp build/tess-cli ../build/linux/debian//tess/usr/bin/
-  #         cd ../
-  #         sed -i "s/{{ DATE }}/$(date -R)/g" ./build/linux/debian/tess/DEBIAN/control
-  #         sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/debian/tess/DEBIAN/control
+          cd cli
+          cmake . -B build
+          make -C build
+          strip build/tess-cli
+          cp build/tess-cli ../build/linux/debian//tess/usr/bin/
+          cd ../
+          sed -i "s/{{ DATE }}/$(date -R)/g" ./build/linux/debian/tess/DEBIAN/control
+          sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/debian/tess/DEBIAN/control
   
-  #         cd ./build/linux/debian/
-  #         sudo chmod 755 tess/DEBIAN/postinst 
-  #         dpkg-deb --build tess
-  #       env:
-  #         VERSION: ${{ steps.get_release.outputs.tag_name }}
+          cd ./build/linux/debian/
+          sudo chmod 755 tess/DEBIAN/postinst 
+          dpkg-deb --build tess
+        env:
+          VERSION: ${{ steps.get_release.outputs.tag_name }}
         
-  #     - name: Upload release binary
-  #       uses: actions/upload-release-asset@v1.0.2
-  #       env:
-  #         GITHUB_TOKEN: ${{ github.token }}
-  #       with:
-  #         upload_url: ${{ steps.get_release.outputs.upload_url }}
-  #         asset_path: ./build/linux/debian/tess.deb
-  #         asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
-  #         asset_content_type: application/octet-stream
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ./build/linux/debian/tess.deb
+          asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
+          asset_content_type: application/octet-stream
           
-      # - name: Deploy to server
-      #   uses: easingthemes/ssh-deploy@main
-      #   env:
-      #     SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-      #     SOURCE: ./build/linux/debian/tess.deb
-      #     REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-      #     REMOTE_USER: ${{ secrets.REMOTE_USER }}
-      #     REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-      #     TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
+      - name: Deploy to server
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SOURCE: ./build/linux/debian/tess.deb
+          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+          REMOTE_USER: ${{ secrets.REMOTE_USER }}
+          REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
+          TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
           
-      # - name: Update apt repository
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.REMOTE_HOST }}
-      #     username: ${{ secrets.REMOTE_USER }}
-      #     key: ${{ secrets.SERVER_SSH_KEY }}
-      #     port: ${{ secrets.REMOTE_PORT }}
-      #     script: ${{ secrets.REMOTE_DEPLOY }}
+      - name: Update apt repository
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          port: ${{ secrets.REMOTE_PORT }}
+          script: ${{ secrets.REMOTE_DEPLOY }}
 
+  AppImage:
+      name: Creating AppImage
+      needs: Linux
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
 
-  # AppImage:
-  #     name: Creating AppImage
-  #     needs: Linux
-  #     runs-on: ubuntu-latest
-  #     steps:
-  #       - name: Checkout code
-  #         uses: actions/checkout@v2
+        - name: Get release
+          id: get_release
+          uses: bruceadams/get-release@v1.2.2
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
 
-  #       - name: Get release
-  #         id: get_release
-  #         uses: bruceadams/get-release@v1.2.2
-  #         env:
-  #           GITHUB_TOKEN: ${{ github.token }}
+        - name: Generating AppImage    
+          run: |
+            npm install && npm run build-appimage
 
-  #       - name: Generating AppImage    
-  #         run: |
-  #           npm install && npm run build-appimage
-
-  #       - name: Upload release binary
-  #         uses: actions/upload-release-asset@v1.0.2
-  #         env:
-  #           GITHUB_TOKEN: ${{ github.token }}
-  #         with:
-  #           upload_url: ${{ steps.get_release.outputs.upload_url }}
-  #           asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage
-  #           asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
-  #           asset_content_type: application/octet-stream
+        - name: Upload release binary
+          uses: actions/upload-release-asset@v1.0.2
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.get_release.outputs.upload_url }}
+            asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage
+            asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
+            asset_content_type: application/octet-stream
           
-  # Pacman_Package:
-  #   name: Creating Pacman Package
-  #   needs: Linux
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Downloading Files
-  #       uses: actions/checkout@v2
+  Pacman_Package:
+    name: Creating Pacman Package
+    needs: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Downloading Files
+        uses: actions/checkout@v2
         
-  #     - name: Update PKGBUILD
-  #       uses: 2m/arch-pkgbuild-builder@v1.16
-  #       with:
-  #         target: 'pkgbuild'
-  #         pkgname: 'build/linux/archlinux/tess-git'
+      - name: Update PKGBUILD
+        uses: 2m/arch-pkgbuild-builder@v1.16
+        with:
+          target: 'pkgbuild'
+          pkgname: 'build/linux/archlinux/tess-git'
           
-  #     - name: Renaming package
-  #       run : |
-  #         cd build/linux/archlinux/tess-git
-  #         mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
-  #     - name: Get release
-  #       id: get_release
-  #       uses: bruceadams/get-release@v1.2.2
-  #       env:
-  #         GITHUB_TOKEN: ${{ github.token }}
+      - name: Renaming package
+        run : |
+          cd build/linux/archlinux/tess-git
+          mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
-  #     - name: Upload release binary
-  #       uses: actions/upload-release-asset@v1.0.2
-  #       env:
-  #         GITHUB_TOKEN: ${{ github.token }}
-  #       with:
-  #         upload_url: ${{ steps.get_release.outputs.upload_url }}
-  #         asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
-  #         asset_name: tess-git-x86_64.pkg.tar.zst
-  #         asset_content_type: application/octet-stream
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
+          asset_name: tess-git-x86_64.pkg.tar.zst
+          asset_content_type: application/octet-stream
+
+      - name: Update PKGBUILD
+        uses: 2m/arch-pkgbuild-builder@v1.16
+        with:
+          target: 'pkgbuild'
+          pkgname: 'build/linux/archlinux/tess-git'
+                
+      - name: Update AUR Package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
+        with:
+          pkgname: tess-git
+          pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: Update AUR package
           
   RPM_Package:
     name: Creating RPM Package
@@ -247,56 +264,27 @@ jobs:
           asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
           asset_content_type: application/octet-stream
 
-      # - name: Deploy to server
-      #   uses: wlixcc/SFTP-Deploy-Action@v1.0
-      #   with:
-      #     server: ${{ secrets.REMOTE_HOST }}
-      #     username: ${{ secrets.REMOTE_USER }}
-      #     port: ${{ secrets.REMOTE_PORT }}
-      #     ssh_private_key: ${{ secrets.SERVER_SSH_KEY }}
-      #     local_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
-      #     remote_path: ${{ secrets.REMOTE_TARGET_RPM }}/tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
-      #     args: '-o ConnectTimeout=5'
+      - name: Deploy to server
+        uses: wlixcc/SFTP-Deploy-Action@v1.0
+        with:
+          server: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          port: ${{ secrets.REMOTE_PORT }}
+          ssh_private_key: ${{ secrets.SERVER_SSH_KEY }}
+          local_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          remote_path: ${{ secrets.REMOTE_TARGET_RPM }}/tess-${{ steps.get_release.outputs.tag_name }}-x86_64.rpm
+          args: '-o ConnectTimeout=5'
 
+      - name: Update RPM repository
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          port: ${{ secrets.REMOTE_PORT }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: ${{ secrets.RPM_UPDATE_SCRIPT }}    
 
-
-      # - name: Update RPM repository
-      #   uses: appleboy/ssh-action@master
-      #   with:
-      #     host: ${{ secrets.REMOTE_HOST }}
-      #     username: ${{ secrets.REMOTE_USER }}
-      #     port: ${{ secrets.REMOTE_PORT }}
-      #     key: ${{ secrets.SERVER_SSH_KEY }}
-      #     script: ${{ secrets.RPM_UPDATE_SCRIPT }}
-          
-          
-
-  # AUR_Package_tess-git:
-  #   name: Updating AUR Tess-git Package
-  #   needs: Linux
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Downloading Files
-  #       uses: actions/checkout@v2
-      
-  #     - name: Update PKGBUILD
-  #       uses: 2m/arch-pkgbuild-builder@v1.16
-  #       with:
-  #         target: 'pkgbuild'
-  #         pkgname: 'build/linux/archlinux/tess-git'
-          
-  #     - name: Update AUR Package
-  #       uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
-  #       with:
-  #         pkgname: tess-git
-  #         pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
-  #         commit_username: ${{ secrets.AUR_USERNAME }}
-  #         commit_email: ${{ secrets.AUR_EMAIL }}
-  #         ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-  #         commit_message: Update AUR package
-          
-
-  Inno_Setup_App:
+  Windows_Setup:
     name: Creating Windows Setup
     needs: Windows
     runs-on: windows-latest
@@ -330,13 +318,29 @@ jobs:
           cd build/windows/setup
           iscc setup.iss
           cd Output
-          mv tess-0.6.0-setup.exe tess-setup.exe
-          
+          mv tess-0.6.1-setup.exe tess-setup.exe
+          cd ../../..
+
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Building Portable
+        run : |
+          mkdir ./dist/tmp
+          cd cli
+          cmake . -B build
+          cd build
+          cmake --build . --config Release
+          cd Release
+          cp .\tess-cli.exe ../../../dist/tmp/
+          cd ../../../
+          npm run build-win-portable
+          cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
+          cd dist/tmp
+          Compress-Archive ./* tess-portable.zip
           
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
@@ -347,119 +351,59 @@ jobs:
           asset_path: D:\a\Tess\Tess\build\windows\setup\Output\tess-setup.exe
           asset_name: tess-setup.exe
           asset_content_type: application/octet-stream
-          
-          
-  Windows_Portable:
-    name: Creating Windows Portable
-    needs: Windows
-    runs-on: windows-latest
-    steps:
-      - name: Downloading Files
-        uses: actions/checkout@v2
-        
-      - name: Installing MSVC
-        uses: ilammy/msvc-dev-cmd@v1
-     
-      - name: Installing Make Dependencies
-        run: |
-          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
-          ./cmake-setup.msi /silent
-          
-      - name: Building App
-        run: |
-          npm install && npm run build-win-portable
-          cd cli
-          cmake . -B build
-          cd build
-          cmake --build . --config Release
-          cd Release
-          rm -r -Force ../../../dist/win-unpacked && mkdir ../../../dist/win-unpacked
-          cp .\tess-cli.exe ../../../dist/win-unpacked/
-          cd ../../../
-          cd dist
-          cp '.\tess 0.6.0.exe' ./win-unpacked
-          
-      - name: Packaging App
-        run: |
-          cd dist/win-unpacked
-          Compress-Archive ./* tess-portable.zip
-          
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          
-      - name: Upload release binary
+
+      - name: Upload release portable
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:\a\Tess\Tess\dist\win-unpacked\tess-portable.zip
+          asset_path: D:\a\Tess\Tess\dist\tmp\tess-portable.zip
           asset_name: tess-portable.zip
           asset_content_type: application/octet-stream
 
-  
-  Chocolatey:
-    name: Creating Chocolatey Package
-    needs: Windows
-    runs-on: windows-latest
-    steps:
-      - name: Downloading Files
-        uses: actions/checkout@v2
+  # Chocolatey:
+  #   name: Creating Chocolatey Package
+  #   needs: Windows_Setup
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Downloading Files
+  #       uses: actions/checkout@v2
         
-      - name: Installing MSVC
-        uses: ilammy/msvc-dev-cmd@v1
+  #     - name: Installing MSVC
+  #       uses: ilammy/msvc-dev-cmd@v1
       
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+  #     - name: Get release
+  #       id: get_release
+  #       uses: bruceadams/get-release@v1.2.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
      
-      - name: Installing Make Dependencies
-        run: |
-          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
-          ./cmake-setup.msi /silent
-          Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-          choco install checksum
+  #     - name: Installing Make Dependencies
+  #       run: |
+  #         Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+  #         choco install checksum
 
-      - name: Building App
-        run: |
-          npm install && npm run build-win
-          cd cli
-          cmake . -B build
-          cd build
-          cmake --build . --config Release
-          cd Release
-          cp .\tess-cli.exe ../../../dist/win-unpacked/
-          cd ../../../
-          
-      - name: Packaging App
-        run: |
-          cd build/windows/setup
-          iscc setup.iss
-          cd Output
-          mv tess-0.6.0-setup.exe tess-setup.exe
+  #     - name: Getting Installer
+  #       run: |
+  #         Invoke-WebRequest https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe -O build/windows/
 
-      - name: Creating Chocolatey Package
-        run: |
-          cd build/windows/setup/Output
-          mv tess-setup.exe ../../chocolatey/tools/
-          cd ../../chocolatey
-          $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
-          get-content tools\chocolateyinstall.ps1 | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/chocolateyinstall.ps1
-          get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }}} > tess.nuspec
+  #     - name: Creating Chocolatey Package
+  #       run: |
+  #         cd build/windows/
+  #         mv tess-setup.exe ./chocolatey/tools/
+  #         cd ./chocolatey
+  #         $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
+  #         get-content tools/VERIFICATION.txt | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/VERIFICATION.txt
+  #         get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }}} > tess.nuspec
 
-          choco pack
-          choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
-          choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/
+  #         choco pack
+  #         choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
+  #         choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/  
   
-
   # Winget:
   #   name: Creating Winget Package
-  #   needs: Inno_Setup_App
+  #   needs: Windows_Setup
   #   runs-on: windows-latest
   #   steps:
   #     - name: Downloading Files
@@ -473,16 +417,12 @@ jobs:
      
   #     - name: Installing Make Dependencies
   #       run: |
-  #         Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
-  #         ./cmake-setup.msi /silent
   #         Invoke-WebRequest https://github.com/microsoft/winget-create/releases/download/v1.0.3.0/wingetcreate.exe -O wingetcreate.exe
 
   #     - name: Building Package
   #       run: |
   #         cd .\build\windows\winget\
   #         ..\..\..\wingetcreate.exe update --urls https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-setup.exe --version ${{ steps.get_release.outputs.tag_name }} Squitch.Tess
-
-
 
   SNAP_Package:
     name: Creating Snap Package

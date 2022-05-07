@@ -14,13 +14,11 @@ class ScrollerPicker extends HTMLElement {
 
         let maxIndicator = document.createElement("div");
         maxIndicator.classList.add("indicator");
-        maxIndicator.innerHTML = "1";
         this.shadow.appendChild(maxIndicator);
 
         let minIndicator = document.createElement("div");
         minIndicator.classList.add("indicator");
         minIndicator.classList.add("min-indicator");
-        minIndicator.innerHTML = "0";
         this.shadow.appendChild(minIndicator);
 
         this.maxIndicator = maxIndicator;
@@ -45,8 +43,8 @@ class ScrollerPicker extends HTMLElement {
             value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
             let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
-            value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
-            this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min));
+            value.innerText = (pourcent * (this.max - this.min) + parseInt(this.min)).toFixed(this.precision);
+            this.setAttribute("selected-value", (pourcent * (this.max - this.min) + parseInt(this.min)).toFixed(this.precision));
 
             this.dispatchEvent(new CustomEvent("update"), {
                 composed: true,
@@ -57,7 +55,7 @@ class ScrollerPicker extends HTMLElement {
         bar.addEventListener("mouseenter", (_) => {
             let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
             this.pourcent = pourcent;
-            value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
+            value.innerText = (pourcent * (this.max - this.min) + parseInt(this.min)).toFixed(this.precision);
             value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
             this.showValueTimeout = setTimeout(() => {
                 value.classList.add("visible");
@@ -80,8 +78,8 @@ class ScrollerPicker extends HTMLElement {
                 value.style.transform = "translate(" + (progress.getBoundingClientRect().width - value.getBoundingClientRect().width / 2) + "px, -32px)";
                 let pourcent = progress.getBoundingClientRect().width / bar.getBoundingClientRect().width;
                 this.pourcent = pourcent;
-                value.innerText = parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min);
-                this.setAttribute("selected-value", parseInt((pourcent * (this.max - this.min)).toFixed()) + parseInt(this.min));
+                value.innerText = (pourcent * (this.max - this.min) + parseInt(this.min)).toFixed(this.precision);
+                this.setAttribute("selected-value", (pourcent * (this.max - this.min) + parseInt(this.min)).toFixed(this.precision));
                 
                 this.callbackTimeout = setTimeout(() => {
                     this.dispatchEvent(new CustomEvent("update"), {
@@ -101,6 +99,8 @@ class ScrollerPicker extends HTMLElement {
         bar.appendChild(progress);
         this.shadow.appendChild(bar);
 
+        this.precision = 0;
+
         window.addEventListener("resize", () => {
             progress.style.transition = "all 450ms";
             progress.style.width = this.pourcent * (this.getBoundingClientRect().width) + "px";
@@ -109,7 +109,7 @@ class ScrollerPicker extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ["min-value", "max-value", "suffix", "selected-value"];
+        return ["min-value", "max-value", "suffix", "selected-value", "precision"];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -122,14 +122,16 @@ class ScrollerPicker extends HTMLElement {
             this.maxIndicator.innerHTML = String(this.max + this.suffix);
             this.minIndicator.innerHTML = String(this.min + this.suffix);
         } else if (name == "selected-value" && oldValue == null && newValue != null) {
-            let pourcent = parseInt(newValue - this.min) / (this.max - this.min) * 100;
+            let pourcent = (newValue - this.min) / (this.max - this.min) * 100;
             this.pourcent = pourcent / 100;
             this.progress.style.width = pourcent + "%";
+        } else if (name == "precision" && oldValue == null && newValue != null) {
+            this.precision = parseInt(newValue);
         }
 
         setTimeout(() => {
             this.maxIndicator.style.transform = "translate(" + (this.getBoundingClientRect().width - this.maxIndicator.getBoundingClientRect().width / 2) + "px, -32px)";
-        }, 75)
+        }, 80)
     }
 }
 

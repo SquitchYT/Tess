@@ -33,8 +33,8 @@
     background: var(--background);
     border-radius: 4px;
     transition: opacity;
-    transition-timing-function: ease;
-    transition-duration: 340ms;
+    transition-timing-function: ease-out;
+    transition-duration: 300ms;
     opacity: 0;
     user-select: none;
     display: flex;

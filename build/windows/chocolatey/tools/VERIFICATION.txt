@@ -6,12 +6,12 @@ The installer have been downloaded from their official download link listed on <
 and can be verified like this:
 
 1. Download the following installers:
-  64-Bit: <https://github.com/SquitchYT/Tess/releases/download/0.6.0/tess-setup.exe>
+  64-Bit: <https://github.com/SquitchYT/Tess/releases/download/0.6.1/tess-setup.exe>
 2. You can use one of the following methods to obtain the checksum
   - Use powershell function 'Get-Filehash'
   - Use chocolatey utility 'checksum.exe'
 
   checksum type: 
-  checksum64: CE13083C122F596844C801127141EB83649CAE65F47F4933EB7F542307329040
+  checksum64: {{ CHECKSUM }}
 
 File 'LICENSE.txt' is obtained from <https://github.com/SquitchYT/Tess/blob/main/LICENSE>

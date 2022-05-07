@@ -33,7 +33,6 @@ const inputProfilProcessName = document.querySelector(".profil-process-name");
 const reloadRequireIcon = document.querySelector(".reload-require");
 const leftSideMenuLink = document.querySelectorAll(".left-side-menu-link span");
 
-/* NEW CONST FOR REWORK OF OPTIONS MENU*/
 const menuIcon = document.getElementById("menu-icon");
 const leftSideMenu = document.querySelector(".left-side-menu-items");
 const pageCloseButton = document.querySelectorAll(".return-button");
@@ -525,7 +524,6 @@ function loadConfig() {
 
     inputs.forEach((el) => {
         el.value = config[el.getAttribute("parameters")];
-        console.log(el, config[el.getAttribute("parameters")])
         el.addEventListener("input", () => {
             let timeout;
             clearTimeout(timeout);
