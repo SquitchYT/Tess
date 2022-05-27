@@ -28,6 +28,7 @@
     white-space: normal;
     overflow-x: hidden;
     padding-left: 9px;
+    white-space: nowrap;
 }
 
 .element:hover .edit-icon {
