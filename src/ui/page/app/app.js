@@ -393,11 +393,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
                 result.then(() => {
                     if (configUpdated) {
                         configUpdated = false;
-                        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                            if (!err) {
-                                ipc.send("reloadConfig");
-                            }
-                        });
+                        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config),  (_) => {});
                     }
                     ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
                 }).catch(() => {
@@ -691,11 +687,7 @@ function ExecuteShortcut(e) {
                             popup.then(() => {
                                 if (configUpdated) {
                                     configUpdated = false;
-                                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                                        if (!err) {
-                                            ipc.send("reloadConfig");
-                                        }
-                                    });
+                                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config),  (_) => {});
                                 }
                                 ipc.send("close-terminal", currentTabIndex);
                             }).catch(() => {
@@ -1035,11 +1027,7 @@ ipc.on("confirmClosingAll", () => {
         showPopup("Close all", "Are you sure you want to close all tabs").then(() => {
             if (configUpdated) {
                 configUpdated = false;
-                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                    if (!err) {
-                        ipc.send("reloadConfig");
-                    }
-                });
+                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (_) => {});
             }
             ipc.send("closeAll");
         }).catch(() => {
@@ -1054,11 +1042,7 @@ ipc.on("confirmClosingAll", () => {
             popup.then(() => {
                 if (configUpdated) {
                     configUpdated = false;
-                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                        if (!err) {
-                            ipc.send("reloadConfig");
-                        }
-                    });
+                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (_) => {});
                 }
                 ipc.send("close-terminal", currentTabIndex);
             }).catch(() => {
