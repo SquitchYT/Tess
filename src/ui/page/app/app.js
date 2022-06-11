@@ -768,6 +768,7 @@ ipc.on("newConfig", (_, data) => {
     root.style.setProperty("--tab-text-size", (colors?.app?.text?.size) ? colors?.app?.tab?.text?.size + "px ": "12px");
     root.style.setProperty("--general-text-colo)r", colors.app.textColor);
     root.style.setProperty("--tab-hover", colors.app.backgroundHover);
+    root.style.setProperty("--popup-valid-color", colors.app.primary);
     
     body.style.color = colors.app.textColor;
     fontSize = (config?.terminalFontSize) ? config.terminalFontSize : 14;

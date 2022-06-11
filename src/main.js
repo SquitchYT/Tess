@@ -49,6 +49,7 @@ fs.watch(osData.homeDir + "/Applications/tess/config/tess.config", (event, __) =
         config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
 
         colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
+        colors.app.primary = colors?.app?.primary ? colors.app.primary : colors.terminal.theme.blue;
 
         if (osData.os == "win32") {
             updateJumpMenu();
