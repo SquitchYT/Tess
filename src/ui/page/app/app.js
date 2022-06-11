@@ -140,7 +140,7 @@ ipc.on("pty-data", (_, data) => {
                 for (let index = 0; index < el.term.rows; index++) {
                     bufferString += terminalBuffer.getLine(terminalBuffer.viewportY + index)?.translateToString();
                 }
-                let progress_value = bufferString.match(/\s\d+%/g)?.pop();    
+                let progress_value = bufferString.match(/[+-]?([0-9]*[.])?[0-9]+%/g)?.pop();    
                 if (progress_value && progress_value.trim() != "100%") {
                     tab.classList.add("in-progress");
                     tabProgressBar.classList.add("progress");
