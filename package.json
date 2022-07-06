@@ -28,7 +28,8 @@
     "build": "electron-builder --linux dir",
     "build-win": "electron-builder --win dir",
     "build-appimage": "electron-builder --linux appimage --publish=never",
-    "build-win-portable": "electron-builder --win portable"
+    "build-win-portable": "electron-builder --win portable",
+    "build-mac": "electron-builder --mac dir"
   },
   "dependencies": {
     "electron-acrylic-window": "^0.5.11",
