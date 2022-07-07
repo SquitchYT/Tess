@@ -63,9 +63,7 @@ fs.watch(osData.homeDir + "/Applications/tess/config/tess.config", (event, __) =
         }
 
         mainWindow.webContents.send("newConfig", {config: config, color: colors});  
-    } catch (err) {
-        console.log(err)
-    }
+    } catch (_) {}
 })
 
 
