@@ -40,7 +40,9 @@ class filePicker extends HTMLElement {
 
         element.addEventListener("click", () => {
             // eslint-disable-next-line no-undef
-            let path = ipcRenderer.sendSync("openFileDialog", {properties : ["openFile"]});
+            let path = ipcRenderer.sendSync("openFileDialog", {properties : ["openFile"], filters: [
+                { name: "Images", extensions: ["jpg", "png", "gif", "ico", "cur", "bmp", "wepb", "svg", "jpeg", "pjp", "pjpeg", "jfif", "avif", "apng"]}
+            ]});
             if (path) {
                 path = path.replace(/\\/g, "/");
                 this.setAttribute("selected-value", path);
