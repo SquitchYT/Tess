@@ -57,6 +57,7 @@ class filePicker extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (name == "selected-value" && newValue != null) {
             this.displayArea.innerText = newValue;
+            this.setAttribute("title", newValue);
             this.dispatchEvent(new CustomEvent("update"), {
                 composed: true,
                 bubbles: true,

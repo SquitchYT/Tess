@@ -1,6 +1,6 @@
 const time1 = new Date().getTime();
 
-const yargs = require("yargs")
+const yargs = require("yargs");
 const argv = yargs.options({
     "newtab": {
         describe: "Launch in a new tab"
@@ -93,7 +93,7 @@ let config, colors;
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", toWrite, (err) => {
-            console.log(err)
+            console.log(err);
         })
     }
 
@@ -303,25 +303,25 @@ function openWindow(config, colors) {
 
 
 ipc.on("new-term", (_, data) => {
-    let Command, prog, args;
+    let command, prog, args;
 
     if (osData.os == "win32") {
-        Command = data.shell.split(".exe ");
+        command = data.shell.split(".exe ");
 
-        prog = Command[0];
-        prog += (Command[0] != data.shell) ? ".exe" : "";
+        prog = command[0];
+        prog += (command[0] != data.shell) ? ".exe" : "";
 
         if (prog.trim() == data.shell.trim()) { // No args provided
             args = [];
         } else {
-            Command.shift();
-            args = Command[0].split(" ");
+            command.shift();
+            args = command[0].split(" ");
         }
     } else {
-        Command = data.shell.split(" ");
-        prog = Command[0];
-        Command.shift();
-        args = Command;
+        command = data.shell.split(" ");
+        prog = command[0];
+        command.shift();
+        args = command;
     }
     prog = getProcessPath(osData.os != "win32" ? prog.trim() : path.basename(prog.trim()));
 
