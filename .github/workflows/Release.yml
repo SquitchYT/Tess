@@ -93,7 +93,7 @@ jobs:
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./build/linux/debian/tess.deb
-          asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
+          asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_x86-64.deb
           asset_content_type: application/octet-stream
           
       - name: Deploy to server
@@ -104,7 +104,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           REMOTE_PORT: ${{ secrets.REMOTE_PORT }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_all.deb
+          TARGET: ${{ secrets.REMOTE_TARGET }}tess_${{ steps.get_release.outputs.tag_name }}-1_x86-64.deb
           
       - name: Update apt repository
         uses: appleboy/ssh-action@master
@@ -318,7 +318,7 @@ jobs:
           cd build/windows/setup
           iscc setup.iss
           cd Output
-          mv tess-0.6.1-setup.exe tess-setup.exe
+          mv tess-0.6.1-setup.exe tess-setup-x86_64.exe
           cd ../../..
 
       - name: Get release
@@ -348,8 +348,8 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:\a\Tess\Tess\build\windows\setup\Output\tess-setup.exe
-          asset_name: tess-setup.exe
+          asset_path: D:\a\Tess\Tess\build\windows\setup\Output\tess-setup-x86_64.exe
+          asset_name: tess-setup-x86_64.exe
           asset_content_type: application/octet-stream
 
       - name: Upload release portable
@@ -359,7 +359,7 @@ jobs:
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: D:\a\Tess\Tess\dist\tmp\tess-portable.zip
-          asset_name: tess-portable.zip
+          asset_name: tess-portable-x86_64.zip
           asset_content_type: application/octet-stream
 
   # Chocolatey:
