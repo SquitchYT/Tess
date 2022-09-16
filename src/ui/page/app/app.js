@@ -146,8 +146,25 @@ ipc.on("pty-data", (_, data) => {
                     tabProgressBar.classList.add("progress");
                     tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value.trim()}, var(--tab-inactive-background) ${progress_value.trim()})`;
                 } else {
-                    tab.classList.remove("in-progress");
-                    tabProgressBar.classList.remove("progress");
+                    let matched = bufferString.match(/(?:[1-9][0-9]*|0)\/[1-9][0-9]*/g)?.pop().split("/");
+                    if (!matched) {
+                        tab.classList.remove("in-progress");
+                        tabProgressBar.classList.remove("progress");
+
+                        return
+                    }
+
+                    let numerator = matched[0];
+                    let denominator = matched[1];
+                    if (numerator > 0 && denominator > 0) {
+                        let progress_value = numerator / denominator * 100
+                        tab.classList.add("in-progress");
+                        tabProgressBar.classList.add("progress");
+                        tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value}%, var(--tab-inactive-background) ${progress_value}%)`;
+                    } else {
+                        tab.classList.remove("in-progress");
+                        tabProgressBar.classList.remove("progress");
+                    }
                 }
             } else {
                 tab.classList.remove("in-progress");
