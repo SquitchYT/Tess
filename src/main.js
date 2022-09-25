@@ -34,8 +34,66 @@ const osData = new (require("./utils/osinfo"))();
 
 const fs = require("fs");
 
+const mkdir = require("mkdirp");
+const net = require("net");
 
-fs.watch(osData.homeDir + "/Applications/tess/config/tess.config", (event, __) => {
+const Color = require("./utils/color");
+
+let useCustomTitleBarIntegration = false;
+
+const { app, ipcMain : ipc, screen, dialog } = require("electron");
+const path = require("path");
+
+let getProcessTree;
+if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
+
+let resizeTimeout;
+
+let config, colors;
+!function LoadConfig() {
+    try {
+        let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
+        config = JSON.parse(file);
+    } catch (_) {
+        let toWrite = `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
+        config = JSON.parse(toWrite);
+
+        mkdir.sync(osData.homeDir + "/Applications/tess/config");
+        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", toWrite, (err) => {
+            console.log(err);
+        })
+    }
+
+    if (config.background == "image" && config.imageLink.startsWith("./")) {
+        config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf(".") + 1);
+    }
+
+    config.bufferSize = config?.bufferSize ? config.bufferSize : 4000;
+    config.lineHeight = config?.lineHeight ? config.lineHeight : 1;
+    config.experimentalProgressTracker = config?.experimentalProgressTracker?.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
+    config.experimentalShowCloseWarningPopup = config?.experimentalShowCloseWarningPopup?.toString() ? config.experimentalShowCloseWarningPopup.toString() == "true" : false;
+    config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
+    config.experimentalPopupExclusionList = config?.experimentalPopupExclusionList ? config.experimentalPopupExclusionList : "fish, bash, zsh, powershell, cmd";
+    config.experimentalCustomTitleBar = config?.experimentalCustomTitleBar?.toString() ? config.experimentalCustomTitleBar.toString() == "true" : false;
+
+    try {
+        let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
+        colors = JSON.parse(file);
+    } catch (_) {
+        let toWrite = '{"terminal":{"theme":{"foreground":"rgb(222, 234, 248)","background":"#141a29","black":"#22303f","red":"#ef3134","green":"#2df4b7","yellow":"#ffc738","blue":"#156ce6","magenta":"#ff5cb8","cyan":"#01defe","white":"#9aa5ce","brightBlack":"#2b3d50","brightRed":"#f1494b","brightGreen":"#76f8d0","brightYellow":"#ffce52","brightBlue":"#297aeb","brightMagenta":"#ff76c3","brightCyan":"#4de8fe","brightWhite":"#abb4d6"}},"app":{"textColor":"rgb(222, 234, 248)","tabActive":"#192033","tabInactive":"#050a19","topBar":"#050a19","background":"#050a19","secondaryBackground":"#192033","backgroundHover":"#161e31","buttonRadius":6}}';
+        colors = JSON.parse(toWrite);
+        
+        mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
+        fs.writeFile(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite, (err) => {
+            console.log(err)
+        });
+    }
+
+    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
+    colors.app.primary = colors?.app?.primary ? colors.app.primary : colors.terminal.theme.blue;
+}();
+
+fs.watch(osData.homeDir + "/Applications/tess/config/tess.config", (_, __) => {
     try {
         config = JSON.parse(fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8"));
 
@@ -63,68 +121,10 @@ fs.watch(osData.homeDir + "/Applications/tess/config/tess.config", (event, __) =
         }
 
         mainWindow.webContents.send("newConfig", {config: config, color: colors});  
-    } catch (_) {}
+    } catch (error) {
+        console.log("Error while watching config file")
+    }
 })
-
-
-const mkdir = require("mkdirp");
-const net = require("net");
-
-const Color = require("./utils/color");
-
-let useCustomTitleBarIntegration = false;
-
-const { app, ipcMain : ipc, screen, dialog } = require("electron");
-const path = require("path");
-
-let getProcessTree;
-if (osData.os == "win32") { getProcessTree = require("windows-process-tree").getProcessTree; }
-
-let resizeTimeout;
-
-let config, colors;
-!function LoadConfig() {
-    try {
-        let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
-        config = JSON.parse(file);
-    } catch (_) {
-        let toWrite= `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
-        config = JSON.parse(toWrite);
-
-        mkdir.sync(osData.homeDir + "/Applications/tess/config");
-        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", toWrite, (err) => {
-            console.log(err);
-        })
-    }
-
-    if (config.background == "image" && config.imageLink.startsWith("./")) {
-        config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf(".") + 1);
-    }
-
-    config.bufferSize = config?.bufferSize ? config.bufferSize : 4000;
-    config.lineHeight = config?.lineHeight ? config.lineHeight : 1;
-    config.experimentalProgressTracker = config?.experimentalProgressTracker?.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
-    config.experimentalShowCloseWarningPopup = config?.experimentalShowCloseWarningPopup?.toString() ? config.experimentalShowCloseWarningPopup.toString() == "true" : false;
-    config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
-    config.experimentalPopupExclusionList = config?.experimentalPopupExclusionList ? config.experimentalPopupExclusionList : "fish, bash, zsh, powershell, cmd";
-    config.experimentalCustomTitleBar = config?.experimentalCustomTitleBar?.toString() ? config.experimentalCustomTitleBar.toString() == "true" : false;
-
-    try {
-        let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
-        colors = JSON.parse(file);
-    } catch (_) {
-        let toWrite = "{ \"terminal\": { \"theme\": { \"foreground\": \"#979FAD\", \"background\": \"#282C34\", \"black\": \"#3c4045\", \"red\": \"#ff5370\", \"green\": \"#97f553\", \"yellow\": \"#d19a66\", \"blue\": \"#61aeef\", \"magenta\": \"#c679dd\", \"cyan\": \"#57b6c2\", \"white\": \"#ABB2BF\", \"brightBlack\": \"#59626f\", \"brightRed\": \"#e06c75\", \"brightGreen\": \"#c3e88d\", \"brightYellow\": \"#e5c17c\", \"brightBlue\": \"#61AEEF\", \"brightMagenta\": \"#C679DD\", \"brightCyan\": \"#56B6C2\", \"brightWhite\": \"#abb2bf\" } }, \"app\": { \"textColor\": \"#979FAD\", \"tabActive\": \"#2F333D\", \"tabInactive\": \"#21252B\" , \"topBar\": \"#21252B\", \"background\":\"#21252B\", \"secondaryBackground\": \"#2F333D\", \"backgroundHover\": \"#2D3339\", \"buttonRadius\": 20 } }";
-        colors = JSON.parse(toWrite);
-        
-        mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
-        fs.writeFile(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite, (err) => {
-            console.log(err)
-        });
-    }
-
-    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
-    colors.app.primary = colors?.app?.primary ? colors.app.primary : colors.terminal.theme.blue;
-}();
 
 if (osData.os == "win32") {
     updateJumpMenu();
@@ -261,9 +261,6 @@ function openWindow(config, colors) {
     mainWindow.removeMenu();
     //mainWindow.openDevTools()
     mainWindow.loadFile("./src/ui/page/app/index.html");
-    /*mainWindow.on("closed", () => {
-        mainWindow = null;
-    });*/
     mainWindow.on("resize",() => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
