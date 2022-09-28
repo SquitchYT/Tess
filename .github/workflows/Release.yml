@@ -169,55 +169,55 @@ jobs:
             asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
             asset_content_type: application/octet-stream
           
-  Pacman_Package:
-    name: Creating Pacman Package
-    needs: Linux
-    runs-on: ubuntu-latest
-    steps:
-      - name: Downloading Files
-        uses: actions/checkout@v2
+  # Pacman_Package:
+  #   name: Creating Pacman Package
+  #   needs: Linux
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Downloading Files
+  #       uses: actions/checkout@v2
         
-      - name: Update PKGBUILD
-        uses: 2m/arch-pkgbuild-builder@v1.16
-        with:
-          target: 'pkgbuild'
-          pkgname: 'build/linux/archlinux/tess-git'
+  #     - name: Update PKGBUILD
+  #       uses: 2m/arch-pkgbuild-builder@v1.16
+  #       with:
+  #         target: 'pkgbuild'
+  #         pkgname: 'build/linux/archlinux/tess-git'
           
-      - name: Renaming package
-        run : |
-          cd build/linux/archlinux/tess-git
-          mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
-      - name: Get release
-        id: get_release
-        uses: bruceadams/get-release@v1.2.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+  #     - name: Renaming package
+  #       run : |
+  #         cd build/linux/archlinux/tess-git
+  #         mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
+  #     - name: Get release
+  #       id: get_release
+  #       uses: bruceadams/get-release@v1.2.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Upload release binary
-        uses: actions/upload-release-asset@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-        with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
-          asset_name: tess-git-x86_64.pkg.tar.zst
-          asset_content_type: application/octet-stream
+  #     - name: Upload release binary
+  #       uses: actions/upload-release-asset@v1.0.2
+  #       env:
+  #         GITHUB_TOKEN: ${{ github.token }}
+  #       with:
+  #         upload_url: ${{ steps.get_release.outputs.upload_url }}
+  #         asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
+  #         asset_name: tess-git-x86_64.pkg.tar.zst
+  #         asset_content_type: application/octet-stream
 
-      - name: Update PKGBUILD
-        uses: 2m/arch-pkgbuild-builder@v1.16
-        with:
-          target: 'pkgbuild'
-          pkgname: 'build/linux/archlinux/tess-git'
+  #     - name: Update PKGBUILD
+  #       uses: 2m/arch-pkgbuild-builder@v1.16
+  #       with:
+  #         target: 'pkgbuild'
+  #         pkgname: 'build/linux/archlinux/tess-git'
                 
-      - name: Update AUR Package
-        uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
-        with:
-          pkgname: tess-git
-          pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
-          commit_username: ${{ secrets.AUR_USERNAME }}
-          commit_email: ${{ secrets.AUR_EMAIL }}
-          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
-          commit_message: Update AUR package
+  #     - name: Update AUR Package
+  #       uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
+  #       with:
+  #         pkgname: tess-git
+  #         pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
+  #         commit_username: ${{ secrets.AUR_USERNAME }}
+  #         commit_email: ${{ secrets.AUR_EMAIL }}
+  #         ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+  #         commit_message: Update AUR package
           
   RPM_Package:
     name: Creating RPM Package
@@ -410,7 +410,7 @@ jobs:
 
           choco pack
           choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
-          choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/  
+        # choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/  
   
   # Winget:
   #   name: Creating Winget Package
@@ -461,8 +461,8 @@ jobs:
         uses: snapcore/action-build@v1
         id: build
 
-      - name: Publishing Snap 
-        uses: snapcore/action-publish@v1
-        with:
-          store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
-          snap: ${{ steps.build.outputs.snap }}
+      # - name: Publishing Snap 
+      #   uses: snapcore/action-publish@v1
+      #   with:
+      #     store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
+      #     snap: ${{ steps.build.outputs.snap }}
