@@ -344,8 +344,7 @@ jobs:
           cp .\tess-cli.exe ../../../dist/tmp/
           cd ../../../
           npm run build-win-portable
-          ls ./dist/
-          cp './dist/tess.exe' ./dist/tmp/
+          cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
           cd dist/tmp
           Compress-Archive ./* tess-portable.zip
           cd ../..
