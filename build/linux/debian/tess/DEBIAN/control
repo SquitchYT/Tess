@@ -1,6 +1,6 @@
 Package: Tess
 Version: {{ VERSION }}
-Architecture: all
+Architecture: x86-64
 Essential: no
 Priority: optional
 Depends: npm,nodejs

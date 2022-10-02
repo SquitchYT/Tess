@@ -303,10 +303,6 @@ iframe {
     align-items: center;
 }
 
-.popup-inner:focus {
-    border: 2px blue solid;
-}
-
 .popup-inner {
     width: 290px;
     height: 140px;
@@ -317,7 +313,7 @@ iframe {
     padding: 18px;
     flex-direction: column;
     padding-bottom: 10px;
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.35);
+    box-shadow: rgba(0, 0, 0, 0.28) 0px 5px 10px;
     padding-right: 14px;
     padding-left: 12px;
 }

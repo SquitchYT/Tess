@@ -25,10 +25,10 @@
     background-color: var(--quick-access-menu-color);
     width: calc((var(--col-count) * 60px) + (var(--col-count) * 28px) + 18px);
     display: flex;
-    border-radius: 7px;
+    border-radius: 6px;
     flex-direction: column;
     align-items: center;
-    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.45);
+    box-shadow: rgba(0, 0, 0, 0.28) 0px 5px 10px;
     pointer-events: none;
 }
 

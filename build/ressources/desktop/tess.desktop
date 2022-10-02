@@ -6,17 +6,20 @@ Name=Tess - Terminal
 GenericName=Terminal
 Terminal=false
 Categories=System;TerminalEmulator
-Description=Tess is a hackable, simple, rapid and beautiful terminal for the new era of technology
+Description=Fast. Lightweight. Famous. Terminal for the new era.
+Description[fr_FR]=Rapide et Léger. Un terminal pour la nouvelle ère
 Comment=Simple Terminal Emulator
 StartupWMClass=tess
 Actions=NewWindow;NewTab;
 
 [Desktop Action NewWindow]
-Name=Open a New Window
+Name=Open a new window
+Name[fr_FR]=Ouvrir une nouvelle fenêtre
 Icon=/usr/share/pixmaps/tess.png
 Exec=/usr/bin/tess
 
 [Desktop Action NewTab]
-Name=Open a New Tab
+Name=Open a new tab
+Name[fr_FR]=Ouvrir un nouvel onglet
 Icon=/usr/share/pixmaps/tess.png
 Exec=/usr/bin/tess --newtab

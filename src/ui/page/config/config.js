@@ -671,11 +671,7 @@ function loadShortcut() {
 }
 
 function saveUpdate() {
-    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-        if (!err) {
-            ipcRenderer.send("reloadConfig");
-        }
-    });
+    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config),  (_) => {});
 }
 
 function deleteProfil(id) {

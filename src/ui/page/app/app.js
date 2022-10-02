@@ -140,14 +140,31 @@ ipc.on("pty-data", (_, data) => {
                 for (let index = 0; index < el.term.rows; index++) {
                     bufferString += terminalBuffer.getLine(terminalBuffer.viewportY + index)?.translateToString();
                 }
-                let progress_value = bufferString.match(/\s\d+%/g)?.pop();    
+                let progress_value = bufferString.match(/[+-]?([0-9]*[.])?[0-9]+%/g)?.pop();    
                 if (progress_value && progress_value.trim() != "100%") {
                     tab.classList.add("in-progress");
                     tabProgressBar.classList.add("progress");
                     tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value.trim()}, var(--tab-inactive-background) ${progress_value.trim()})`;
                 } else {
-                    tab.classList.remove("in-progress");
-                    tabProgressBar.classList.remove("progress");
+                    let matched = bufferString.match(/(?:[1-9][0-9]*|0)\/[1-9][0-9]*/g)?.pop().split("/");
+                    if (!matched) {
+                        tab.classList.remove("in-progress");
+                        tabProgressBar.classList.remove("progress");
+
+                        return
+                    }
+
+                    let numerator = matched[0];
+                    let denominator = matched[1];
+                    if (numerator > 0 && denominator > 0) {
+                        let progress_value = numerator / denominator * 100
+                        tab.classList.add("in-progress");
+                        tabProgressBar.classList.add("progress");
+                        tabProgressBar.style.background = `linear-gradient(to right, var(--general-text-color) ${progress_value}%, var(--tab-inactive-background) ${progress_value}%)`;
+                    } else {
+                        tab.classList.remove("in-progress");
+                        tabProgressBar.classList.remove("progress");
+                    }
                 }
             } else {
                 tab.classList.remove("in-progress");
@@ -393,11 +410,7 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
                 result.then(() => {
                     if (configUpdated) {
                         configUpdated = false;
-                        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                            if (!err) {
-                                ipc.send("reloadConfig");
-                            }
-                        });
+                        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config),  (_) => {});
                     }
                     ipc.send("close-terminal", close_button.getAttribute("close-button-number"));
                 }).catch(() => {
@@ -691,11 +704,7 @@ function ExecuteShortcut(e) {
                             popup.then(() => {
                                 if (configUpdated) {
                                     configUpdated = false;
-                                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                                        if (!err) {
-                                            ipc.send("reloadConfig");
-                                        }
-                                    });
+                                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config),  (_) => {});
                                 }
                                 ipc.send("close-terminal", currentTabIndex);
                             }).catch(() => {
@@ -776,6 +785,7 @@ ipc.on("newConfig", (_, data) => {
     root.style.setProperty("--tab-text-size", (colors?.app?.text?.size) ? colors?.app?.tab?.text?.size + "px ": "12px");
     root.style.setProperty("--general-text-colo)r", colors.app.textColor);
     root.style.setProperty("--tab-hover", colors.app.backgroundHover);
+    root.style.setProperty("--popup-valid-color", colors.app.primary);
     
     body.style.color = colors.app.textColor;
     fontSize = (config?.terminalFontSize) ? config.terminalFontSize : 14;
@@ -1035,11 +1045,7 @@ ipc.on("confirmClosingAll", () => {
         showPopup("Close all", "Are you sure you want to close all tabs").then(() => {
             if (configUpdated) {
                 configUpdated = false;
-                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                    if (!err) {
-                        ipc.send("reloadConfig");
-                    }
-                });
+                fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (_) => {});
             }
             ipc.send("closeAll");
         }).catch(() => {
@@ -1054,11 +1060,7 @@ ipc.on("confirmClosingAll", () => {
             popup.then(() => {
                 if (configUpdated) {
                     configUpdated = false;
-                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (err) => {
-                        if (!err) {
-                            ipc.send("reloadConfig");
-                        }
-                    });
+                    fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", JSON.stringify(config), (_) => {});
                 }
                 ipc.send("close-terminal", currentTabIndex);
             }).catch(() => {

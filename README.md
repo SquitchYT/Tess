@@ -12,7 +12,7 @@
 [![Badge Debian]][Releases]
 [![Badge Fedora]][Releases]
 [![Badge Windows]][Releases] <br>
-[![Badge Chocolatey]][Arch]
+[![Badge Chocolatey]][Chocolatey]
 [![Badge Snapcraft]][Snapcraft]
 [![Badge Winget]][Releases] <br>
 [![Badge JavaScript]][JavaScript]

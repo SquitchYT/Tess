@@ -1,6 +1,6 @@
 const time1 = new Date().getTime();
 
-const yargs = require("yargs")
+const yargs = require("yargs");
 const argv = yargs.options({
     "newtab": {
         describe: "Launch in a new tab"
@@ -30,14 +30,14 @@ const argv = yargs.options({
 const pty = require("node-pty");
 const Child_Proc = require("child_process");
 const { Worker } = require("worker_threads");
+const osData = new (require("./utils/osinfo"))();
 
 const fs = require("fs");
+
 const mkdir = require("mkdirp");
 const net = require("net");
 
 const Color = require("./utils/color");
-
-const osData = new (require("./utils/osinfo"))();
 
 let useCustomTitleBarIntegration = false;
 
@@ -55,12 +55,12 @@ let config, colors;
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
         config = JSON.parse(file);
     } catch (_) {
-        let toWrite= `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
+        let toWrite = `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
         config = JSON.parse(toWrite);
 
         mkdir.sync(osData.homeDir + "/Applications/tess/config");
         fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", toWrite, (err) => {
-            console.log(err)
+            console.log(err);
         })
     }
 
@@ -80,7 +80,7 @@ let config, colors;
         let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
         colors = JSON.parse(file);
     } catch (_) {
-        let toWrite = "{ \"terminal\": { \"theme\": { \"foreground\": \"#979FAD\", \"background\": \"#282C34\", \"black\": \"#3c4045\", \"red\": \"#ff5370\", \"green\": \"#97f553\", \"yellow\": \"#d19a66\", \"blue\": \"#61aeef\", \"magenta\": \"#c679dd\", \"cyan\": \"#57b6c2\", \"white\": \"#ABB2BF\", \"brightBlack\": \"#59626f\", \"brightRed\": \"#e06c75\", \"brightGreen\": \"#c3e88d\", \"brightYellow\": \"#e5c17c\", \"brightBlue\": \"#61AEEF\", \"brightMagenta\": \"#C679DD\", \"brightCyan\": \"#56B6C2\", \"brightWhite\": \"#abb2bf\" } }, \"app\": { \"textColor\": \"#979FAD\", \"tabActive\": \"#2F333D\", \"tabInactive\": \"#21252B\" , \"topBar\": \"#21252B\", \"background\":\"#21252B\", \"secondaryBackground\": \"#2F333D\", \"backgroundHover\": \"#2D3339\", \"buttonRadius\": 20 } }";
+        let toWrite = '{"terminal":{"theme":{"foreground":"rgb(222, 234, 248)","background":"#141a29","black":"#22303f","red":"#ef3134","green":"#2df4b7","yellow":"#ffc738","blue":"#156ce6","magenta":"#ff5cb8","cyan":"#01defe","white":"#9aa5ce","brightBlack":"#2b3d50","brightRed":"#f1494b","brightGreen":"#76f8d0","brightYellow":"#ffce52","brightBlue":"#297aeb","brightMagenta":"#ff76c3","brightCyan":"#4de8fe","brightWhite":"#abb4d6"}},"app":{"textColor":"rgb(222, 234, 248)","tabActive":"#192033","tabInactive":"#050a19","topBar":"#050a19","background":"#050a19","secondaryBackground":"#192033","backgroundHover":"#161e31","buttonRadius":6}}';
         colors = JSON.parse(toWrite);
         
         mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
@@ -92,6 +92,39 @@ let config, colors;
     colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
     colors.app.primary = colors?.app?.primary ? colors.app.primary : colors.terminal.theme.blue;
 }();
+
+fs.watch(osData.homeDir + "/Applications/tess/config/tess.config", (_, __) => {
+    try {
+        config = JSON.parse(fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8"));
+
+        if (config.background == "image" && config.imageLink.startsWith("./")) {
+            config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf(".") + 1);
+        }
+
+        colors = JSON.parse(fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8"));
+
+        config.experimentalProgressTracker = config?.experimentalProgressTracker.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
+        config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
+
+        colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
+        colors.app.primary = colors?.app?.primary ? colors.app.primary : colors.terminal.theme.blue;
+
+        if (osData.os == "win32") {
+            updateJumpMenu();
+            if (useCustomTitleBarIntegration) {
+                mainWindow.setTitleBarOverlay({
+                    color: colors.app.topBar,
+                    symbolColor: colors.app.textColor,
+                    height: 30
+                })
+            }
+        }
+
+        mainWindow.webContents.send("newConfig", {config: config, color: colors});  
+    } catch (error) {
+        console.log("Error while watching config file")
+    }
+})
 
 if (osData.os == "win32") {
     updateJumpMenu();
@@ -228,9 +261,6 @@ function openWindow(config, colors) {
     mainWindow.removeMenu();
     //mainWindow.openDevTools()
     mainWindow.loadFile("./src/ui/page/app/index.html");
-    /*mainWindow.on("closed", () => {
-        mainWindow = null;
-    });*/
     mainWindow.on("resize",() => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
@@ -270,25 +300,25 @@ function openWindow(config, colors) {
 
 
 ipc.on("new-term", (_, data) => {
-    let Command, prog, args;
+    let command, prog, args;
 
     if (osData.os == "win32") {
-        Command = data.shell.split(".exe ");
+        command = data.shell.split(".exe ");
 
-        prog = Command[0];
-        prog += (Command[0] != data.shell) ? ".exe" : "";
+        prog = command[0];
+        prog += (command[0] != data.shell) ? ".exe" : "";
 
         if (prog.trim() == data.shell.trim()) { // No args provided
             args = [];
         } else {
-            Command.shift();
-            args = Command[0].split(" ");
+            command.shift();
+            args = command[0].split(" ");
         }
     } else {
-        Command = data.shell.split(" ");
-        prog = Command[0];
-        Command.shift();
-        args = Command;
+        command = data.shell.split(" ");
+        prog = command[0];
+        command.shift();
+        args = command;
     }
     prog = getProcessPath(osData.os != "win32" ? prog.trim() : path.basename(prog.trim()));
 
@@ -497,62 +527,6 @@ ipc.on("shortcut", (_, state) => {
         BrowserWindow.getFocusedWindow().webContents.send("shortcutStateUpdate", state);
     } catch (_) { }
 });
-
-ipc.on("reloadConfig", () => {
-    reloadConfig();
-
-    try {
-        BrowserWindow.getFocusedWindow().webContents.send("newConfig", {config: config, color: colors});
-    } catch (_) { }
-});
-
-function reloadConfig() {
-    try {
-        let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/tess.config", "utf-8");
-        config = JSON.parse(file);
-    } catch (_) {
-        let toWrite = `{"theme":"default","background":"full","cursorStyle":"block","transparencyValue":"75","imageBlur":"3","imageLink":"","plugin":[],"shortcut":[{"id":1,"action":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","control":"CTRL + T"},{"id":2,"action":"Config","control":"CTRL + P"},{"id":3,"action":"Paste","control":"CTRL + V"},{"id":6,"action":"Copy","control":"CTRL + C"},{"id":12,"action":"Close","control":"CTRL + W"}],"profil":[{"id":1,"programm":"${osData.os == "win32" ? "powershell.exe" : "sh -c $SHELL"}","name":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","icon":"Default"}],"defaultProfil":"${osData.os == "win32" ? "Powershell" : "Default Shell"}","terminalFontSize":"15"}`;
-        config = JSON.parse(toWrite);
-
-        mkdir.sync(osData.homeDir + "/Applications/tess/config");
-        fs.writeFile(osData.homeDir + "/Applications/tess/config/tess.config", toWrite, (err) => {
-            console.log(err)
-        });
-    }
-
-    if (config.background == "image" && config.imageLink.startsWith("./")) {
-        config.imageLink = osData.homeDir + "/Applications/tess/config" + config.imageLink.substring(config.imageLink.indexOf(".") + 1);
-    }
-
-    try {
-        let file = fs.readFileSync(osData.homeDir + "/Applications/tess/config/theme/" + config.theme + ".json", "utf-8");
-        colors = JSON.parse(file);
-    } catch (_) {
-        let toWrite = "{ \"terminal\": { \"theme\": { \"foreground\": \"#979FAD\", \"background\": \"#282C34\", \"black\": \"#3c4045\", \"red\": \"#ff5370\", \"green\": \"#97f553\", \"yellow\": \"#d19a66\", \"blue\": \"#61aeef\", \"magenta\": \"#c679dd\", \"cyan\": \"#57b6c2\", \"white\": \"#ABB2BF\", \"brightBlack\": \"#59626f\", \"brightRed\": \"#e06c75\", \"brightGreen\": \"#c3e88d\", \"brightYellow\": \"#e5c17c\", \"brightBlue\": \"#61AEEF\", \"brightMagenta\": \"#C679DD\", \"brightCyan\": \"#56B6C2\", \"brightWhite\": \"#abb2bf\" } }, \"app\": { \"textColor\": \"#979FAD\", \"tabActive\": \"#2F333D\", \"tabInactive\": \"#21252B\" , \"topBar\": \"#21252B\", \"background\":\"#21252B\", \"secondaryBackground\": \"#2F333D\", \"backgroundHover\": \"#2D3339\", \"buttonRadius\": 20 } }";
-        colors = JSON.parse(toWrite);
-        
-        mkdir.sync(osData.homeDir + "/Applications/tess/config/theme");
-        fs.writeFile(osData.homeDir + "/Applications/tess/config/theme/default.json", toWrite, (err) => {
-            console.log(err)
-        });
-    }
-
-    config.experimentalProgressTracker = config?.experimentalProgressTracker.toString() ? config.experimentalProgressTracker.toString() == "true" : false;
-    config.experimentalShowProcessUpdateIndicator = config?.experimentalShowProcessUpdateIndicator?.toString() ? config.experimentalShowProcessUpdateIndicator.toString() == "true" : false;
-
-    colors.app.appBackground = colors?.app?.appBackground ? colors.app.appBackground : colors.terminal.theme.background;
-
-    if (osData.os == "win32") {
-        updateJumpMenu();
-        if (useCustomTitleBarIntegration) {
-            mainWindow.setTitleBarOverlay({
-                color: colors.app.topBar,
-                symbolColor: colors.app.textColor,
-                height: 30
-            })
-        }
-    }
-}
 
 ipc.on("debug", (_, data) => {
     console.log("[DEBUG] " + data);
