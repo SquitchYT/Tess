@@ -319,47 +319,47 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
-      # - name: Installing MSVC
-      #   uses: ilammy/msvc-dev-cmd@v1
-      # - name: Get release
-      #   id: get_release
-      #   uses: bruceadams/get-release@v1.2.2
-      #   env:
-      #     GITHUB_TOKEN: '${{ github.token }}'
-      # - name: Installing Make Dependencies
-      #   run: >
-      #     Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O
-      #     setup.exe
+      - name: Installing MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: '${{ github.token }}'
+      - name: Installing Make Dependencies
+        run: >
+          Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O
+          setup.exe
 
-      #     ./setup.exe /silent
+          ./setup.exe /silent
 
-      #     Invoke-WebRequest
-      #     https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi
-      #     -O cmake-setup.msi
+          Invoke-WebRequest
+          https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi
+          -O cmake-setup.msi
 
-      #     ./cmake-setup.msi /silent
-      # - name: Building App
-      #   run: |
-      #     npm install && npm run build-win
-      #     cd cli
-      #     cmake . -B build
-      #     cd build
-      #     cmake --build . --config Release
-      #     cd Release
-      #     cp .\tess-cli.exe ../../../dist/win-unpacked/
-      #     cd ../../../
-      # - name: Packaging App
-      #   run: >
-      #     cd build/windows/setup
+          ./cmake-setup.msi /silent
+      - name: Building App
+        run: |
+          npm install && npm run build-win
+          cd cli
+          cmake . -B build
+          cd build
+          cmake --build . --config Release
+          cd Release
+          cp .\tess-cli.exe ../../../dist/win-unpacked/
+          cd ../../../
+      - name: Packaging App
+        run: >
+          cd build/windows/setup
 
-      #     iscc setup.iss
+          iscc setup.iss
 
-      #     cd Output
+          cd Output
 
-      #     mv tess-setup.exe tess-${{ steps.get_release.outputs.tag_name
-      #     }}-setup-x86_64.exe
+          mv tess-setup.exe tess-${{ steps.get_release.outputs.tag_name
+          }}-setup-x86_64.exe
 
-      #     cd ../../..
+          cd ../../..
       # - name: Building Portable
       #   run: >
       #     mkdir ./dist/tmp
@@ -388,17 +388,17 @@ jobs:
       #     Compress-Archive ./* tess-portable.zip
 
       #     cd ../..
-      # - name: Upload release binary
-      #   uses: actions/upload-release-asset@v1.0.2
-      #   env:
-      #     GITHUB_TOKEN: '${{ github.token }}'
-      #   with:
-      #     upload_url: '${{ steps.get_release.outputs.upload_url }}'
-      #     asset_path: >-
-      #       D:/a/Tess/Tess/build/windows/setup/Output/tess-${{
-      #       steps.get_release.outputs.tag_name }}-setup-x86_64.exe
-      #     asset_name: 'tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe'
-      #     asset_content_type: application/octet-stream
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: '${{ github.token }}'
+        with:
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
+          asset_path: >-
+            D:/a/Tess/Tess/build/windows/setup/Output/tess-${{
+            steps.get_release.outputs.tag_name }}-setup-x86_64.exe
+          asset_name: 'tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe'
+          asset_content_type: application/octet-stream
       # - name: Upload release portable
       #   uses: actions/upload-release-asset@v1.0.2
       #   env:
