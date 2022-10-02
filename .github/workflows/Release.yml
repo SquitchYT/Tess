@@ -328,7 +328,7 @@ jobs:
           GITHUB_TOKEN: '${{ github.token }}'
       - name: Installing Make Dependencies
         run: >
-          Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O
+          Invoke-WebRequest https://files.jrsoftware.org/is/6/innosetup-6.1.2.exe -O
           setup.exe
 
           ./setup.exe /silent
