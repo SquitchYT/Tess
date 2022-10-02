@@ -1,51 +1,41 @@
 name: Publish Release
-
-on:
+'on':
   push:
     tags:
       - '*'
-  workflow_dispatch:
-
+  workflow_dispatch: null
 jobs:
   Check:
-     runs-on: ubuntu-latest
-     steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-          
-        - name: Installing dependencies
-          run: |
-            sudo apt update
-            sudo apt install npm libcurl4-openssl-dev cmake git
-        
-        - name: Checking Tess Compilation
-          run: |
-            npm install
-            npm run build
-            
-        - name: Checking Tess-cli Compilation
-          run: |
-            cd cli
-            cmake . -B build
-            cd build && make
-            ./tess-cli -S --theme default
-
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Installing dependencies
+        run: |
+          sudo apt update
+          sudo apt install npm libcurl4-openssl-dev cmake git
+      - name: Checking Tess Compilation
+        run: |
+          npm install
+          npm run build
+      - name: Checking Tess-cli Compilation
+        run: |
+          cd cli
+          cmake . -B build
+          cd build && make
+          ./tess-cli -S --theme default
   Linux:
     needs: Check
     runs-on: ubuntu-latest
-     
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        
   Windows:
     needs: Check
     runs-on: ubuntu-latest
-     
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-    
   DEB_Package:
     name: Creating Debian Package
     needs: Linux
@@ -53,49 +43,64 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Generating DEBIAN Package    
-        run: |
+          GITHUB_TOKEN: '${{ github.token }}'
+      - name: Generating DEBIAN Package
+        run: >
           sudo apt update
+
           sudo apt install libcurl4-openssl-dev cmake git
+
           mkdir -p ./build/linux/debian/tess/usr/lib/tess/
+
           mkdir -p ./build/linux/debian/tess/usr/bin
-          
+
+
           npm install
+
           npm run build
+
           cp -r dist/linux-unpacked/* ./build/linux/debian/tess/usr/lib/tess/
-          
+
+
           cd cli
+
           cmake . -B build
+
           make -C build
+
           strip build/tess-cli
+
           cp build/tess-cli ../build/linux/debian/tess/usr/bin/
+
           cd ../
-          sed -i "s/{{ DATE }}/$(date -R)/g" ./build/linux/debian/tess/DEBIAN/control
-          sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/debian/tess/DEBIAN/control
-  
+
+          sed -i "s/{{ DATE }}/$(date -R)/g"
+          ./build/linux/debian/tess/DEBIAN/control
+
+          sed -i "s/{{ VERSION }}/${VERSION}/g"
+          ./build/linux/debian/tess/DEBIAN/control
+
+
           cd ./build/linux/debian/
+
           sudo chmod 755 tess/DEBIAN/postinst 
+
           dpkg-deb --build tess
         env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
-        
+          VERSION: '${{ steps.get_release.outputs.tag_name }}'
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: '${{ github.token }}'
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
           asset_path: ./build/linux/debian/tess.deb
-          asset_name: tess_${{ steps.get_release.outputs.tag_name }}-1_x86-64.deb
+          asset_name: 'tess_${{ steps.get_release.outputs.tag_name }}-1_x86-64.deb'
           asset_content_type: application/octet-stream
-
   Linux_Tar:
     name: Creating Tar Package
     needs: Linux
@@ -103,72 +108,63 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Generating DEBIAN Package    
+          GITHUB_TOKEN: '${{ github.token }}'
+      - name: Generating DEBIAN Package
         run: |
           sudo apt update
           sudo apt install libcurl4-openssl-dev cmake git
-          
+
           npm install
           npm run build
-          
+
           cd cli
           cmake . -B build
           make -C build
           strip build/tess-cli
           cp build/tess-cli ../dist/linux-unpacked
           cd ../
-  
+
           cd dist
           tar -zcv linux-unpacked/ -f tess-${VERSION}-x86_64.tar.gz
         env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
-        
+          VERSION: '${{ steps.get_release.outputs.tag_name }}'
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: '${{ github.token }}'
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}-x86_64.tar.gz
-          asset_name: tess-${{ steps.get_release.outputs.tag_name }}-x86_64.tar.gz
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
+          asset_path: './dist/tess-${{ steps.get_release.outputs.tag_name }}-x86_64.tar.gz'
+          asset_name: 'tess-${{ steps.get_release.outputs.tag_name }}-x86_64.tar.gz'
           asset_content_type: application/octet-stream
-
-
   AppImage:
-      name: Creating AppImage
-      needs: Linux
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
-
-        - name: Get release
-          id: get_release
-          uses: bruceadams/get-release@v1.2.2
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-
-        - name: Generating AppImage    
-          run: |
-            npm install && npm run build-appimage
-
-        - name: Upload release binary
-          uses: actions/upload-release-asset@v1.0.2
-          env:
-            GITHUB_TOKEN: ${{ github.token }}
-          with:
-            upload_url: ${{ steps.get_release.outputs.upload_url }}
-            asset_path: ./dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage
-            asset_name: tess_${{ steps.get_release.outputs.tag_name }}.AppImage
-            asset_content_type: application/octet-stream
-          
+    name: Creating AppImage
+    needs: Linux
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: '${{ github.token }}'
+      - name: Generating AppImage
+        run: |
+          npm install && npm run build-appimage
+      - name: Upload release binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: '${{ github.token }}'
+        with:
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
+          asset_path: './dist/tess-${{ steps.get_release.outputs.tag_name }}.AppImage'
+          asset_name: 'tess_${{ steps.get_release.outputs.tag_name }}.AppImage'
+          asset_content_type: application/octet-stream
   Pacman_Package:
     name: Creating Pacman Package
     needs: Linux
@@ -176,120 +172,146 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
-        
       - name: Update PKGBUILD
         uses: 2m/arch-pkgbuild-builder@v1.16
         with:
-          target: 'pkgbuild'
-          pkgname: 'build/linux/archlinux/tess-git'
-          
+          target: pkgbuild
+          pkgname: build/linux/archlinux/tess-git
       - name: Renaming package
-        run : |
+        run: |
           cd build/linux/archlinux/tess-git
           mv *.pkg.tar.zst tess-git-x86_64.pkg.tar.zst
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-
+          GITHUB_TOKEN: '${{ github.token }}'
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: '${{ github.token }}'
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
           asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
           asset_name: tess-git-x86_64.pkg.tar.zst
           asset_content_type: application/octet-stream
-
       - name: Update PKGBUILD
         uses: 2m/arch-pkgbuild-builder@v1.16
         with:
-          target: 'pkgbuild'
-          pkgname: 'build/linux/archlinux/tess-git'
-               
+          target: pkgbuild
+          pkgname: build/linux/archlinux/tess-git
       - name: Update AUR Package
         uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
         with:
           pkgname: tess-git
           pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
-          commit_username: ${{ secrets.AUR_USERNAME }}
-          commit_email: ${{ secrets.AUR_EMAIL }}
-          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_username: '${{ secrets.AUR_USERNAME }}'
+          commit_email: '${{ secrets.AUR_EMAIL }}'
+          ssh_private_key: '${{ secrets.AUR_SSH_PRIVATE_KEY }}'
           commit_message: Update AUR package
-          
   RPM_Package:
     name: Creating RPM Package
     needs: Linux
     runs-on: ubuntu-latest
     container:
-      image: fedora:latest
-    
+      image: 'fedora:latest'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: '${{ github.token }}'
+      - name: Generating RPM Package
+        run: >
+          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git
+          openssl-devel -y
 
-      - name: Generating RPM Package    
-        run: |
-          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git openssl-devel -y
-          
+
           mkdir -p ./build/linux/rhel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          
-          sed -i "s/{{ VERSION }}/${VERSION}/g" ./build/linux/rhel/rpmbuild/SPECS/tess.spec
+
+
+          sed -i "s/{{ VERSION }}/${VERSION}/g"
+          ./build/linux/rhel/rpmbuild/SPECS/tess.spec
+
 
           mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app
+
           mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli
-          mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1
-          
-          cp ./build/ressources/desktop/tess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
-          cp ./build/ressources/desktop/open-app-in-tess.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
-          cp ./build/ressources/desktop/open-tess-here.desktop ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
-          cp ./build/ressources/icon/icon.png ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
-          
+
+          mkdir -p
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man/fr/man1
+
+
+          cp ./build/ressources/desktop/tess.desktop
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+
+          cp ./build/ressources/desktop/open-app-in-tess.desktop
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+
+          cp ./build/ressources/desktop/open-tess-here.desktop
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+
+          cp ./build/ressources/icon/icon.png
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/
+
+
           mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
+
           mkdir -p ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
 
-          cp -r ./build/ressources/man/fr/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
-          cp -r ./build/ressources/man/en/man1/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
-          
+
+          cp -r ./build/ressources/man/fr/man1/*
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-fr/
+
+          cp -r ./build/ressources/man/en/man1/*
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/man-en/
+
+
           npm install
+
           npm run build
-          cp -r dist/linux-unpacked/* ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app/
-          
+
+          cp -r dist/linux-unpacked/*
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/app/
+
+
           cd cli
+
           cmake . -B build
+
           make -C build
+
           strip build/tess-cli
+
           cd ../
-          
-          cp cli/build/tess-cli ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
+
+
+          cp cli/build/tess-cli
+          ./build/linux/rhel/rpmbuild/SOURCES/tess-${VERSION}/cli/tess-cli
                   
           cd ./build/linux/rhel/rpmbuild/SOURCES
+
           tar zcvf tess.tar.gz ./*
+
           cd ../
-          
+
+
           rpmbuild --define "_topdir `pwd`" -bb ./SPECS/tess.spec
-          
         env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
-        
+          VERSION: '${{ steps.get_release.outputs.tag_name }}'
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: '${{ github.token }}'
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
-          asset_name: tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
+          asset_path: >-
+            ./build/linux/rhel/rpmbuild/RPMS/x86_64/tess-${{
+            steps.get_release.outputs.tag_name }}-0.x86_64.rpm
+          asset_name: 'tess-${{ steps.get_release.outputs.tag_name }}-0.x86_64.rpm'
           asset_content_type: application/octet-stream
-
   Windows_Setup:
     name: Creating Windows Setup
     needs: Windows
@@ -297,23 +319,25 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
-        
       - name: Installing MSVC
         uses: ilammy/msvc-dev-cmd@v1
-
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-     
+          GITHUB_TOKEN: '${{ github.token }}'
       - name: Installing Make Dependencies
-        run: |
-          Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O setup.exe
+        run: >
+          Invoke-WebRequest https://jrsoftware.org/download.php/is.exe -O
+          setup.exe
+
           ./setup.exe /silent
-          Invoke-WebRequest https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi -O cmake-setup.msi
+
+          Invoke-WebRequest
+          https://github.com/Kitware/CMake/releases/download/v3.21.3/cmake-3.21.3-windows-x86_64.msi
+          -O cmake-setup.msi
+
           ./cmake-setup.msi /silent
-          
       - name: Building App
         run: |
           npm install && npm run build-win
@@ -324,51 +348,66 @@ jobs:
           cd Release
           cp .\tess-cli.exe ../../../dist/win-unpacked/
           cd ../../../
-          
       - name: Packaging App
-        run: |
+        run: >
           cd build/windows/setup
-          iscc setup.iss
-          cd Output
-          mv tess-setup.exe tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe
-          cd ../../..
 
+          iscc setup.iss
+
+          cd Output
+
+          mv tess-setup.exe tess-${{ steps.get_release.outputs.tag_name
+          }}-setup-x86_64.exe
+
+          cd ../../..
       - name: Building Portable
-        run : |
+        run: >
           mkdir ./dist/tmp
+
           cd cli
+
           cmake . -B build
+
           cd build
+
           cmake --build . --config Release
+
           cd Release
+
           cp .\tess-cli.exe ../../../dist/tmp/
+
           cd ../../../
+
           npm run build-win-portable
-          cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe' ./dist/tmp/
+
+          cp './dist/tess ${{ steps.get_release.outputs.tag_name }}.exe'
+          ./dist/tmp/
+
           cd dist/tmp
+
           Compress-Archive ./* tess-portable.zip
+
           cd ../..
-          
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: '${{ github.token }}'
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:/a/Tess/Tess/build/windows/setup/Output/tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe
-          asset_name: tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
+          asset_path: >-
+            D:/a/Tess/Tess/build/windows/setup/Output/tess-${{
+            steps.get_release.outputs.tag_name }}-setup-x86_64.exe
+          asset_name: 'tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe'
           asset_content_type: application/octet-stream
-
       - name: Upload release portable
         uses: actions/upload-release-asset@v1.0.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: '${{ github.token }}'
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: D:/a/Tess/Tess/dist/tmp/tess-portable.zip
-          asset_name: tess-${{ steps.get_release.outputs.tag_name }}-portable-x86_64.zip
+          upload_url: '${{ steps.get_release.outputs.upload_url }}'
+          asset_path: 'D:/a/Tess/Tess/dist/tmp/tess-portable.zip'
+          asset_name: 'tess-${{ steps.get_release.outputs.tag_name }}-portable-x86_64.zip'
           asset_content_type: application/octet-stream
-
   Chocolatey:
     name: Creating Chocolatey Package
     needs: Windows_Setup
@@ -376,65 +415,87 @@ jobs:
     steps:
       - name: Downloading Files
         uses: actions/checkout@v2
-        
       - name: Installing MSVC
         uses: ilammy/msvc-dev-cmd@v1
-      
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-     
+          GITHUB_TOKEN: '${{ github.token }}'
       - name: Installing Make Dependencies
-        run: |
-          Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+        run: >
+          Set-ExecutionPolicy Bypass -Scope Process -Force;
+          [System.Net.ServicePointManager]::SecurityProtocol =
+          [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex
+          ((New-Object
+          System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+
           choco install checksum
-
       - name: Getting Installer
-        run: |
-          Invoke-WebRequest https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe -O build/windows/tess-setup.exe
-
+        run: >
+          Invoke-WebRequest
+          https://github.com/SquitchYT/Tess/releases/download/${{
+          steps.get_release.outputs.tag_name }}/tess-${{
+          steps.get_release.outputs.tag_name }}-setup-x86_64.exe -O
+          build/windows/tess-setup.exe
       - name: Creating Chocolatey Package
-        run: |
+        run: >
           cd build/windows/
+
           mv tess-setup.exe ./chocolatey/tools/
+
           cd ./chocolatey
+
           $checksum = checksum.exe -t sha256 -f tools/tess-setup.exe
-          get-content tools/VERIFICATION.txt | %{$_ -replace "{{ CHECKSUM }}", $checksum} > tools/VERIFICATION-tmp.txt
+
+          get-content tools/VERIFICATION.txt | %{$_ -replace "{{ CHECKSUM }}",
+          $checksum} > tools/VERIFICATION-tmp.txt
+
           rm tools/VERIFICATION.txt
+
           mv tools/VERIFICATION-tmp.txt tools/VERIFICATION.txt
-          get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{ steps.get_release.outputs.tag_name }}} > tess-tmp.nuspec
+
+          get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{
+          steps.get_release.outputs.tag_name }}} > tess-tmp.nuspec
+
           rm tess.nuspec
+
           mv tess-tmp.nuspec tess.nuspec
 
+
           choco pack
-          choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source https://push.chocolatey.org/
-          choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg --source https://push.chocolatey.org/  
-  
-   Winget:
-     name: Creating Winget Package
-     needs: Windows_Setup
-     runs-on: windows-latest
-     steps:
-       - name: Downloading Files
-         uses: actions/checkout@v2
-     
-       - name: Get release
-         id: get_release
-         uses: bruceadams/get-release@v1.2.2
-         env:
-           GITHUB_TOKEN: ${{ github.token }}
-     
-       - name: Installing Make Dependencies
-         run: |
-           Invoke-WebRequest https://github.com/microsoft/winget-create/releases/download/v1.0.3.0/wingetcreate.exe -O wingetcreate.exe
 
-       - name: Building Package
-         run: |
-           cd .\build\windows\winget\
-           ..\..\..\wingetcreate.exe update Squitch.Tess --urls "https://github.com/SquitchYT/Tess/releases/download/${{ steps.get_release.outputs.tag_name }}/tess-${{ steps.get_release.outputs.tag_name }}-setup-x86_64.exe|x64" --version ${{ steps.get_release.outputs.tag_name }} -s
+          choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source
+          https://push.chocolatey.org/
 
+          choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg
+          --source https://push.chocolatey.org/  
+  Winget:
+    name: Creating Winget Package
+    needs: Windows_Setup
+    runs-on: windows-latest
+    steps:
+      - name: Downloading Files
+        uses: actions/checkout@v2
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.2.2
+        env:
+          GITHUB_TOKEN: '${{ github.token }}'
+      - name: Installing Make Dependencies
+        run: >
+          Invoke-WebRequest
+          https://github.com/microsoft/winget-create/releases/download/v1.0.3.0/wingetcreate.exe
+          -O wingetcreate.exe
+      - name: Building Package
+        run: >
+          cd .\build\windows\winget\
+
+          ..\..\..\wingetcreate.exe update Squitch.Tess --urls
+          "https://github.com/SquitchYT/Tess/releases/download/${{
+          steps.get_release.outputs.tag_name }}/tess-${{
+          steps.get_release.outputs.tag_name }}-setup-x86_64.exe|x64" --version
+          ${{ steps.get_release.outputs.tag_name }} -s
   SNAP_Package:
     name: Creating Snap Package
     needs: Linux
@@ -442,27 +503,27 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-
       - name: Get release
         id: get_release
         uses: bruceadams/get-release@v1.2.2
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-
-      - name: Preparing Snap  
-        run: |
+          GITHUB_TOKEN: '${{ github.token }}'
+      - name: Preparing Snap
+        run: >
           cp ./build/linux/snap/snapcraft.yaml ./
-          wget https://github.com/SquitchYT/Tess/archive/refs/tags/${VERSION}.zip -O Tess.zip
+
+          wget
+          https://github.com/SquitchYT/Tess/archive/refs/tags/${VERSION}.zip -O
+          Tess.zip
+
           sed -i "s/{{ VERSION }}/${VERSION}/g" ./snapcraft.yaml
         env:
-          VERSION: ${{ steps.get_release.outputs.tag_name }}
-
-      - name: Building Snap 
+          VERSION: '${{ steps.get_release.outputs.tag_name }}'
+      - name: Building Snap
         uses: snapcore/action-build@v1
         id: build
-
-      - name: Publishing Snap 
+      - name: Publishing Snap
         uses: snapcore/action-publish@v1
         with:
-          store_login: ${{ secrets.SNAPCRAFT_LOGIN }}
-          snap: ${{ steps.build.outputs.snap }}
+          store_login: '${{ secrets.SNAPCRAFT_LOGIN }}'
+          snap: '${{ steps.build.outputs.snap }}'
