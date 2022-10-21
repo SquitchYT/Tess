@@ -22,7 +22,6 @@ const quickMenuInner = document.querySelector(".inner-quick-menu");
 
 const quickDefault = document.getElementById("quick-default");
 const quickConfig = document.getElementById("quick-config");
-//const quickMarket = document.getElementById("quick-market");
 
 const quickDefaultName = document.getElementById("quick-default-name");
 const quickDefaultShortcut = document.getElementById("quick-default-shortcut");
@@ -87,8 +86,7 @@ const CustomPage = [
     }
 ];
 
-let cols;
-let rows;
+let cols, rows;
 let terminalsList = [];
 let [currentTabIndex, index, tabOrderToAdd] = [0, 0, 0]
 let config;

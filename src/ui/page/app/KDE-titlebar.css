@@ -1,6 +1,19 @@
 .icon-KDE {
     margin-left: 6px;
 }
+
+body::after {
+    position:absolute; width:0; height:0; overflow:hidden; z-index:-1;
+    content: url("/usr/share/themes/Breeze-Dark/assets/titlebutton-close-hover@2.png")
+             url("/usr/share/themes/Breeze-Dark/assets/titlebutton-close-active@2.png")
+             url("/usr/share/themes/Breeze-Dark/assets/breeze-minimize-hover-symbolic.svg")
+             url("/usr/share/themes/Breeze-Dark/assets/breeze-minimize-active-symbolic.svg")
+             url("/usr/share/themes/Breeze-Dark/assets/breeze-maximize-hover-symbolic.svg")
+             url("/usr/share/themes/Breeze-Dark/assets/breeze-maximize-active-symbolic.svg")
+             url("/usr/share/themes/Breeze-Dark/assets/breeze-maximized-hover-symbolic.svg")
+             url("/usr/share/themes/Breeze-Dark/assets/breeze-maximized-active-symbolic.svg");
+}
+
 .close-button-KDE {
     background: url("/usr/share/themes/Breeze-Dark/assets/titlebutton-close@2.png");
     background-size: cover !important;
