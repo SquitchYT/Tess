@@ -228,20 +228,18 @@ ipc.on("loaded", (_, data) => {
 
     let needTransparent = (config.background == "transparent" || config.background == "acrylic" || config.background == "blurbehind");
     if (needTransparent) {
-        colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
-        root.style.setProperty("--background", colors.terminal.theme.background);
+        root.style.setProperty("--background", bgColor.rgba);
     } else if (config.background == "image") {
-        colors.terminal.theme.background = bgColor.rgba;
         root.style.setProperty("--opacity", (config.transparencyValue / 100) + 0.21);
         root.style.setProperty("--background-image", 'url("' + config.imageLink + '")');
-        root.style.setProperty("--background", colors.terminal.theme.background);
+        root.style.setProperty("--background", bgColor.rgba);
         root.style.setProperty("--blur", "blur(" + config.imageBlur +"px)");
     } else {
         root.style.setProperty("--background", colors.terminal.theme.background);
     }
 
-    colors.terminal.theme.background = "transparent";
+    colors.terminal.theme.background = new Color(colors.terminal.theme.background, 0).ToRgba();
 
     root.style.setProperty("--tab-panel-background", colors.app.topBar);
     root.style.setProperty("--quick-access-menu-color", colors.app.topBar);
@@ -491,8 +489,10 @@ function CreateNewTerminal(toStart, name, icon, workdir, processNamed) {
             fontFamily: (config?.terminalFonts) ? config?.terminalFonts : "Consolas, courier-new, courier, monospace",
             rendererType: config?.experimentalRendererType ? config.experimentalRendererType : "canvas",
             scrollback: config.bufferSize,
-            lineHeight: Number(config.lineHeight)
+            lineHeight: Number(config.lineHeight),
         });
+
+        console.log(colors.terminal)
         term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon(("click", (_, url) => {
             shell.openExternal(url);
