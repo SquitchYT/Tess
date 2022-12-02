@@ -48,7 +48,6 @@
 **Winget Package**: [Wiki link][Install Winget]
 
 
-
 ## Preview
 
 <div align = center>
@@ -59,19 +58,22 @@
 </div>
 
 
+## Known issues
+### As long as Tess is in beta, many bugs may occur and some of them have not yet been fixed. Below is a list of most of them
+* **Opaque selection using the DOM renderer**
+* **On Windows, the acrylic background has flickering effects on window resize and moving**
+* **Characters overflow using the font ligature with the canvas renderer**
+
+
 ## Contributors
 
 [![Squitch Avatar]][Squitch]
+
 
 ## License
 **[Tess] | [Mozilla Public License 2.0][License]**
 
 
-
-
-
-
-<!-----------------------------------{ Links }--------------------------------->
 
 [Releases]: https://github.com/SquitchYT/Tess/releases/latest/
 [Arch]: https://aur.archlinux.org/packages/tess-git/
