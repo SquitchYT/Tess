@@ -15,7 +15,7 @@ void exit_handler() {
 }
 
 void print_help() {
-    std::cout << "TessCLI - 0.6.2" << std::endl;
+    std::cout << "TessCLI - 0.6.3" << std::endl;
     std::cout << "   --help          Show this help." << std::endl;
     std::cout << "   -S, --save      Install the given extensions." << std::endl;
     std::cout << "   -R, --remove    Remove the given extensions." << std::endl;
@@ -50,11 +50,3 @@ int main(int argc, char **argv){
 
     return err.getCode();
 }
-
-/* TODO
-###############################################################.
-# - Add warning class and warning for no downloaded extension #
-# - Add error no installed plugin on remove                   #
-# - Add updater                                               #
-###############################################################
-*/
