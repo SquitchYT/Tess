@@ -221,7 +221,7 @@ jobs:
         run: >
           dnf install libcurl-devel gcc-c++ rpmdevtools cmake git openssl-devel -y
           
-          dnf module install nodejs:16
+          dnf module install nodejs:16 -y
 
 
           mkdir -p ./build/linux/rhel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
