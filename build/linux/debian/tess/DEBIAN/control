@@ -1,5 +1,5 @@
 Package: Tess
-Version: {{ VERSION }}
+Version: 0.6.3
 Architecture: amd64
 Essential: no
 Priority: optional
