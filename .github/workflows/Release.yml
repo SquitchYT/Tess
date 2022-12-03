@@ -222,7 +222,7 @@ jobs:
           GITHUB_TOKEN: '${{ github.token }}'
       - name: Generating RPM Package
         run: >
-          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs cmake git
+          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs:16 cmake git
           openssl-devel -y
 
 
