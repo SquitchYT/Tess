@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
   <metadata>
     <id>tess</id>
-    <version>{{ VERSION }}</version>
+    <version>0.6.3</version>
     <title>tess (Install)</title>
     <authors>Squitch</authors>
     <projectUrl>https://tessapp.dev</projectUrl>
