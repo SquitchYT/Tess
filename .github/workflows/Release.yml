@@ -450,14 +450,6 @@ jobs:
 
           mv tools/VERIFICATION-tmp.txt tools/VERIFICATION.txt
 
-          get-content tess.nuspec | %{$_ -replace "{{ VERSION }}", ${{
-          steps.get_release.outputs.tag_name }}} > tess-tmp.nuspec
-
-          rm tess.nuspec
-
-          mv tess-tmp.nuspec tess.nuspec
-
-
           choco pack
 
     #      choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source
