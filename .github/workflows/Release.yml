@@ -80,9 +80,6 @@ jobs:
 
           sed -i "s/{{ DATE }}/$(date -R)/g"
           ./build/linux/debian/tess/DEBIAN/control
-          sed -i "s/{{ VERSION }}/${VERSION}/g"
-          ./build/linux/debian/tess/DEBIAN/control
-
 
           cd ./build/linux/debian/
 
@@ -222,10 +219,9 @@ jobs:
           GITHUB_TOKEN: '${{ github.token }}'
       - name: Generating RPM Package
         run: >
-          dnf install libcurl-devel gcc-c++ rpmdevtools cmake git openssl-devel make -y
+          dnf install libcurl-devel gcc-c++ rpmdevtools cmake git openssl-devel -y
           
-          curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash - 
-          dnf install nodejs -y
+          dnf module install nodejs:16
 
 
           mkdir -p ./build/linux/rhel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
