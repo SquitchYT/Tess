@@ -222,8 +222,10 @@ jobs:
           GITHUB_TOKEN: '${{ github.token }}'
       - name: Generating RPM Package
         run: >
-          dnf install libcurl-devel gcc-c++ rpmdevtools nodejs:16 cmake git
-          openssl-devel -y
+          dnf install libcurl-devel gcc-c++ rpmdevtools cmake git openssl-devel make -y
+          
+          curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash - 
+          dnf install nodejs -y
 
 
           mkdir -p ./build/linux/rhel/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
