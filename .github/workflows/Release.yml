@@ -189,20 +189,20 @@ jobs:
           asset_path: build/linux/archlinux/tess-git/tess-git-x86_64.pkg.tar.zst
           asset_name: tess-git-x86_64.pkg.tar.zst
           asset_content_type: application/octet-stream
-  #    - name: Update PKGBUILD
-   #     uses: 2m/arch-pkgbuild-builder@v1.16
-   #     with:
-   #       target: pkgbuild
-   #       pkgname: build/linux/archlinux/tess-git
-   #   - name: Update AUR Package
-   #     uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
-   #     with:
-   #       pkgname: tess-git
-   #       pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
-   #       commit_username: '${{ secrets.AUR_USERNAME }}'
-   #       commit_email: '${{ secrets.AUR_EMAIL }}'
-   #       ssh_private_key: '${{ secrets.AUR_SSH_PRIVATE_KEY }}'
-   #       commit_message: Update AUR package
+      - name: Update PKGBUILD
+        uses: 2m/arch-pkgbuild-builder@v1.16
+        with:
+          target: pkgbuild
+          pkgname: build/linux/archlinux/tess-git
+      - name: Update AUR Package
+        uses: KSXGitHub/github-actions-deploy-aur@v2.2.4
+        with:
+          pkgname: tess-git
+          pkgbuild: build/linux/archlinux/tess-git/PKGBUILD
+          commit_username: '${{ secrets.AUR_USERNAME }}'
+          commit_email: '${{ secrets.AUR_EMAIL }}'
+          ssh_private_key: '${{ secrets.AUR_SSH_PRIVATE_KEY }}'
+          commit_message: Update AUR package
   RPM_Package:
     name: Creating RPM Package
     needs: Linux
@@ -452,11 +452,11 @@ jobs:
 
           choco pack
 
-    #      choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source
-    #      https://push.chocolatey.org/
+          choco apikey --key ${{ secrets.CHOCOLATEY_KEY }} --source
+          https://push.chocolatey.org/
 
-   #       choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg
-   #       --source https://push.chocolatey.org/  
+          choco push .\tess.${{ steps.get_release.outputs.tag_name }}.nupkg
+          --source https://push.chocolatey.org/  
   # Winget:
   #   name: Creating Winget Package
   #   needs: Windows_Setup
