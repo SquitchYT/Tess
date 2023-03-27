@@ -1,5 +1,0 @@
-ln -s "/usr/lib/tess/tess" "/usr/bin/tess"
-
-if type "$kbuildsycoca5" > /dev/null; then
-        kbuildsycoca5
-fi

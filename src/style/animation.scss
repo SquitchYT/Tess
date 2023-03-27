@@ -1,0 +1,54 @@
+@keyframes slide-initial-to-left {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-100%); }
+}
+
+@keyframes slide-left-to-initial {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(0); }  
+}
+
+@keyframes slide-initial-to-right {
+    from { transform: translateX(0); }
+    to   { transform: translateX(100%); }
+}
+
+@keyframes slide-right-to-initial {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }  
+}
+
+@keyframes tab-created {
+    from { width: 0; }
+    to { width: 16rem; }
+}
+
+@keyframes tab-closed {
+    to { width: 0; }
+}
+
+@keyframes tab-with-progress-added-title {
+    to { transform: translateY(-4px); }
+}
+
+@keyframes tab-with-progress-added-progress-bar {
+    from {
+        width: 0;
+    }
+    to { 
+        opacity: 1;
+    }
+}
+
+@keyframes tab-with-progress-removed-title {
+    from { transform: translateY(-4px); }
+}
+
+@keyframes tab-with-progress-removed-progress-bar {
+    from { 
+        opacity: 1;
+    }
+    to {
+        width: 0;
+    }
+}

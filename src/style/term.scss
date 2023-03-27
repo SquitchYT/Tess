@@ -1,0 +1,29 @@
+.views {
+    height: 100%;
+    width: 100%;
+    background: $primary-color;
+    display: flex;
+
+    .view {
+        height: 100%;
+        width: 100%;
+        visibility: hidden;
+        position: absolute;
+        display: flex;
+
+        &.visible {
+            visibility: unset;
+        }
+
+        .pane {
+            width: 100%;
+            height: 100%;
+            display: flex;
+
+            .internal-term {
+                height: calc(100% - 30px);
+                width: 100%;
+            }
+        }
+    }
+}

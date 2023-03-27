@@ -1,126 +1,124 @@
+![TODO](https://tessapp.dev/static/assets/website_thumbnail.png)
 
-<div align = center>
+# Why another terminal?
 
-# Tess
+Tess was mainly built in order to offer you a new, intuitive, fully customizable and blazing fast terminal app, by using the power of web technologies.
 
-**Hackable, Simple, Rapid & Beautiful** <br>
-**terminal for the new era of technology.**
+Why should you not test it? We work for more than 2 years on this, and we've been relied on by thousands of users.
+
+Tess is currently officially tested on Windows & Linux, but it should work also on other platform.
+If you cannot have access to Tess yet, fill an issue, we'll try to provide you the best cross-platform experience by making new packages or helping you manually installing Tess.
+
+<br>
+<br>
+
+# Installation | Linux
+
+## Requirements
+
+* Have an OS with `x86` arch type
+* `webkit2gtk` & `gtk3` installed
 
 <br>
 
-[![Badge Arch]][Arch]
-[![Badge Debian]][Releases]
-[![Badge Fedora]][Releases]
-[![Badge Windows]][Releases] <br>
-[![Badge Chocolatey]][Chocolatey]
-[![Badge Snapcraft]][Snapcraft]
-[![Badge Winget]][Releases] <br>
-[![Badge JavaScript]][JavaScript]
-[![Badge C++]][C++]
-[![Badge NodeJS]][NodeJS]
-[![Badge Electron]][Electron] <br>
-[![Badge Discord]][Discord]
-[![Badge Twitter]][Twitter]
+## Installation from archive
+
+We provide package for most major distribution, simply select the one that match your distro and install it.
+
+## Installation with PPA
+
+If you prefer using apt over downloading and installing the `deb` archive. You could set up the PPA and download Tess with these
+```bash
+apt install curl apt-transport-https gnupg2
+
+curl -s https://apt.tessapp.dev/key.gpg | gpg --dearmor | tee /usr/share/keyrings/tess.gpg > /dev/null
+
+echo 'deb [signed-by=/usr/share/keyrings/tess.gpg] https://apt.tessapp.dev stable main' >> /etc/apt/sources.list.d/tess-packages.list
+
+apt update && apt install tess
+```
+
+## Installation with AUR
+
+On Arch Linux, the recommended way to install Tess is using an AUR package manager like [yay](https://todo.define)
+`yay -S tess-git`
+
+## Installation with RPM repository
+
+If you are on RHEL derivate distros, you could also want to add our RPM repository to install Tess and receive update automatically with your package manager
+
+```bash
+yum install curl 
+
+curl https://rpm.tessapp.dev/tess.repo > /etc/yum.repos.d/tess.repo
+
+yum check-update && yum install tess
+```
+<br>
+
+# Installation | Windows
+
+## Requirements
+
+* `Windows 10 64 bits` or superior
 
 <br>
 
-*Check the **[Wiki]** on how to use* ***Tess***
+## Installation from Installer
 
-</div>
+Simply download and execute the installer, available in the [releases](https://github.com/SquitchYT/Tess/releases) page.
 
+## Installation using Winget
 
-## Installation
+If you are running on `Windows 10 1709 (build 16299)` or superior, you could download [winget](https://github.com/microsoft/winget-cli). It may also be already installed on your system.<br>
+Next, execute the following command
 
-### Packages
+```sh
+winget install Squitch.Tess
+```
 
-**ArchLinux**: [Wiki link][Install Arch]
+## Installation using Chocolatey
+
+Firstly, download [Chocolatey](https://chocolatey.org/install).<br>
+Next, you will be allowed to run this
+
+```sh
+choco install tess
+```
+
+You can also find the package [here](https://community.chocolatey.org/packages/tess)
+
 <br>
-**Debian / Ubuntu**: [Wiki link][Install Debian]
 <br>
-**Fedora / RedHat**: [Wiki link][Install Fedora]
-<br>
-**Windows**: [Wiki link][Install Windows]
-<br>
-**Snap package**: [Wiki link][Install Snapcraft]
-<br>
-**Chocolatey package**: [Wiki link][Install Chocolatey]
-<br>
-**Winget Package**: [Wiki link][Install Winget]
+
+# Roadmap
+
+As long as Tess is in beta, many bugs may occur and some of them have not yet been fixed.<br>
+More, many features are not yet available, here's a quick recap of major features that will want to integrate in Tess.
 
 
-## Preview
-
-<div align = center>
-    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview1.png alt = Preview1>
-    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview3.png alt = Preview2>
-    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview2.png alt = Preview3>
-    <img width = 400 src = https://raw.githubusercontent.com/SquitchYT/Tess/main/preview/preview4.png alt = Preview4>
-</div>
-
-
-## Known issues
-### As long as Tess is in beta, many bugs may occur and some of them have not yet been fixed. Below is a list of most of them
-* **Opaque selection using the DOM renderer**
-* **On Windows, the acrylic background has flickering effects on window resize and moving**
-* **Characters overflow using the font ligature with the canvas renderer**
-
-
-## Contributors
-
-[![Squitch Avatar]][Squitch]
-
-
-## License
-**[Tess] | [Mozilla Public License 2.0][License]**
+|Features                 |Electron|Tauri|
+|-------------------------|--------|-----|
+|Translation              |❌      |⌛   |
+|Tabs                     |✔️      |✔️   |
+|Move tabs between windows|❌      |⌛   |
+|Administrator tabs       |❌      |⌛   |
+|Tabs split               |❌      |⌛   |
+|Notification             |❌      |⌛   |
+|Macros                   |❌      |⌛   |
+|Plugins                  |🟠      |⌛   |
+|Themes                   |🟠      |⌛   |
+|Config page              |✔️      |⌛   |
+|Config watching          |🟠      |⌛   |
+|Image display            |❌      |⌛   |
+|Font ligature            |🟠      |⌛   |
+|Animated background      |❌      |⌛   |
+|URI scheme API           |❌      |⌛   |
+|Search in a shell        |❌      |⌛   |
+|Marketplace              |❌      |⌛   |
 
 
-
-[Releases]: https://github.com/SquitchYT/Tess/releases/latest/
-[Arch]: https://aur.archlinux.org/packages/tess-git/
-[Chocolatey]: https://community.chocolatey.org/packages/tess/
-[Snapcraft]: https://snapcraft.io/tess
-[JavaScript]: https://developer.mozilla.org/fr/docs/Web/JavaScript
-[C++]: https://isocpp.org/
-[NodeJs]: https://nodejs.org/en/
-[Electron]: https://www.electronjs.org/
-[Discord]: https://tessapp.dev/discord
-[Twitter]: https://tessapp.dev/twitter
-
-[Preview]: preview/preview1.png
-[License]: LICENSE
-
-[Wiki]: https://github.com/SquitchYT/Tess/wiki/
-[Tess]: https://github.com/SquitchYT/tess
-
-
-<!-------------------------------{ Installations }----------------------------->
-
-[Install Chocolatey]: https://github.com/SquitchYT/Tess/wiki/Installation#chocolatey
-[Install Snapcraft]: https://github.com/SquitchYT/Tess/wiki/Installation#snapcraft
-[Install Windows]: https://github.com/SquitchYT/Tess/wiki/Installation#windows
-[Install Fedora]: https://github.com/SquitchYT/Tess/wiki/Installation#redhat-fedora
-[Install Debian]: https://github.com/SquitchYT/Tess/wiki/Installation#debian-ubuntu
-[Install Arch]: https://github.com/SquitchYT/Tess/wiki/Installation#archlinux
-[Install Winget]: https://github.com/SquitchYT/Tess/wiki/Installation#winget
-
-<!-------------------------------{ Contributors }------------------------------>
-
-[Squitch Avatar]: https://avatars.githubusercontent.com/u/63391793?s=45&u=715a3054e5ce60b197271a3a2a188a48adbd405e
-[Squitch]: https://github.com/SquitchYT
-
-
-<!-----------------------------------{ Badges }-------------------------------->
-
-[Badge Arch]: https://img.shields.io/badge/Arch_Linux-1793D1?style=for-the-badge&logo=arch-linux&logoColor=white
-[Badge Debian]: https://img.shields.io/badge/Debian-A81D33?style=for-the-badge&logo=debian&logoColor=white
-[Badge Fedora]: https://img.shields.io/badge/Fedora-294172?style=for-the-badge&logo=fedora&logoColor=white
-[Badge Windows]: https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white
-[Badge Chocolatey]: https://img.shields.io/static/v1?style=for-the-badge&message=Chocolatey&color=222222&logo=Chocolatey&logoColor=80B5E3&label=
-[Badge Snapcraft]: https://img.shields.io/badge/snapcraft-222222?style=for-the-badge&logo=snapcraft&logoColor=#82BEA0
-[Badge Winget]: https://img.shields.io/badge/Winget-0078D6?style=for-the-badge&logo=Windows
-[Badge JavaScript]: https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black
-[Badge C++]: https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=c%2B%2B&logoColor=white
-[Badge NodeJS]: https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node-dot-js&logoColor=white
-[Badge Electron]: https://img.shields.io/badge/Electron-2B2E3A?style=for-the-badge&logo=electron&logoColor=9FEAF9
-[Badge Discord]: https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white
-[Badge Twitter]: https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white
+*❌ **Not available**<br>*
+*🟠 **Partially integrated**<br>*
+*⌛ **Planned / In progress**<br>*
+*✔️ **Integrated**<br>*

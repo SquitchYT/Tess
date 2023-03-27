@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;500;600;700&display=swap');
+
+.topbar {
+    background-color: $secondary-color;
+    display: flex;
+
+    .tabs {
+        height: 30px;
+        background: $secondary-color;
+        display: flex;
+        margin-left: 14px;
+        width: fit-content;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .actions {
+        display: flex;
+
+        .more {
+            height: 30px;
+            width: 30px;
+            //background: brown;
+        }
+
+        .open {
+            height: 30px;
+            width: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: $text-color;
+
+            svg {
+                height: 14px;
+                width: 14px;
+            }
+        }
+    }
+}

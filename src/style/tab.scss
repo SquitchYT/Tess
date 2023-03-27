@@ -1,0 +1,125 @@
+.tab {
+    height: 100%;
+    cursor: pointer;
+    width: 16rem;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    color: $text-color;
+    font-weight: 600;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    -webkit-user-select: none;
+    transition: transform 200ms, background 140ms;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: capitalize;
+    font-family: 'Ubuntu', sans-serif;
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+
+    &.dragging {
+        cursor: move;
+        transition: transform 0ms;
+    }
+
+    &.selected {
+        background: $tab-focused-background !important;
+
+        .close {
+            opacity: unset;
+            background: $tab-focused-background;
+        }
+    }
+
+    &:hover {
+        background: $tab-hovered-background;
+
+        .close {
+            opacity: unset;
+            background: $tab-hovered-background;
+        }
+    }
+
+    .title {
+        white-space: nowrap;
+        overflow : hidden;
+        width: calc(100% - 64px);
+        text-align: center;
+    }
+
+    .close {
+        height: 20px;
+        width: 20px;
+        border-radius: 3px;
+        right: 6px;
+        position: absolute;
+        justify-content: center;
+        align-items: center;
+        transition: background 100ms;
+        opacity: 0;
+        display: flex;
+
+        &:hover {
+            background: $secondary-color;
+        }
+
+        svg {
+            height: 12px;
+            width: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+    }
+
+    .progress {
+        position: absolute;
+        width: min(calc(100% - 58px), 164px);
+        height: 3px;
+        background: $secondary-color;
+        border-radius: 4px;
+        bottom: 4px;
+        opacity: 0;
+        display: flex;
+        overflow: hidden;
+
+        .value {
+            background:$text-color;
+            transition: width 140ms;
+        }
+    }
+
+    &.small {
+        .close {
+            right: unset;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .icon {
+            left: unset;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .progress {
+            opacity: 0;
+        }
+    }
+
+    .icon {
+        height: 20px;
+        width: 20px;
+        border-radius: 3px;
+        left: 5px;
+        position: absolute;
+
+        img {
+            max-height: 100%;
+            max-width: 100%;
+        }
+    }
+}
