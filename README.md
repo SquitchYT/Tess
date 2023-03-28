@@ -104,7 +104,8 @@ More, many features are not yet available, here's a quick recap of major feature
 |Move tabs between windows|❌      |⌛   |
 |Administrator tabs       |❌      |⌛   |
 |Tabs split               |❌      |⌛   |
-|Notification             |❌      |⌛   |
+|Command line interface   |✔️      |⌛   |
+|Notifications            |❌      |⌛   |
 |Macros                   |❌      |⌛   |
 |Plugins                  |🟠      |⌛   |
 |Themes                   |🟠      |⌛   |
