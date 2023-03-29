@@ -40,7 +40,7 @@ apt update && apt install tess
 
 ## Installation with AUR
 
-On Arch Linux, the recommended way to install Tess is using an AUR package manager like [yay](https://todo.define)
+On Arch Linux, the recommended way to install Tess is using an AUR package manager like [yay](https://github.com/Jguer/yay)
 `yay -S tess-git`
 
 ## Installation with RPM repository
@@ -70,7 +70,7 @@ Simply download and execute the installer, available in the [releases](https://g
 
 ## Installation using Winget
 
-If you are running on `Windows 10 1709 (build 16299)` or superior, you could download [winget](https://github.com/microsoft/winget-cli). It may also be already installed on your system.<br>
+If you are running on `Windows 10 1709 (build 16299)` or superior, you could download [Winget](https://github.com/microsoft/winget-cli). It may also be already installed on your system.<br>
 Next, execute the following command
 
 ```sh
@@ -87,6 +87,32 @@ choco install tess
 ```
 
 You can also find the package [here](https://community.chocolatey.org/packages/tess)
+
+<br>
+<br>
+
+# Contributing
+
+## Getting started
+
+You want to contribute in Tess, find a simple task to help us with this project.
+
+* You've found a mistake in documentations, code or in the wiki, let us know by opening an [issue](https://github.com/SquitchYT/Tess/issues).
+* You've an amazing feature idea, simply post your suggestion by creating an issue too.
+* You want to help us close an issue, implementing a feature or something else related to code, follow the guide below.
+
+*Please, search for a similar issue before creating a new one.*
+
+<br>
+
+## Developing with Tess
+
+You want to contribute to Tess, it's simply, fork the repository and start developing on it.
+
+* As Tess is cross-platform, when you implement a new feature, try to make it available everywhere. If despite all your efforts, you are unable to make it cross-platform, let us know the supported platforms when submitting your changes.
+* If you update code, explain why you think this change is important and what you've done.
+
+After making your changes, simply open a [pull request](https://github.com/SquitchYT/Tess/pulls).
 
 <br>
 <br>
