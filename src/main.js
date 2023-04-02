@@ -239,7 +239,6 @@ function openWindow(config, colors) {
         frame: needFrame,
         icon: "/usr/share/pixmaps/tess.png",
         blur: needBlur,
-        blurType: config.background,
         blurGnomeSigma: 100,
         blurCornerRadius: 0,
         backgroundColor: !needTransparent ? colors.terminal.theme.background : "#00ffffff",
@@ -257,6 +256,8 @@ function openWindow(config, colors) {
         },
         show: false
     });
+
+    mainWindow.blurType = config.background
 
     mainWindow.removeMenu();
     //mainWindow.openDevTools()
