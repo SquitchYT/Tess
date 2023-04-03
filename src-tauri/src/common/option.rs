@@ -1,7 +1,9 @@
 use serde::Deserialize;
 
 use crate::common::theme::{Theme, TerminalTheme};
-use crate::common::types::{RangedInt, CursorType, BackgroundType};
+use crate::common::types::{RangedInt, CursorType, BackgroundType, PartialShortcutAction, ShortcutAction};
+
+use super::types::{PartialShortcut, Shortcut};
 
 #[derive(Debug)]
 pub struct Option {
@@ -13,7 +15,8 @@ pub struct Option {
     pub custom_titlebar: bool,
     pub profiles: Vec<Profile>,
     pub terminal: TerminalOption,
-    pub close_confirmation: bool
+    pub close_confirmation: bool,
+    pub shortcuts: Vec<Shortcut>
 }
 
 impl Default for Option {
@@ -25,7 +28,8 @@ impl Default for Option {
             profiles: Vec::default(),
             terminal: TerminalOption::default(),
             close_confirmation: true,
-            background_transparency: RangedInt::default()
+            background_transparency: RangedInt::default(),
+            shortcuts: Vec::default() // TODO: Replace with correct defaults shortcuts list
         }
     }
 }
@@ -33,6 +37,7 @@ impl Default for Option {
 impl<'de> serde::Deserialize<'de> for Option {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let partial_option = PartialOption::deserialize(deserializer).unwrap_or_default();
+
 
         let mut profiles = vec![];
         for partial_profile in partial_option.profiles {
@@ -52,9 +57,104 @@ impl<'de> serde::Deserialize<'de> for Option {
                 name: partial_profile.name,
                 terminal: profile_option,
                 theme: partial_profile.theme.unwrap_or(partial_option.theme.clone()).terminal,
-                background_transparency: partial_profile.background_transparency.unwrap_or(RangedInt::default())
+                background_transparency: partial_profile.background_transparency.unwrap_or(RangedInt::default()),
+                uuid: uuid::Uuid::parse_str(partial_profile.id.unwrap_or_default().as_str()).unwrap_or(uuid::Uuid::new_v4()).to_string()
             })
         }
+
+        let mut shortcuts = Vec::new();
+
+        if let Some(partial_option_shortcuts) = partial_option.shortcuts {
+            for partial_shortcut in partial_option_shortcuts {
+                match partial_shortcut.action {
+                    PartialShortcutAction::OpenProfile(profile_id) => {
+                        if let Some(profile) = profiles.iter().find(|profile| profile.uuid == profile_id) {
+                            shortcuts.push(
+                                Shortcut {
+                                    shortcut: partial_shortcut.shortcut,
+                                    action: ShortcutAction::OpenProfile(profile.uuid.clone()) 
+                                }
+                            )
+                        }
+                        todo!()
+                    }
+                    PartialShortcutAction::ExecuteMacro(id) => {
+                        todo!()
+                    }
+                    PartialShortcutAction::Copy => {
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::Copy
+                            }
+                        )
+                    }
+                    PartialShortcutAction::Paste => {
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::Paste 
+                            }
+                        )
+                    }
+                    PartialShortcutAction::CloseAllTabs => {
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::CloseAllTabs 
+                            }
+                        )
+                    }
+                    PartialShortcutAction::CloseFocusedTab => {
+                        todo!()
+                    }
+                    PartialShortcutAction::OpenDefaultProfile => {
+                        todo!()
+                    }
+                    PartialShortcutAction::FocusFirstTab => {
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::FocusFirstTab 
+                            }
+                        )
+                    }
+                    PartialShortcutAction::FocusLastTab => {
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::FocusLastTab 
+                            }
+                        )
+                    }
+                    PartialShortcutAction::FocusNextTab => {
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::FocusNextTab 
+                            }
+                        )
+                    }
+                    PartialShortcutAction::FocusPrevTab => {
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::FocusPrevTab 
+                            }
+                        )
+                    }
+                    PartialShortcutAction::FocusTab(tab_index) => {
+                        todo!()
+                    }
+                    _ => {
+                        todo!()
+                    }
+                };
+            }
+        } else {
+            todo!();
+        }
+
 
         Ok(Option {
             theme: partial_option.theme,
@@ -63,7 +163,8 @@ impl<'de> serde::Deserialize<'de> for Option {
             terminal: partial_option.terminal,
             profiles: profiles,
             close_confirmation: partial_option.close_confirmation,
-            background_transparency: partial_option.background_transparency
+            background_transparency: partial_option.background_transparency,
+            shortcuts: shortcuts // TODO: Set default shortcuts here
         })
     }
 }
@@ -80,6 +181,7 @@ pub struct Profile {
     terminal: TerminalOption,
     theme: TerminalTheme,
     background_transparency: RangedInt<0, 100, 0>,
+    uuid: String
 }
 
 
@@ -137,6 +239,9 @@ struct PartialOption {
     #[serde(default)]
     background_transparency: RangedInt<0, 100, 100>,
 
+    #[serde(default)]
+    shortcuts: std::option::Option<Vec<PartialShortcut>>,
+
     // TODO: Save individually for each pane or only in global ?
     #[serde(default="default_to_true")]
     close_confirmation: bool
@@ -151,7 +256,8 @@ impl Default for PartialOption {
             profiles: Vec::default(),
             terminal: TerminalOption::default(),
             close_confirmation: true,
-            background_transparency: RangedInt::default()
+            background_transparency: RangedInt::default(),
+            shortcuts: Some(Vec::default())
         }
     }
 }
@@ -171,7 +277,8 @@ struct PartialProfile {
     background_transparency: std::option::Option<RangedInt<0, 100, 0>>,
     cursor_blink: std::option::Option<bool>,
     draw_bold_in_bright: std::option::Option<bool>,
-    show_unread_data_indicator: std::option::Option<bool>
+    show_unread_data_indicator: std::option::Option<bool>,
+    id: std::option::Option<String> // TODO: Support uuid
 }
 
 
