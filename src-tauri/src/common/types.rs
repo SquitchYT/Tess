@@ -213,3 +213,15 @@ pub struct Shortcut {
     pub shortcut: String,
     pub action: ShortcutAction
 }
+
+#[derive(Deserialize, Debug)]
+pub struct Macro {
+    pub content: String,
+    pub uuid: String
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PartialMacro {
+    pub content: String,
+    pub uuid: Option<String>
+}
