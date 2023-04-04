@@ -3,7 +3,7 @@ use serde::Deserialize;
 use crate::common::theme::{Theme, TerminalTheme};
 use crate::common::types::{RangedInt, CursorType, BackgroundType, PartialShortcutAction, ShortcutAction};
 
-use super::types::{PartialShortcut, Shortcut};
+use super::types::{PartialShortcut, Shortcut, Macro, PartialMacro};
 
 #[derive(Debug)]
 pub struct Option {
@@ -16,7 +16,8 @@ pub struct Option {
     pub profiles: Vec<Profile>,
     pub terminal: TerminalOption,
     pub close_confirmation: bool,
-    pub shortcuts: Vec<Shortcut>
+    pub shortcuts: Vec<Shortcut>,
+    pub macros: Vec<Macro>
 }
 
 impl Default for Option {
@@ -29,7 +30,8 @@ impl Default for Option {
             terminal: TerminalOption::default(),
             close_confirmation: true,
             background_transparency: RangedInt::default(),
-            shortcuts: Vec::default() // TODO: Replace with correct defaults shortcuts list
+            shortcuts: Vec::default(), // TODO: Replace with correct defaults shortcuts list
+            macros: Vec::default()
         }
     }
 }
@@ -62,8 +64,19 @@ impl<'de> serde::Deserialize<'de> for Option {
             })
         }
 
-        let mut shortcuts = Vec::new();
 
+        let mut macros = vec![];
+        if let Some(partial_macros) = partial_option.macros {
+            for macro_command in partial_macros {
+                macros.push(Macro {
+                    content: macro_command.content,
+                    uuid: macro_command.uuid.unwrap_or_else(|| uuid::Uuid::new_v4().to_string())
+                })
+            }
+        }
+
+
+        let mut shortcuts = Vec::new();
         if let Some(partial_option_shortcuts) = partial_option.shortcuts {
             for partial_shortcut in partial_option_shortcuts {
                 match partial_shortcut.action {
@@ -164,7 +177,8 @@ impl<'de> serde::Deserialize<'de> for Option {
             profiles: profiles,
             close_confirmation: partial_option.close_confirmation,
             background_transparency: partial_option.background_transparency,
-            shortcuts: shortcuts // TODO: Set default shortcuts here
+            shortcuts: shortcuts, // TODO: Set default shortcuts here
+            macros: macros
         })
     }
 }
@@ -241,6 +255,8 @@ struct PartialOption {
 
     #[serde(default)]
     shortcuts: std::option::Option<Vec<PartialShortcut>>,
+    #[serde(default)]
+    macros: std::option::Option<Vec<PartialMacro>>,
 
     // TODO: Save individually for each pane or only in global ?
     #[serde(default="default_to_true")]
@@ -257,7 +273,8 @@ impl Default for PartialOption {
             terminal: TerminalOption::default(),
             close_confirmation: true,
             background_transparency: RangedInt::default(),
-            shortcuts: Some(Vec::default())
+            shortcuts: Some(Vec::default()),
+            macros: Some(Vec::default())
         }
     }
 }
