@@ -60,7 +60,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 terminal: profile_option,
                 theme: partial_profile.theme.unwrap_or(partial_option.theme.clone()).terminal,
                 background_transparency: partial_profile.background_transparency.unwrap_or(RangedInt::default()),
-                uuid: uuid::Uuid::parse_str(partial_profile.id.unwrap_or_default().as_str()).unwrap_or(uuid::Uuid::new_v4()).to_string()
+                uuid: uuid::Uuid::parse_str(partial_profile.uuid.unwrap_or_default().as_str()).unwrap_or(uuid::Uuid::new_v4()).to_string()
             })
         }
 
@@ -76,7 +76,7 @@ impl<'de> serde::Deserialize<'de> for Option {
         }
 
 
-        let mut shortcuts = Vec::new();
+        let mut shortcuts = vec![];
         if let Some(partial_option_shortcuts) = partial_option.shortcuts {
             for partial_shortcut in partial_option_shortcuts {
                 match partial_shortcut.action {
@@ -89,10 +89,14 @@ impl<'de> serde::Deserialize<'de> for Option {
                                 }
                             )
                         }
-                        todo!()
                     }
-                    PartialShortcutAction::ExecuteMacro(id) => {
-                        todo!()
+                    PartialShortcutAction::ExecuteMacro(macro_id) => {
+                        if let Some(macro_command) = macros.iter().find(|macro_command| macro_command.uuid == macro_id) {
+                            shortcuts.push(Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::ExecuteMacro(macro_command.uuid.clone())
+                            })
+                        }
                     }
                     PartialShortcutAction::Copy => {
                         shortcuts.push(
@@ -119,10 +123,20 @@ impl<'de> serde::Deserialize<'de> for Option {
                         )
                     }
                     PartialShortcutAction::CloseFocusedTab => {
-                        todo!()
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::CloseFocusedTab
+                            }
+                        )
                     }
                     PartialShortcutAction::OpenDefaultProfile => {
-                        todo!()
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::OpenDefaultProfile
+                            }
+                        )
                     }
                     PartialShortcutAction::FocusFirstTab => {
                         shortcuts.push(
@@ -157,15 +171,46 @@ impl<'de> serde::Deserialize<'de> for Option {
                         )
                     }
                     PartialShortcutAction::FocusTab(tab_index) => {
-                        todo!()
-                    }
-                    _ => {
-                        todo!()
+                        shortcuts.push(
+                            Shortcut {
+                                shortcut: partial_shortcut.shortcut,
+                                action: ShortcutAction::FocusTab(tab_index)
+                            }
+                        )
                     }
                 };
             }
         } else {
-            todo!();
+            shortcuts.append(&mut vec![
+                Shortcut {
+                    shortcut: String::from("CTRL+C"),
+                    action: ShortcutAction::Copy
+                },
+                Shortcut {
+                    shortcut: String::from("CTRL+V"),
+                    action: ShortcutAction::Paste
+                },
+                Shortcut {
+                    shortcut: String::from("CTRL+T"),
+                    action: ShortcutAction::OpenDefaultProfile
+                },
+                Shortcut {
+                    shortcut: String::from("CTRL+W"),
+                    action: ShortcutAction::CloseFocusedTab
+                },
+                Shortcut {
+                    shortcut: String::from("CTRL+MAJ+W"),
+                    action: ShortcutAction::CloseAllTabs
+                },
+                Shortcut {
+                    shortcut: String::from("CTRL+TAB"),
+                    action: ShortcutAction::FocusNextTab
+                },
+                Shortcut {
+                    shortcut: String::from("CTRL+MAJ+TAB"),
+                    action: ShortcutAction::FocusPrevTab
+                }
+            ]);
         }
 
 
@@ -187,7 +232,6 @@ impl<'de> serde::Deserialize<'de> for Option {
 #[derive(Debug)]
 pub struct Profile {
     // TODO: Implement
-    // TODO: Add uuid
     // TODO: Add Icon
     // TODO: Implement background_media
 
@@ -295,10 +339,10 @@ struct PartialProfile {
     cursor_blink: std::option::Option<bool>,
     draw_bold_in_bright: std::option::Option<bool>,
     show_unread_data_indicator: std::option::Option<bool>,
-    id: std::option::Option<String> // TODO: Support uuid
+    uuid: std::option::Option<String>
 }
 
 
-fn default_to_true () -> bool {
+fn default_to_true() -> bool {
     true
 }
