@@ -222,7 +222,7 @@ impl<'de> serde::Deserialize<'de> for Option {
             profiles: profiles,
             close_confirmation: partial_option.close_confirmation,
             background_transparency: partial_option.background_transparency,
-            shortcuts: shortcuts, // TODO: Set default shortcuts here
+            shortcuts: shortcuts,
             macros: macros
         })
     }
