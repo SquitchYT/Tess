@@ -45,7 +45,12 @@ impl<'de> serde::Deserialize<'de> for Option {
                 show_picture: partial_profile.show_picture.unwrap_or(partial_option.terminal.show_picture),
                 cursor_blink: partial_profile.cursor_blink.unwrap_or(partial_option.terminal.cursor_blink),
                 draw_bold_in_bright: partial_profile.draw_bold_in_bright.unwrap_or(partial_option.terminal.draw_bold_in_bright),
-                show_unread_data_indicator: partial_profile.show_unread_data_indicator.unwrap_or(partial_option.terminal.show_unread_data_indicator)
+                show_unread_data_indicator: partial_profile.show_unread_data_indicator.unwrap_or(partial_option.terminal.show_unread_data_indicator),
+                line_height: partial_profile.line_height.unwrap_or(partial_option.terminal.line_height),
+                letter_spacing: partial_profile.letter_spacing.unwrap_or(partial_option.terminal.letter_spacing),
+                font_weight: partial_profile.font_weight.unwrap_or(partial_option.terminal.font_weight),
+                font_weight_bold: partial_profile.font_weight_bold.unwrap_or(partial_option.terminal.font_weight_bold),
+                title_is_running_process: partial_profile.title_is_running_process.unwrap_or(partial_option.terminal.title_is_running_process)
             };
 
             profiles.push(Profile {
@@ -101,8 +106,18 @@ pub struct TerminalOption {
     cursor_blink: bool,
     #[serde(default)]
     draw_bold_in_bright: bool,
-    #[serde(default)] // TODO: Set to true
-    show_unread_data_indicator: bool
+    #[serde(default="default_to_true")]
+    show_unread_data_indicator: bool,
+    #[serde(default)]
+    line_height: RangedInt<100, 200, 100>,
+    #[serde(default)]
+    letter_spacing: RangedInt<1, 8, 1>,
+    #[serde(default)]
+    font_weight: RangedInt<1, 9, 4>,
+    #[serde(default)]
+    font_weight_bold: RangedInt<1, 9, 6>,
+    #[serde(default="default_to_true")]
+    title_is_running_process: bool
 }
 
 impl Default for TerminalOption {
@@ -116,7 +131,12 @@ impl Default for TerminalOption {
             bell: false,
             cursor_blink: false,
             draw_bold_in_bright: false,
-            show_unread_data_indicator: true
+            show_unread_data_indicator: true,
+            line_height: RangedInt::default(),
+            letter_spacing: RangedInt::default(),
+            font_weight: RangedInt::default(),
+            font_weight_bold: RangedInt::default(),
+            title_is_running_process: true
         }
     }
 }
@@ -171,7 +191,12 @@ struct PartialProfile {
     background_transparency: std::option::Option<RangedInt<0, 100, 0>>,
     cursor_blink: std::option::Option<bool>,
     draw_bold_in_bright: std::option::Option<bool>,
-    show_unread_data_indicator: std::option::Option<bool>
+    show_unread_data_indicator: std::option::Option<bool>,
+    line_height: std::option::Option<RangedInt<100, 200, 100>>,
+    letter_spacing: std::option::Option<RangedInt<1, 8, 1>>,
+    font_weight: std::option::Option<RangedInt<1, 9, 4>>,
+    font_weight_bold: std::option::Option<RangedInt<1, 9, 6>>,
+    title_is_running_process: std::option::Option<bool>
 }
 
 
