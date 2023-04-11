@@ -2,6 +2,8 @@ use serde::Deserialize;
 
 use serde::de::Error;
 
+use super::option::Profile;
+
 #[derive(Debug, Clone, Copy)]
 pub struct RangedInt<const MIN: u32, const MAX: u32, const DEF: u32> {
     value: u32,
@@ -163,4 +165,63 @@ impl<'de> serde::Deserialize<'de> for BackgroundMedia {
             Err(D::Error::custom("Cannot read file"))
         } 
     }
+}
+
+
+#[derive(Debug)]
+pub enum ShortcutAction {
+    // TODO: Finish
+
+    CloseFocusedTab,
+    CloseAllTabs,
+    OpenDefaultProfile,
+    OpenProfile(String),
+    ExecuteMacro(String),
+    Copy,
+    Paste,
+    FocusFirstTab,
+    FocusLastTab,
+    FocusNextTab,
+    FocusPrevTab,
+    FocusTab(usize)
+}
+
+#[derive(Debug, Deserialize)]
+pub enum PartialShortcutAction {
+    CloseFocusedTab,
+    CloseAllTabs,
+    OpenDefaultProfile,
+    OpenProfile(String),
+    ExecuteMacro(String),
+    Copy,
+    Paste,
+    FocusFirstTab,
+    FocusLastTab,
+    FocusNextTab,
+    FocusPrevTab,
+    FocusTab(usize)
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PartialShortcut {
+    pub shortcut: String,
+    pub action: PartialShortcutAction
+}
+
+#[derive(Debug)]
+pub struct Shortcut {
+    pub shortcut: String,
+    pub action: ShortcutAction
+}
+
+#[derive(Deserialize, Debug)]
+pub struct Macro {
+    pub content: String,
+    pub uuid: String
+}
+
+#[derive(Deserialize, Debug)]
+pub struct PartialMacro {
+    pub content: String,
+    pub uuid: Option<String>
 }
