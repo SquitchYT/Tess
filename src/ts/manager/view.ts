@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 
 import { terminalDataPayload } from "../schema/term";
 import { View } from "../class/views";
+import { Toaster } from "./toast";
 
 
 export class ViewsManager {
@@ -15,7 +16,9 @@ export class ViewsManager {
 
     private views: View[] = [];
 
-    constructor(target: Element, tabsTarget: Element) {
+    private toaster: Toaster;
+
+    constructor(target: Element, tabsTarget: Element, toastTarget: Element) {
         this.target = target;
         this.tabsManager = new TabsManager(tabsTarget, async (id) => { await this.onTabRequestClose(id); });
 
@@ -23,6 +26,12 @@ export class ViewsManager {
 
         listen<terminalDataPayload>("terminalData", (e) => { this.onTerminalReceiveData(e); });
         listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
+
+        this.toaster = new Toaster(toastTarget);
+
+        setTimeout(() => {
+            this.toaster.toast("Code copied",  "fdgd")
+        }, 1000)
     }
 
     private onTabFocused(id: string) {
