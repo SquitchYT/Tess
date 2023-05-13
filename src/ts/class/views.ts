@@ -13,7 +13,7 @@ export class View {
 
     // TODO: Replace with 2 fucntion overloaded
     // TODO: Add close eveent from view manager
-    async buildWithTerminal(viewId: string, initialPane: "terminal" | "page", paneId: string, terminalCommand: string, closedEvent: ((id: string) => void)) {
+    async buildNew(viewId: string, initialPane: "terminal" | "page", paneId: string, terminalCommand: string, closedEvent: ((id: string) => void)) {
         this.id = viewId;
         this.element = this.generateComponents();
         this.closedEvent = closedEvent;

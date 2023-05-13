@@ -10,7 +10,7 @@ viewsManager.openProfile("sh -c $SHELL", true);
 
 
 document.querySelector(".open")!.addEventListener("click", () => {
-    viewsManager.openProfile("fish", true);
+    viewsManager.openProfile("sh -c $SHELL", true);
 })
 
 

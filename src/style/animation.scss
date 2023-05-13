@@ -71,3 +71,9 @@
         transform: translateY(58px);
     }
 }
+
+@keyframes toast-slide-down {
+    from {
+        transform: translateY(-58px);
+    }
+}
