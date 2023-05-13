@@ -52,3 +52,28 @@
         width: 0;
     }
 }
+
+@keyframes toast-inserted {
+    from {
+        transform: translateY(24px);
+        opacity: 0;
+    }
+}
+
+@keyframes toast-removed {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes toast-slide-up {
+    from {
+        transform: translateY(58px);
+    }
+}
+
+@keyframes toast-slide-down {
+    from {
+        transform: translateY(-58px);
+    }
+}

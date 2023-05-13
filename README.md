@@ -1,4 +1,4 @@
-![TODO](https://tessapp.dev/static/assets/website_thumbnail.png)
+![tessapp.dev](https://tessapp.dev/static/assets/website_thumbnail.png)
 
 # Why another terminal?
 

@@ -5,7 +5,7 @@
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     color: $text-color;
-    font-weight: 600;
+    font-weight: 500;
     justify-content: center;
     align-items: center;
     display: flex;
@@ -14,7 +14,6 @@
     font-size: 13px;
     letter-spacing: 1px;
     text-transform: capitalize;
-    font-family: 'Ubuntu', sans-serif;
     position: relative;
     min-width: 0;
     overflow: hidden;
@@ -29,7 +28,7 @@
 
         .close {
             opacity: unset;
-            background: $tab-focused-background;
+            background: $tab-focused-background !important;
         }
     }
 
@@ -62,7 +61,7 @@
         display: flex;
 
         &:hover {
-            background: $secondary-color;
+            background: $secondary-color !important;
         }
 
         svg {

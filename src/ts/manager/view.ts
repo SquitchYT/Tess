@@ -5,6 +5,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 
 import { terminalDataPayload } from "../schema/term";
 import { View } from "../class/views";
+import { Toaster } from "./toast";
 
 
 export class ViewsManager {
@@ -15,7 +16,9 @@ export class ViewsManager {
 
     private views: View[] = [];
 
-    constructor(target: Element, tabsTarget: Element) {
+    private toaster: Toaster;
+
+    constructor(target: Element, tabsTarget: Element, toastTarget: Element) {
         this.target = target;
         this.tabsManager = new TabsManager(tabsTarget, async (id) => { await this.onTabRequestClose(id); });
 
@@ -23,6 +26,8 @@ export class ViewsManager {
 
         listen<terminalDataPayload>("terminalData", (e) => { this.onTerminalReceiveData(e); });
         listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
+
+        this.toaster = new Toaster(toastTarget);
     }
 
     private onTabFocused(id: string) {
@@ -54,6 +59,7 @@ export class ViewsManager {
                         invoke("close_window");
                     }
                 }).catch((error) => {
+                    this.toaster.toast("Unable to close pty",  error);
                     reject(error);
                 })
             }
@@ -62,9 +68,9 @@ export class ViewsManager {
 
     private onTerminalReceiveData(e: Event<terminalDataPayload>) {
         this.views.forEach((view) => {
-            let term = view.getTerm(e.payload.id)
+            let term = view.getTerm(e.payload.id);
             if (term) {
-                term.term.write(e.payload.data)
+                term.term.write(e.payload.data);
             }
         })
     }
@@ -77,7 +83,7 @@ export class ViewsManager {
         this.views.forEach((view) => {
             view.panes.forEach((pane) => {
                 if (pane.id == e.payload) {
-                    this.closeViewPane(view.id!, pane.id)
+                    this.closeViewPane(view.id!, pane.id);
                 }
             })
         });
@@ -89,7 +95,7 @@ export class ViewsManager {
 
         let view = new View();
 
-        view.buildWithTerminal(viewId, "terminal", paneId, profileId, (id) => {this.tabsManager.closeTab(id)}).then(() => {
+        view.buildNew(viewId, "terminal", paneId, profileId, (id) => {this.tabsManager.closeTab(id)}).then(() => {
             this.views.push(view);
             this.target.appendChild(view.element!);
 
@@ -100,8 +106,8 @@ export class ViewsManager {
             this.tabsManager.openNewTab(profileId, viewId);
 
             if (focus) { this.tabsManager.select(viewId); }
-        }).catch((error) => {
-            console.log("dfdfdhfgdfhgfdjhgdfjkghdjkfghdfjkghdfjkgdfg:", error);
+        }).catch((err) => {
+            this.toaster.toast("Unable to create view",  err);
         })
     }
 
@@ -109,8 +115,8 @@ export class ViewsManager {
         let view = this.views.find((view) => view.id == viewId);
 
         if (view) {
-            view.closeOne(paneId).catch(() => {
-                // TODO: Handle error
+            view.closeOne(paneId).catch((err) => {
+                this.toaster.toast("Unable to close a view's pane",  err);
             })
         } else {
             // TODO: Handle error

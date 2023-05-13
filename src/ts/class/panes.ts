@@ -35,9 +35,9 @@ export class TerminalPane {
         // TODO: Finish
         // TODO: Add modal with close confirmation if error occured
 
-        this.term!.close();
-
         await invoke("close_terminal", {id: this.id});
+
+        this.term!.close();
     }
 
     write(data: string) {

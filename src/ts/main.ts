@@ -5,12 +5,12 @@ window.addEventListener("contextmenu", (e) => {
     e.preventDefault();
 })
 
-let viewsManager = new ViewsManager(document.querySelector(".views")!, document.querySelector(".tabs")!);
+let viewsManager = new ViewsManager(document.querySelector(".views")!, document.querySelector(".tabs")!, document.querySelector(".toasts")!);
 viewsManager.openProfile("sh -c $SHELL", true);
 
 
 document.querySelector(".open")!.addEventListener("click", () => {
-    viewsManager.openProfile("fish", true);
+    viewsManager.openProfile("sh -c $SHELL", true);
 })
 
 
