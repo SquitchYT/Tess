@@ -1,6 +1,22 @@
-$secondary-color: #050a19;
-$primary-color: #141a29;
-$text-color: #deeaf8;
+:root {
+    --app-background: #141a29; 
 
-$tab-focused-background: #192033;
-$tab-hovered-background: #161e32;
+    --text-color: #deeaf8;
+
+    --icon-color: #deeaf8;
+
+    --topbar-background: #050a19;
+
+    --tabs-background: #050a19;
+    --tab-focused-background: #192033;
+    --tab-hovered-background: #161e32;
+    --tab-progressbar-color: #deeaf8;
+    --tab-progressbar-background: #050a19;
+
+    --toast-background: #192033;
+
+    --action-button-background: transparent;
+    --action-button-hovered-background: #050a19; 
+
+    --shadow-color: #192033; // Delete this ??
+}

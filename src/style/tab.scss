@@ -4,7 +4,7 @@
     width: 16rem;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    color: $text-color;
+    color: var(--text-color);
     font-weight: 500;
     justify-content: center;
     align-items: center;
@@ -17,6 +17,7 @@
     position: relative;
     min-width: 0;
     overflow: hidden;
+    background: var(--tabs-background);
 
     &.dragging {
         cursor: move;
@@ -24,20 +25,20 @@
     }
 
     &.selected {
-        background: $tab-focused-background !important;
+        background: var(--tab-focused-background) !important;
 
         .close {
             opacity: unset;
-            background: $tab-focused-background !important;
+            background: var(--action-button-background) !important;
         }
     }
 
     &:hover {
-        background: $tab-hovered-background;
+        background: var(--tab-hovered-background);
 
         .close {
             opacity: unset;
-            background: $tab-hovered-background;
+            background: var(--tab-hovered-background);
         }
     }
 
@@ -59,9 +60,10 @@
         transition: background 100ms;
         opacity: 0;
         display: flex;
+        color: var(--icon-color);
 
         &:hover {
-            background: $secondary-color !important;
+            background: var(--action-button-hovered-background) !important;
         }
 
         svg {
@@ -78,7 +80,7 @@
         position: absolute;
         width: min(calc(100% - 58px), 164px);
         height: 3px;
-        background: $secondary-color;
+        background: var(--tab-progressbar-background);
         border-radius: 4px;
         bottom: 4px;
         opacity: 0;
@@ -86,7 +88,7 @@
         overflow: hidden;
 
         .value {
-            background:$text-color;
+            background: var(--tab-progressbar-color);
             transition: width 140ms;
         }
     }
