@@ -1,10 +1,9 @@
 .topbar {
-    background-color: $secondary-color;
+    background: var(--topbar-background);
     display: flex;
 
     .tabs {
         height: 30px;
-        background: $secondary-color;
         display: flex;
         margin-left: 14px;
         width: fit-content;
@@ -14,6 +13,7 @@
 
     .actions {
         display: flex;
+        color: var(--icon-color);
 
         .more {
             height: 30px;
@@ -27,7 +27,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: $text-color;
 
             svg {
                 height: 14px;

@@ -4,12 +4,15 @@ pub enum PtyError {
     Resize(String),
     Write(String),
     Create(String),
-    ManagerUnresponding
+    ManagerUnresponding,
 }
 
 impl serde::Serialize for PtyError {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error> where S: serde::ser::Serializer {
-      serializer.serialize_str(self.to_string().as_ref())
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::ser::Serializer,
+    {
+        serializer.serialize_str(self.to_string().as_ref())
     }
 }
 
@@ -20,7 +23,7 @@ impl std::fmt::Display for PtyError {
             PtyError::Resize(r) => write!(f, "Unable to resize the given terminal. Reason: {}", r),
             PtyError::Write(r) => write!(f, "Unable to write to the given terminal. Reason: {}", r),
             PtyError::Create(r) => write!(f, "Unable to create a new terminal. Reason: {}", r),
-            PtyError::ManagerUnresponding => write!(f, "Terminal manager is unresponding.")
+            PtyError::ManagerUnresponding => write!(f, "Terminal manager is unresponding."),
         }
     }
 }

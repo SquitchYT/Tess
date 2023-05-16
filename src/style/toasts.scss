@@ -19,12 +19,12 @@
         border-radius: 4px;
         box-shadow: rgba(0, 0, 0, 0.28) 0px 5px 10px;
         height: fit-content;
-        background: $tab-focused-background;
+        background: var(--toast-background);
         animation: toast-inserted 140ms forwards;
         display: flex;
         justify-content: center;
         align-items: center;
-        color: $text-color;
+        color: var(--text-color);
         pointer-events: all;
         max-width: 260px;
         position: relative;
@@ -38,6 +38,7 @@
             justify-content: center;
             align-items: center;
             padding-left: 10px;
+            color: var(--icon-color);
 
             svg {
                 height: 16px;
@@ -88,7 +89,7 @@
                 }
     
                 .expand {
-                    box-shadow: -9px 0 7px $tab-focused-background;
+                    box-shadow: -9px 0 7px var(--shadow-color);
                 }
             }
 
@@ -108,7 +109,8 @@
             opacity: 0;
             flex-direction: row-reverse;
             gap: 5px;
-            background: $tab-focused-background;
+            background: var(--toast-background);
+            color: var(--icon-color);
 
             & > * {
                 border-radius: 3px;
@@ -118,16 +120,16 @@
                 cursor: pointer;
 
                 &:hover {
-                    background: $secondary-color !important;
+                    background: var(--action-button-hovered-background) !important;
                 }
             }
 
             .close {
-                background: $tab-focused-background;
+                background: var(--action-button-background);
                 height: 20px;
                 width: 20px;
                 transition: background 100ms;
-                box-shadow: -9px 0 8px $tab-focused-background;
+                box-shadow: -9px 0 8px var(--toast-background);
 
                 & > svg {
                     height: 12px;
@@ -136,7 +138,7 @@
             }
 
             .expand {
-                background: $tab-focused-background;
+                background: var(--action-button-background);
                 height: 20px;
                 width: 20px;
 

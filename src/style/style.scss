@@ -26,8 +26,6 @@
 }
 
 
-
-
 body {
     margin: 0;
     padding: 0;
@@ -38,4 +36,5 @@ body {
     font-family: "Inter";
     letter-spacing: 0.6px;
     word-spacing: 0.66px;
+    background: var(--app-background);
 }
