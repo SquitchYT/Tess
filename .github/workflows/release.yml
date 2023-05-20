@@ -1,0 +1,51 @@
+name: 'Generate binaries'
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  generate-linux-binaries:
+    name: Build linux binary for target ${{ matrix.target }}
+    strategy:
+      matrix:
+        target:
+          - x86_64-unknown-linux-gnu
+          - i686-unknown-linux-gnu
+
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 'latest'
+
+      - name: Install Rustup
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+
+      - name: Install Cross
+        run: |
+          cargo install cross --git https://github.com/cross-rs/cross
+      
+      - name: Build frontend
+        run: |
+          npm i
+          npm run build
+
+      - name: Build binary
+        run: |
+          cd src-tauri
+          cross build --release --target ${{ matrix.target }}
+          mv target/${{ matrix.target }}/release/tess target/${{ matrix.target }}/release/tess-${{ matrix.target }}
+
+      - name: Publish binary
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            src-tauri/target/${{ matrix.target }}/release/tess-${{ matrix.target }}

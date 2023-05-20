@@ -1,0 +1,25 @@
+#!/bin/bash
+
+exe=$(which rustfmt)
+
+if [ -n "$exe" ]
+then
+    IFS=$'\n'
+
+    for line in $(git status -s)
+    do
+        if [[ $line == A* || $line == M* ]]
+        then
+            if [[ $line == *.rs ]]
+            then
+                rustfmt $(pwd)/${line:3}
+                git add $(pwd)/${line:3}
+            fi
+        fi
+    done
+
+else
+    echo "rustfmt was not found"
+fi
+
+# From "https://stackoverflow.com/questions/71222422/how-can-i-auto-format-rust-and-c-code-on-commit-automatically"
