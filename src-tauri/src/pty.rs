@@ -1,5 +1,5 @@
-use portable_pty::Child;
 use portable_pty::{native_pty_system, CommandBuilder, PtySize};
+use portable_pty::Child;
 use std::sync::{Arc, Mutex};
 
 use crate::common::errors::PtyError;
@@ -104,8 +104,11 @@ impl Pty {
                         cloned_app
                             .emit_all("terminal_closed", id_cloned.clone())
                             .ok();
+
                         break;
                     }
+
+                    std::thread::sleep(std::time::Duration::from_millis(5));
                 });
             };
 
@@ -160,7 +163,13 @@ impl Pty {
                         )))
                     }
                 } else if let Ok(_) = child.try_wait() {
-                    Ok(())
+                    if let Ok(()) = self.close_channel_sender.send(()) {
+                        Ok(())
+                    } else {
+                        Err(PtyError::Kill(String::from(
+                            "process didn't terminate correctly.",
+                        )))
+                    }
                 } else {
                     Err(PtyError::Kill(String::from(
                         "process didn't terminate correctly.",

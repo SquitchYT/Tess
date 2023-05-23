@@ -29,7 +29,7 @@
 
         .close {
             opacity: unset;
-            background: var(--action-button-background) !important;
+            background: var(--tab-action-button-background) !important;
         }
     }
 
@@ -61,6 +61,7 @@
         opacity: 0;
         display: flex;
         color: var(--icon-color);
+        box-shadow: -9px 0 7px var(--shadow-color);
 
         &:hover {
             background: var(--action-button-hovered-background) !important;

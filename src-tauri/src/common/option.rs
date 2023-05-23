@@ -275,7 +275,6 @@ impl<'de> serde::Deserialize<'de> for Option {
 pub struct Profile {
     // TODO: Add Icon
     // TODO: Add background_media
-
     name: String,
     terminal: TerminalOption,
     theme: String,
