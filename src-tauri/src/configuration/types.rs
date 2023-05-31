@@ -1,11 +1,7 @@
-use serde::Serializer;
-use serde::{Deserialize, Serialize};
-
+use serde::{Serializer, Serialize};
 use serde::de::Error;
+use serde::Deserialize;
 
-use serde::ser::SerializeSeq;
-
-// TODO: Custom Serialize Impl
 #[derive(Debug, Clone, Copy)]
 pub struct RangedInt<const MIN: u32, const MAX: u32, const DEF: u32> {
     value: u32,
@@ -49,6 +45,7 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize
         serializer.serialize_u32(self.value)
     }
 }
+
 
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -114,6 +111,7 @@ impl<'de> serde::Deserialize<'de> for BackgroundType {
 }
 
 #[derive(Debug, Deserialize, Clone, Copy, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum CursorType {
     Block,
     Bar,
@@ -172,98 +170,4 @@ impl<'de> serde::Deserialize<'de> for BackgroundMedia {
             Err(D::Error::custom("Cannot read file"))
         }
     }
-}
-
-#[derive(Debug, Clone)]
-pub enum ShortcutAction {
-    // TODO: Finish
-    CloseFocusedTab,
-    CloseAllTabs,
-    OpenDefaultProfile,
-    OpenProfile(String),
-    ExecuteMacro(String),
-    Copy,
-    Paste,
-    FocusFirstTab,
-    FocusLastTab,
-    FocusNextTab,
-    FocusPrevTab,
-    FocusTab(usize),
-}
-
-impl Serialize for ShortcutAction {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match self {
-            Self::CloseFocusedTab => serializer.serialize_str("closeFocusedTab"),
-            Self::CloseAllTabs => serializer.serialize_str("closeAllTabs"),
-            Self::OpenDefaultProfile => serializer.serialize_str("openDefaultProfile"),
-            Self::Copy => serializer.serialize_str("copy"),
-            Self::Paste => serializer.serialize_str("paste"),
-            Self::FocusFirstTab => serializer.serialize_str("focusFirstTab"),
-            Self::FocusLastTab => serializer.serialize_str("focusLastTab"),
-            Self::FocusNextTab => serializer.serialize_str("focusNextTab"),
-            Self::FocusPrevTab => serializer.serialize_str("focusPrevTab"),
-            Self::OpenProfile(value) => {
-                let mut a = serializer.serialize_seq(Some(2))?;
-                a.serialize_element("openProfile");
-                a.serialize_element(value);
-                a.end()
-            }
-            Self::ExecuteMacro(value) => {
-                let mut a = serializer.serialize_seq(Some(2))?;
-                a.serialize_element("executeMacro");
-                a.serialize_element(value);
-                a.end()
-            }
-            Self::FocusTab(value) => {
-                let mut a = serializer.serialize_seq(Some(2))?;
-                a.serialize_element("openProfile");
-                a.serialize_element(value);
-                a.end()
-            }
-        }
-    }
-}
-
-#[derive(Debug, Deserialize)]
-pub enum PartialShortcutAction {
-    CloseFocusedTab,
-    CloseAllTabs,
-    OpenDefaultProfile,
-    OpenProfile(String),
-    ExecuteMacro(String),
-    Copy,
-    Paste,
-    FocusFirstTab,
-    FocusLastTab,
-    FocusNextTab,
-    FocusPrevTab,
-    FocusTab(usize),
-}
-
-#[derive(Deserialize, Debug)]
-pub struct PartialShortcut {
-    pub shortcut: String,
-    pub action: PartialShortcutAction,
-}
-
-#[derive(Debug, Serialize, Clone)]
-pub struct Shortcut {
-    pub shortcut: String,
-    pub action: ShortcutAction,
-}
-
-#[derive(Deserialize, Debug, Serialize, Clone)]
-pub struct Macro {
-    pub content: String,
-    pub uuid: String,
-}
-
-#[derive(Deserialize, Debug)]
-pub struct PartialMacro {
-    pub content: String,
-    pub uuid: Option<String>,
 }

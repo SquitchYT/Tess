@@ -11,20 +11,20 @@ invoke<Option>("get_configuration").then((option) => {
     let stylesheet = document.createElement("link");
     stylesheet.type = "text/css";
     stylesheet.rel = "stylesheet";
-    stylesheet.href = convertFileSrc(option.theme);
-
+    stylesheet.href = convertFileSrc(option.appTheme);
     document.head.appendChild(stylesheet);
+
+    let viewsManager = new ViewsManager(document.querySelector(".views")!, document.querySelector(".tabs")!, document.querySelector(".toasts")!, option);
+
+    viewsManager.openProfile(option.defaultProfile.uuid, true)
+
+
+    document.querySelector(".open")!.addEventListener("click", () => {
+        viewsManager.openProfile(option.defaultProfile.uuid, true);
+    })
+    
+    listen<string>("global_config_updated", (e) => {
+        console.log("Updated config:", e.payload);
+    });
 })
 
-let viewsManager = new ViewsManager(document.querySelector(".views")!, document.querySelector(".tabs")!, document.querySelector(".toasts")!);
-viewsManager.openProfile("sh -c $SHELL", true);
-
-
-document.querySelector(".open")!.addEventListener("click", () => {
-    viewsManager.openProfile("sh -c $SHELL", true);
-})
-
-
-listen<string>("global_config_updated", (e) => {
-    console.log("Updated config:", e.payload);
-});

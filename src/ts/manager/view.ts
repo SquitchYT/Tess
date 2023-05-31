@@ -6,6 +6,7 @@ import { invoke } from '@tauri-apps/api/tauri'
 import { terminalDataPayload } from "../schema/term";
 import { View } from "../class/views";
 import { Toaster } from "./toast";
+import { Option } from "ts/schema/option";
 
 
 export class ViewsManager {
@@ -14,11 +15,13 @@ export class ViewsManager {
     private target: Element;
     private tabsManager: TabsManager;
 
+    option: Option;
+
     private views: View[] = [];
 
     private toaster: Toaster;
 
-    constructor(target: Element, tabsTarget: Element, toastTarget: Element) {
+    constructor(target: Element, tabsTarget: Element, toastTarget: Element, option: Option) {
         this.target = target;
         this.tabsManager = new TabsManager(tabsTarget, async (id) => { await this.onTabRequestClose(id); });
 
@@ -28,6 +31,8 @@ export class ViewsManager {
         listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
 
         this.toaster = new Toaster(toastTarget);
+
+        this.option = option;
     }
 
     private onTabFocused(id: string) {
@@ -95,20 +100,26 @@ export class ViewsManager {
 
         let view = new View();
 
-        view.buildNew(viewId, "terminal", paneId, profileId, (id) => {this.tabsManager.closeTab(id)}).then(() => {
-            this.views.push(view);
-            this.target.appendChild(view.element!);
+        let profile = this.option.profiles.find(profile => profile.uuid == profileId);
 
-            view.getTerm(paneId)!.term.onData((content, _) => {
-                this.onTerminalPaneInput(paneId, content);
-            });
-
-            this.tabsManager.openNewTab(profileId, viewId);
-
-            if (focus) { this.tabsManager.select(viewId); }
-        }).catch((err) => {
-            this.toaster.toast("Unable to create view",  err);
-        })
+        if (profile) {
+            view.buildNew(viewId, paneId, (id) => {this.tabsManager.closeTab(id)}, profile).then(() => {
+                this.views.push(view);
+                this.target.appendChild(view.element!);
+    
+                view.getTerm(paneId)!.term.onData((content, _) => {
+                    this.onTerminalPaneInput(paneId, content);
+                });
+    
+                this.tabsManager.openNewTab(profile!.name, viewId);
+    
+                if (focus) { this.tabsManager.select(viewId); }
+            }).catch((err) => {
+                this.toaster.toast("Unable to create view",  err);
+            })
+        } else {
+            this.toaster.toast("Unable to create view", `An error occur while opening a view. Reason: no profile corresponding to id ${profileId}`);
+        }
     }
 
     closeViewPane(viewId: string, paneId: string) {

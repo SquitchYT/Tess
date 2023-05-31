@@ -67,8 +67,7 @@ impl Pty {
 
         if let Ok(child) = self.pair.slave.spawn_command(cmd) {
             let child = Arc::from(Mutex::from(child));
-            let child_cloned = child.clone();
-            let second_child_clone = child.clone();
+            let child_clone = child.clone();
 
             if let Ok(mut reader) = self.pair.clone().master.try_clone_reader() {
                 let app = self.app.as_ref().clone();
@@ -100,7 +99,7 @@ impl Pty {
                 });
 
                 std::thread::spawn(move || loop {
-                    if let Ok(Some(_)) = second_child_clone.as_ref().lock().unwrap().try_wait() {
+                    if let Ok(Some(_)) = child_clone.as_ref().lock().unwrap().try_wait() {
                         cloned_app
                             .emit_all("terminal_closed", id_cloned.clone())
                             .ok();

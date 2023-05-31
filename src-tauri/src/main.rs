@@ -6,7 +6,7 @@
 use notify::Watcher;
 use tauri::Manager;
 use tess::command::{option::*, term::*, window::*};
-use tess::common::option::Option;
+use tess::configuration::deserialized::Option;
 use tess::logger::Logger;
 
 use std::sync::{Arc, Mutex};
@@ -20,15 +20,19 @@ fn main() {
         "{}/tess/config.json",
         dirs_next::config_dir().unwrap_or_default().display()
     ));
+
+
+
+
+
     let option = Arc::from(Mutex::from(if let Ok(config_file) = config_file {
+        // TODO: Log error
         serde_json::from_str(&config_file).unwrap_or_default()
     } else {
         Option::default()
     }));
 
     let option_clone = option.clone();
-
-    println!("{:?}", option);
 
     let app = tauri::Builder::default()
         .manage(Mutex::new(tess::state::pty_manager::PtyManager::new()))
@@ -47,7 +51,7 @@ fn main() {
 
     app_handle
         .fs_scope()
-        .allow_file(&option.lock().unwrap().theme);
+        .allow_file(&option.lock().unwrap().app_theme);
 
     let logger_clone = logger.clone();
 

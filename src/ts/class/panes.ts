@@ -1,5 +1,6 @@
 import { invoke } from '@tauri-apps/api/tauri';
 import { Terminal } from "./terminal";
+import { Profile } from 'ts/schema/option';
 
 export class TerminalPane {
     element: Element;
@@ -23,10 +24,10 @@ export class TerminalPane {
         return element
     }
 
-    async initializeTerm(termCommand: string) {
-        let terminal = new Terminal(this.id);
+    async initializeTerm(profile: Profile) {
+        let terminal = new Terminal(this.id, profile.terminalOptions, profile.theme);
 
-        await terminal.launch(this.element.querySelector(".internal-term")!, termCommand);
+        await terminal.launch(this.element.querySelector(".internal-term")!, profile.command);
 
         this.term = terminal;
     }

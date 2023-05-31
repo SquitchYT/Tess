@@ -1,12 +1,12 @@
 export type Option = {
-    theme : string,
+    appTheme : string,
     closeConfirmation: boolean,
     customTitlebar: boolean,
     backgroundTransparency: Number,
     profiles: Profile[],
     macros: Macro[],
     shortcuts: Shortcut[],
-    terminal: TerminalOptions
+    defaultProfile: Profile
 }
 
 type Shortcut = {
@@ -19,27 +19,51 @@ type Macro = {
     uuid: string
 }
 
-type TerminalOptions = {
+export type TerminalOptions = {
     bell: boolean,
-    buffersize: Number,
-    cursor: string,
+    bufferSize: number,
+    cursor: "bar" | "underline" | "block",
     cursorBlink: boolean,
     drawBoldInBright: boolean,
     fontLigature: boolean,
-    fontWeight: Number,
-    fontWeightBold: Number,
-    fontSize: Number,
-    letterSpacing: Number,
-    lineHeight: Number,
+    fontWeight: number,
+    fontWeightBold: number,
+    fontSize: number,
+    letterSpacing: number,
+    lineHeight: number,
     showPicture: boolean,
-    showUnreadDataIndicator: boolean, // TODO: Rename
+    showUnreadDataIndicator: boolean,
     titleIsRunningProcess: boolean
 }
 
-type Profile = {
+export type Profile = {
     name: string,
-    terminal: TerminalOptions,
-    theme: string, // TODO: Finish
+    terminalOptions: TerminalOptions,
+    theme: TerminalTheme,
     uuid: string,
-    backgroundTransparency: Number
+    backgroundTransparency: number,
+    command: string
+}
+
+export type TerminalTheme = {
+    foreground: string,
+    background: string,
+    black: string,
+    red: string,
+    green: string,
+    yellow: string,
+    blue: string,
+    magenta: string,
+    cyan: string,
+    white: string,
+    brightBlack: string,
+    brightRed: string,
+    brightGreen: string,
+    brightYellow: string,
+    brightBlue: string,
+    brightMagenta: string,
+    brightCyan: string,
+    brightWhite: string,
+    cursor: string,
+    cursorAccent: string
 }

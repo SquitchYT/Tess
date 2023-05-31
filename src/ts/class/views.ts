@@ -1,5 +1,6 @@
 import { Terminal } from "./terminal";
 import { PagePane, TerminalPane } from "./panes";
+import { Profile } from "ts/schema/option";
 
 export class View {
     // TODO: Implement pane page type
@@ -11,32 +12,20 @@ export class View {
 
     closedEvent: ((id: string) => void) | undefined;
 
-    // TODO: Replace with 2 fucntion overloaded
-    // TODO: Add close eveent from view manager
-    async buildNew(viewId: string, initialPane: "terminal" | "page", paneId: string, terminalCommand: string, closedEvent: ((id: string) => void)) {
+
+    async buildNew(viewId: string, paneId: string, closedEvent: ((id: string) => void), profile: Profile) {
         this.id = viewId;
         this.element = this.generateComponents();
         this.closedEvent = closedEvent;
 
-        switch (initialPane) {
-            case "terminal": {
-                let pane = new TerminalPane(paneId);
 
-                await pane.initializeTerm(terminalCommand);
 
-                this.panes.push(pane)
-                this.element.appendChild(pane.element);
+        let pane = new TerminalPane(paneId);
 
-                break;
-            }
-            case "page": {
-                // TODO: Implement
+        await pane.initializeTerm(profile);
 
-                this.panes.push(new PagePane(paneId));
-
-                break;
-            }
-        }
+        this.panes.push(pane)
+        this.element.appendChild(pane.element);
     }
 
     private generateComponents() : HTMLElement {
@@ -45,10 +34,6 @@ export class View {
 
         return view
     }
-
-    /*openPane(split: "horizontaly" | "vertically", paneId: string, subviewToSplit: string) {
-        // TODO: Implement
-    }*/
 
     async closeAll() {
         for await (let pane of this.panes) {
@@ -103,7 +88,7 @@ export class View {
 
     unfocus() {
         // TODO: Implement
-        // TODO: Save last pane with focus
+        // TODO: Save current pane with focus
 
         this.element!.classList.remove("visible");
 
@@ -111,4 +96,8 @@ export class View {
             pane.unfocus();
         })
     }
+
+    /*openPane(split: "horizontaly" | "vertically", paneId: string, subviewToSplit: string) {
+        // TODO: Implement
+    }*/
 }
