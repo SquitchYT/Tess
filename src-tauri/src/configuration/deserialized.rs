@@ -7,6 +7,8 @@ use crate::configuration::partial::PartialOption;
 
 use crate::common::utils::parse_theme;
 
+
+
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Option {
@@ -28,18 +30,20 @@ pub struct Option {
 
 impl Default for Option {
     fn default() -> Self {
+        let uuid = uuid::Uuid::new_v4().to_string();
+
         Self {
             app_theme: String::default(),
             terminal_theme: TerminalTheme::default(),
             background: BackgroundType::default(),
             custom_titlebar: true, // TODO: Set false on linux
-            profiles: vec![default_profile()],
+            profiles: vec![default_profile(uuid.clone())],
             terminal: TerminalOption::default(),
             close_confirmation: true,
             background_transparency: RangedInt::default(),
             shortcuts: default_shortcuts(),
             macros: Vec::default(),
-            default_profile: default_profile(),
+            default_profile: default_profile(uuid),
 
             theme: String::default()
         }
@@ -469,8 +473,8 @@ fn default_to_true() -> bool {
     true
 }
 
-fn default_profile() -> Profile {
-    Profile { name: String::from("Default profile"), terminal_options: TerminalOption::default(), theme: TerminalTheme::default(), background_transparency: RangedInt::default(), uuid: uuid::Uuid::new_v4().to_string(), command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/ }
+fn default_profile(uuid: String) -> Profile {
+    Profile { name: String::from("Default profile"), terminal_options: TerminalOption::default(), theme: TerminalTheme::default(), background_transparency: RangedInt::default(), uuid, command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/ }
 }
 
 fn default_shortcuts() -> Vec<Shortcut> {

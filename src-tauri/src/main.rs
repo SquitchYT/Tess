@@ -13,16 +13,12 @@ use std::sync::{Arc, Mutex};
 
 fn main() {
     let start = std::time::Instant::now();
-
     let logger = Arc::from(Logger {});
 
     let config_file = std::fs::read_to_string(format!(
         "{}/tess/config.json",
         dirs_next::config_dir().unwrap_or_default().display()
     ));
-
-
-
 
 
     let option = Arc::from(Mutex::from(if let Ok(config_file) = config_file {
