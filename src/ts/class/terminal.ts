@@ -58,6 +58,7 @@ export class Terminal {
         this.term.onRender(() => {
             this.fitAddon.fit();
             invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
+            this.term.write("\0");
         })
     }
 
