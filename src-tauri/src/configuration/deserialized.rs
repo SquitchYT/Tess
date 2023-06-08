@@ -2,7 +2,7 @@ use serde::{Serialize, Serializer, ser::SerializeSeq};
 use serde::Deserialize;
 use crate::configuration::types::RangedInt;
 use crate::configuration::types::CursorType;
-use crate::configuration::types::BackgroundType;
+use crate::configuration::types::{BackgroundType, BackgroundMedia};
 use crate::configuration::partial::PartialOption;
 
 use crate::common::utils::parse_theme;
@@ -63,7 +63,7 @@ impl<'de> serde::Deserialize<'de> for Option {
 
         if partial_option.profiles.is_empty() {
             profiles.push(
-                Profile { name: String::from("Default profile"), terminal_options: partial_option.terminal.clone(), theme: terminal_theme.clone(), background_transparency: RangedInt::default(), uuid: uuid::Uuid::new_v4().to_string(), command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/ }
+                Profile { name: String::from("Default profile"), terminal_options: partial_option.terminal.clone(), theme: terminal_theme.clone(), background_transparency: RangedInt::default(), uuid: uuid::Uuid::new_v4().to_string(), command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/, background: None }
             )
         } else {
             for partial_profile in partial_option.profiles {
@@ -111,18 +111,19 @@ impl<'de> serde::Deserialize<'de> for Option {
                 };
 
                 let profile_theme =  if let Some(partial_profile_theme) = partial_profile.theme { parse_theme(partial_profile_theme).1.unwrap_or(terminal_theme.clone()) } else { terminal_theme.clone() };
-    
+
                 profiles.push(Profile {
                     name: partial_profile.name,
                     terminal_options: profile_option,
                     theme: profile_theme,
                     background_transparency: partial_profile
                         .background_transparency
-                        .unwrap_or(RangedInt::default()),
+                        .unwrap_or(partial_option.background_transparency),
                     uuid: uuid::Uuid::parse_str(partial_profile.uuid.unwrap_or_default().as_str())
                         .unwrap_or(uuid::Uuid::new_v4())
                         .to_string(),
-                    command: partial_profile.command
+                    command: partial_profile.command,
+                    background: partial_profile.background
                 })
             }
         }
@@ -335,7 +336,8 @@ pub struct Profile {
     name: String,
     terminal_options: TerminalOption,
     theme: TerminalTheme,
-    background_transparency: RangedInt<0, 100, 0>,
+    background_transparency: RangedInt<0, 100, 100>,
+    background: std::option::Option<BackgroundMedia>,
     uuid: String,
     command: String
 }
@@ -474,7 +476,7 @@ fn default_to_true() -> bool {
 }
 
 fn default_profile(uuid: String) -> Profile {
-    Profile { name: String::from("Default profile"), terminal_options: TerminalOption::default(), theme: TerminalTheme::default(), background_transparency: RangedInt::default(), uuid, command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/ }
+    Profile { name: String::from("Default profile"), terminal_options: TerminalOption::default(), theme: TerminalTheme::default(), background_transparency: RangedInt::default(), uuid, command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/, background: None }
 }
 
 fn default_shortcuts() -> Vec<Shortcut> {

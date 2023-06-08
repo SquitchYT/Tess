@@ -38,3 +38,15 @@ body {
     word-spacing: 0.66px;
     background: var(--app-background);
 }
+
+.background-image {
+    height: 100%;
+    width: 100%;
+    z-index: -4;
+    object-fit: cover;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    will-change: transform; // Require to force GPU acceleration to improve blur performance.
+}
