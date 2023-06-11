@@ -59,6 +59,10 @@ export class Terminal {
             this.fitAddon.fit();
             invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
         })
+
+        this.term.onWriteParsed(() => {
+            invoke("get_terminal_title", {id: this.id})
+        })
     }
 
     focus() {

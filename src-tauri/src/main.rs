@@ -39,6 +39,7 @@ fn main() {
             terminal_input,
             resize_terminal,
             close_terminal,
+            get_terminal_title,
             close_window,
             get_configuration
         ])

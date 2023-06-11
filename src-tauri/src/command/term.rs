@@ -65,3 +65,12 @@ pub async fn close_terminal(
         Err(PtyError::ManagerUnresponding)
     }
 }
+
+#[tauri::command]
+pub async fn get_terminal_title(pty_manager: tauri::State<'_, Mutex<PtyManager>>, id: String,) -> Result<(), PtyError> {
+    if let Ok(mut pty_manager) = pty_manager.lock() {
+        pty_manager.get_title(id)
+    } else {
+        Err(PtyError::ManagerUnresponding)
+    }
+}
