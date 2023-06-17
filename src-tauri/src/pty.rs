@@ -61,9 +61,12 @@ impl Pty {
         id: String,
         close_channel_receiver: Receiver<()>,
     ) -> Result<(), PtyError> {
-        let cmd = CommandBuilder::from_argv(Vec::from_iter(
+        let mut cmd = CommandBuilder::from_argv(Vec::from_iter(
             cmd.split(' ').map(|s| std::ffi::OsString::from(s)),
         ));
+
+        #[cfg(target_family = "unix")]
+        cmd.env("TERM", "xterm-256color");
 
         if let Ok(child) = self.pair.slave.spawn_command(cmd) {
             let child = Arc::from(Mutex::from(child));

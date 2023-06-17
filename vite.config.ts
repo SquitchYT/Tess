@@ -17,7 +17,7 @@ export default defineConfig({
 	css: {
 		preprocessorOptions: {
 			scss: {
-				additionalData: process.platform === 'linux' ? '@import "./target/linux.scss"' : ''
+				additionalData: process.platform === 'linux' ? '@import "./target/linux.scss";' : ''
 			}
 		}
 	}
