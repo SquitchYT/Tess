@@ -72,7 +72,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                     #[cfg(target_family = "unix")]
                     command: String::from("sh -c $SHELL"),
                     #[cfg(target_os = "windows")]
-                    command: String::from("powershell.exe"),
+                    command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
                 }
             )
         } else {
@@ -493,7 +493,7 @@ fn default_profile(uuid: String) -> Profile {
         #[cfg(target_family = "unix")]
         command: String::from("sh -c $SHELL"),
         #[cfg(target_os = "windows")]
-        command: String::from("powershell.exe"),
+        command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
     }
 }
 
