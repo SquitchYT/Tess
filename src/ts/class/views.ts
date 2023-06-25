@@ -18,11 +18,8 @@ export class View {
         this.element = this.generateComponents();
         this.closedEvent = closedEvent;
 
-
-
-        let pane = new TerminalPane(paneId);
-
-        await pane.initializeTerm(profile);
+        let pane = new TerminalPane(paneId, profile);
+        await pane.initializeTerm();
 
         this.panes.push(pane)
         this.element.appendChild(pane.element);

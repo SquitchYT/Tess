@@ -2,11 +2,11 @@ export type Option = {
     appTheme : string,
     closeConfirmation: boolean,
     customTitlebar: boolean,
-    backgroundTransparency: Number,
     profiles: Profile[],
     macros: Macro[],
     shortcuts: Shortcut[],
-    defaultProfile: Profile
+    defaultProfile: Profile,
+    background: "transparent" | "opaque" | "blurred" | "mica" | "acrylic" | "vibrancy" | {media: BackgroundMedia}
 }
 
 type Shortcut = {
@@ -42,6 +42,7 @@ export type Profile = {
     theme: TerminalTheme,
     uuid: string,
     backgroundTransparency: number,
+    background: BackgroundMedia | null,
     command: string
 }
 
@@ -66,4 +67,9 @@ export type TerminalTheme = {
     brightWhite: string,
     cursor: string,
     cursorAccent: string
+}
+
+export type BackgroundMedia = {
+    blur: number,
+    location: string
 }

@@ -1,33 +1,50 @@
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
 import { Terminal } from "./terminal";
 import { Profile } from 'ts/schema/option';
 
 export class TerminalPane {
     element: Element;
     id: string;
+    profile: Profile;
 
     term: Terminal | null = null;
 
-    constructor(id: string) {
+    constructor(id: string, profile: Profile) {
+        this.profile = profile
         this.element = this.generateComponents();
         this.id = id;
     }
 
     generateComponents() : Element {
+        // TODO: Set transparency value
+
         let element = document.createElement("div");
         element.classList.add("pane");
 
         let internalTerm = document.createElement("div");
-        internalTerm.classList.add("internal-term")
+        internalTerm.classList.add("internal-term");
+
+        if (this.profile.background) {
+            let background = document.createElement("img");
+            background.src = convertFileSrc(this.profile.background.location);
+            background.classList.add("background-image");
+            element.appendChild(background);
+
+            internalTerm.style.setProperty("-webkit-backdrop-filter", `blur(${this.profile.background.blur}px)`)
+        }
+
+        internalTerm.style.setProperty("--profile-background", this.profile.theme.background);
+        internalTerm.style.setProperty("--profile-background-transparency", `${this.profile.backgroundTransparency}%`);
+
         element.appendChild(internalTerm);
 
         return element
     }
 
-    async initializeTerm(profile: Profile) {
-        let terminal = new Terminal(this.id, profile.terminalOptions, profile.theme);
+    async initializeTerm() {
+        let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme);
 
-        await terminal.launch(this.element.querySelector(".internal-term")!, profile.command);
+        await terminal.launch(this.element.querySelector(".internal-term")!, this.profile.command);
 
         this.term = terminal;
     }
