@@ -1,5 +1,8 @@
 use crate::configuration::deserialized::TerminalTheme;
 
+#[cfg(target_os = "windows")]
+use std::ffi::OsString;
+
 pub fn parse_theme(location: String) -> (Option<String>, Option<TerminalTheme>) {
     let theme_path = if std::path::Path::new(&format!(
         "{}/tess/themes/{}",
@@ -26,5 +29,25 @@ pub fn parse_theme(location: String) -> (Option<String>, Option<TerminalTheme>) 
         (app_theme, terminal_theme)
     } else {
         (None, None)
+    }
+}
+
+
+#[cfg(target_os = "windows")]
+pub fn get_leader_process_name(process: remoteprocess::Process) -> Option<OsString> {
+    if let Ok(mut childs) = process.child_processes() {
+        if childs.is_empty() {
+            std::path::Path::new(&process.exe().ok().unwrap_or_default()).file_name().map(|x| x.to_owned())
+        } else {
+            childs.sort();
+
+            if let Ok(child_process) = remoteprocess::Process::new(childs.as_slice().last().unwrap().0) {
+                get_leader_process_name(child_process)
+            } else {
+                std::path::Path::new(&process.exe().ok().unwrap_or_default()).file_name().map(|x| x.to_owned())
+            }
+        }
+    } else {
+        std::path::Path::new(&process.exe().ok().unwrap_or_default()).file_name().map(|x| x.to_owned())
     }
 }

@@ -67,4 +67,10 @@ impl PtyManager {
             .close()?;
         Ok(())
     }
+
+    pub fn get_title(&mut self, id: String) -> Result<(), PtyError> {
+        self.ptys.get_mut(&id).unwrap().get_title();
+
+        Ok(())
+    }
 }

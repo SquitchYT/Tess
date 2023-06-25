@@ -13,11 +13,16 @@ use lazy_static::lazy_static;
 #[cfg(target_os = "windows")]
 use regex::{Regex, Captures};
 
+use crate::common::utils::get_leader_process_name;
+
+
 pub struct Pty {
     pub app: Arc<AppHandle>,
-    pair: Arc<portable_pty::PtyPair>,
+    pair: portable_pty::PtyPair,
     close_channel_sender: Sender<()>,
     child: Option<Arc<Mutex<Box<dyn Child + Send + Sync>>>>,
+    current_leader: i32,
+    writer: Option<Box<dyn std::io::Write + Send>>
 }
 
 unsafe impl Send for Pty {}
@@ -44,10 +49,12 @@ impl Pty {
 
         if let Ok(pair) = pair {
             let mut pty = Pty {
-                app: app,
-                pair: Arc::new(pair),
+                app,
+                pair,
                 child: None,
                 close_channel_sender: sender,
+                current_leader: 0,
+                writer: None
             };
 
             pty.run(cmd, id, receiver)?;
@@ -87,11 +94,14 @@ impl Pty {
             let child = Arc::from(Mutex::from(child));
             let child_clone = child.clone();
 
-            if let Ok(mut reader) = self.pair.clone().master.try_clone_reader() {
+            if let Ok(mut reader) = self.pair.master.try_clone_reader() {
                 let app = self.app.as_ref().clone();
                 let cloned_app = app.clone();
 
                 let id_cloned = id.clone();
+
+                self.child = Some(child);
+                self.writer = Some(self.pair.master.take_writer().unwrap());
 
                 std::thread::spawn(move || loop {
                     match close_channel_receiver.try_recv() {
@@ -129,8 +139,6 @@ impl Pty {
                 });
             };
 
-            self.child = Some(child);
-
             Ok(())
         } else {
             Err(PtyError::Create(String::from(
@@ -141,7 +149,7 @@ impl Pty {
 
     pub fn write(&mut self, content: String) -> Result<(), PtyError> {
         if let Ok(()) = write!(
-            self.pair.clone().master.try_clone_writer().unwrap(),
+            self.writer.as_mut().unwrap(),
             "{}",
             content
         ) {
@@ -202,5 +210,22 @@ impl Pty {
                 "doesn't have access to the pty.",
             )))
         }
+    }
+
+    pub fn get_title(&mut self) {
+        #[cfg(target_family = "unix")]
+        if let Some(process_leader_pid) = self.pair.master.process_group_leader() {
+            if self.current_leader != process_leader_pid {
+                self.current_leader = process_leader_pid;
+
+                if let Ok(mut process_leader_title) = std::fs::read_to_string(format!("/proc/{}/comm", process_leader_pid)) {
+                    process_leader_title.pop();
+                    println!("{:?}", process_leader_title);
+                }
+            }
+        }
+
+        #[cfg(target_os = "windows")]
+        todo!()
     }
 }

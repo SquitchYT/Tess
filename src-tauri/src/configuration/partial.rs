@@ -2,8 +2,9 @@ use crate::configuration::types::RangedInt;
 use crate::configuration::deserialized::ShortcutAction;
 use crate::configuration::deserialized::TerminalOption;
 use crate::configuration::types::CursorType;
-use crate::configuration::types::BackgroundType;
+use crate::configuration::types::{BackgroundType, BackgroundMedia};
 use serde::Deserialize;
+use serde::Deserializer;
 
 
 #[derive(Deserialize, Debug)]
@@ -65,7 +66,7 @@ pub struct PartialProfile {
     pub show_picture: std::option::Option<bool>,
     pub bell: std::option::Option<bool>,
     pub theme: std::option::Option<String>,
-    pub background_transparency: std::option::Option<RangedInt<0, 100, 0>>,
+    pub background_transparency: std::option::Option<RangedInt<0, 100, 100>>,
     pub cursor_blink: std::option::Option<bool>,
     pub draw_bold_in_bright: std::option::Option<bool>,
     pub show_unread_data_indicator: std::option::Option<bool>,
@@ -74,6 +75,9 @@ pub struct PartialProfile {
     pub font_weight: std::option::Option<RangedInt<1, 9, 4>>,
     pub font_weight_bold: std::option::Option<RangedInt<1, 9, 6>>,
     pub title_is_running_process: std::option::Option<bool>,
+    #[serde(deserialize_with = "deserialize_profile_background")]
+    #[serde(default)]
+    pub background: std::option::Option<BackgroundMedia>
 }
 
 
@@ -94,9 +98,27 @@ pub struct PartialShortcut {
 
 
 
+fn deserialize_profile_background<'de, D>(data: D) -> Result<std::option::Option<BackgroundMedia>, D::Error> where D: Deserializer<'de> {
+    #[derive(Deserialize, Debug)]
+    #[serde(untagged)]
+    enum Representation {
+        Simple(String),
+        Complex(BackgroundMedia)
+    }
 
-
-
+    Ok(if let Ok(name_to_find) = Representation::deserialize(data) {
+        match name_to_find {
+            Representation::Simple(path) => {
+                BackgroundMedia::deserialize_from_string(path)
+            },
+            Representation::Complex(background) => {
+                Some(background)
+            }
+        }
+    } else {
+        None
+    })    
+}
 
 
 fn default_to_true() -> bool {

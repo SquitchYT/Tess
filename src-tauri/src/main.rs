@@ -8,6 +8,7 @@ use tauri::Manager;
 use tess::command::{option::*, term::*, window::*};
 use tess::configuration::deserialized::Option;
 use tess::logger::Logger;
+use tess::configuration::types::BackgroundType;
 
 use std::sync::{Arc, Mutex};
 
@@ -44,12 +45,37 @@ fn main() {
             terminal_input,
             resize_terminal,
             close_terminal,
+            get_terminal_title,
             close_window,
             get_configuration
         ])
         .build(tauri::generate_context!());
 
     let app_handle = app.as_ref().unwrap().app_handle();
+
+    
+    match &option.lock().unwrap().background {
+        BackgroundType::Media(media) => {
+            app_handle.fs_scope().allow_file(&media.location);
+        },
+        BackgroundType::Blurred => {
+            todo!()
+        }
+        #[cfg(target_os = "windows")]
+        BackgroundType::Mica => {
+            todo!()
+        }
+        #[cfg(target_os = "windows")]
+        BackgroundType::Acrylic => {
+            todo!()
+        }
+        #[cfg(target_os = "macos")]
+        BackgroundType::Vibrancy => {
+            todo!()
+        }
+        _ => {}
+    }
+
 
     app_handle
         .fs_scope()

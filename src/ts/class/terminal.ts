@@ -14,11 +14,15 @@ export class Terminal {
         // TODO: Finish
         // TODO: Load all addons
 
+
+        theme = Object.assign({}, theme);
+        theme.background = "transparent";
         
         this.id = id;
         this.term = new Xterm({
             allowProposedApi: true,
             fontFamily: "Fira Code, monospace",
+            allowTransparency: true,
             fontSize: options.fontSize,
             drawBoldTextInBrightColors: options.drawBoldInBright,
             cursorBlink: options.cursorBlink,
@@ -66,6 +70,10 @@ export class Terminal {
             this.fitAddon.fit();
             invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
             this.term.write("\0");
+        })
+
+        this.term.onWriteParsed(() => {
+            invoke("get_terminal_title", {id: this.id})
         })
     }
 

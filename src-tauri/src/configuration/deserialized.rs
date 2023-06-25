@@ -2,7 +2,7 @@ use serde::{Serialize, Serializer, ser::SerializeSeq};
 use serde::Deserialize;
 use crate::configuration::types::RangedInt;
 use crate::configuration::types::CursorType;
-use crate::configuration::types::BackgroundType;
+use crate::configuration::types::{BackgroundType, BackgroundMedia};
 use crate::configuration::partial::PartialOption;
 
 use crate::common::utils::parse_theme;
@@ -73,6 +73,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                     command: String::from("sh -c $SHELL"),
                     #[cfg(target_os = "windows")]
                     command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
+                    background: None
                 }
             )
         } else {
@@ -121,18 +122,19 @@ impl<'de> serde::Deserialize<'de> for Option {
                 };
 
                 let profile_theme =  if let Some(partial_profile_theme) = partial_profile.theme { parse_theme(partial_profile_theme).1.unwrap_or(terminal_theme.clone()) } else { terminal_theme.clone() };
-    
+
                 profiles.push(Profile {
                     name: partial_profile.name,
                     terminal_options: profile_option,
                     theme: profile_theme,
                     background_transparency: partial_profile
                         .background_transparency
-                        .unwrap_or(RangedInt::default()),
+                        .unwrap_or(partial_option.background_transparency),
                     uuid: uuid::Uuid::parse_str(partial_profile.uuid.unwrap_or_default().as_str())
                         .unwrap_or(uuid::Uuid::new_v4())
                         .to_string(),
-                    command: partial_profile.command
+                    command: partial_profile.command,
+                    background: partial_profile.background
                 })
             }
         }
@@ -345,7 +347,8 @@ pub struct Profile {
     name: String,
     terminal_options: TerminalOption,
     theme: TerminalTheme,
-    background_transparency: RangedInt<0, 100, 0>,
+    background_transparency: RangedInt<0, 100, 100>,
+    background: std::option::Option<BackgroundMedia>,
     uuid: String,
     command: String
 }
@@ -494,6 +497,7 @@ fn default_profile(uuid: String) -> Profile {
         command: String::from("sh -c $SHELL"),
         #[cfg(target_os = "windows")]
         command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
+        background: None
     }
 }
 
