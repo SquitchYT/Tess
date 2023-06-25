@@ -45,17 +45,6 @@ export class Terminal {
                 console.error(error);
             });
         })
-
-
-        this.term.attachCustomKeyEventHandler((e) => {
-            if (e.key == "F10") {
-                invoke("terminal_input", {content: "\x1b[21~", id: id});
-
-                return false
-            } else {
-                return true
-            }
-        })
     }
 
     async launch(target: HTMLElement, command: string) {
@@ -69,7 +58,6 @@ export class Terminal {
         this.term.onRender(() => {
             this.fitAddon.fit();
             invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
-            this.term.write("\0");
         })
     }
 

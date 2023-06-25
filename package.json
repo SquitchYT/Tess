@@ -4,15 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "cp node_modules/xterm/css/xterm.css src/style/xterm.css; vite",
     "build": "tsc && vite build --emptyOutDir",
     "preview": "vite preview"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",
     "@types/uuid": "^9.0.0",
-    "postcss": "^8.4.24",
-    "postcss-discard-comments": "^6.0.0",
     "sass": "^1.56.1",
     "typescript": "^4.6.4",
     "vite": "^3.2.3"
