@@ -11,7 +11,7 @@
     display: flex;
     -webkit-user-select: none;
     transition: transform 200ms, background 140ms;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 1px;
     text-transform: capitalize;
     position: relative;
@@ -47,6 +47,7 @@
         overflow : hidden;
         width: calc(100% - 64px);
         text-align: center;
+        font-weight: 600;
     }
 
     .close {

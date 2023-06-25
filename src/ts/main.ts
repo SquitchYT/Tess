@@ -3,6 +3,7 @@ import { listen } from '@tauri-apps/api/event';
 import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
 import { Option } from './schema/option';
 
+
 window.addEventListener("contextmenu", (e) => {
     e.preventDefault();
 })

@@ -63,7 +63,18 @@ impl<'de> serde::Deserialize<'de> for Option {
 
         if partial_option.profiles.is_empty() {
             profiles.push(
-                Profile { name: String::from("Default profile"), terminal_options: partial_option.terminal.clone(), theme: terminal_theme.clone(), background_transparency: RangedInt::default(), uuid: uuid::Uuid::new_v4().to_string(), command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/, background: None }
+                Profile { 
+                    name: String::from("Default profile"), 
+                    terminal_options: partial_option.terminal.clone(), 
+                    theme: terminal_theme.clone(), 
+                    background_transparency: RangedInt::default(), 
+                    uuid: uuid::Uuid::new_v4().to_string(),
+                    #[cfg(target_family = "unix")]
+                    command: String::from("sh -c $SHELL"),
+                    #[cfg(target_os = "windows")]
+                    command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
+                    background: None
+                }
             )
         } else {
             for partial_profile in partial_option.profiles {
@@ -476,7 +487,18 @@ fn default_to_true() -> bool {
 }
 
 fn default_profile(uuid: String) -> Profile {
-    Profile { name: String::from("Default profile"), terminal_options: TerminalOption::default(), theme: TerminalTheme::default(), background_transparency: RangedInt::default(), uuid, command: String::from("sh -c $SHELL") /* TODO: Set correct for each oses*/, background: None }
+    Profile {
+        name: String::from("Default profile"), 
+        terminal_options: TerminalOption::default(), 
+        theme: TerminalTheme::default(), 
+        background_transparency: RangedInt::default(), 
+        uuid, 
+        #[cfg(target_family = "unix")]
+        command: String::from("sh -c $SHELL"),
+        #[cfg(target_os = "windows")]
+        command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
+        background: None
+    }
 }
 
 fn default_shortcuts() -> Vec<Shortcut> {
