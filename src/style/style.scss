@@ -5,23 +5,30 @@
 @import "term";
 @import "tab";
 
+@import "../../node_modules/xterm/css/xterm.css";
+
+
 @font-face {
     font-family: "Inter";
+    font-weight: 400;
     src: url(../fonts/Inter-Regular.ttf);
 }
 
 @font-face {
     font-family: "Inter";
+    font-weight: 500;
     src: url(../fonts/Inter-Medium.ttf);
 }
 
 @font-face {
     font-family: "Inter";
+    font-weight: 600;
     src: url(../fonts/Inter-SemiBold.ttf);
 }
 
 @font-face {
     font-family: "Inter";
+    font-weight: 700;
     src: url(../fonts/Inter-Bold.ttf);
 }
 
@@ -38,6 +45,18 @@ body {
     word-spacing: 0.66px;
     background: var(--app-background);
 }
+
+
+::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background:rgba(212, 212, 212, 0.14);
+    border-radius: 6px;
+}
+
 
 .background-image {
     height: 100%;
