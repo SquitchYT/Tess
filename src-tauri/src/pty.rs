@@ -8,11 +8,6 @@ use tauri::{AppHandle, Manager};
 
 use crate::common::payloads::PtySendData;
 
-#[cfg(target_os = "windows")]
-use lazy_static::lazy_static;
-#[cfg(target_os = "windows")]
-use regex::{Regex, Captures};
-
 pub struct Pty {
     pub app: Arc<AppHandle>,
     pair: Arc<portable_pty::PtyPair>,
@@ -66,24 +61,11 @@ impl Pty {
         id: String,
         close_channel_receiver: Receiver<()>,
     ) -> Result<(), PtyError> {
-        #[cfg(target_os = "windows")]
-        lazy_static! {
-            static ref PROGRAMM_PARSING_REGEX: Regex = Regex::new("%([[:word:]]*)%").unwrap();
-        }
-
-        #[cfg(target_os = "windows")]
-        let cmd: String = PROGRAMM_PARSING_REGEX.replace_all(&cmd, |env_variable: &Captures| {
-            std::env::var(&env_variable[1]).unwrap_or_default()
-        }).into();
-
-        let mut command_builder = CommandBuilder::from_argv(Vec::from_iter(
+        let cmd = CommandBuilder::from_argv(Vec::from_iter(
             cmd.split(' ').map(|s| std::ffi::OsString::from(s)),
         ));
 
-        #[cfg(target_family = "unix")]
-        command_builder.env("TERM", "xterm-256color");
-
-        if let Ok(child) = self.pair.slave.spawn_command(command_builder) {
+        if let Ok(child) = self.pair.slave.spawn_command(cmd) {
             let child = Arc::from(Mutex::from(child));
             let child_clone = child.clone();
 

@@ -16,14 +16,8 @@ fn main() {
     let start = std::time::Instant::now();
     let logger = Arc::from(Logger {});
 
-    #[cfg(target_family = "unix")]
     let config_file = std::fs::read_to_string(format!(
         "{}/tess/config.json",
-        dirs_next::config_dir().unwrap_or_default().display()
-    ));
-    #[cfg(target_os = "windows")]
-    let config_file = std::fs::read_to_string(format!(
-        "{}/Tess/config.json",
         dirs_next::config_dir().unwrap_or_default().display()
     ));
 
