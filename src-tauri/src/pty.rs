@@ -89,12 +89,13 @@ impl Pty {
             })
             .into();
 
+        #[cfg(target_family = "unix")]
+        let cmd = profile.command;
+
         #[allow(unused_mut)]
         let mut command_builder = CommandBuilder::from_argv(Vec::from_iter(
-            profile
-                .command
-                .split(' ')
-                .map(|s| std::ffi::OsString::from(s)),
+            cmd.split(' ')
+               .map(|s| std::ffi::OsString::from(s)),
         ));
 
         #[cfg(target_family = "unix")]
@@ -126,8 +127,9 @@ impl Pty {
                 #[cfg(target_os = "windows")]
                 let leader_programm_name = self.leader_programm_name.clone();
 
+                #[cfg(target_family = "unix")]
                 let cloned_pair = self.pair.clone();
-
+                #[cfg(target_family = "unix")]
                 let current_process_leader_pid = self.current_leader.clone();
 
                 std::thread::spawn(move || {
