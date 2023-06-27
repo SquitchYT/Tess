@@ -7,8 +7,8 @@ use notify::Watcher;
 use tauri::Manager;
 use tess::command::{option::*, term::*, window::*};
 use tess::configuration::deserialized::Option;
-use tess::logger::Logger;
 use tess::configuration::types::BackgroundType;
+use tess::logger::Logger;
 
 use std::sync::{Arc, Mutex};
 
@@ -27,7 +27,6 @@ fn main() {
         dirs_next::config_dir().unwrap_or_default().display()
     ));
 
-
     let option = Arc::from(Mutex::from(if let Ok(config_file) = config_file {
         // TODO: Log error
         serde_json::from_str(&config_file).unwrap_or_default()
@@ -45,7 +44,6 @@ fn main() {
             terminal_input,
             resize_terminal,
             close_terminal,
-            get_terminal_title,
             close_window,
             get_configuration
         ])
@@ -53,11 +51,10 @@ fn main() {
 
     let app_handle = app.as_ref().unwrap().app_handle();
 
-    
     match &option.lock().unwrap().background {
         BackgroundType::Media(media) => {
             app_handle.fs_scope().allow_file(&media.location);
-        },
+        }
         BackgroundType::Blurred => {
             todo!()
         }
@@ -75,7 +72,6 @@ fn main() {
         }
         _ => {}
     }
-
 
     app_handle
         .fs_scope()

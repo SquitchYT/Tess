@@ -1,13 +1,11 @@
-use serde::{Serialize, Serializer, ser::SerializeSeq};
-use serde::Deserialize;
-use crate::configuration::types::RangedInt;
-use crate::configuration::types::CursorType;
-use crate::configuration::types::{BackgroundType, BackgroundMedia};
 use crate::configuration::partial::PartialOption;
+use crate::configuration::types::CursorType;
+use crate::configuration::types::RangedInt;
+use crate::configuration::types::{BackgroundMedia, BackgroundType};
+use serde::Deserialize;
+use serde::{ser::SerializeSeq, Serialize, Serializer};
 
 use crate::common::utils::parse_theme;
-
-
 
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -25,7 +23,7 @@ pub struct Option {
     pub default_profile: Profile,
 
     #[serde(skip_serializing)]
-    theme: String
+    theme: String,
 }
 
 impl Default for Option {
@@ -45,7 +43,7 @@ impl Default for Option {
             macros: Vec::default(),
             default_profile: default_profile(uuid),
 
-            theme: String::default()
+            theme: String::default(),
         }
     }
 }
@@ -58,24 +56,23 @@ impl<'de> serde::Deserialize<'de> for Option {
         let app_theme = app_theme.unwrap_or_default();
         let terminal_theme = terminal_theme.unwrap_or_default();
 
-
         let mut profiles = vec![];
 
         if partial_option.profiles.is_empty() {
-            profiles.push(
-                Profile { 
-                    name: String::from("Default profile"), 
-                    terminal_options: partial_option.terminal.clone(), 
-                    theme: terminal_theme.clone(), 
-                    background_transparency: RangedInt::default(), 
-                    uuid: uuid::Uuid::new_v4().to_string(),
-                    #[cfg(target_family = "unix")]
-                    command: String::from("sh -c $SHELL"),
-                    #[cfg(target_os = "windows")]
-                    command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
-                    background: None
-                }
-            )
+            profiles.push(Profile {
+                name: String::from("Default profile"),
+                terminal_options: partial_option.terminal.clone(),
+                theme: terminal_theme.clone(),
+                background_transparency: RangedInt::default(),
+                uuid: uuid::Uuid::new_v4().to_string(),
+                #[cfg(target_family = "unix")]
+                command: String::from("sh -c $SHELL"),
+                #[cfg(target_os = "windows")]
+                command: String::from(
+                    "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                ),
+                background: None,
+            })
         } else {
             for partial_profile in partial_option.profiles {
                 let profile_option = TerminalOption {
@@ -121,7 +118,13 @@ impl<'de> serde::Deserialize<'de> for Option {
                         .unwrap_or(partial_option.terminal.title_is_running_process),
                 };
 
-                let profile_theme =  if let Some(partial_profile_theme) = partial_profile.theme { parse_theme(partial_profile_theme).1.unwrap_or(terminal_theme.clone()) } else { terminal_theme.clone() };
+                let profile_theme = if let Some(partial_profile_theme) = partial_profile.theme {
+                    parse_theme(partial_profile_theme)
+                        .1
+                        .unwrap_or(terminal_theme.clone())
+                } else {
+                    terminal_theme.clone()
+                };
 
                 profiles.push(Profile {
                     name: partial_profile.name,
@@ -134,11 +137,10 @@ impl<'de> serde::Deserialize<'de> for Option {
                         .unwrap_or(uuid::Uuid::new_v4())
                         .to_string(),
                     command: partial_profile.command,
-                    background: partial_profile.background
+                    background: partial_profile.background,
                 })
             }
         }
-
 
         let mut macros = vec![];
 
@@ -153,7 +155,6 @@ impl<'de> serde::Deserialize<'de> for Option {
             }
         }
 
-        
         let shortcuts = if let Some(partial_option_shortcuts) = partial_option.shortcuts {
             let mut shortcuts = vec![];
 
@@ -179,12 +180,13 @@ impl<'de> serde::Deserialize<'de> for Option {
                                 action: ShortcutAction::ExecuteMacro(macro_command.uuid.clone()),
                             })
                         }
-                    },
-                    _ => {
-                        shortcuts.push(Shortcut { shortcut: partial_shortcut.shortcut, action: partial_shortcut.action })
                     }
+                    _ => shortcuts.push(Shortcut {
+                        shortcut: partial_shortcut.shortcut,
+                        action: partial_shortcut.action,
+                    }),
                 };
-            };
+            }
 
             shortcuts
         } else {
@@ -204,12 +206,14 @@ impl<'de> serde::Deserialize<'de> for Option {
             background_transparency: partial_option.background_transparency,
             shortcuts: shortcuts,
             macros: macros,
-            default_profile: profiles.iter().find(|&profile| {profile.uuid == partial_option.default_profile}).unwrap_or(&profiles[0]).clone()
+            default_profile: profiles
+                .iter()
+                .find(|&profile| profile.uuid == partial_option.default_profile)
+                .unwrap_or(&profiles[0])
+                .clone(),
         })
     }
 }
-
-
 
 #[derive(Deserialize, Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -241,7 +245,7 @@ pub struct TerminalOption {
     #[serde(default)]
     font_weight_bold: RangedInt<1, 9, 6>,
     #[serde(default = "default_to_true")]
-    title_is_running_process: bool,
+    pub title_is_running_process: bool,
 }
 
 impl Default for TerminalOption {
@@ -265,23 +269,17 @@ impl Default for TerminalOption {
     }
 }
 
-
-
 #[derive(Deserialize, Debug, Serialize, Clone)]
 pub struct Macro {
     pub content: String,
     pub uuid: String,
 }
 
-
-
 #[derive(Debug, Serialize, Clone)]
 pub struct Shortcut {
     pub shortcut: String,
     pub action: ShortcutAction,
 }
-
-
 
 #[derive(Debug, Clone, Deserialize)]
 pub enum ShortcutAction {
@@ -336,23 +334,19 @@ impl Serialize for ShortcutAction {
     }
 }
 
-
-
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Profile {
     // TODO: Add Icon
     // TODO: Add background_media
-
     name: String,
-    terminal_options: TerminalOption,
+    pub terminal_options: TerminalOption,
     theme: TerminalTheme,
     background_transparency: RangedInt<0, 100, 100>,
     background: std::option::Option<BackgroundMedia>,
-    uuid: String,
-    command: String
+    pub uuid: String,
+    pub command: String,
 }
-
 
 #[derive(Debug, Clone, Serialize)]
 pub struct TerminalTheme {
@@ -375,9 +369,8 @@ pub struct TerminalTheme {
     bright_cyan: String,
     bright_white: String,
     cursor: String,
-    cursor_accent: String
+    cursor_accent: String,
 }
-
 
 impl Default for TerminalTheme {
     fn default() -> Self {
@@ -401,7 +394,7 @@ impl Default for TerminalTheme {
             bright_cyan: String::from("#4DE8FE"),
             bright_white: String::from("#ABB4D6"),
             cursor: String::from("#DEEAF8"),
-            cursor_accent: String::from("#141A29")
+            cursor_accent: String::from("#141A29"),
         }
     }
 }
@@ -449,38 +442,77 @@ impl<'de> Deserialize<'de> for TerminalTheme {
             #[serde(default)]
             pub cursor: std::option::Option<String>,
             #[serde(default)]
-            pub cursor_accent: std::option::Option<String>
+            pub cursor_accent: std::option::Option<String>,
         }
 
-        let partial_terminal_theme = PartialTerminalTheme::deserialize(deserializer).unwrap_or_default();
+        let partial_terminal_theme =
+            PartialTerminalTheme::deserialize(deserializer).unwrap_or_default();
         let default_terminal_theme = TerminalTheme::default();
-        
+
         Ok(TerminalTheme {
-            foreground: partial_terminal_theme.foreground.unwrap_or(default_terminal_theme.foreground),
-            background: partial_terminal_theme.background.unwrap_or(default_terminal_theme.background),
-            black: partial_terminal_theme.black.unwrap_or(default_terminal_theme.black),
-            red: partial_terminal_theme.red.unwrap_or(default_terminal_theme.red),
-            green: partial_terminal_theme.green.unwrap_or(default_terminal_theme.green),
-            yellow: partial_terminal_theme.yellow.unwrap_or(default_terminal_theme.yellow),
-            blue: partial_terminal_theme.blue.unwrap_or(default_terminal_theme.blue),
-            magenta: partial_terminal_theme.magenta.unwrap_or(default_terminal_theme.magenta),
-            cyan: partial_terminal_theme.cyan.unwrap_or(default_terminal_theme.cyan),
-            white: partial_terminal_theme.white.unwrap_or(default_terminal_theme.white),
-            bright_black: partial_terminal_theme.bright_black.unwrap_or(default_terminal_theme.bright_black),
-            bright_red: partial_terminal_theme.bright_red.unwrap_or(default_terminal_theme.bright_red),
-            bright_green: partial_terminal_theme.bright_green.unwrap_or(default_terminal_theme.bright_green),
-            bright_yellow: partial_terminal_theme.bright_yellow.unwrap_or(default_terminal_theme.bright_yellow),
-            bright_blue: partial_terminal_theme.bright_blue.unwrap_or(default_terminal_theme.bright_blue),
-            bright_magenta: partial_terminal_theme.bright_magenta.unwrap_or(default_terminal_theme.bright_magenta),
-            bright_cyan: partial_terminal_theme.bright_cyan.unwrap_or(default_terminal_theme.bright_cyan),
-            bright_white: partial_terminal_theme.bright_white.unwrap_or(default_terminal_theme.bright_white),
-            cursor: partial_terminal_theme.cursor.unwrap_or(default_terminal_theme.cursor),
-            cursor_accent: partial_terminal_theme.cursor_accent.unwrap_or(default_terminal_theme.cursor_accent),
+            foreground: partial_terminal_theme
+                .foreground
+                .unwrap_or(default_terminal_theme.foreground),
+            background: partial_terminal_theme
+                .background
+                .unwrap_or(default_terminal_theme.background),
+            black: partial_terminal_theme
+                .black
+                .unwrap_or(default_terminal_theme.black),
+            red: partial_terminal_theme
+                .red
+                .unwrap_or(default_terminal_theme.red),
+            green: partial_terminal_theme
+                .green
+                .unwrap_or(default_terminal_theme.green),
+            yellow: partial_terminal_theme
+                .yellow
+                .unwrap_or(default_terminal_theme.yellow),
+            blue: partial_terminal_theme
+                .blue
+                .unwrap_or(default_terminal_theme.blue),
+            magenta: partial_terminal_theme
+                .magenta
+                .unwrap_or(default_terminal_theme.magenta),
+            cyan: partial_terminal_theme
+                .cyan
+                .unwrap_or(default_terminal_theme.cyan),
+            white: partial_terminal_theme
+                .white
+                .unwrap_or(default_terminal_theme.white),
+            bright_black: partial_terminal_theme
+                .bright_black
+                .unwrap_or(default_terminal_theme.bright_black),
+            bright_red: partial_terminal_theme
+                .bright_red
+                .unwrap_or(default_terminal_theme.bright_red),
+            bright_green: partial_terminal_theme
+                .bright_green
+                .unwrap_or(default_terminal_theme.bright_green),
+            bright_yellow: partial_terminal_theme
+                .bright_yellow
+                .unwrap_or(default_terminal_theme.bright_yellow),
+            bright_blue: partial_terminal_theme
+                .bright_blue
+                .unwrap_or(default_terminal_theme.bright_blue),
+            bright_magenta: partial_terminal_theme
+                .bright_magenta
+                .unwrap_or(default_terminal_theme.bright_magenta),
+            bright_cyan: partial_terminal_theme
+                .bright_cyan
+                .unwrap_or(default_terminal_theme.bright_cyan),
+            bright_white: partial_terminal_theme
+                .bright_white
+                .unwrap_or(default_terminal_theme.bright_white),
+            cursor: partial_terminal_theme
+                .cursor
+                .unwrap_or(default_terminal_theme.cursor),
+            cursor_accent: partial_terminal_theme
+                .cursor_accent
+                .unwrap_or(default_terminal_theme.cursor_accent),
         })
     }
 }
-
-
 
 fn default_to_true() -> bool {
     true
@@ -488,16 +520,16 @@ fn default_to_true() -> bool {
 
 fn default_profile(uuid: String) -> Profile {
     Profile {
-        name: String::from("Default profile"), 
-        terminal_options: TerminalOption::default(), 
-        theme: TerminalTheme::default(), 
-        background_transparency: RangedInt::default(), 
-        uuid, 
+        name: String::from("Default profile"),
+        terminal_options: TerminalOption::default(),
+        theme: TerminalTheme::default(),
+        background_transparency: RangedInt::default(),
+        uuid,
         #[cfg(target_family = "unix")]
         command: String::from("sh -c $SHELL"),
         #[cfg(target_os = "windows")]
         command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
-        background: None
+        background: None,
     }
 }
 

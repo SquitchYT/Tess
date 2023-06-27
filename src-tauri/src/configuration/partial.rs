@@ -1,11 +1,10 @@
-use crate::configuration::types::RangedInt;
 use crate::configuration::deserialized::ShortcutAction;
 use crate::configuration::deserialized::TerminalOption;
 use crate::configuration::types::CursorType;
-use crate::configuration::types::{BackgroundType, BackgroundMedia};
+use crate::configuration::types::RangedInt;
+use crate::configuration::types::{BackgroundMedia, BackgroundType};
 use serde::Deserialize;
 use serde::Deserializer;
-
 
 #[derive(Deserialize, Debug)]
 pub struct PartialOption {
@@ -32,7 +31,7 @@ pub struct PartialOption {
     pub close_confirmation: bool,
 
     #[serde(default)]
-    pub default_profile: String
+    pub default_profile: String,
 }
 
 impl Default for PartialOption {
@@ -47,12 +46,10 @@ impl Default for PartialOption {
             background_transparency: RangedInt::default(),
             shortcuts: Some(Vec::default()),
             macros: Some(Vec::default()),
-            default_profile: String::new()
+            default_profile: String::new(),
         }
     }
 }
-
-
 
 #[derive(Deserialize, Debug)]
 pub struct PartialProfile {
@@ -77,10 +74,8 @@ pub struct PartialProfile {
     pub title_is_running_process: std::option::Option<bool>,
     #[serde(deserialize_with = "deserialize_profile_background")]
     #[serde(default)]
-    pub background: std::option::Option<BackgroundMedia>
+    pub background: std::option::Option<BackgroundMedia>,
 }
-
-
 
 #[derive(Deserialize, Debug)]
 pub struct PartialMacro {
@@ -88,38 +83,36 @@ pub struct PartialMacro {
     pub uuid: Option<String>,
 }
 
-
-
 #[derive(Deserialize, Debug)]
 pub struct PartialShortcut {
     pub shortcut: String,
     pub action: ShortcutAction,
 }
 
-
-
-fn deserialize_profile_background<'de, D>(data: D) -> Result<std::option::Option<BackgroundMedia>, D::Error> where D: Deserializer<'de> {
+fn deserialize_profile_background<'de, D>(
+    data: D,
+) -> Result<std::option::Option<BackgroundMedia>, D::Error>
+where
+    D: Deserializer<'de>,
+{
     #[derive(Deserialize, Debug)]
     #[serde(untagged)]
     enum Representation {
         Simple(String),
-        Complex(BackgroundMedia)
+        Complex(BackgroundMedia),
     }
 
-    Ok(if let Ok(name_to_find) = Representation::deserialize(data) {
-        match name_to_find {
-            Representation::Simple(path) => {
-                BackgroundMedia::deserialize_from_string(path)
-            },
-            Representation::Complex(background) => {
-                Some(background)
+    Ok(
+        if let Ok(name_to_find) = Representation::deserialize(data) {
+            match name_to_find {
+                Representation::Simple(path) => BackgroundMedia::deserialize_from_string(path),
+                Representation::Complex(background) => Some(background),
             }
-        }
-    } else {
-        None
-    })    
+        } else {
+            None
+        },
+    )
 }
-
 
 fn default_to_true() -> bool {
     true

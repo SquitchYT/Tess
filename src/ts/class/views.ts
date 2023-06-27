@@ -11,12 +11,14 @@ export class View {
     panes: (TerminalPane|PagePane)[] = []
 
     closedEvent: ((id: string) => void) | undefined;
+    focusedPaneTitleChangedEvent: ((title: string) => void) | undefined;
 
 
-    async buildNew(viewId: string, paneId: string, closedEvent: ((id: string) => void), profile: Profile) {
+    async buildNew(viewId: string, paneId: string, closedEvent: ((id: string) => void), profile: Profile, focusedPaneTitleChangedEvent: ((title: string) => void)) {
         this.id = viewId;
         this.element = this.generateComponents();
         this.closedEvent = closedEvent;
+        this.focusedPaneTitleChangedEvent = focusedPaneTitleChangedEvent;
 
         let pane = new TerminalPane(paneId, profile);
         await pane.initializeTerm();
@@ -92,6 +94,14 @@ export class View {
         this.panes.forEach((pane) => {
             pane.unfocus();
         })
+    }
+
+    updatePaneTitle(id: string, title: string) {
+        let pane = this.panes.find((pane) => pane.id == id);
+        if (pane) {
+            pane.title = title;
+            this.focusedPaneTitleChangedEvent!(title)
+        }
     }
 
     /*openPane(split: "horizontaly" | "vertically", paneId: string, subviewToSplit: string) {

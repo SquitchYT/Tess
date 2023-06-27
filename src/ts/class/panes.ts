@@ -9,15 +9,16 @@ export class TerminalPane {
 
     term: Terminal | null = null;
 
+    title: String
+
     constructor(id: string, profile: Profile) {
         this.profile = profile
         this.element = this.generateComponents();
         this.id = id;
+        this.title = profile.name;
     }
 
     generateComponents() : Element {
-        // TODO: Set transparency value
-
         let element = document.createElement("div");
         element.classList.add("pane");
 
@@ -44,7 +45,7 @@ export class TerminalPane {
     async initializeTerm() {
         let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme);
 
-        await terminal.launch(this.element.querySelector(".internal-term")!, this.profile.command);
+        await terminal.launch(this.element.querySelector(".internal-term")!, this.profile.uuid);
 
         this.term = terminal;
     }
@@ -78,10 +79,13 @@ export class PagePane {
     id: string
     element: Element | null = null;
 
+    title: String
+
     constructor(id: string) {
         // TODO: Implement
 
         this.id = id;
+        this.title = "";
     }
 
     async close() {

@@ -1,6 +1,6 @@
-use serde::{Serializer, Serialize};
 use serde::de::Error;
 use serde::Deserialize;
+use serde::{Serialize, Serializer};
 
 #[derive(Debug, Clone, Copy)]
 pub struct RangedInt<const MIN: u32, const MAX: u32, const DEF: u32> {
@@ -45,7 +45,6 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize
         serializer.serialize_u32(self.value)
     }
 }
-
 
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -156,7 +155,9 @@ impl<'de> serde::Deserialize<'de> for BackgroundMedia {
         }
 
         let partial_background_media = PartialBackgroundMedia::deserialize(deserializer)?;
-        if std::fs::read(&partial_background_media.location).is_ok_and(|file| infer::is_image(&file)) {
+        if std::fs::read(&partial_background_media.location)
+            .is_ok_and(|file| infer::is_image(&file))
+        {
             Ok(Self {
                 blur: partial_background_media.blur.unwrap_or_default(),
                 location: partial_background_media.location,

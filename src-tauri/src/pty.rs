@@ -1,28 +1,34 @@
-use portable_pty::{native_pty_system, CommandBuilder, PtySize};
 use portable_pty::Child;
-use std::sync::{Arc, Mutex};
+use portable_pty::{native_pty_system, CommandBuilder, PtySize};
+use remoteprocess::Process;
+use std::ffi::OsString;
+use std::sync::{Arc, Mutex, RwLock};
 
 use crate::common::errors::PtyError;
-use std::sync::mpsc::{Receiver, Sender, TryRecvError};
+use crate::configuration::deserialized::Profile;
 use tauri::{AppHandle, Manager};
 
-use crate::common::payloads::PtySendData;
+use crate::common::payloads::{PtySendData, PtyTitleChanged};
 
+#[cfg(target_os = "windows")]
+use crate::common::utils::get_leader_process_name;
 #[cfg(target_os = "windows")]
 use lazy_static::lazy_static;
 #[cfg(target_os = "windows")]
-use regex::{Regex, Captures};
-
-use crate::common::utils::get_leader_process_name;
-
+use regex::{Captures, Regex};
 
 pub struct Pty {
     pub app: Arc<AppHandle>,
     pair: portable_pty::PtyPair,
-    close_channel_sender: Sender<()>,
     child: Option<Arc<Mutex<Box<dyn Child + Send + Sync>>>>,
+    #[cfg(target_family = "unix")]
     current_leader: i32,
-    writer: Option<Box<dyn std::io::Write + Send>>
+    #[cfg(target_os = "windows")]
+    leader_programm_name: Arc<Mutex<OsString>>,
+    writer: Option<Box<dyn std::io::Write + Send>>,
+    is_running: Arc<RwLock<bool>>,
+
+    title_is_running_process: Arc<RwLock<bool>>,
 }
 
 unsafe impl Send for Pty {}
@@ -31,7 +37,7 @@ unsafe impl Sync for Pty {}
 impl Pty {
     pub fn new(
         app: Arc<AppHandle>,
-        cmd: &str,
+        profile: Profile,
         cols: u16,
         rows: u16,
         id: String,
@@ -45,19 +51,24 @@ impl Pty {
             pixel_height: 0,
         });
 
-        let (sender, receiver) = std::sync::mpsc::channel::<()>();
-
         if let Ok(pair) = pair {
             let mut pty = Pty {
                 app,
                 pair,
                 child: None,
-                close_channel_sender: sender,
+                #[cfg(target_family = "unix")]
                 current_leader: 0,
-                writer: None
+                #[cfg(target_os = "windows")]
+                leader_programm_name: Arc::new(Mutex::from(OsString::new())),
+                writer: None,
+                is_running: Arc::new(RwLock::new(true)),
+
+                title_is_running_process: Arc::new(RwLock::new(
+                    profile.terminal_options.title_is_running_process,
+                )),
             };
 
-            pty.run(cmd, id, receiver)?;
+            pty.run(profile, id)?;
 
             Ok(pty)
         } else {
@@ -67,22 +78,20 @@ impl Pty {
         }
     }
 
-    pub fn run(
-        &mut self,
-        cmd: &str,
-        id: String,
-        close_channel_receiver: Receiver<()>,
-    ) -> Result<(), PtyError> {
+    pub fn run(&mut self, profile: Profile, id: String) -> Result<(), PtyError> {
         #[cfg(target_os = "windows")]
         lazy_static! {
             static ref PROGRAMM_PARSING_REGEX: Regex = Regex::new("%([[:word:]]*)%").unwrap();
         }
 
         #[cfg(target_os = "windows")]
-        let cmd: String = PROGRAMM_PARSING_REGEX.replace_all(&cmd, |env_variable: &Captures| {
-            std::env::var(&env_variable[1]).unwrap_or_default()
-        }).into();
+        let cmd: String = PROGRAMM_PARSING_REGEX
+            .replace_all(&profile.command, |env_variable: &Captures| {
+                std::env::var(&env_variable[1]).unwrap_or_default()
+            })
+            .into();
 
+        #[allow(unused_mut)]
         let mut command_builder = CommandBuilder::from_argv(Vec::from_iter(
             cmd.split(' ').map(|s| std::ffi::OsString::from(s)),
         ));
@@ -91,6 +100,8 @@ impl Pty {
         command_builder.env("TERM", "xterm-256color");
 
         if let Ok(child) = self.pair.slave.spawn_command(command_builder) {
+            let tmp_pty_pid = child.process_id().unwrap();
+
             let child = Arc::from(Mutex::from(child));
             let child_clone = child.clone();
 
@@ -103,39 +114,69 @@ impl Pty {
                 self.child = Some(child);
                 self.writer = Some(self.pair.master.take_writer().unwrap());
 
-                std::thread::spawn(move || loop {
-                    match close_channel_receiver.try_recv() {
-                        Err(TryRecvError::Empty) => {
-                            let mut buffer = [0; 4096];
+                let is_running = self.is_running.clone();
+                let is_running_cloned = is_running.clone();
 
-                            if reader.read(&mut buffer).is_ok() {
-                                app.emit_all(
-                                    "terminalData",
-                                    PtySendData {
-                                        data: String::from_utf8(buffer.to_vec())
-                                            .unwrap_or_default(),
-                                        id: id.clone(),
-                                    },
-                                )
-                                .ok();
-                            }
-                        }
-                        _ => {
-                            break;
+                let title_is_running_process = self.title_is_running_process.clone();
+
+                let leader_programm_name = self.leader_programm_name.clone();
+
+                std::thread::spawn(move || {
+                    while *is_running.read().unwrap() {
+                        let mut buffer = [0; 4096];
+
+                        if reader.read(&mut buffer).is_ok() {
+                            app.emit_all(
+                                "terminalData",
+                                PtySendData {
+                                    data: String::from_utf8(buffer.to_vec()).unwrap_or_default(),
+                                    id: id.clone(),
+                                },
+                            )
+                            .ok();
                         }
                     }
                 });
 
-                std::thread::spawn(move || loop {
-                    if let Ok(Some(_)) = child_clone.as_ref().lock().unwrap().try_wait() {
-                        cloned_app
-                            .emit_all("terminal_closed", id_cloned.clone())
-                            .ok();
+                std::thread::spawn(move || {
+                    while *is_running_cloned.read().unwrap() {
+                        if let Ok(Some(_)) = child_clone.as_ref().lock().unwrap().try_wait() {
+                            *is_running_cloned.write().unwrap() = false;
 
-                        break;
+                            cloned_app
+                                .emit_all("terminal_closed", id_cloned.clone())
+                                .ok();
+
+                            break;
+                        } else if *title_is_running_process.read().unwrap() {
+                            let leader_process_name =
+                                get_leader_process_name(Process::new(tmp_pty_pid).unwrap());
+
+                            if let Some(new_leader_process_name) = leader_process_name {
+                                let mut leader_programm_name_locked =
+                                    leader_programm_name.lock().unwrap();
+
+                                if new_leader_process_name != *leader_programm_name_locked {
+                                    *leader_programm_name_locked = new_leader_process_name;
+
+                                    cloned_app
+                                        .emit_all(
+                                            "terminalTitleChanged",
+                                            PtyTitleChanged {
+                                                id: id_cloned.clone(),
+                                                title: leader_programm_name_locked
+                                                    .clone()
+                                                    .into_string()
+                                                    .unwrap(),
+                                            },
+                                        )
+                                        .ok();
+                                }
+                            }
+                        }
+
+                        std::thread::sleep(std::time::Duration::from_millis(10));
                     }
-
-                    std::thread::sleep(std::time::Duration::from_millis(5));
                 });
             };
 
@@ -148,11 +189,7 @@ impl Pty {
     }
 
     pub fn write(&mut self, content: String) -> Result<(), PtyError> {
-        if let Ok(()) = write!(
-            self.writer.as_mut().unwrap(),
-            "{}",
-            content
-        ) {
+        if let Ok(()) = write!(self.writer.as_mut().unwrap(), "{}", content) {
             Ok(())
         } else {
             Err(PtyError::Write(String::from(
@@ -178,54 +215,39 @@ impl Pty {
 
     pub fn close(&mut self) -> Result<(), PtyError> {
         if let Some(child) = self.child.as_deref() {
+            *self.is_running.write().unwrap() = false;
+
             if let Ok(mut child) = child.lock() {
-                if let Ok(()) = child.kill() {
-                    if let Ok(()) = self.close_channel_sender.send(()) {
-                        Ok(())
-                    } else {
-                        Err(PtyError::Kill(String::from(
-                            "process didn't terminate correctly.",
-                        )))
-                    }
-                } else if let Ok(_) = child.try_wait() {
-                    if let Ok(()) = self.close_channel_sender.send(()) {
-                        Ok(())
-                    } else {
-                        Err(PtyError::Kill(String::from(
-                            "process didn't terminate correctly.",
-                        )))
-                    }
+                if child.try_wait().is_ok_and(|x| x.is_some()) {
+                    Ok(())
+                } else if let Ok(()) = child.kill() {
+                    Ok(())
                 } else {
-                    Err(PtyError::Kill(String::from(
-                        "process didn't terminate correctly.",
-                    )))
+                    todo!()
                 }
             } else {
-                Err(PtyError::Kill(String::from(
-                    "doesn't have access to the pty.",
-                )))
+                todo!()
             }
         } else {
-            Err(PtyError::Kill(String::from(
-                "doesn't have access to the pty.",
-            )))
+            todo!()
         }
     }
 
-    pub fn get_title(&mut self) {
+    pub fn poll_for_title_change(&mut self) {
+        // TODO: Completly remove this
+
         #[cfg(target_family = "unix")]
         if let Some(process_leader_pid) = self.pair.master.process_group_leader() {
             if self.current_leader != process_leader_pid {
                 self.current_leader = process_leader_pid;
 
-                if let Ok(mut process_leader_title) = std::fs::read_to_string(format!("/proc/{}/comm", process_leader_pid)) {
+                if let Ok(mut process_leader_title) =
+                    std::fs::read_to_string(format!("/proc/{}/comm", process_leader_pid))
+                {
                     process_leader_title.pop();
                     println!("{:?}", process_leader_title);
                 }
             }
         }
-
-        #[cfg(target_os = "windows")]
-        todo!()
     }
 }

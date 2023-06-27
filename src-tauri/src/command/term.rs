@@ -1,3 +1,4 @@
+use crate::configuration::deserialized::Option;
 use crate::state::pty_manager::PtyManager;
 use std::sync::{Arc, Mutex};
 
@@ -24,17 +25,28 @@ pub async fn create_terminal(
     cols: u16,
     rows: u16,
     id: String,
-    command: String,
+    profile_uuid: String,
+    option: tauri::State<'_, Arc<Mutex<Option>>>,
 ) -> Result<(), PtyError> {
-    if let Ok(mut pty_manager) = pty_manager.lock() {
-        if let None = pty_manager.app {
-            pty_manager.app = Some(Arc::new(app));
-        }
+    if let Some(profile) = option
+        .lock()
+        .unwrap()
+        .profiles
+        .iter()
+        .find(|profile| profile.uuid == profile_uuid)
+    {
+        if let Ok(mut pty_manager) = pty_manager.lock() {
+            if let None = pty_manager.app {
+                pty_manager.app = Some(Arc::new(app));
+            }
 
-        pty_manager.create_pty(cols, rows, id, &command)?;
-        Ok(())
+            pty_manager.create_pty(cols, rows, id, profile.clone())?;
+            Ok(())
+        } else {
+            Err(PtyError::ManagerUnresponding)
+        }
     } else {
-        Err(PtyError::ManagerUnresponding)
+        todo!()
     }
 }
 
@@ -61,15 +73,6 @@ pub async fn close_terminal(
     if let Ok(mut pty_manager) = pty_manager.lock() {
         pty_manager.close(id)?;
         Ok(())
-    } else {
-        Err(PtyError::ManagerUnresponding)
-    }
-}
-
-#[tauri::command]
-pub async fn get_terminal_title(pty_manager: tauri::State<'_, Mutex<PtyManager>>, id: String,) -> Result<(), PtyError> {
-    if let Ok(mut pty_manager) = pty_manager.lock() {
-        pty_manager.get_title(id)
     } else {
         Err(PtyError::ManagerUnresponding)
     }

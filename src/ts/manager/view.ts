@@ -3,7 +3,7 @@ import { listen, Event } from '@tauri-apps/api/event'
 import { v4 as uuid } from 'uuid';
 import { invoke } from '@tauri-apps/api/tauri'
 
-import { terminalDataPayload } from "../schema/term";
+import { terminalDataPayload, terminalTitleChangedPayload } from "../schema/term";
 import { View } from "../class/views";
 import { Toaster } from "./toast";
 import { Option } from "ts/schema/option";
@@ -28,6 +28,7 @@ export class ViewsManager {
         this.tabsManager.addEventListener("tabFocused", (id) => { this.onTabFocused(id); });
 
         listen<terminalDataPayload>("terminalData", (e) => { this.onTerminalReceiveData(e); });
+        listen<terminalTitleChangedPayload>("terminalTitleChanged", (e) => { this.onTerminalTitleChanged(e); })
         listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
 
         this.toaster = new Toaster(toastTarget);
@@ -80,6 +81,14 @@ export class ViewsManager {
         })
     }
 
+    private onTerminalTitleChanged(e: Event<terminalTitleChangedPayload>) {
+        this.views.forEach((view) => {
+            if (view.getTerm(e.payload.id)) {
+                view.updatePaneTitle(e.payload.id, e.payload.title)
+            }
+        })
+    }
+
     private onTerminalPaneInput(id: string, data: string) {
         invoke("terminal_input", {content: data, id: id});
     }
@@ -103,7 +112,7 @@ export class ViewsManager {
         let profile = this.option.profiles.find(profile => profile.uuid == profileId);
 
         if (profile) {
-            view.buildNew(viewId, paneId, (id) => {this.tabsManager.closeTab(id)}, profile).then(() => {
+            view.buildNew(viewId, paneId, (id) => {this.tabsManager.closeTab(id)}, profile, (title) => {this.tabsManager.setTitle(viewId, title)}).then(() => {
                 this.views.push(view);
                 this.target.appendChild(view.element!);
     
