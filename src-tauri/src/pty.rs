@@ -1,7 +1,5 @@
 use portable_pty::Child;
 use portable_pty::{native_pty_system, CommandBuilder, PtySize};
-use remoteprocess::Process;
-use std::ffi::OsString;
 use std::sync::{Arc, Mutex, RwLock};
 
 use crate::common::errors::PtyError;
@@ -16,18 +14,21 @@ use crate::common::utils::get_leader_process_name;
 use lazy_static::lazy_static;
 #[cfg(target_os = "windows")]
 use regex::{Captures, Regex};
+#[cfg(target_os = "windows")]
+use remoteprocess::Process;
+#[cfg(target_os = "windows")]
+use std::ffi::OsString;
 
 pub struct Pty {
     pub app: Arc<AppHandle>,
-    pair: portable_pty::PtyPair,
+    pair: Arc<Mutex<portable_pty::PtyPair>>,
     child: Option<Arc<Mutex<Box<dyn Child + Send + Sync>>>>,
     #[cfg(target_family = "unix")]
-    current_leader: i32,
+    current_leader: Arc<RwLock<i32>>,
     #[cfg(target_os = "windows")]
     leader_programm_name: Arc<Mutex<OsString>>,
     writer: Option<Box<dyn std::io::Write + Send>>,
     is_running: Arc<RwLock<bool>>,
-
     title_is_running_process: Arc<RwLock<bool>>,
 }
 
@@ -44,25 +45,22 @@ impl Pty {
     ) -> Result<Self, PtyError> {
         let pty_system = native_pty_system();
 
-        let pair = pty_system.openpty(PtySize {
+        if let Ok(pair) = pty_system.openpty(PtySize {
             rows: rows,
             cols: cols,
             pixel_width: 0,
             pixel_height: 0,
-        });
-
-        if let Ok(pair) = pair {
+        }) {
             let mut pty = Pty {
                 app,
-                pair,
+                pair: Arc::new(Mutex::from(pair)),
                 child: None,
                 #[cfg(target_family = "unix")]
-                current_leader: 0,
+                current_leader: Arc::new(RwLock::new(0)),
                 #[cfg(target_os = "windows")]
                 leader_programm_name: Arc::new(Mutex::from(OsString::new())),
                 writer: None,
                 is_running: Arc::new(RwLock::new(true)),
-
                 title_is_running_process: Arc::new(RwLock::new(
                     profile.terminal_options.title_is_running_process,
                 )),
@@ -93,33 +91,44 @@ impl Pty {
 
         #[allow(unused_mut)]
         let mut command_builder = CommandBuilder::from_argv(Vec::from_iter(
-            cmd.split(' ').map(|s| std::ffi::OsString::from(s)),
+            profile
+                .command
+                .split(' ')
+                .map(|s| std::ffi::OsString::from(s)),
         ));
 
         #[cfg(target_family = "unix")]
         command_builder.env("TERM", "xterm-256color");
 
-        if let Ok(child) = self.pair.slave.spawn_command(command_builder) {
+        let locked_pair = self.pair.lock().unwrap();
+
+        if let Ok(child) = locked_pair.slave.spawn_command(command_builder) {
+            #[cfg(target_os = "windows")]
             let tmp_pty_pid = child.process_id().unwrap();
 
             let child = Arc::from(Mutex::from(child));
             let child_clone = child.clone();
 
-            if let Ok(mut reader) = self.pair.master.try_clone_reader() {
+            if let Ok(mut reader) = locked_pair.master.try_clone_reader() {
                 let app = self.app.as_ref().clone();
                 let cloned_app = app.clone();
 
                 let id_cloned = id.clone();
 
                 self.child = Some(child);
-                self.writer = Some(self.pair.master.take_writer().unwrap());
+                self.writer = Some(locked_pair.master.take_writer().unwrap());
 
                 let is_running = self.is_running.clone();
                 let is_running_cloned = is_running.clone();
 
                 let title_is_running_process = self.title_is_running_process.clone();
 
+                #[cfg(target_os = "windows")]
                 let leader_programm_name = self.leader_programm_name.clone();
+
+                let cloned_pair = self.pair.clone();
+
+                let current_process_leader_pid = self.current_leader.clone();
 
                 std::thread::spawn(move || {
                     while *is_running.read().unwrap() {
@@ -148,29 +157,71 @@ impl Pty {
                                 .ok();
 
                             break;
-                        } else if *title_is_running_process.read().unwrap() {
-                            let leader_process_name =
-                                get_leader_process_name(Process::new(tmp_pty_pid).unwrap());
+                        } else {
+                            if *title_is_running_process.read().unwrap() {
+                                #[cfg(target_os = "windows")]
+                                {
+                                    let leader_process_name =
+                                        get_leader_process_name(Process::new(tmp_pty_pid).unwrap());
 
-                            if let Some(new_leader_process_name) = leader_process_name {
-                                let mut leader_programm_name_locked =
-                                    leader_programm_name.lock().unwrap();
+                                    if let Some(new_leader_process_name) = leader_process_name {
+                                        let mut leader_programm_name_locked =
+                                            leader_programm_name.lock().unwrap();
 
-                                if new_leader_process_name != *leader_programm_name_locked {
-                                    *leader_programm_name_locked = new_leader_process_name;
+                                        if new_leader_process_name != *leader_programm_name_locked {
+                                            *leader_programm_name_locked = new_leader_process_name;
 
-                                    cloned_app
-                                        .emit_all(
-                                            "terminalTitleChanged",
-                                            PtyTitleChanged {
-                                                id: id_cloned.clone(),
-                                                title: leader_programm_name_locked
-                                                    .clone()
-                                                    .into_string()
-                                                    .unwrap(),
-                                            },
-                                        )
-                                        .ok();
+                                            cloned_app
+                                                .emit_all(
+                                                    "terminalTitleChanged",
+                                                    PtyTitleChanged {
+                                                        id: id_cloned.clone(),
+                                                        title: leader_programm_name_locked
+                                                            .clone()
+                                                            .into_string()
+                                                            .unwrap(),
+                                                    },
+                                                )
+                                                .ok();
+                                        }
+                                    }
+                                }
+
+                                #[cfg(target_family = "unix")]
+                                {
+                                    let cloned_locked_pair = cloned_pair.lock().unwrap();
+
+                                    if let Some(process_leader_pid) =
+                                        cloned_locked_pair.master.process_group_leader()
+                                    {
+                                        if process_leader_pid
+                                            != *current_process_leader_pid.read().unwrap()
+                                        {
+                                            std::thread::sleep(std::time::Duration::from_millis(5));
+
+                                            *current_process_leader_pid.write().unwrap() =
+                                                process_leader_pid;
+
+                                            if let Ok(mut process_leader_title) =
+                                                std::fs::read_to_string(format!(
+                                                    "/proc/{}/comm",
+                                                    process_leader_pid
+                                                ))
+                                            {
+                                                process_leader_title.pop();
+
+                                                cloned_app
+                                                    .emit_all(
+                                                        "terminalTitleChanged",
+                                                        PtyTitleChanged {
+                                                            id: id_cloned.clone(),
+                                                            title: process_leader_title,
+                                                        },
+                                                    )
+                                                    .ok();
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -199,12 +250,18 @@ impl Pty {
     }
 
     pub fn resize(&self, cols: u16, rows: u16) -> Result<(), PtyError> {
-        if let Ok(()) = self.pair.master.resize(portable_pty::PtySize {
-            cols,
-            rows,
-            pixel_height: 0,
-            pixel_width: 0,
-        }) {
+        if let Ok(()) = self
+            .pair
+            .lock()
+            .unwrap()
+            .master
+            .resize(portable_pty::PtySize {
+                cols,
+                rows,
+                pixel_height: 0,
+                pixel_width: 0,
+            })
+        {
             Ok(())
         } else {
             Err(PtyError::Resize(String::from(
@@ -230,24 +287,6 @@ impl Pty {
             }
         } else {
             todo!()
-        }
-    }
-
-    pub fn poll_for_title_change(&mut self) {
-        // TODO: Completly remove this
-
-        #[cfg(target_family = "unix")]
-        if let Some(process_leader_pid) = self.pair.master.process_group_leader() {
-            if self.current_leader != process_leader_pid {
-                self.current_leader = process_leader_pid;
-
-                if let Ok(mut process_leader_title) =
-                    std::fs::read_to_string(format!("/proc/{}/comm", process_leader_pid))
-                {
-                    process_leader_title.pop();
-                    println!("{:?}", process_leader_title);
-                }
-            }
         }
     }
 }
