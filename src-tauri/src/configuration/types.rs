@@ -52,6 +52,7 @@ pub enum BackgroundType {
     Opaque,
     Media(BackgroundMedia),
     Transparent,
+    #[cfg(target_family = "unix")]
     Blurred,
     #[cfg(target_os = "windows")]
     Acrylic,
@@ -83,6 +84,7 @@ impl<'de> serde::Deserialize<'de> for BackgroundType {
                 match option_value.to_lowercase().as_str() {
                     "opaque" => BackgroundType::Opaque,
                     "transparent" => BackgroundType::Transparent,
+                    #[cfg(target_family = "unix")]
                     "blurred" => BackgroundType::Blurred,
                     #[cfg(target_os = "windows")]
                     "acrylic" => BackgroundType::Acrylic,

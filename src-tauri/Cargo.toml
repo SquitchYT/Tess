@@ -28,6 +28,7 @@ remoteprocess = "0.4.11"
 [target.'cfg(windows)'.dependencies]
 lazy_static = "1.4.0"
 regex = "1.8.4"
+window-vibrancy = "0.3.2"
 
 [features]
 default = ["custom-protocol"]
