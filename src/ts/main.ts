@@ -27,16 +27,14 @@ invoke<Option>("get_configuration").then((option) => {
     document.head.appendChild(stylesheet);
 
 
-
     let viewsManager = new ViewsManager(document.querySelector(".views")!, document.querySelector(".tabs")!, document.querySelector(".toasts")!, option);
-
     viewsManager.openProfile(option.defaultProfile.uuid, true)
-
 
     document.querySelector(".open")!.addEventListener("click", () => {
         viewsManager.openProfile(option.defaultProfile.uuid, true);
     })
     
+
     listen<string>("global_config_updated", (e) => {
         console.log("Updated config:", e.payload);
     });

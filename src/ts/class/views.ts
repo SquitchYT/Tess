@@ -58,8 +58,6 @@ export class View {
         if (this.panes.length == 0) {
             this.closedEvent!(this.id!);
         }
-
-        // TODO: Implement
     }
 
     writeToTerm(termId: string, data: string) {

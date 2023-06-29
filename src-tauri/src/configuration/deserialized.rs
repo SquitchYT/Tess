@@ -338,7 +338,7 @@ impl Serialize for ShortcutAction {
 #[serde(rename_all = "camelCase")]
 pub struct Profile {
     // TODO: Add Icon
-    // TODO: Add background_media
+
     name: String,
     pub terminal_options: TerminalOption,
     theme: TerminalTheme,

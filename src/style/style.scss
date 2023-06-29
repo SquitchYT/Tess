@@ -67,5 +67,4 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     position: absolute;
-    will-change: transform; // Require to force GPU acceleration to improve blur performance.
 }
