@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use crate::configuration::deserialized::Profile;
 use crate::pty::Pty;
 
 use crate::common::errors::PtyError;
@@ -23,10 +24,10 @@ impl PtyManager {
         cols: u16,
         rows: u16,
         id: String,
-        cmd: &str,
+        profile: Profile,
     ) -> Result<(), PtyError> {
         if let Some(app_ref) = self.app.as_ref() {
-            let pty = Pty::new(app_ref.clone(), cmd, cols, rows, id.clone())?;
+            let pty = Pty::new(app_ref.clone(), profile, cols, rows, id.clone())?;
 
             self.ptys.insert(id, pty);
 
@@ -60,17 +61,10 @@ impl PtyManager {
 
     pub fn close(&mut self, id: String) -> Result<(), PtyError> {
         self.ptys
-            .get_mut(&id)
+            .remove(&id)
             .ok_or(PtyError::Kill(String::from(
                 "Unable to access to the terminal.",
             )))?
-            .close()?;
-        Ok(())
-    }
-
-    pub fn get_title(&mut self, id: String) -> Result<(), PtyError> {
-        self.ptys.get_mut(&id).unwrap().get_title();
-
-        Ok(())
+            .close()
     }
 }

@@ -63,7 +63,8 @@
         "resizable": true,
         "title": "Tess",
         "width": 1280,
-        "transparent": true
+        "transparent": true,
+        "decorations": false
       }
     ]
   }
