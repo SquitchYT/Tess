@@ -46,6 +46,7 @@ body {
     background: var(--app-background);
 }
 
+
 ::-webkit-scrollbar {
     height: 4px;
     width: 4px;
@@ -54,4 +55,16 @@ body {
 ::-webkit-scrollbar-thumb {
     background:rgba(212, 212, 212, 0.14);
     border-radius: 6px;
+}
+
+
+.background-image {
+    height: 100%;
+    width: 100%;
+    z-index: -4;
+    object-fit: cover;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
 }

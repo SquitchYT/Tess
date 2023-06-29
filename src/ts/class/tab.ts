@@ -48,8 +48,6 @@ export class Tab {
     }
 
     private generateComponents() : HTMLElement {
-        // TODO: Finish implementing this
-
         let tab = document.createElement("div");
 
         let title = document.createElement("span");

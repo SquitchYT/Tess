@@ -7,13 +7,14 @@ use notify::Watcher;
 use tauri::Manager;
 use tess::command::{option::*, term::*, window::*};
 use tess::configuration::deserialized::Option;
+use tess::configuration::types::BackgroundType;
 use tess::logger::Logger;
 
 use std::sync::{Arc, Mutex};
 
 fn main() {
     let start = std::time::Instant::now();
-    let logger = Arc::from(Logger {});
+    let logger = Logger{};
 
     #[cfg(target_family = "unix")]
     let config_file = std::fs::read_to_string(format!(
@@ -25,7 +26,6 @@ fn main() {
         "{}/Tess/config.json",
         dirs_next::config_dir().unwrap_or_default().display()
     ));
-
 
     let option = Arc::from(Mutex::from(if let Ok(config_file) = config_file {
         // TODO: Log error
@@ -51,11 +51,40 @@ fn main() {
 
     let app_handle = app.as_ref().unwrap().app_handle();
 
+    match &option.lock().unwrap().background {
+        BackgroundType::Media(media) => {
+            app_handle.fs_scope().allow_file(&media.location);
+        }
+        #[cfg(target_family = "unix")]
+        BackgroundType::Blurred => {
+            todo!()
+        }
+        #[cfg(target_os = "windows")]
+        BackgroundType::Mica => {
+            if let Err(_) = window_vibrancy::apply_mica(app_handle.get_window("main").unwrap()) {
+                logger.warn("Cannot apply mica background effect. Switching back to transparent background");
+            }
+        }
+        #[cfg(target_os = "windows")]
+        BackgroundType::Acrylic => {
+            if let Err(_) = window_vibrancy::apply_acrylic(app_handle.get_window("main").unwrap(), None) {
+                logger.warn("Cannot apply acrylic background effect. Switching back to transparent background");
+            }
+        }
+        #[cfg(target_os = "macos")]
+        BackgroundType::Vibrancy => {
+            todo!()
+        }
+        _ => {}
+    }
+
+    app_handle.get_window("main").unwrap().set_decorations(true);
+
+
     app_handle
         .fs_scope()
         .allow_file(&option.lock().unwrap().app_theme);
 
-    let logger_clone = logger.clone();
 
     let mut watcher =
         notify::recommended_watcher(move |res: Result<notify::Event, notify::Error>| {
@@ -77,7 +106,7 @@ fn main() {
 
                             *reff = option;
 
-                            logger_clone.info("Refreshing config...");
+                            logger.info("Refreshing config...");
 
                             app_handle.emit_all("global_config_updated", format!("{:?}", reff));
                         }

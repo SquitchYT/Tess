@@ -8,17 +8,21 @@ import { TerminalOptions, TerminalTheme } from "ts/schema/option";
 export class Terminal {
     id: string;
     term: Xterm;
-    fitAddon: FitAddon
+    fitAddon: FitAddon;
+
 
     constructor(id: string, options: TerminalOptions, theme: TerminalTheme) {
         // TODO: Finish
         // TODO: Load all addons
 
+        theme = Object.assign({}, theme);
+        theme.background = "transparent";
         
         this.id = id;
         this.term = new Xterm({
             allowProposedApi: true,
             fontFamily: "Fira Code, monospace",
+            allowTransparency: true,
             fontSize: options.fontSize,
             drawBoldTextInBrightColors: options.drawBoldInBright,
             cursorBlink: options.cursorBlink,
@@ -33,16 +37,6 @@ export class Terminal {
 
         this.fitAddon = new FitAddon();
 
-        addEventListener("resize", () => {
-            this.fitAddon.fit();
-            invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id}).catch((error) => {
-                // TODO: Send notification with error message
-
-                console.error(error);
-            });
-        })
-
-
         this.term.attachCustomKeyEventHandler((e) => {
             if (e.key == "F10") {
                 invoke("terminal_input", {content: "\x1b[21~", id: id});
@@ -54,8 +48,17 @@ export class Terminal {
         })
     }
 
-    async launch(target: HTMLElement, command: string) {
-        await invoke("create_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id, command: command})
+    async launch(target: HTMLElement, profile_id: string) {
+        target.addEventListener("resize", () => {
+            this.fitAddon.fit();
+            invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id}).catch((error) => {
+                // TODO: Send notification with error message
+
+                console.error(error);
+            });
+        })
+
+        await invoke("create_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id, profileUuid: profile_id})
 
         this.term.open(target);
 

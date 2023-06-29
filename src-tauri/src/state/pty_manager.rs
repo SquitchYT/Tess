@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use crate::configuration::deserialized::Profile;
 use crate::pty::Pty;
 
 use crate::common::errors::PtyError;
@@ -23,10 +24,10 @@ impl PtyManager {
         cols: u16,
         rows: u16,
         id: String,
-        cmd: &str,
+        profile: Profile,
     ) -> Result<(), PtyError> {
         if let Some(app_ref) = self.app.as_ref() {
-            let pty = Pty::new(app_ref.clone(), cmd, cols, rows, id.clone())?;
+            let pty = Pty::new(app_ref.clone(), profile, cols, rows, id.clone())?;
 
             self.ptys.insert(id, pty);
 
@@ -38,33 +39,32 @@ impl PtyManager {
         }
     }
 
-    pub fn write(&mut self, id: String, content: String) -> Result<(), PtyError> {
+    pub fn write(&mut self, id: &str, content: String) -> Result<(), PtyError> {
         self.ptys
-            .get_mut(&id)
-            .ok_or(PtyError::Write(String::from(
+            .get_mut(id)
+            .ok_or_else(|| PtyError::Write(String::from(
                 "Unable to access to the terminal.",
             )))?
             .write(content)?;
         Ok(())
     }
 
-    pub fn resize(&mut self, id: String, cols: u16, rows: u16) -> Result<(), PtyError> {
+    pub fn resize(&mut self, id: &str, cols: u16, rows: u16) -> Result<(), PtyError> {
         self.ptys
-            .get_mut(&id)
-            .ok_or(PtyError::Resize(String::from(
+            .get_mut(id)
+            .ok_or_else(|| PtyError::Resize(String::from(
                 "Unable to access to the terminal.",
             )))?
             .resize(cols, rows)?;
         Ok(())
     }
 
-    pub fn close(&mut self, id: String) -> Result<(), PtyError> {
+    pub fn close(&mut self, id: &str) -> Result<(), PtyError> {
         self.ptys
-            .get_mut(&id)
-            .ok_or(PtyError::Kill(String::from(
+            .remove(id)
+            .ok_or_else(|| PtyError::Kill(String::from(
                 "Unable to access to the terminal.",
             )))?
-            .close()?;
-        Ok(())
+            .close()
     }
 }

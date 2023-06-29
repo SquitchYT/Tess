@@ -1,6 +1,6 @@
-use serde::{Serializer, Serialize};
 use serde::de::Error;
 use serde::Deserialize;
+use serde::{Serialize, Serializer};
 
 #[derive(Debug, Clone, Copy)]
 pub struct RangedInt<const MIN: u32, const MAX: u32, const DEF: u32> {
@@ -46,13 +46,13 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize
     }
 }
 
-
 #[derive(Debug, Serialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub enum BackgroundType {
     Opaque,
     Media(BackgroundMedia),
     Transparent,
+    #[cfg(target_family = "unix")]
     Blurred,
     #[cfg(target_os = "windows")]
     Acrylic,
@@ -84,6 +84,7 @@ impl<'de> serde::Deserialize<'de> for BackgroundType {
                 match option_value.to_lowercase().as_str() {
                     "opaque" => BackgroundType::Opaque,
                     "transparent" => BackgroundType::Transparent,
+                    #[cfg(target_family = "unix")]
                     "blurred" => BackgroundType::Blurred,
                     #[cfg(target_os = "windows")]
                     "acrylic" => BackgroundType::Acrylic,
@@ -127,13 +128,13 @@ impl Default for CursorType {
 #[derive(Debug, Serialize, Clone)]
 pub struct BackgroundMedia {
     blur: RangedInt<0, 20, 0>,
-    location: String,
+    pub location: String,
 }
 
 impl BackgroundMedia {
-    fn deserialize_from_string(value: String) -> Option<Self> {
+    pub fn deserialize_from_string(value: String) -> Option<Self> {
         if let Ok(file) = std::fs::read(&value) {
-            if infer::is_image(&file) || infer::is_video(&file) {
+            if infer::is_image(&file) {
                 Some(Self {
                     location: value,
                     blur: RangedInt::default(),
@@ -156,18 +157,15 @@ impl<'de> serde::Deserialize<'de> for BackgroundMedia {
         }
 
         let partial_background_media = PartialBackgroundMedia::deserialize(deserializer)?;
-
-        if let Ok(file) = std::fs::read(&partial_background_media.location) {
-            if infer::is_image(&file) || infer::is_video(&file) {
-                Ok(Self {
-                    blur: partial_background_media.blur.unwrap_or_default(),
-                    location: partial_background_media.location,
-                })
-            } else {
-                Err(D::Error::custom("Format not supported"))
-            }
+        if std::fs::read(&partial_background_media.location)
+            .is_ok_and(|file| infer::is_image(&file))
+        {
+            Ok(Self {
+                blur: partial_background_media.blur.unwrap_or_default(),
+                location: partial_background_media.location,
+            })
         } else {
-            Err(D::Error::custom("Cannot read file"))
+            Err(D::Error::custom("File not found or format not supported"))
         }
     }
 }
