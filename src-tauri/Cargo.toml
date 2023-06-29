@@ -1,6 +1,6 @@
 [package]
 name = "tess"
-version = "0.7.0-alpha.4"
+version = "0.7.0-alpha.5"
 description = "Fast. Lightweight. Famous. Terminal for the new era."
 authors = ["Squitch"]
 repository = "https://github.com/SquitchYT/Tess"

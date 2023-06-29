@@ -196,16 +196,16 @@ impl<'de> serde::Deserialize<'de> for Option {
         Ok(Option {
             theme: partial_option.theme.clone(),
 
-            terminal_theme: terminal_theme,
-            app_theme: app_theme,
+            terminal_theme,
+            app_theme,
             background: partial_option.background,
             custom_titlebar: partial_option.custom_titlebar,
             terminal: partial_option.terminal,
             profiles: profiles.clone(),
             close_confirmation: partial_option.close_confirmation,
             background_transparency: partial_option.background_transparency,
-            shortcuts: shortcuts,
-            macros: macros,
+            shortcuts,
+            macros,
             default_profile: profiles
                 .iter()
                 .find(|&profile| profile.uuid == partial_option.default_profile)

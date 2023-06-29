@@ -11,7 +11,7 @@ pub async fn terminal_input(
     content: String,
 ) -> Result<(), PtyError> {
     if let Ok(mut pty_manager) = pty_manager.lock() {
-        pty_manager.write(id, content)?;
+        pty_manager.write(&id, content)?;
         Ok(())
     } else {
         Err(PtyError::ManagerUnresponding)
@@ -36,7 +36,7 @@ pub async fn create_terminal(
         .find(|profile| profile.uuid == profile_uuid)
     {
         if let Ok(mut pty_manager) = pty_manager.lock() {
-            if let None = pty_manager.app {
+            if pty_manager.app.is_none() {
                 pty_manager.app = Some(Arc::new(app));
             }
 
@@ -58,7 +58,7 @@ pub async fn resize_terminal(
     rows: u16,
 ) -> Result<(), PtyError> {
     if let Ok(mut pty_manager) = pty_manager.lock() {
-        pty_manager.resize(id, cols, rows)?;
+        pty_manager.resize(&id, cols, rows)?;
         Ok(())
     } else {
         Err(PtyError::ManagerUnresponding)
@@ -71,7 +71,7 @@ pub async fn close_terminal(
     id: String,
 ) -> Result<(), PtyError> {
     if let Ok(mut pty_manager) = pty_manager.lock() {
-        pty_manager.close(id)?;
+        pty_manager.close(&id)?;
         Ok(())
     } else {
         Err(PtyError::ManagerUnresponding)
