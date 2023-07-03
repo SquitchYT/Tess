@@ -21,6 +21,8 @@ export class TabsManager {
 
     private requestTabClosing: (id: string) => Promise<void>;
 
+    private tabWithClosingRequest: Tab[] = [];
+
     // Max Index is tabs.lenght
 
 
@@ -76,19 +78,23 @@ export class TabsManager {
     closeTab(uuid: string) {
         // TODO: Add confirmation
 
-        this.requestTabClosing(uuid).then(() => {
-            let tmp = this.tabs.find(tab => tab.id === uuid)
-            if (tmp) {
-                const index = this.tabs.indexOf(tmp);
+        let tab = this.tabs.find(tab => tab.id === uuid);
+
+        if (tab && !this.tabWithClosingRequest.includes(tab)) {
+            this.tabWithClosingRequest.push(tab);
+
+            this.requestTabClosing(uuid).then(() => {
+                const index = this.tabs.indexOf(tab!);
                 if (index > -1) { this.tabs.splice(index, 1); }
 
-                tmp.element.style.animation = "tab-closed 150ms forwards";
+                tab!.element.style.animation = "tab-closed 150ms forwards";
 
                 setTimeout(() => {
-                    tmp!.element.remove();
+                    tab!.element.remove();
 
+                    let closingTabIndex = tab!.index;
                     this.tabs.forEach((tab) => {
-                        if (tab.index > tmp!.index) {
+                        if (tab.index > closingTabIndex) {
                             tab.index -= 1;
                             tab.element.style.order = String(tab.index);
                         }
@@ -102,24 +108,26 @@ export class TabsManager {
                         this.select(this.selectedTab!.index + 1);
                     }
                 }
-            }
-        });
+            }).finally(() => {
+                this.tabWithClosingRequest.splice(this.tabWithClosingRequest.indexOf(tab!), 1);
+            });
+        }
     }
 
     selectNext() {
-        // TODO: Implement
+        this.select(this.selectedTab!.index + 1 > this.tabs.length ? 1 : this.selectedTab!.index + 1);
     }
 
     selectPrevious() {
-        // TODO: Implement
+        this.select(this.selectedTab!.index - 1 < 1 ? this.tabs.length : this.selectedTab!.index - 1);
     }
 
     selectFirst() {
-        // TODO: Implement
+        this.select(1);
     }
 
     selectLast() {
-        // TODO: Implement
+        this.select(this.tabs.length);
     }
 
     select(uuid: string) : void;

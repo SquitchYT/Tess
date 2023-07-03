@@ -8,10 +8,12 @@ export class View {
     id: string | undefined;
     element: HTMLElement | undefined;
 
-    panes: (TerminalPane|PagePane)[] = []
+    panes: (TerminalPane|PagePane)[] = [];
 
     closedEvent: ((id: string) => void) | undefined;
     focusedPaneTitleChangedEvent: ((title: string) => void) | undefined;
+
+    focusedPane: TerminalPane | PagePane | undefined = undefined;
 
 
     async buildNew(viewId: string, paneId: string, closedEvent: ((id: string) => void), profile: Profile, focusedPaneTitleChangedEvent: ((title: string) => void)) {
@@ -25,6 +27,8 @@ export class View {
 
         this.panes.push(pane)
         this.element.appendChild(pane.element);
+
+        this.focusedPane = pane;
     }
 
     private generateComponents() : HTMLElement {

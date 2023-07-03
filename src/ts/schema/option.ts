@@ -9,10 +9,23 @@ export type Option = {
     background: "transparent" | "opaque" | "blurred" | "mica" | "acrylic" | "vibrancy" | {media: BackgroundMedia}
 }
 
-type Shortcut = {
-    action: string | [string, any],
+export type Shortcut = {
+    action: ShortcutAction,
     shortcut: string
 }
+
+export type ShortcutAction = "copy" 
+                           | "paste"
+                           | "openDefaultProfile"
+                           | "closeFocusedTab"
+                           | "closeAllTabs"
+                           | "focusNextTab"
+                           | "focusPrevTab"
+                           | "focusFirstTab"
+                           | "focusLastTab"
+                           | ["focusTab", number]
+                           | ["openProfile", string]
+                           | ["executeMacro", string]
 
 type Macro = {
     content: string,
