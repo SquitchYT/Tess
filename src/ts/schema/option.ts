@@ -73,3 +73,10 @@ export type BackgroundMedia = {
     blur: number,
     location: string
 }
+
+export type CloseConfirmation = {
+    tab: boolean,
+    window: boolean,
+    app: boolean,
+    excludedProcess: string[]
+}

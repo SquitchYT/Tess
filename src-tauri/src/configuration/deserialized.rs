@@ -17,10 +17,10 @@ pub struct Option {
     pub custom_titlebar: bool,
     pub profiles: Vec<Profile>,
     pub terminal: TerminalOption,
-    pub close_confirmation: bool,
     pub shortcuts: Vec<Shortcut>,
     pub macros: Vec<Macro>,
     pub default_profile: Profile,
+    pub close_confirmation: CloseConfirmation,
 
     #[serde(skip_serializing)]
     theme: String,
@@ -37,11 +37,12 @@ impl Default for Option {
             custom_titlebar: true, // TODO: Set false on linux
             profiles: vec![default_profile(uuid.clone())],
             terminal: TerminalOption::default(),
-            close_confirmation: true,
             background_transparency: RangedInt::default(),
             shortcuts: default_shortcuts(),
             macros: Vec::default(),
             default_profile: default_profile(uuid),
+
+            close_confirmation: CloseConfirmation::default(),
 
             theme: String::default(),
         }
@@ -202,7 +203,6 @@ impl<'de> serde::Deserialize<'de> for Option {
             custom_titlebar: partial_option.custom_titlebar,
             terminal: partial_option.terminal,
             profiles: profiles.clone(),
-            close_confirmation: partial_option.close_confirmation,
             background_transparency: partial_option.background_transparency,
             shortcuts,
             macros,
@@ -211,6 +211,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 .find(|&profile| profile.uuid == partial_option.default_profile)
                 .unwrap_or(&profiles[0])
                 .clone(),
+            close_confirmation: partial_option.close_confirmation
         })
     }
 }
@@ -513,6 +514,75 @@ impl<'de> Deserialize<'de> for TerminalTheme {
         })
     }
 }
+
+
+#[derive(Debug, Clone, Serialize)]
+pub struct CloseConfirmation {
+    pub tab: bool,
+    pub window: bool,
+    pub app: bool,
+    pub excluded_process: Vec<String>
+}
+
+impl<'de> Deserialize<'de> for CloseConfirmation {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        #[derive(Deserialize)]
+        struct PartialCloseConfirmation {
+            tab: std::option::Option<bool>,
+            window: std::option::Option<bool>,
+            app: std::option::Option<bool>,
+            excluded_process: std::option::Option<Vec<String>>,
+        }
+
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum Representation {
+            Simple(bool),
+            Complex(PartialCloseConfirmation)
+        }
+
+
+        match Representation::deserialize(deserializer)? {
+            Representation::Simple(close_confirmation_toggled) => {
+                Ok(CloseConfirmation {
+                    tab: close_confirmation_toggled,
+                    window: close_confirmation_toggled,
+                    app: close_confirmation_toggled,
+                    #[cfg(target_family = "unix")]
+                    excluded_process: vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()],
+                    #[cfg(target_os = "windows")]
+                    excluded_process: vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
+                })
+            },
+            Representation::Complex(partial_close_confirmation) =>  {
+                Ok(CloseConfirmation {
+                    tab: partial_close_confirmation.tab.unwrap_or(true),
+                    window: partial_close_confirmation.window.unwrap_or(true),
+                    app: partial_close_confirmation.app.unwrap_or(true),
+                    #[cfg(target_family = "unix")]
+                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or(vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()]),
+                    #[cfg(target_os = "windows")]
+                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or(vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()])
+                })
+            }
+        }
+    }
+}
+
+impl Default for CloseConfirmation {
+    fn default() -> Self {
+        Self {
+            tab: true,
+            window: true,
+            app: true,
+            #[cfg(target_family = "unix")]
+            excluded_process: vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()],
+            #[cfg(target_os = "windows")]
+            excluded_process: vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
+        }
+    }
+}
+
 
 fn default_to_true() -> bool {
     true

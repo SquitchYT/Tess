@@ -7,6 +7,8 @@ import { terminalDataPayload, terminalTitleChangedPayload } from "../schema/term
 import { View } from "../class/views";
 import { Toaster } from "./toast";
 import { Option } from "ts/schema/option";
+import { PopupManager } from "./popup";
+import { PopupBuilder, PopupButton } from "../class/popup";
 
 
 export class ViewsManager {
@@ -14,6 +16,7 @@ export class ViewsManager {
 
     private target: Element;
     private tabsManager: TabsManager;
+    private popupManager: PopupManager;
 
     option: Option;
 
@@ -26,10 +29,23 @@ export class ViewsManager {
         this.tabsManager = new TabsManager(tabsTarget, async (id) => { await this.onTabRequestClose(id); });
 
         this.tabsManager.addEventListener("tabFocused", (id) => { this.onTabFocused(id); });
+        this.popupManager = new PopupManager();
 
         listen<terminalDataPayload>("terminalData", (e) => { this.onTerminalReceiveData(e); });
         listen<terminalTitleChangedPayload>("terminalTitleChanged", (e) => { this.onTerminalTitleChanged(e); })
         listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
+
+        listen("request_window_closing", async (_) => {
+            if (this.views.length == 1) {
+                this.tabsManager.closeTab(this.views[0].id!)
+            } else {
+                let confirmButton = new PopupButton("confirm", "validate");
+                let cancelButton = new PopupButton("cancel", "dismiss");
+    
+                let popupResult = await this.popupManager.sendPopup(new PopupBuilder(`Confirm close of ${this.views.length} tabs`).withMessage(`Are you sure to close this window?`).withButtons(confirmButton, cancelButton));
+                if (popupResult.action == "confirm") invoke("close_window");
+            }
+        })
 
         this.toaster = new Toaster(toastTarget);
 
