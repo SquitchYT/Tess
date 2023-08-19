@@ -1,5 +1,6 @@
 use crate::configuration::deserialized::ShortcutAction;
 use crate::configuration::deserialized::TerminalOption;
+use crate::configuration::deserialized::CloseConfirmation;
 use crate::configuration::types::CursorType;
 use crate::configuration::types::RangedInt;
 use crate::configuration::types::{BackgroundMedia, BackgroundType};
@@ -26,9 +27,8 @@ pub struct PartialOption {
     #[serde(default)]
     pub macros: std::option::Option<Vec<PartialMacro>>,
 
-    // TODO: Save individually for each pane or only in global ?
-    #[serde(default = "default_to_true")]
-    pub close_confirmation: bool,
+    #[serde(default)]
+    pub close_confirmation: CloseConfirmation,
 
     #[serde(default)]
     pub default_profile: String,
@@ -42,11 +42,11 @@ impl Default for PartialOption {
             custom_titlebar: true, // TODO: Set false on linux
             profiles: Vec::default(),
             terminal: TerminalOption::default(),
-            close_confirmation: true,
             background_transparency: RangedInt::default(),
             shortcuts: Some(Vec::default()),
             macros: Some(Vec::default()),
             default_profile: String::new(),
+            close_confirmation: CloseConfirmation::default()
         }
     }
 }
