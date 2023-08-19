@@ -11,7 +11,9 @@
   },
   "tauri": {
     "allowlist": {
-      "all": true,
+      "clipboard": {
+        "all": true
+      },
       "protocol": {
         "asset": true,
         "assetScope": ["**"]

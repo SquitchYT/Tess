@@ -6,8 +6,12 @@ import { invoke } from '@tauri-apps/api/tauri'
 import { terminalDataPayload, terminalTitleChangedPayload } from "../schema/term";
 import { View } from "../class/views";
 import { Toaster } from "./toast";
-import { Option } from "ts/schema/option";
+
+import { Option, ShortcutAction } from "ts/schema/option";
 import { PopupManager } from "./popup";
+import { TerminalPane } from "ts/class/panes";
+import { ShortcutsManager } from "./shortcuts";
+import { clipboard } from "@tauri-apps/api";
 import { PopupBuilder, PopupButton } from "../class/popup";
 
 
@@ -15,8 +19,10 @@ export class ViewsManager {
     // TODO: Finish
 
     private target: Element;
+
     private tabsManager: TabsManager;
     private popupManager: PopupManager;
+    private shortcutsManager: ShortcutsManager
 
     option: Option;
 
@@ -24,12 +30,16 @@ export class ViewsManager {
 
     private toaster: Toaster;
 
+    private focusedView: View | undefined;
+
     constructor(target: Element, tabsTarget: Element, toastTarget: Element, option: Option) {
         this.target = target;
-        this.tabsManager = new TabsManager(tabsTarget, async (id) => { await this.onTabRequestClose(id); });
 
+        this.tabsManager = new TabsManager(tabsTarget, async (id) => { await this.onTabRequestClose(id); });
         this.tabsManager.addEventListener("tabFocused", (id) => { this.onTabFocused(id); });
         this.popupManager = new PopupManager();
+
+        this.shortcutsManager = new ShortcutsManager(option.shortcuts, (action) => { this.onShortcutExecuted(action) });
 
         listen<terminalDataPayload>("terminalData", (e) => { this.onTerminalReceiveData(e); });
         listen<terminalTitleChangedPayload>("terminalTitleChanged", (e) => { this.onTerminalTitleChanged(e); })
@@ -56,6 +66,8 @@ export class ViewsManager {
         let viewToFocus = this.views.find((view) => view.id! == id);
 
         if (viewToFocus) {
+            this.focusedView = viewToFocus;
+
             viewToFocus.focus();
 
             this.views.forEach((view) => {
@@ -119,6 +131,62 @@ export class ViewsManager {
         });
     }
 
+    private async onShortcutExecuted(action: ShortcutAction) {
+        if (Array.isArray(action)) {
+            switch (action[0]) {
+                case "focusTab":
+                    this.tabsManager.select(action[1]);
+                    break;
+                case "openProfile":
+                    this.openProfile(action[1], true);
+                    break;
+                case "executeMacro":
+                    let macro = this.option.macros.find(macro => macro.uuid == action[1]);
+                    if (macro) {
+                        invoke("terminal_input", {content: macro.content, id: this.focusedView!.focusedPane!.id});
+                    }
+                    break;
+                default:
+                    this.toaster.toast("Shortcut error", action[0] + " is not yet implemented");
+            }
+        } else {
+            switch (action) {
+                case "copy":
+                    clipboard.writeText((this.focusedView!.focusedPane! as TerminalPane).term!.term.getSelection());
+                    break;
+                case "paste":
+                    let clipboardContent = await clipboard.readText();
+                    if (clipboardContent) {
+                        invoke("terminal_input", {content: clipboardContent, id: this.focusedView!.focusedPane!.id});
+                    }
+                    break;
+                case "openDefaultProfile":
+                    this.openProfile(this.option.defaultProfile.uuid, true);
+                    break;
+                case "closeFocusedTab":
+                    this.tabsManager.closeTab(this.tabsManager.getSelected().id);
+                    break;
+                case "focusNextTab":
+                    this.tabsManager.selectNext();
+                    break;
+                case "focusPrevTab":
+                    this.tabsManager.selectPrevious();
+                    break;
+                case "focusFirstTab":
+                    this.tabsManager.selectFirst();
+                    break;
+                case "focusLastTab":
+                    this.tabsManager.selectLast();
+                    break;
+                case 'closeAllTabs':
+                    invoke("close_window");
+                    break;
+                default:
+                    this.toaster.toast("Shortcut error", action + " is not yet implemented");
+            }
+        }
+    }
+
     openProfile(profileId: string, focus: boolean) {
         let viewId = uuid();
         let paneId = uuid();
@@ -137,6 +205,9 @@ export class ViewsManager {
                 });
     
                 this.tabsManager.openNewTab(profile!.name, viewId);
+
+                let term = (view.panes[0] as TerminalPane).term!.term;
+                term.attachCustomKeyEventHandler((e) => { return this.shortcutsManager.onKeyPress(e, term); });
     
                 if (focus) { this.tabsManager.select(viewId); }
             }).catch((err) => {

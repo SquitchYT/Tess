@@ -270,7 +270,7 @@ impl Default for TerminalOption {
     }
 }
 
-#[derive(Deserialize, Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Clone)]
 pub struct Macro {
     pub content: String,
     pub uuid: String,
@@ -286,9 +286,7 @@ pub struct Shortcut {
 pub enum ShortcutAction {
     CloseFocusedTab,
     CloseAllTabs,
-    OpenStartProfile,
-    OpenProfile(String),
-    ExecuteMacro(String),
+    OpenDefaultProfile,
     Copy,
     Paste,
     FocusFirstTab,
@@ -296,6 +294,8 @@ pub enum ShortcutAction {
     FocusNextTab,
     FocusPrevTab,
     FocusTab(usize),
+    OpenProfile(String),
+    ExecuteMacro(String),
 }
 
 impl Serialize for ShortcutAction {
@@ -306,7 +306,7 @@ impl Serialize for ShortcutAction {
         match self {
             Self::CloseFocusedTab => serializer.serialize_str("closeFocusedTab"),
             Self::CloseAllTabs => serializer.serialize_str("closeAllTabs"),
-            Self::OpenStartProfile => serializer.serialize_str("openDefaultProfile"),
+            Self::OpenDefaultProfile => serializer.serialize_str("openDefaultProfile"),
             Self::Copy => serializer.serialize_str("copy"),
             Self::Paste => serializer.serialize_str("paste"),
             Self::FocusFirstTab => serializer.serialize_str("focusFirstTab"),
@@ -315,20 +315,20 @@ impl Serialize for ShortcutAction {
             Self::FocusPrevTab => serializer.serialize_str("focusPrevTab"),
             Self::OpenProfile(value) => {
                 let mut a = serializer.serialize_seq(Some(2))?;
-                a.serialize_element("openProfile");
-                a.serialize_element(value);
+                a.serialize_element("openProfile")?;
+                a.serialize_element(value)?;
                 a.end()
             }
             Self::ExecuteMacro(value) => {
                 let mut a = serializer.serialize_seq(Some(2))?;
-                a.serialize_element("executeMacro");
-                a.serialize_element(value);
+                a.serialize_element("executeMacro")?;
+                a.serialize_element(value)?;
                 a.end()
             }
             Self::FocusTab(value) => {
                 let mut a = serializer.serialize_seq(Some(2))?;
-                a.serialize_element("focusTab");
-                a.serialize_element(value);
+                a.serialize_element("focusTab")?;
+                a.serialize_element(value)?;
                 a.end()
             }
         }
@@ -615,7 +615,7 @@ fn default_shortcuts() -> Vec<Shortcut> {
         },
         Shortcut {
             shortcut: String::from("CTRL+T"),
-            action: ShortcutAction::OpenStartProfile,
+            action: ShortcutAction::OpenDefaultProfile,
         },
         Shortcut {
             shortcut: String::from("CTRL+W"),
