@@ -4,7 +4,7 @@
 )]
 
 use notify::Watcher;
-use tauri::Manager;
+use tauri::{Manager, WindowEvent};
 use tess::command::{option::*, term::*, window::*};
 use tess::configuration::deserialized::Option;
 use tess::configuration::types::BackgroundType;
@@ -45,6 +45,8 @@ fn main() {
             resize_terminal,
             close_terminal,
             close_window,
+            check_close_availability,
+            get_pty_title,
             get_configuration
         ])
         .build(tauri::generate_context!());
@@ -134,7 +136,16 @@ fn main() {
 
             #[cfg(debug_assertions)]
             app.get_window("main").unwrap().open_devtools();
-        }
+        },
+        tauri::RunEvent::WindowEvent { label, event, .. } => {
+            if let WindowEvent::CloseRequested{api, ..} = event {
+                if option.lock().unwrap().close_confirmation.window {
+                    app.get_window(&label).unwrap().emit("request_window_closing", "");
+
+                    api.prevent_close()
+                }
+            };
+        },
         _ => (),
     })
 }

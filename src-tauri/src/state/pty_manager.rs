@@ -67,4 +67,8 @@ impl PtyManager {
             )))?
             .close()
     }
+
+    pub fn get_running_process(&self, id: &str) -> Result<String, PtyError> {
+        self.ptys.get(id).ok_or_else(|| PtyError::CloseableStatus(String::from("Unable to access to the terminal.")))?.running_process()
+    }
 }

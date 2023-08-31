@@ -1,6 +1,8 @@
 import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
 import { Terminal } from "./terminal";
 import { Profile } from 'ts/schema/option';
+import { PopupManager } from 'ts/manager/popup';
+import { PopupBuilder, PopupButton } from './popup';
 
 export class TerminalPane {
     element: Element;
@@ -50,12 +52,27 @@ export class TerminalPane {
         this.term = terminal;
     }
 
-    async close() {
-        // TODO: Finish
-        // TODO: Add modal with close confirmation if error occured
+    async requestClosing(popupManager: PopupManager, viewElement: HTMLElement) : Promise<boolean> {
+        if (!await invoke("check_close_availability", {id: this.id})) {
+            let cancelButton = new PopupButton("cancel", "dismiss");
+            let confirmButton = new PopupButton("confirm", "validate");
+    
+            let closeAuthorized = (await popupManager.sendPopup(new PopupBuilder(`Confirm close of ${await invoke("get_pty_title", {id: this.id})}`).withMessage("Are you sure to close this tab?").withButtons(cancelButton, confirmButton), viewElement)).action == "confirm";
+    
+            if (closeAuthorized) {
+                await invoke("close_terminal", {id: this.id});
+                this.term!.close();
+            }
+            return closeAuthorized;
+        } else {
+            await invoke("close_terminal", {id: this.id});
+            this.term!.close();
+            return true;
+        }
+    }
 
+    async forceClosing() {
         await invoke("close_terminal", {id: this.id});
-
         this.term!.close();
     }
 
@@ -88,7 +105,11 @@ export class PagePane {
         this.title = "";
     }
 
-    async close() {
+    async requestClosing() {
+        // TODO: Implement
+    }
+
+    async forceClosing() {
         // TODO: Implement
     }
 

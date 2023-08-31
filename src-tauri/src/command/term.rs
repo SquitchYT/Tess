@@ -66,6 +66,21 @@ pub async fn resize_terminal(
 }
 
 #[tauri::command]
+pub async fn check_close_availability(pty_manager: tauri::State<'_, Mutex<PtyManager>>, app_config: tauri::State<'_, Arc<Mutex<Option>>>, id: String) -> Result<bool, PtyError> {
+    let app_config = app_config.lock().unwrap();
+
+    if app_config.close_confirmation.tab {
+        if let Ok(pty_manager) = pty_manager.lock() {
+            Ok(app_config.close_confirmation.excluded_process.contains(&pty_manager.get_running_process(&id)?))
+        } else {
+            Err(PtyError::ManagerUnresponding)
+        }
+    } else {
+        Ok(true)
+    }
+}
+
+#[tauri::command]
 pub async fn close_terminal(
     pty_manager: tauri::State<'_, Mutex<PtyManager>>,
     id: String,
@@ -76,4 +91,9 @@ pub async fn close_terminal(
     } else {
         Err(PtyError::ManagerUnresponding)
     }
+}
+
+#[tauri::command]
+pub async fn get_pty_title(pty_manager: tauri::State<'_, Mutex<PtyManager>>, id: String) -> Result<String, PtyError> {
+    pty_manager.lock().or(Err(PtyError::ManagerUnresponding))?.get_running_process(&id)
 }

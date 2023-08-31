@@ -18,22 +18,21 @@ export class TabsManager {
 
     private tabFocusedListener: ((id: string) => void)[] = [];
     private tabAddedListener: ((id: string) => void)[] = [];
-
-    private requestTabClosing: (id: string) => Promise<void>;
+    private requestedTabClosingListener: (id: string) => void;
 
     // Max Index is tabs.lenght
 
 
-    constructor(target: Element, closeRequestedListener: (id: string) => Promise<void> ) {
+    constructor(target: Element, closeRequestedListener: (id: string) => void ) {
         this.target = target;
-        this.requestTabClosing = closeRequestedListener;
+        this.requestedTabClosingListener = closeRequestedListener;
 
         document.addEventListener("mousemove", (e) => this.inDragging(e));
         document.addEventListener("mouseup", (_) => this.stopDragging());
     }
 
     openNewTab(title: string, id: string) : string {
-        let tab = new Tab(this.tabs.length + 1, id, (id) => this.closeTab(id))
+        let tab = new Tab(this.tabs.length + 1, id, (id) => this.requestTabClosing(id))
 
         tab.element.addEventListener("mousedown", (e) => {this.focusAndStartDragging(e, tab)});
         tab.element.classList.add("tab");
@@ -73,53 +72,57 @@ export class TabsManager {
         }   
     }
 
+    requestTabClosing(uuid: string) {
+        let tab = this.tabs.find(tab => tab.id === uuid);
+        
+        if (tab) {
+            this.requestedTabClosingListener(tab.id);
+        }
+    }
+
     closeTab(uuid: string) {
-        // TODO: Add confirmation
+        let tab = this.tabs.find(tab => tab.id === uuid);
 
-        this.requestTabClosing(uuid).then(() => {
-            let tmp = this.tabs.find(tab => tab.id === uuid)
-            if (tmp) {
-                const index = this.tabs.indexOf(tmp);
-                if (index > -1) { this.tabs.splice(index, 1); }
+        const index = this.tabs.indexOf(tab!);
+        if (index > -1) { this.tabs.splice(index, 1); }
 
-                tmp.element.style.animation = "tab-closed 150ms forwards";
+        tab!.element.style.animation = "tab-closed 150ms forwards";
 
-                setTimeout(() => {
-                    tmp!.element.remove();
+        setTimeout(() => {
+            tab!.element.remove();
 
-                    this.tabs.forEach((tab) => {
-                        if (tab.index > tmp!.index) {
-                            tab.index -= 1;
-                            tab.element.style.order = String(tab.index);
-                        }
-                    })
-                }, 150);
-
-                if (this.selectedTab!.id == uuid) {
-                    if (this.selectedTab!.index - 1 == this.tabs.length) {
-                        this.select(this.tabs.length);
-                    } else {
-                        this.select(this.selectedTab!.index + 1);
-                    }
+            let closingTabIndex = tab!.index;
+            this.tabs.forEach((tab) => {
+                if (tab.index > closingTabIndex) {
+                    tab.index -= 1;
+                    tab.element.style.order = String(tab.index);
                 }
+            })
+        }, 150);
+
+        if (this.selectedTab!.id == uuid) {
+            if (this.selectedTab!.index - 1 == this.tabs.length) {
+                this.select(this.tabs.length);
+            } else {
+                this.select(this.selectedTab!.index + 1);
             }
-        });
+        }
     }
 
     selectNext() {
-        // TODO: Implement
+        this.select(this.selectedTab!.index + 1 > this.tabs.length ? 1 : this.selectedTab!.index + 1);
     }
 
     selectPrevious() {
-        // TODO: Implement
+        this.select(this.selectedTab!.index - 1 < 1 ? this.tabs.length : this.selectedTab!.index - 1);
     }
 
     selectFirst() {
-        // TODO: Implement
+        this.select(1);
     }
 
     selectLast() {
-        // TODO: Implement
+        this.select(this.tabs.length);
     }
 
     select(uuid: string) : void;

@@ -1,6 +1,8 @@
 import { Terminal } from "./terminal";
 import { PagePane, TerminalPane } from "./panes";
 import { Profile } from "ts/schema/option";
+import { PopupManager } from "ts/manager/popup";
+
 
 export class View {
     // TODO: Implement pane page type
@@ -8,13 +10,19 @@ export class View {
     id: string | undefined;
     element: HTMLElement | undefined;
 
-    panes: (TerminalPane|PagePane)[] = []
+    panes: (TerminalPane|PagePane)[] = [];
 
     closedEvent: ((id: string) => void) | undefined;
     focusedPaneTitleChangedEvent: ((title: string) => void) | undefined;
 
+    focusedPane: TerminalPane | PagePane | undefined = undefined;
 
-    async buildNew(viewId: string, paneId: string, closedEvent: ((id: string) => void), profile: Profile, focusedPaneTitleChangedEvent: ((title: string) => void)) {
+    popupManager: PopupManager | undefined;
+
+    closingAllRequested: boolean = false;
+
+
+    async buildNew(viewId: string, paneId: string, closedEvent: ((id: string) => void), profile: Profile, focusedPaneTitleChangedEvent: ((title: string) => void), popupManager: PopupManager) {
         this.id = viewId;
         this.element = this.generateComponents();
         this.closedEvent = closedEvent;
@@ -25,6 +33,10 @@ export class View {
 
         this.panes.push(pane)
         this.element.appendChild(pane.element);
+
+        this.focusedPane = pane;
+
+        this.popupManager = popupManager;
     }
 
     private generateComponents() : HTMLElement {
@@ -36,27 +48,42 @@ export class View {
 
     async closeAll() {
         for await (let pane of this.panes) {
-            await pane.close();
-            this.panes.splice(this.panes.indexOf(pane), 1);
-
-            this.element!.removeChild(pane.element!)
+            await pane.forceClosing()
         }
-
-        this.element!.remove();
     }
 
     async closeOne(id: string) {
         let pane = this.panes.find((pane) => pane.id == id);
 
         if (pane) {
-            await pane.close()
-            this.panes.splice(this.panes.indexOf(pane), 1);
-        } else {
-            // TODO: Handle error
+            await pane.forceClosing
         }
+    }
 
-        if (this.panes.length == 0) {
-            this.closedEvent!(this.id!);
+    async requestClosingAll() {
+        if (!this.closingAllRequested) {
+            this.closingAllRequested = true;
+
+            for await (let pane of this.panes) {
+                await this.requestClosingOne(pane.id)
+            }
+
+            this.closingAllRequested = false;
+        }
+    }
+
+    async requestClosingOne(id: string) {
+        let pane = this.panes.find((pane) => pane.id == id);
+
+        if (pane) {
+            let closed = await pane.requestClosing(this.popupManager!, this.element!);
+            if (closed) {
+                this.panes.splice(this.panes.indexOf(pane), 1);
+
+                if (this.panes.length == 0) {
+                    this.closedEvent!(this.id!);
+                }
+            }
         }
     }
 

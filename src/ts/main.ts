@@ -8,6 +8,7 @@ window.addEventListener("contextmenu", (e) => {
     e.preventDefault();
 })
 
+
 invoke<Option>("get_configuration").then((option) => {
     if (option.background != "opaque" && !(option.background instanceof Object)) {
         document.body.style.background = "transparent";
