@@ -1,17 +1,15 @@
 .views {
     height: 100%;
     width: 100%;
-    display: flex;
 
     .view {
         height: 100%;
         width: 100%;
-        visibility: hidden;
-        position: absolute;
-        display: flex;
+        position: relative;
+        display: none;
 
         &.visible {
-            visibility: unset;
+            display: flex;
         }
 
         .pane {

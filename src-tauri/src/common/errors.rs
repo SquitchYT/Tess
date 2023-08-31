@@ -4,6 +4,7 @@ pub enum PtyError {
     Resize(String),
     Write(String),
     Create(String),
+    CloseableStatus(String),
     ManagerUnresponding,
 }
 
@@ -23,6 +24,7 @@ impl std::fmt::Display for PtyError {
             PtyError::Resize(r) => write!(f, "Unable to resize the given terminal. Reason: {}", r),
             PtyError::Write(r) => write!(f, "Unable to write to the given terminal. Reason: {}", r),
             PtyError::Create(r) => write!(f, "Unable to create a new terminal. Reason: {}", r),
+            PtyError::CloseableStatus(r) => write!(f, "Unable to verify if the terminal is closable. Reason: {}", r),
             PtyError::ManagerUnresponding => write!(f, "Terminal manager is unresponding."),
         }
     }

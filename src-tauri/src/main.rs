@@ -45,6 +45,8 @@ fn main() {
             resize_terminal,
             close_terminal,
             close_window,
+            check_close_availability,
+            get_pty_title,
             get_configuration
         ])
         .build(tauri::generate_context!());

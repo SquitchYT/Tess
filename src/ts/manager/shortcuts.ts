@@ -21,8 +21,8 @@ export class ShortcutsManager {
 
     onKeyPress(e: KeyboardEvent, target?: Terminal) : boolean {
         if (e.type == "keydown" && e.code != "Space") {
-            e.preventDefault()
-            e.stopImmediatePropagation()
+            e.preventDefault();
+            e.stopImmediatePropagation();
 
             let key = e.key.toLowerCase() == "unidentified" ? e.code : e.key;
             let pressedShortcut = [key.toLowerCase()];

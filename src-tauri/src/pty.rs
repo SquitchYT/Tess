@@ -30,6 +30,7 @@ pub struct Pty {
     writer: Option<Box<dyn std::io::Write + Send>>,
     is_running: Arc<RwLock<bool>>,
     title_is_running_process: Arc<RwLock<bool>>,
+    running_process: Arc<Mutex<String>>
 }
 
 unsafe impl Send for Pty {}
@@ -64,6 +65,7 @@ impl Pty {
                 title_is_running_process: Arc::new(RwLock::new(
                     profile.terminal_options.title_is_running_process,
                 )),
+                running_process: Arc::new(Mutex::from(String::new()))
             };
 
             pty.run(profile, id)?;
@@ -116,6 +118,8 @@ impl Pty {
 
                 let id_cloned = id.clone();
 
+                let running_process_cloned = self.running_process.clone();
+
                 self.child = Some(child);
                 self.writer = Some(locked_pair.master.take_writer().unwrap());
 
@@ -159,7 +163,7 @@ impl Pty {
                                 .ok();
 
                             break;
-                        } else if *title_is_running_process.read().unwrap() {
+                        } else {
                             #[cfg(target_os = "windows")]
                             {
                                 let leader_process_name =
@@ -172,7 +176,8 @@ impl Pty {
                                     if new_leader_process_name != *leader_programm_name_locked {
                                         *leader_programm_name_locked = new_leader_process_name;
 
-                                        cloned_app
+                                        if *title_is_running_process.read().unwrap() {
+                                            cloned_app
                                             .emit_all(
                                                 "terminalTitleChanged",
                                                 PtyTitleChanged {
@@ -184,6 +189,14 @@ impl Pty {
                                                 },
                                             )
                                             .ok();
+                                        }
+
+                                        if let Ok(mut locked_running_process_clone) = running_process_cloned.lock() {
+                                            *locked_running_process_clone = leader_programm_name_locked
+                                                                            .clone()
+                                                                            .into_string()
+                                                                            .unwrap()
+                                        }
                                     }
                                 }
                             }
@@ -211,15 +224,21 @@ impl Pty {
                                         {
                                             process_leader_title.pop();
 
-                                            cloned_app
+                                            if *title_is_running_process.read().unwrap() {
+                                                cloned_app
                                                 .emit_all(
                                                     "terminalTitleChanged",
                                                     PtyTitleChanged {
                                                         id: id_cloned.clone(),
-                                                        title: process_leader_title,
+                                                        title: process_leader_title.clone(),
                                                     },
                                                 )
                                                 .ok();
+                                            }
+
+                                            if let Ok(mut locked_running_process_clone) = running_process_cloned.lock() {
+                                                *locked_running_process_clone = process_leader_title
+                                            }
                                         }
                                     }
                                 }
@@ -288,5 +307,9 @@ impl Pty {
         } else {
             todo!()
         }
+    }
+
+    pub fn running_process(&self) -> Result<String, PtyError> {
+        Ok(self.running_process.lock().or(Err(PtyError::CloseableStatus(String::from("Cannot get running process."))))?.to_string())
     }
 }

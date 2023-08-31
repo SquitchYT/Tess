@@ -35,7 +35,7 @@ export class ViewsManager {
     constructor(target: Element, tabsTarget: Element, toastTarget: Element, option: Option) {
         this.target = target;
 
-        this.tabsManager = new TabsManager(tabsTarget, async (id) => { await this.onTabRequestClose(id); });
+        this.tabsManager = new TabsManager(tabsTarget, (id) => { this.onTabRequestClose(id); });
         this.tabsManager.addEventListener("tabFocused", (id) => { this.onTabFocused(id); });
         this.popupManager = new PopupManager();
 
@@ -47,13 +47,19 @@ export class ViewsManager {
 
         listen("request_window_closing", async (_) => {
             if (this.views.length == 1) {
-                this.tabsManager.closeTab(this.views[0].id!)
+                this.tabsManager.requestTabClosing(this.views[0].id!)
             } else {
                 let confirmButton = new PopupButton("confirm", "validate");
                 let cancelButton = new PopupButton("cancel", "dismiss");
     
                 let popupResult = await this.popupManager.sendPopup(new PopupBuilder(`Confirm close of ${this.views.length} tabs`).withMessage(`Are you sure to close this window?`).withButtons(confirmButton, cancelButton));
-                if (popupResult.action == "confirm") invoke("close_window");
+                if (popupResult.action == "confirm") {
+                    for await (let view of this.views) {
+                        await view.closeAll()
+                    }
+
+                    invoke("close_window");
+                }
             }
         })
 
@@ -80,24 +86,26 @@ export class ViewsManager {
         }
     }
 
-    private onTabRequestClose(id: string) : Promise<void> {
-        return new Promise((resolve, reject) => {
-            let view = this.views.find((view) => view.id == id);
+    private onTabRequestClose(id: string) {
+        let view = this.views.find((view) => view.id == id);
+        if (view) {
+            view.requestClosingAll()
+        } else {
+            this.toaster.toast("Orphaned tab", "It looks like this tab is orphaned.")
+        }
+    }
 
-            if (view) {
-                view.closeAll().then(() => {
-                    this.views.splice(this.views.indexOf(view!), 1);
-                    resolve();
-
-                    if (this.views.length == 0) {
-                        invoke("close_window");
-                    }
-                }).catch((error) => {
-                    this.toaster.toast("Unable to close pty",  error);
-                    reject(error);
-                })
+    private onViewsClosed(uuid: string) {
+        let view = this.views.find((view) => view.id == uuid);
+        if (view) {
+            view.element!.remove();
+            this.views.splice(this.views.indexOf(view), 1);
+            if (this.views.length == 0) {
+                invoke("close_window")
             }
-        })
+        }
+
+        this.tabsManager.closeTab(uuid);
     }
 
     private onTerminalReceiveData(e: Event<terminalDataPayload>) {
@@ -164,7 +172,7 @@ export class ViewsManager {
                     this.openProfile(this.option.defaultProfile.uuid, true);
                     break;
                 case "closeFocusedTab":
-                    this.tabsManager.closeTab(this.tabsManager.getSelected().id);
+                    this.tabsManager.requestTabClosing(this.tabsManager.getSelected().id);
                     break;
                 case "focusNextTab":
                     this.tabsManager.selectNext();
@@ -196,7 +204,7 @@ export class ViewsManager {
         let profile = this.option.profiles.find(profile => profile.uuid == profileId);
 
         if (profile) {
-            view.buildNew(viewId, paneId, (id) => {this.tabsManager.closeTab(id)}, profile, (title) => {this.tabsManager.setTitle(viewId, title)}).then(() => {
+            view.buildNew(viewId, paneId, (id) => {this.onViewsClosed(id)}, profile, (title) => {this.tabsManager.setTitle(viewId, title)}, this.popupManager).then(() => {
                 this.views.push(view);
                 this.target.appendChild(view.element!);
     
@@ -222,7 +230,7 @@ export class ViewsManager {
         let view = this.views.find((view) => view.id == viewId);
 
         if (view) {
-            view.closeOne(paneId).catch((err) => {
+            view.requestClosingOne(paneId).catch((err) => {
                 this.toaster.toast("Unable to close a view's pane",  err);
             })
         } else {

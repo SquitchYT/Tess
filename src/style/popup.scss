@@ -8,7 +8,7 @@
     z-index: 10;
     background: rgba(0,0,0,0.1);
     -webkit-backdrop-filter: blur(2px);
-    animation: popup-added-background-fade 140ms forwards;
+    outline: none;
 
     .inner {
         background: var(--popup-background);    
@@ -22,7 +22,6 @@
         align-items: center;
         flex-direction: column;
         color: var(--text-color);
-        animation: popup-added 140ms forwards;
 
         .top {
             display: flex;

@@ -6,7 +6,7 @@ export class PopupManager {
 
     sendPopup(popupBuilder: PopupBuilder, target: HTMLElement = document.body) : Promise<PopupResult> {
         return new Promise(async (resolve, _) => {
-            if (this.usedTarget.find((target) => target == target)) {
+            if (this.usedTarget.find((registredTarget) => registredTarget == target)) {
                 await new Promise((resolve, _) => {
                     this.waitingQueue.push([popupBuilder, target, resolve]);
                 })
@@ -33,6 +33,8 @@ export class PopupManager {
             });
 
             popupBuilt.addEventListener("keydown", (e) => {
+                if (target == document.body) { e.stopImmediatePropagation(); }
+
                 let focusableElements = popupBuilt.querySelectorAll("[tabindex]");
                 let firstElement = focusableElements[0];
                 let lastElement = focusableElements[focusableElements.length - 1]
@@ -57,6 +59,14 @@ export class PopupManager {
                     e.preventDefault();
                 }               
             });
+
+            popupBuilt.style.animation = "popup-added-background-fade 140ms forwards";
+            (popupBuilt.querySelector(".inner") as HTMLElement).style.animation = "popup-added 140ms forwards";
+
+            setTimeout(() => {
+                popupBuilt.style.animation = "";
+                (popupBuilt.querySelector(".inner") as HTMLElement).style.animation = "";
+            }, 140)
 
             popupBuilt.setAttribute("tabindex", "0");
             target.appendChild(popupBuilt);
