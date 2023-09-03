@@ -34,30 +34,25 @@ export class PopupManager {
 
             popupBuilt.addEventListener("keydown", (e) => {
                 if (target == document.body) { e.stopImmediatePropagation(); }
+                e.preventDefault();
 
                 let focusableElements = popupBuilt.querySelectorAll("[tabindex]");
                 let firstElement = focusableElements[0];
-                let lastElement = focusableElements[focusableElements.length - 1]
+                let lastElement = focusableElements[focusableElements.length - 1];
 
                 if (e.key == "Tab" || e.keyCode == 9) {
                     if (document.activeElement == popupBuilt) {
                         (firstElement as HTMLElement).focus();
-                        e.preventDefault();
-                    }
-
-                    else if (e.shiftKey && document.activeElement == firstElement) {
+                    } else if (e.shiftKey && document.activeElement == firstElement) {
                         (lastElement as HTMLElement).focus();
-                        e.preventDefault();
-                    } else if (document.activeElement == lastElement && !e.shiftKey) {
+                    } else if (!e.shiftKey && document.activeElement == lastElement) {
                         (firstElement as HTMLElement).focus();
-                        e.preventDefault();
+                    } else {
+                        (focusableElements[Array.prototype.indexOf.call(focusableElements, document.activeElement) + (e.shiftKey ? -1 : 1)] as HTMLElement).focus();
                     }
                 } else if (e.key == "Enter") {
                     (document.activeElement as HTMLElement).click();
-                    e.preventDefault()
-                } else {
-                    e.preventDefault();
-                }               
+                }              
             });
 
             popupBuilt.style.animation = "popup-added-background-fade 140ms forwards";

@@ -113,9 +113,13 @@
                 text-transform: capitalize;
                 background: var(--popup-button-background);
 
-                &:hover {
+                &:hover, &:focus {
                     box-shadow: rgba(0, 0, 0, 0.28) 0px 5px 10px;
                     background: var(--popup-button-hovered-background);
+                }
+
+                &:focus {
+                    outline: 5px auto;
                 }
     
                 &.primary {

@@ -45,23 +45,7 @@ export class ViewsManager {
         listen<terminalTitleChangedPayload>("terminalTitleChanged", (e) => { this.onTerminalTitleChanged(e); })
         listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
 
-        listen("request_window_closing", async (_) => {
-            if (this.views.length == 1) {
-                this.tabsManager.requestTabClosing(this.views[0].id!)
-            } else {
-                let confirmButton = new PopupButton("confirm", "validate");
-                let cancelButton = new PopupButton("cancel", "dismiss");
-    
-                let popupResult = await this.popupManager.sendPopup(new PopupBuilder(`Confirm close of ${this.views.length} tabs`).withMessage(`Are you sure to close this window?`).withButtons(confirmButton, cancelButton));
-                if (popupResult.action == "confirm") {
-                    for await (let view of this.views) {
-                        await view.closeAll()
-                    }
-
-                    invoke("close_window");
-                }
-            }
-        })
+        listen("request_window_closing", () => { this.closeViews(); })
 
         this.toaster = new Toaster(toastTarget);
 
@@ -187,10 +171,28 @@ export class ViewsManager {
                     this.tabsManager.selectLast();
                     break;
                 case 'closeAllTabs':
-                    invoke("close_window");
+                    this.closeViews()
                     break;
                 default:
                     this.toaster.toast("Shortcut error", action + " is not yet implemented");
+            }
+        }
+    }
+
+    private async closeViews() {
+        if (this.views.length == 1) {
+            this.tabsManager.requestTabClosing(this.views[0].id!)
+        } else {
+            let confirmButton = new PopupButton("confirm", "validate");
+            let cancelButton = new PopupButton("cancel", "dismiss");
+
+            let popupResult = await this.popupManager.sendPopup(new PopupBuilder(`Confirm close of ${this.views.length} tabs`).withMessage(`Are you sure to close this window?`).withButtons(confirmButton, cancelButton));
+            if (popupResult.action == "confirm") {
+                for await (let view of this.views) {
+                    await view.closeAll()
+                }
+
+                invoke("close_window");
             }
         }
     }
