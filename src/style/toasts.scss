@@ -53,6 +53,7 @@
             row-gap: 2px;
             flex-direction: column;
             overflow: hidden;
+            font-weight: 600;
 
             .title {
                 font-size: 13px;
@@ -64,7 +65,7 @@
                 max-height: 14px;
                 white-space: nowrap;
                 overflow: hidden;
-                transition: max-height 200ms ease-out;
+                transition: max-height 200ms;
                 -webkit-line-clamp: 13;
                 -webkit-box-orient: vertical;
                 display: -webkit-box;

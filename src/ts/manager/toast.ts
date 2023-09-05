@@ -90,8 +90,8 @@ export class Toaster {
 
             setTimeout(() => {
                 toast.remove()
-            }, 139)
-        }, 15000);
+            }, 140)
+        }, 20000);
 
         dismissToastButton.addEventListener("click", () => {
             clearTimeout(closeTimeout);

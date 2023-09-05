@@ -21,9 +21,6 @@ export class ShortcutsManager {
 
     onKeyPress(e: KeyboardEvent, target?: Terminal) : boolean {
         if (e.type == "keydown" && e.code != "Space") {
-            e.preventDefault();
-            e.stopImmediatePropagation();
-
             let key = e.key.toLowerCase() == "unidentified" ? e.code : e.key;
             let pressedShortcut = [key.toLowerCase()];
 
@@ -33,31 +30,37 @@ export class ShortcutsManager {
 
             let correspondingShortcut = this.shortcuts.find((shortcut) => {
                 return (pressedShortcut.every((tmp) => {
-                    return shortcut[0].includes(tmp)
+                    return shortcut[0].includes(tmp);
                 }) && shortcut[0].every((tmp) => {
-                    return pressedShortcut.includes(tmp)
+                    return pressedShortcut.includes(tmp);
                 }))
-            })
+            });
 
             if (correspondingShortcut) {
                 if (target && correspondingShortcut[1] == "copy") {
                     if (target.hasSelection()) {
-                        this.onShortcutExecutedCallback(correspondingShortcut[1])
+                        this.onShortcutExecutedCallback(correspondingShortcut[1]);
 
-                        return false
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+
+                        return false;
                     } else {
-                        return true
+                        return true;
                     }
                 } else {
-                    this.onShortcutExecutedCallback(correspondingShortcut[1])
+                    this.onShortcutExecutedCallback(correspondingShortcut[1]);
 
-                    return false
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    return false;
                 }
             } else {
-                return true
+                return true;
             }
         }
 
-        return true
+        return true;
     }
 }
