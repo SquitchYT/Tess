@@ -103,17 +103,9 @@ where
     }
 
     Ok(
-        if let Ok(name_to_find) = Representation::deserialize(data) {
-            match name_to_find {
-                Representation::Simple(path) => BackgroundMedia::deserialize_from_string(path),
-                Representation::Complex(background) => Some(background),
-            }
-        } else {
-            None
-        },
+        Representation::deserialize(data).map_or(None, |todo_name_to_find| match todo_name_to_find {
+            Representation::Simple(path) => BackgroundMedia::deserialize_from_string(path),
+            Representation::Complex(background) => Some(background),
+        })
     )
-}
-
-fn default_to_true() -> bool {
-    true
 }

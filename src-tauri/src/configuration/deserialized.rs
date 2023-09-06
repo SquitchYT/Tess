@@ -73,7 +73,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                     "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
                 ),
                 background: None,
-            })
+            });
         } else {
             for partial_profile in partial_option.profiles {
                 let profile_option = TerminalOption {
@@ -119,13 +119,11 @@ impl<'de> serde::Deserialize<'de> for Option {
                         .unwrap_or(partial_option.terminal.title_is_running_process),
                 };
 
-                let profile_theme = if let Some(partial_profile_theme) = partial_profile.theme {
+                let profile_theme = partial_profile.theme.map_or_else(|| terminal_theme.clone(), |partial_profile_theme| {
                     parse_theme(partial_profile_theme)
-                        .1
-                        .unwrap_or(terminal_theme.clone())
-                } else {
-                    terminal_theme.clone()
-                };
+                    .1
+                    .unwrap_or_else(|| terminal_theme.clone())
+                });
 
                 profiles.push(Profile {
                     name: partial_profile.name,
@@ -135,11 +133,11 @@ impl<'de> serde::Deserialize<'de> for Option {
                         .background_transparency
                         .unwrap_or(partial_option.background_transparency),
                     uuid: uuid::Uuid::parse_str(partial_profile.uuid.unwrap_or_default().as_str())
-                        .unwrap_or(uuid::Uuid::new_v4())
+                        .unwrap_or_else(|_| uuid::Uuid::new_v4())
                         .to_string(),
                     command: partial_profile.command,
                     background: partial_profile.background,
-                })
+                });
             }
         }
 
@@ -152,11 +150,11 @@ impl<'de> serde::Deserialize<'de> for Option {
                     uuid: macro_command
                         .uuid
                         .unwrap_or_else(|| uuid::Uuid::new_v4().to_string()),
-                })
+                });
             }
         }
 
-        let shortcuts = if let Some(partial_option_shortcuts) = partial_option.shortcuts {
+        let shortcuts = partial_option.shortcuts.map_or_else(default_shortcuts, |partial_option_shortcuts| {
             let mut shortcuts = vec![];
 
             for partial_shortcut in partial_option_shortcuts {
@@ -168,7 +166,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                             shortcuts.push(Shortcut {
                                 shortcut: partial_shortcut.shortcut,
                                 action: ShortcutAction::OpenProfile(profile.uuid.clone()),
-                            })
+                            });
                         }
                     }
                     ShortcutAction::ExecuteMacro(macro_id) => {
@@ -179,7 +177,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                             shortcuts.push(Shortcut {
                                 shortcut: partial_shortcut.shortcut,
                                 action: ShortcutAction::ExecuteMacro(macro_command.uuid.clone()),
-                            })
+                            });
                         }
                     }
                     _ => shortcuts.push(Shortcut {
@@ -190,11 +188,9 @@ impl<'de> serde::Deserialize<'de> for Option {
             }
 
             shortcuts
-        } else {
-            default_shortcuts()
-        };
+        });
 
-        Ok(Option {
+        Ok(Self {
             theme: partial_option.theme.clone(),
 
             terminal_theme,
@@ -448,9 +444,9 @@ impl<'de> Deserialize<'de> for TerminalTheme {
 
         let partial_terminal_theme =
             PartialTerminalTheme::deserialize(deserializer).unwrap_or_default();
-        let default_terminal_theme = TerminalTheme::default();
+        let default_terminal_theme = Self::default();
 
-        Ok(TerminalTheme {
+        Ok(Self {
             foreground: partial_terminal_theme
                 .foreground
                 .unwrap_or(default_terminal_theme.foreground),
@@ -544,7 +540,7 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
 
         match Representation::deserialize(deserializer)? {
             Representation::Simple(close_confirmation_toggled) => {
-                Ok(CloseConfirmation {
+                Ok(Self {
                     tab: close_confirmation_toggled,
                     window: close_confirmation_toggled,
                     app: close_confirmation_toggled,
@@ -555,14 +551,14 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
                 })
             },
             Representation::Complex(partial_close_confirmation) =>  {
-                Ok(CloseConfirmation {
+                Ok(Self {
                     tab: partial_close_confirmation.tab.unwrap_or(true),
                     window: partial_close_confirmation.window.unwrap_or(true),
                     app: partial_close_confirmation.app.unwrap_or(true),
                     #[cfg(target_family = "unix")]
-                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or(vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()]),
+                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(|| vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()]),
                     #[cfg(target_os = "windows")]
-                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or(vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()])
+                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(|| vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()])
                 })
             }
         }
@@ -584,7 +580,7 @@ impl Default for CloseConfirmation {
 }
 
 
-fn default_to_true() -> bool {
+const fn default_to_true() -> bool {
     true
 }
 

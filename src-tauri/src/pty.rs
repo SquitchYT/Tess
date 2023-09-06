@@ -1,5 +1,6 @@
 use portable_pty::Child;
 use portable_pty::{native_pty_system, CommandBuilder, PtySize};
+use std::ffi::OsString;
 use std::sync::{Arc, Mutex, RwLock};
 
 use crate::common::errors::PtyError;
@@ -52,7 +53,7 @@ impl Pty {
             pixel_width: 0,
             pixel_height: 0,
         }) {
-            let mut pty = Pty {
+            let mut pty = Self {
                 app,
                 pair: Arc::new(Mutex::from(pair)),
                 child: None,
@@ -95,10 +96,7 @@ impl Pty {
         let cmd = profile.command;
 
         #[allow(unused_mut)]
-        let mut command_builder = CommandBuilder::from_argv(Vec::from_iter(
-            cmd.split(' ')
-               .map(std::ffi::OsString::from),
-        ));
+        let mut command_builder = CommandBuilder::from_argv(cmd.split(' ').map(std::ffi::OsString::from).collect::<Vec<OsString>>());
 
         #[cfg(target_family = "unix")]
         command_builder.env("TERM", "xterm-256color");
@@ -163,18 +161,67 @@ impl Pty {
                                 .ok();
 
                             break;
-                        } else {
-                            #[cfg(target_os = "windows")]
+                        }
+
+                        #[cfg(target_os = "windows")]
+                        {
+                            let leader_process_name =
+                                get_leader_process_name(Process::new(tmp_pty_pid).unwrap());
+
+                            if let Some(new_leader_process_name) = leader_process_name {
+                                let mut leader_programm_name_locked =
+                                    leader_programm_name.lock().unwrap();
+
+                                if new_leader_process_name != *leader_programm_name_locked {
+                                    *leader_programm_name_locked = new_leader_process_name;
+
+                                    if *title_is_running_process.read().unwrap() {
+                                        cloned_app
+                                        .emit_all(
+                                            "terminalTitleChanged",
+                                            PtyTitleChanged {
+                                                id: id_cloned.clone(),
+                                                title: leader_programm_name_locked
+                                                    .clone()
+                                                    .into_string()
+                                                    .unwrap(),
+                                            },
+                                        )
+                                        .ok();
+                                    }
+
+                                    if let Ok(mut locked_running_process_clone) = running_process_cloned.lock() {
+                                        *locked_running_process_clone = leader_programm_name_locked
+                                                                        .clone()
+                                                                        .into_string()
+                                                                        .unwrap()
+                                    }
+                                }
+                            }
+                        }
+
+                        #[cfg(target_family = "unix")]
+                        {
+                            let cloned_locked_pair = cloned_pair.lock().unwrap();
+
+                            if let Some(process_leader_pid) =
+                                cloned_locked_pair.master.process_group_leader()
                             {
-                                let leader_process_name =
-                                    get_leader_process_name(Process::new(tmp_pty_pid).unwrap());
+                                if process_leader_pid
+                                    != *current_process_leader_pid.read().unwrap()
+                                {
+                                    std::thread::sleep(std::time::Duration::from_millis(5));
 
-                                if let Some(new_leader_process_name) = leader_process_name {
-                                    let mut leader_programm_name_locked =
-                                        leader_programm_name.lock().unwrap();
+                                    *current_process_leader_pid.write().unwrap() =
+                                        process_leader_pid;
 
-                                    if new_leader_process_name != *leader_programm_name_locked {
-                                        *leader_programm_name_locked = new_leader_process_name;
+                                    if let Ok(mut process_leader_title) =
+                                        std::fs::read_to_string(format!(
+                                            "/proc/{}/comm",
+                                            process_leader_pid
+                                        ))
+                                    {
+                                        process_leader_title.pop();
 
                                         if *title_is_running_process.read().unwrap() {
                                             cloned_app
@@ -182,63 +229,14 @@ impl Pty {
                                                 "terminalTitleChanged",
                                                 PtyTitleChanged {
                                                     id: id_cloned.clone(),
-                                                    title: leader_programm_name_locked
-                                                        .clone()
-                                                        .into_string()
-                                                        .unwrap(),
+                                                    title: process_leader_title.clone(),
                                                 },
                                             )
                                             .ok();
                                         }
 
                                         if let Ok(mut locked_running_process_clone) = running_process_cloned.lock() {
-                                            *locked_running_process_clone = leader_programm_name_locked
-                                                                            .clone()
-                                                                            .into_string()
-                                                                            .unwrap()
-                                        }
-                                    }
-                                }
-                            }
-
-                            #[cfg(target_family = "unix")]
-                            {
-                                let cloned_locked_pair = cloned_pair.lock().unwrap();
-
-                                if let Some(process_leader_pid) =
-                                    cloned_locked_pair.master.process_group_leader()
-                                {
-                                    if process_leader_pid
-                                        != *current_process_leader_pid.read().unwrap()
-                                    {
-                                        std::thread::sleep(std::time::Duration::from_millis(5));
-
-                                        *current_process_leader_pid.write().unwrap() =
-                                            process_leader_pid;
-
-                                        if let Ok(mut process_leader_title) =
-                                            std::fs::read_to_string(format!(
-                                                "/proc/{}/comm",
-                                                process_leader_pid
-                                            ))
-                                        {
-                                            process_leader_title.pop();
-
-                                            if *title_is_running_process.read().unwrap() {
-                                                cloned_app
-                                                .emit_all(
-                                                    "terminalTitleChanged",
-                                                    PtyTitleChanged {
-                                                        id: id_cloned.clone(),
-                                                        title: process_leader_title.clone(),
-                                                    },
-                                                )
-                                                .ok();
-                                            }
-
-                                            if let Ok(mut locked_running_process_clone) = running_process_cloned.lock() {
-                                                *locked_running_process_clone = process_leader_title
-                                            }
+                                            *locked_running_process_clone = process_leader_title;
                                         }
                                     }
                                 }
@@ -258,8 +256,8 @@ impl Pty {
         }
     }
 
-    pub fn write(&mut self, content: String) -> Result<(), PtyError> {
-        if let Ok(()) = write!(self.writer.as_mut().unwrap(), "{}", content) {
+    pub fn write(&mut self, content: &str) -> Result<(), PtyError> {
+        if matches!(write!(self.writer.as_mut().unwrap(), "{}", content), Ok(())) {
             Ok(())
         } else {
             Err(PtyError::Write(String::from(
@@ -269,7 +267,7 @@ impl Pty {
     }
 
     pub fn resize(&self, cols: u16, rows: u16) -> Result<(), PtyError> {
-        if let Ok(()) = self
+        if matches!(self
             .pair
             .lock()
             .unwrap()
@@ -278,8 +276,8 @@ impl Pty {
                 cols,
                 rows,
                 pixel_height: 0,
-                pixel_width: 0,
-            })
+                pixel_width: 0
+            }), Ok(())) 
         {
             Ok(())
         } else {
@@ -290,23 +288,16 @@ impl Pty {
     }
 
     pub fn close(&mut self) -> Result<(), PtyError> {
-        if let Some(child) = self.child.as_deref() {
+        self.child.as_deref().map_or_else(|| todo!(), |child| {
             *self.is_running.write().unwrap() = false;
 
-            if let Ok(mut child) = child.lock() {
-                if child.try_wait().is_ok_and(|x| x.is_some()) {
-                    Ok(())
-                } else if let Ok(()) = child.kill() {
+            child.lock().map_or_else(|_| todo!(), |mut child|
+                if child.try_wait().is_ok_and(|x| x.is_some()) || matches!(child.kill(), Ok(())) {
                     Ok(())
                 } else {
                     todo!()
-                }
-            } else {
-                todo!()
-            }
-        } else {
-            todo!()
-        }
+                })
+        })
     }
 
     pub fn running_process(&self) -> Result<String, PtyError> {

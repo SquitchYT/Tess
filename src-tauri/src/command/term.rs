@@ -11,7 +11,7 @@ pub async fn terminal_input(
     content: String,
 ) -> Result<(), PtyError> {
     if let Ok(mut pty_manager) = pty_manager.lock() {
-        pty_manager.write(&id, content)?;
+        pty_manager.write(&id, &content)?;
         Ok(())
     } else {
         Err(PtyError::ManagerUnresponding)

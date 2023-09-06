@@ -18,7 +18,7 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Deserialize<'de
 {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         Ok(
-            if let Ok(deserialized_value) = u32::deserialize(deserializer) {
+            u32::deserialize(deserializer).map_or_else(|_| Self::default(), |deserialized_value| {
                 if deserialized_value < MIN {
                     Self { value: MIN }
                 } else if deserialized_value > MAX {
@@ -28,14 +28,12 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Deserialize<'de
                         value: deserialized_value,
                     }
                 }
-            } else {
-                RangedInt::default()
-            },
+            })
         )
     }
 }
 
-impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize
+impl<const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize
     for RangedInt<MIN, MAX, DEF>
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
@@ -82,30 +80,24 @@ impl<'de> serde::Deserialize<'de> for BackgroundType {
         Ok(
             if let OptionRepresentation::Simple(option_value) = option_representation {
                 match option_value.to_lowercase().as_str() {
-                    "opaque" => BackgroundType::Opaque,
-                    "transparent" => BackgroundType::Transparent,
+                    "opaque" => Self::Opaque,
+                    "transparent" => Self::Transparent,
                     #[cfg(target_family = "unix")]
-                    "blurred" => BackgroundType::Blurred,
+                    "blurred" => Self::Blurred,
                     #[cfg(target_os = "windows")]
-                    "acrylic" => BackgroundType::Acrylic,
+                    "acrylic" => Self::Acrylic,
                     #[cfg(target_os = "windows")]
-                    "mica" => BackgroundType::Mica,
+                    "mica" => Self::Mica,
                     #[cfg(target_os = "macos")]
-                    "vibrancy" => BackgroundType::Vibrancy,
+                    "vibrancy" => Self::Vibrancy,
                     _ => {
-                        if let Some(background_media) =
-                            BackgroundMedia::deserialize_from_string(option_value)
-                        {
-                            BackgroundType::Media(background_media)
-                        } else {
-                            BackgroundType::default()
-                        }
+                        BackgroundMedia::deserialize_from_string(option_value).map_or_else(Self::default, Self::Media)
                     }
                 }
             } else if let OptionRepresentation::Complex(background_media) = option_representation {
-                BackgroundType::Media(background_media)
+                Self::Media(background_media)
             } else {
-                BackgroundType::default()
+                Self::default()
             },
         )
     }
@@ -133,7 +125,7 @@ pub struct BackgroundMedia {
 
 impl BackgroundMedia {
     pub fn deserialize_from_string(value: String) -> Option<Self> {
-        if let Ok(file) = std::fs::read(&value) {
+        std::fs::read(&value).map_or(None, |file| {
             if infer::is_image(&file) {
                 Some(Self {
                     location: value,
@@ -142,9 +134,7 @@ impl BackgroundMedia {
             } else {
                 None
             }
-        } else {
-            None
-        }
+        })
     }
 }
 

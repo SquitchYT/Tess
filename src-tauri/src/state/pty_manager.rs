@@ -11,9 +11,17 @@ pub struct PtyManager {
     pub app: Option<Arc<tauri::AppHandle>>,
 }
 
+impl Default for PtyManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+
 impl PtyManager {
+    #[must_use]
     pub fn new() -> Self {
-        PtyManager {
+        Self {
             ptys: HashMap::new(),
             app: None,
         }
@@ -39,7 +47,7 @@ impl PtyManager {
         }
     }
 
-    pub fn write(&mut self, id: &str, content: String) -> Result<(), PtyError> {
+    pub fn write(&mut self, id: &str, content: &str) -> Result<(), PtyError> {
         self.ptys
             .get_mut(id)
             .ok_or_else(|| PtyError::Write(String::from(
