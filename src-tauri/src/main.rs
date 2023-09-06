@@ -14,7 +14,7 @@ use std::sync::{Arc, Mutex};
 
 fn main() {
     let start = std::time::Instant::now();
-    let logger = Logger{};
+    let logger = Logger {};
 
     #[cfg(target_family = "unix")]
     let config_file = std::fs::read_to_string(format!(
@@ -63,13 +63,16 @@ fn main() {
         }
         #[cfg(target_os = "windows")]
         BackgroundType::Mica => {
-            if let Err(_) = window_vibrancy::apply_mica(app_handle.get_window("main").unwrap()) {
-                logger.warn("Cannot apply mica background effect. Switching back to transparent background");
+            if window_vibrancy::apply_mica(app_handle.get_window("main").unwrap()).is_err() {
+                logger.warn(
+                    "Cannot apply mica background effect. Switching back to transparent background",
+                );
             }
         }
         #[cfg(target_os = "windows")]
         BackgroundType::Acrylic => {
-            if let Err(_) = window_vibrancy::apply_acrylic(app_handle.get_window("main").unwrap(), None) {
+            if window_vibrancy::apply_acrylic(app_handle.get_window("main").unwrap(), None).is_err()
+            {
                 logger.warn("Cannot apply acrylic background effect. Switching back to transparent background");
             }
         }
@@ -82,38 +85,33 @@ fn main() {
 
     app_handle.get_window("main").unwrap().set_decorations(true);
 
-
     app_handle
         .fs_scope()
         .allow_file(&option.lock().unwrap().app_theme);
-
 
     let mut watcher =
         notify::recommended_watcher(move |res: Result<notify::Event, notify::Error>| {
             match res {
                 Ok(event) => {
-                    match event.kind {
-                        notify::EventKind::Access(notify::event::AccessKind::Close(..)) => {
-                            let config_file = std::fs::read_to_string(format!(
-                                "{}/tess/config.json",
-                                dirs_next::config_dir().unwrap_or_default().display()
-                            ));
-                            let option = if let Ok(config_file) = config_file {
-                                serde_json::from_str(&config_file).unwrap_or_default()
-                            } else {
-                                Option::default()
-                            };
+                    if let  notify::EventKind::Access(notify::event::AccessKind::Close(..)) = event.kind {
+                        let config_file = std::fs::read_to_string(format!(
+                            "{}/tess/config.json",
+                            dirs_next::config_dir().unwrap_or_default().display()
+                        ));
+                        let option = if let Ok(config_file) = config_file {
+                            serde_json::from_str(&config_file).unwrap_or_default()
+                        } else {
+                            Option::default()
+                        };
 
-                            let mut reff = option_clone.lock().unwrap();
+                        let mut reff = option_clone.lock().unwrap();
 
-                            *reff = option;
+                        *reff = option;
 
-                            logger.info("Refreshing config...");
+                        logger.info("Refreshing config...");
 
-                            app_handle.emit_all("global_config_updated", format!("{:?}", reff));
-                        }
-                        _ => (),
-                    };
+                        app_handle.emit_all("global_config_updated", format!("{:?}", reff));
+                    }
                 }
                 Err(e) => println!("Config watching error: {}", e),
             };
@@ -136,16 +134,22 @@ fn main() {
 
             #[cfg(debug_assertions)]
             app.get_window("main").unwrap().open_devtools();
-        },
-        tauri::RunEvent::WindowEvent { label, event, .. } => {
-            if let WindowEvent::CloseRequested{api, ..} = event {
-                if option.lock().unwrap().close_confirmation.window {
-                    app.get_window(&label).unwrap().emit("request_window_closing", "");
+        }
+        tauri::RunEvent::WindowEvent {
+            label,
+            event: WindowEvent::CloseRequested { api, .. },
+            ..
+        } => {
+            //if let  = event {
+            if option.lock().unwrap().close_confirmation.window {
+                app.get_window(&label)
+                    .unwrap()
+                    .emit("request_window_closing", "");
 
-                    api.prevent_close()
-                }
-            };
-        },
+                api.prevent_close()
+            }
+            //};
+        }
         _ => (),
     })
 }

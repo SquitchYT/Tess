@@ -24,7 +24,11 @@ impl std::fmt::Display for PtyError {
             Self::Resize(r) => write!(f, "Unable to resize the given terminal. Reason: {}", r),
             Self::Write(r) => write!(f, "Unable to write to the given terminal. Reason: {}", r),
             Self::Create(r) => write!(f, "Unable to create a new terminal. Reason: {}", r),
-            Self::CloseableStatus(r) => write!(f, "Unable to verify if the terminal is closable. Reason: {}", r),
+            Self::CloseableStatus(r) => write!(
+                f,
+                "Unable to verify if the terminal is closable. Reason: {}",
+                r
+            ),
             Self::ManagerUnresponding => write!(f, "Terminal manager is unresponding."),
         }
     }

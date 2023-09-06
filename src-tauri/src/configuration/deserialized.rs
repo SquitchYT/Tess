@@ -119,11 +119,14 @@ impl<'de> serde::Deserialize<'de> for Option {
                         .unwrap_or(partial_option.terminal.title_is_running_process),
                 };
 
-                let profile_theme = partial_profile.theme.map_or_else(|| terminal_theme.clone(), |partial_profile_theme| {
-                    parse_theme(partial_profile_theme)
-                    .1
-                    .unwrap_or_else(|| terminal_theme.clone())
-                });
+                let profile_theme = partial_profile.theme.map_or_else(
+                    || terminal_theme.clone(),
+                    |partial_profile_theme| {
+                        parse_theme(partial_profile_theme)
+                            .1
+                            .unwrap_or_else(|| terminal_theme.clone())
+                    },
+                );
 
                 profiles.push(Profile {
                     name: partial_profile.name,
@@ -154,41 +157,46 @@ impl<'de> serde::Deserialize<'de> for Option {
             }
         }
 
-        let shortcuts = partial_option.shortcuts.map_or_else(default_shortcuts, |partial_option_shortcuts| {
-            let mut shortcuts = vec![];
+        let shortcuts =
+            partial_option
+                .shortcuts
+                .map_or_else(default_shortcuts, |partial_option_shortcuts| {
+                    let mut shortcuts = vec![];
 
-            for partial_shortcut in partial_option_shortcuts {
-                match partial_shortcut.action {
-                    ShortcutAction::OpenProfile(profile_id) => {
-                        if let Some(profile) =
-                            profiles.iter().find(|profile| profile.uuid == profile_id)
-                        {
-                            shortcuts.push(Shortcut {
+                    for partial_shortcut in partial_option_shortcuts {
+                        match partial_shortcut.action {
+                            ShortcutAction::OpenProfile(profile_id) => {
+                                if let Some(profile) =
+                                    profiles.iter().find(|profile| profile.uuid == profile_id)
+                                {
+                                    shortcuts.push(Shortcut {
+                                        shortcut: partial_shortcut.shortcut,
+                                        action: ShortcutAction::OpenProfile(profile.uuid.clone()),
+                                    });
+                                }
+                            }
+                            ShortcutAction::ExecuteMacro(macro_id) => {
+                                if let Some(macro_command) = macros
+                                    .iter()
+                                    .find(|macro_command| macro_command.uuid == macro_id)
+                                {
+                                    shortcuts.push(Shortcut {
+                                        shortcut: partial_shortcut.shortcut,
+                                        action: ShortcutAction::ExecuteMacro(
+                                            macro_command.uuid.clone(),
+                                        ),
+                                    });
+                                }
+                            }
+                            _ => shortcuts.push(Shortcut {
                                 shortcut: partial_shortcut.shortcut,
-                                action: ShortcutAction::OpenProfile(profile.uuid.clone()),
-                            });
-                        }
+                                action: partial_shortcut.action,
+                            }),
+                        };
                     }
-                    ShortcutAction::ExecuteMacro(macro_id) => {
-                        if let Some(macro_command) = macros
-                            .iter()
-                            .find(|macro_command| macro_command.uuid == macro_id)
-                        {
-                            shortcuts.push(Shortcut {
-                                shortcut: partial_shortcut.shortcut,
-                                action: ShortcutAction::ExecuteMacro(macro_command.uuid.clone()),
-                            });
-                        }
-                    }
-                    _ => shortcuts.push(Shortcut {
-                        shortcut: partial_shortcut.shortcut,
-                        action: partial_shortcut.action,
-                    }),
-                };
-            }
 
-            shortcuts
-        });
+                    shortcuts
+                });
 
         Ok(Self {
             theme: partial_option.theme.clone(),
@@ -207,7 +215,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 .find(|&profile| profile.uuid == partial_option.default_profile)
                 .unwrap_or(&profiles[0])
                 .clone(),
-            close_confirmation: partial_option.close_confirmation
+            close_confirmation: partial_option.close_confirmation,
         })
     }
 }
@@ -335,7 +343,6 @@ impl Serialize for ShortcutAction {
 #[serde(rename_all = "camelCase")]
 pub struct Profile {
     // TODO: Add Icon
-
     name: String,
     pub terminal_options: TerminalOption,
     theme: TerminalTheme,
@@ -511,13 +518,12 @@ impl<'de> Deserialize<'de> for TerminalTheme {
     }
 }
 
-
 #[derive(Debug, Clone, Serialize)]
 pub struct CloseConfirmation {
     pub tab: bool,
     pub window: bool,
     pub app: bool,
-    pub excluded_process: Vec<String>
+    pub excluded_process: Vec<String>,
 }
 
 impl<'de> Deserialize<'de> for CloseConfirmation {
@@ -534,33 +540,48 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
         #[serde(untagged)]
         enum Representation {
             Simple(bool),
-            Complex(PartialCloseConfirmation)
+            Complex(PartialCloseConfirmation),
         }
 
-
         match Representation::deserialize(deserializer)? {
-            Representation::Simple(close_confirmation_toggled) => {
-                Ok(Self {
-                    tab: close_confirmation_toggled,
-                    window: close_confirmation_toggled,
-                    app: close_confirmation_toggled,
-                    #[cfg(target_family = "unix")]
-                    excluded_process: vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()],
-                    #[cfg(target_os = "windows")]
-                    excluded_process: vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
-                })
-            },
-            Representation::Complex(partial_close_confirmation) =>  {
-                Ok(Self {
-                    tab: partial_close_confirmation.tab.unwrap_or(true),
-                    window: partial_close_confirmation.window.unwrap_or(true),
-                    app: partial_close_confirmation.app.unwrap_or(true),
-                    #[cfg(target_family = "unix")]
-                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(|| vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()]),
-                    #[cfg(target_os = "windows")]
-                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(|| vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()])
-                })
-            }
+            Representation::Simple(close_confirmation_toggled) => Ok(Self {
+                tab: close_confirmation_toggled,
+                window: close_confirmation_toggled,
+                app: close_confirmation_toggled,
+                #[cfg(target_family = "unix")]
+                excluded_process: vec![
+                    "sh".to_owned(),
+                    "bash".to_owned(),
+                    "fish".to_owned(),
+                    "zsh".to_owned(),
+                ],
+                #[cfg(target_os = "windows")]
+                excluded_process: vec![
+                    "cmd".to_owned(),
+                    "powershell".to_owned(),
+                    "pwsh".to_owned(),
+                ],
+            }),
+            Representation::Complex(partial_close_confirmation) => Ok(Self {
+                tab: partial_close_confirmation.tab.unwrap_or(true),
+                window: partial_close_confirmation.window.unwrap_or(true),
+                app: partial_close_confirmation.app.unwrap_or(true),
+                #[cfg(target_family = "unix")]
+                excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(
+                    || {
+                        vec![
+                            "sh".to_owned(),
+                            "bash".to_owned(),
+                            "fish".to_owned(),
+                            "zsh".to_owned(),
+                        ]
+                    },
+                ),
+                #[cfg(target_os = "windows")]
+                excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(
+                    || vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
+                ),
+            }),
         }
     }
 }
@@ -572,13 +593,17 @@ impl Default for CloseConfirmation {
             window: true,
             app: true,
             #[cfg(target_family = "unix")]
-            excluded_process: vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()],
+            excluded_process: vec![
+                "sh".to_owned(),
+                "bash".to_owned(),
+                "fish".to_owned(),
+                "zsh".to_owned(),
+            ],
             #[cfg(target_os = "windows")]
             excluded_process: vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
         }
     }
 }
-
 
 const fn default_to_true() -> bool {
     true

@@ -17,8 +17,9 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Deserialize<'de
     for RangedInt<MIN, MAX, DEF>
 {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        Ok(
-            u32::deserialize(deserializer).map_or_else(|_| Self::default(), |deserialized_value| {
+        Ok(u32::deserialize(deserializer).map_or_else(
+            |_| Self::default(),
+            |deserialized_value| {
                 if deserialized_value < MIN {
                     Self { value: MIN }
                 } else if deserialized_value > MAX {
@@ -28,14 +29,12 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Deserialize<'de
                         value: deserialized_value,
                     }
                 }
-            })
-        )
+            },
+        ))
     }
 }
 
-impl<const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize
-    for RangedInt<MIN, MAX, DEF>
-{
+impl<const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize for RangedInt<MIN, MAX, DEF> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -90,9 +89,8 @@ impl<'de> serde::Deserialize<'de> for BackgroundType {
                     "mica" => Self::Mica,
                     #[cfg(target_os = "macos")]
                     "vibrancy" => Self::Vibrancy,
-                    _ => {
-                        BackgroundMedia::deserialize_from_string(option_value).map_or_else(Self::default, Self::Media)
-                    }
+                    _ => BackgroundMedia::deserialize_from_string(option_value)
+                        .map_or_else(Self::default, Self::Media),
                 }
             } else if let OptionRepresentation::Complex(background_media) = option_representation {
                 Self::Media(background_media)

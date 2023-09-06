@@ -1,6 +1,6 @@
+use crate::configuration::deserialized::CloseConfirmation;
 use crate::configuration::deserialized::ShortcutAction;
 use crate::configuration::deserialized::TerminalOption;
-use crate::configuration::deserialized::CloseConfirmation;
 use crate::configuration::types::CursorType;
 use crate::configuration::types::RangedInt;
 use crate::configuration::types::{BackgroundMedia, BackgroundType};
@@ -46,7 +46,7 @@ impl Default for PartialOption {
             shortcuts: Some(Vec::default()),
             macros: Some(Vec::default()),
             default_profile: String::new(),
-            close_confirmation: CloseConfirmation::default()
+            close_confirmation: CloseConfirmation::default(),
         }
     }
 }
@@ -102,10 +102,11 @@ where
         Complex(BackgroundMedia),
     }
 
-    Ok(
-        Representation::deserialize(data).map_or(None, |todo_name_to_find| match todo_name_to_find {
+    Ok(Representation::deserialize(data).map_or(
+        None,
+        |todo_name_to_find| match todo_name_to_find {
             Representation::Simple(path) => BackgroundMedia::deserialize_from_string(path),
             Representation::Complex(background) => Some(background),
-        })
-    )
+        },
+    ))
 }
