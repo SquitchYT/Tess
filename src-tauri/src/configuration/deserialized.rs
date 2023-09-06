@@ -551,7 +551,7 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
                     #[cfg(target_family = "unix")]
                     excluded_process: vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()],
                     #[cfg(target_os = "windows")]
-                    excluded_process: vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
+                    excluded_process: vec!["cmd.exe".to_owned(), "powershell.exe".to_owned(), "pwsh.exe".to_owned()],
                 })
             },
             Representation::Complex(partial_close_confirmation) =>  {
@@ -562,7 +562,7 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
                     #[cfg(target_family = "unix")]
                     excluded_process: partial_close_confirmation.excluded_process.unwrap_or(vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()]),
                     #[cfg(target_os = "windows")]
-                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or(vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()])
+                    excluded_process: partial_close_confirmation.excluded_process.unwrap_or(vec!["cmd.exe".to_owned(), "powershell.exe".to_owned(), "pwsh.exe".to_owned()])
                 })
             }
         }
@@ -578,7 +578,7 @@ impl Default for CloseConfirmation {
             #[cfg(target_family = "unix")]
             excluded_process: vec!["sh".to_owned(), "bash".to_owned(), "fish".to_owned(), "zsh".to_owned()],
             #[cfg(target_os = "windows")]
-            excluded_process: vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
+            excluded_process: vec!["cmd.exe".to_owned(), "powershell.exe".to_owned(), "pwsh.exe".to_owned()],
         }
     }
 }
