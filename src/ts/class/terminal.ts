@@ -11,7 +11,7 @@ export class Terminal {
     fitAddon: FitAddon;
 
 
-    constructor(id: string, options: TerminalOptions, theme: TerminalTheme) {
+    constructor(id: string, options: TerminalOptions, theme: TerminalTheme, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean)) {
         // TODO: Finish
         // TODO: Load all addons
 
@@ -43,7 +43,7 @@ export class Terminal {
 
                 return false
             } else {
-                return true
+                return customKeyEventHandler(e, this.term)
             }
         })
     }

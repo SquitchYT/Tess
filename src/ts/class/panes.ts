@@ -4,6 +4,8 @@ import { Profile } from 'ts/schema/option';
 import { PopupManager } from 'ts/manager/popup';
 import { PopupBuilder, PopupButton } from './popup';
 
+import { Terminal as Xterm } from "xterm";
+
 export class TerminalPane {
     element: Element;
     id: string;
@@ -44,8 +46,8 @@ export class TerminalPane {
         return element
     }
 
-    async initializeTerm() {
-        let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme);
+    async initializeTerm(customKeyEventHanlder: ((e: KeyboardEvent, term: Xterm) => boolean)) {
+        let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme, customKeyEventHanlder);
 
         await terminal.launch(this.element.querySelector(".internal-term")!, this.profile.uuid);
 
