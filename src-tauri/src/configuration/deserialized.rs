@@ -64,7 +64,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 name: String::from("Default profile"),
                 terminal_options: partial_option.terminal.clone(),
                 theme: terminal_theme.clone(),
-                background_transparency: RangedInt::default(),
+                background_transparency: partial_option.background_transparency,
                 uuid: uuid::Uuid::new_v4().to_string(),
                 #[cfg(target_family = "unix")]
                 command: String::from("sh -c $SHELL"),
