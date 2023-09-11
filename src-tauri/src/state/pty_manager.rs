@@ -11,9 +11,16 @@ pub struct PtyManager {
     pub app: Option<Arc<tauri::AppHandle>>,
 }
 
+impl Default for PtyManager {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PtyManager {
+    #[must_use]
     pub fn new() -> Self {
-        PtyManager {
+        Self {
             ptys: HashMap::new(),
             app: None,
         }
@@ -39,12 +46,10 @@ impl PtyManager {
         }
     }
 
-    pub fn write(&mut self, id: &str, content: String) -> Result<(), PtyError> {
+    pub fn write(&mut self, id: &str, content: &str) -> Result<(), PtyError> {
         self.ptys
             .get_mut(id)
-            .ok_or_else(|| PtyError::Write(String::from(
-                "Unable to access to the terminal.",
-            )))?
+            .ok_or_else(|| PtyError::Write(String::from("Unable to access to the terminal.")))?
             .write(content)?;
         Ok(())
     }
@@ -52,9 +57,7 @@ impl PtyManager {
     pub fn resize(&mut self, id: &str, cols: u16, rows: u16) -> Result<(), PtyError> {
         self.ptys
             .get_mut(id)
-            .ok_or_else(|| PtyError::Resize(String::from(
-                "Unable to access to the terminal.",
-            )))?
+            .ok_or_else(|| PtyError::Resize(String::from("Unable to access to the terminal.")))?
             .resize(cols, rows)?;
         Ok(())
     }
@@ -62,13 +65,16 @@ impl PtyManager {
     pub fn close(&mut self, id: &str) -> Result<(), PtyError> {
         self.ptys
             .remove(id)
-            .ok_or_else(|| PtyError::Kill(String::from(
-                "Unable to access to the terminal.",
-            )))?
+            .ok_or_else(|| PtyError::Kill(String::from("Unable to access to the terminal.")))?
             .close()
     }
 
     pub fn get_running_process(&self, id: &str) -> Result<String, PtyError> {
-        self.ptys.get(id).ok_or_else(|| PtyError::CloseableStatus(String::from("Unable to access to the terminal.")))?.running_process()
+        self.ptys
+            .get(id)
+            .ok_or_else(|| {
+                PtyError::CloseableStatus(String::from("Unable to access to the terminal."))
+            })?
+            .running_process()
     }
 }

@@ -22,7 +22,7 @@ pub fn parse_theme(location: String) -> (Option<String>, Option<TerminalTheme>) 
         None
     };
 
-    if let Some(theme_path) = theme_path {
+    theme_path.map_or((None, None), |theme_path| {
         let app_theme = if std::path::Path::new(&format!("{}/style.css", theme_path)).exists() {
             Some(format!("{}/style.css", theme_path))
         } else {
@@ -45,9 +45,7 @@ pub fn parse_theme(location: String) -> (Option<String>, Option<TerminalTheme>) 
             };
 
         (app_theme, terminal_theme)
-    } else {
-        (None, None)
-    }
+    })
 }
 
 #[cfg(target_os = "windows")]

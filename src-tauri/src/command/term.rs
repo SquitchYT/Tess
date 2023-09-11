@@ -11,7 +11,7 @@ pub async fn terminal_input(
     content: String,
 ) -> Result<(), PtyError> {
     if let Ok(mut pty_manager) = pty_manager.lock() {
-        pty_manager.write(&id, content)?;
+        pty_manager.write(&id, &content)?;
         Ok(())
     } else {
         Err(PtyError::ManagerUnresponding)
@@ -66,12 +66,19 @@ pub async fn resize_terminal(
 }
 
 #[tauri::command]
-pub async fn check_close_availability(pty_manager: tauri::State<'_, Mutex<PtyManager>>, app_config: tauri::State<'_, Arc<Mutex<Option>>>, id: String) -> Result<bool, PtyError> {
+pub async fn check_close_availability(
+    pty_manager: tauri::State<'_, Mutex<PtyManager>>,
+    app_config: tauri::State<'_, Arc<Mutex<Option>>>,
+    id: String,
+) -> Result<bool, PtyError> {
     let app_config = app_config.lock().unwrap();
 
     if app_config.close_confirmation.tab {
         if let Ok(pty_manager) = pty_manager.lock() {
-            Ok(app_config.close_confirmation.excluded_process.contains(&pty_manager.get_running_process(&id)?))
+            Ok(app_config
+                .close_confirmation
+                .excluded_process
+                .contains(&pty_manager.get_running_process(&id)?))
         } else {
             Err(PtyError::ManagerUnresponding)
         }
@@ -94,6 +101,12 @@ pub async fn close_terminal(
 }
 
 #[tauri::command]
-pub async fn get_pty_title(pty_manager: tauri::State<'_, Mutex<PtyManager>>, id: String) -> Result<String, PtyError> {
-    pty_manager.lock().or(Err(PtyError::ManagerUnresponding))?.get_running_process(&id)
+pub async fn get_pty_title(
+    pty_manager: tauri::State<'_, Mutex<PtyManager>>,
+    id: String,
+) -> Result<String, PtyError> {
+    pty_manager
+        .lock()
+        .or(Err(PtyError::ManagerUnresponding))?
+        .get_running_process(&id)
 }
