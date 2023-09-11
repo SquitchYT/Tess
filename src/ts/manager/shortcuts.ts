@@ -10,7 +10,7 @@ export class ShortcutsManager {
 
     constructor(shortcuts: Shortcut[], onShortcutExecuted: ((shortcut: ShortcutAction) => void)) {
         shortcuts.forEach((shortcut) => {
-            this.shortcuts.push([shortcut.shortcut.toLowerCase().split("+"), shortcut.action])
+            this.shortcuts.push([shortcut.shortcut.toLowerCase().replaceAll(" ", "").split("+"), shortcut.action])
         })
 
         this.onShortcutExecutedCallback = onShortcutExecuted;
