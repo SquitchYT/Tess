@@ -8,6 +8,8 @@ use tauri::{AppHandle, Manager};
 
 use crate::common::payloads::{PtySendData, PtyTitleChanged};
 
+use std::ffi::OsString;
+
 #[cfg(target_os = "windows")]
 use crate::common::utils::get_leader_process_name;
 #[cfg(target_os = "windows")]
@@ -16,8 +18,6 @@ use lazy_static::lazy_static;
 use regex::{Captures, Regex};
 #[cfg(target_os = "windows")]
 use remoteprocess::Process;
-#[cfg(target_os = "windows")]
-use std::ffi::OsString;
 
 pub struct Pty {
     pub app: Arc<AppHandle>,
