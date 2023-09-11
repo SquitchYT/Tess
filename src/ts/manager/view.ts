@@ -201,12 +201,11 @@ export class ViewsManager {
         let viewId = uuid();
         let paneId = uuid();
 
-        let view = new View();
-
         let profile = this.option.profiles.find(profile => profile.uuid == profileId);
-
         if (profile) {
-            view.buildNew(viewId, paneId, (id) => {this.onViewsClosed(id)}, profile, (title) => {this.tabsManager.setTitle(viewId, title)}, this.popupManager).then(() => {
+            let view = new View(viewId, this.popupManager, (id) => { this.onViewsClosed(id); }, (title) => { this.tabsManager.setTitle(viewId, title); })
+            
+            view.openPane(paneId, profile, (e, term) => { return this.shortcutsManager.onKeyPress(e, term); }).then(() => {
                 this.views.push(view);
                 this.target.appendChild(view.element!);
     
@@ -215,9 +214,6 @@ export class ViewsManager {
                 });
     
                 this.tabsManager.openNewTab(profile!.name, viewId);
-
-                let term = (view.panes[0] as TerminalPane).term!.term;
-                term.attachCustomKeyEventHandler((e) => { return this.shortcutsManager.onKeyPress(e, term); });
     
                 if (focus) { this.tabsManager.select(viewId); }
             }).catch((err) => {

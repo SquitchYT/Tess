@@ -3,6 +3,7 @@ import { PagePane, TerminalPane } from "./panes";
 import { Profile } from "ts/schema/option";
 import { PopupManager } from "ts/manager/popup";
 
+import { Terminal as Xterm } from "xterm";
 
 export class View {
     // TODO: Implement pane page type
@@ -22,21 +23,28 @@ export class View {
     closingAllRequested: boolean = false;
 
 
-    async buildNew(viewId: string, paneId: string, closedEvent: ((id: string) => void), profile: Profile, focusedPaneTitleChangedEvent: ((title: string) => void), popupManager: PopupManager) {
-        this.id = viewId;
+    constructor (viewId: string, popupManager: PopupManager, closedEvent: ((id: string) => void), focusedPaneTitleChangedEvent: ((title: string) => void)) {
+        this.id =  viewId;
         this.element = this.generateComponents();
         this.closedEvent = closedEvent;
         this.focusedPaneTitleChangedEvent = focusedPaneTitleChangedEvent;
-
-        let pane = new TerminalPane(paneId, profile);
-        await pane.initializeTerm();
-
-        this.panes.push(pane)
-        this.element.appendChild(pane.element);
-
-        this.focusedPane = pane;
-
         this.popupManager = popupManager;
+    }
+
+    async openPane(paneId: string) : Promise<void>;
+    async openPane(paneId: string, profile: Profile, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean)) : Promise<void>;
+    async openPane(paneId: string, profile?: Profile, customKeyEventHandler?: ((e: KeyboardEvent, term: Xterm) => boolean)) {
+        if (profile) {
+            let pane = new TerminalPane(paneId, profile);
+            await pane.initializeTerm(customKeyEventHandler!);
+
+            this.panes.push(pane)
+            this.element!.appendChild(pane.element);
+
+            this.focusedPane = pane;
+        } else {
+            console.log("not yet implemented")
+        }
     }
 
     private generateComponents() : HTMLElement {
@@ -128,8 +136,4 @@ export class View {
             this.focusedPaneTitleChangedEvent!(title)
         }
     }
-
-    /*openPane(split: "horizontaly" | "vertically", paneId: string, subviewToSplit: string) {
-        // TODO: Implement
-    }*/
 }

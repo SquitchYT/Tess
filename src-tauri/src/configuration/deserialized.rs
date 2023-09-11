@@ -64,7 +64,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 name: String::from("Default profile"),
                 terminal_options: partial_option.terminal.clone(),
                 theme: terminal_theme.clone(),
-                background_transparency: RangedInt::default(),
+                background_transparency: partial_option.background_transparency,
                 uuid: uuid::Uuid::new_v4().to_string(),
                 #[cfg(target_family = "unix")]
                 command: String::from("sh -c $SHELL"),
@@ -557,9 +557,9 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
                 ],
                 #[cfg(target_os = "windows")]
                 excluded_process: vec![
-                    "cmd".to_owned(),
-                    "powershell".to_owned(),
-                    "pwsh".to_owned(),
+                    "cmd.exe".to_owned(),
+                    "powershell.exe".to_owned(),
+                    "pwsh.exe".to_owned(),
                 ],
             }),
             Representation::Complex(partial_close_confirmation) => Ok(Self {
@@ -579,7 +579,7 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
                 ),
                 #[cfg(target_os = "windows")]
                 excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(
-                    || vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
+                    || vec!["cmd.exe".to_owned(), "powershell.exe".to_owned(), "pwsh.exe".to_owned()],
                 ),
             }),
         }
@@ -600,7 +600,7 @@ impl Default for CloseConfirmation {
                 "zsh".to_owned(),
             ],
             #[cfg(target_os = "windows")]
-            excluded_process: vec!["cmd".to_owned(), "powershell".to_owned(), "pwsh".to_owned()],
+            excluded_process: vec!["cmd.exe".to_owned(), "powershell.exe".to_owned(), "pwsh.exe".to_owned()],
         }
     }
 }
