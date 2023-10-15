@@ -579,7 +579,13 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
                 ),
                 #[cfg(target_os = "windows")]
                 excluded_process: partial_close_confirmation.excluded_process.unwrap_or_else(
-                    || vec!["cmd.exe".to_owned(), "powershell.exe".to_owned(), "pwsh.exe".to_owned()],
+                    || {
+                        vec![
+                            "cmd.exe".to_owned(),
+                            "powershell.exe".to_owned(),
+                            "pwsh.exe".to_owned(),
+                        ]
+                    },
                 ),
             }),
         }
@@ -600,7 +606,11 @@ impl Default for CloseConfirmation {
                 "zsh".to_owned(),
             ],
             #[cfg(target_os = "windows")]
-            excluded_process: vec!["cmd.exe".to_owned(), "powershell.exe".to_owned(), "pwsh.exe".to_owned()],
+            excluded_process: vec![
+                "cmd.exe".to_owned(),
+                "powershell.exe".to_owned(),
+                "pwsh.exe".to_owned(),
+            ],
         }
     }
 }

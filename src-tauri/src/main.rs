@@ -55,7 +55,7 @@ fn main() {
 
     match &option.lock().unwrap().background {
         BackgroundType::Media(media) => {
-            app_handle.fs_scope().allow_file(&media.location);
+            app_handle.fs_scope().allow_file(&media.location).ok();
         }
         #[cfg(target_family = "unix")]
         BackgroundType::Blurred => {
@@ -83,17 +83,19 @@ fn main() {
         _ => {}
     }
 
-    app_handle.get_window("main").unwrap().set_decorations(true);
+    app_handle.get_window("main").unwrap().set_decorations(true).ok();
 
     app_handle
         .fs_scope()
-        .allow_file(&option.lock().unwrap().app_theme);
+        .allow_file(&option.lock().unwrap().app_theme).ok();
 
     let mut watcher =
         notify::recommended_watcher(move |res: Result<notify::Event, notify::Error>| {
             match res {
                 Ok(event) => {
-                    if let  notify::EventKind::Access(notify::event::AccessKind::Close(..)) = event.kind {
+                    if let notify::EventKind::Access(notify::event::AccessKind::Close(..)) =
+                        event.kind
+                    {
                         let config_file = std::fs::read_to_string(format!(
                             "{}/tess/config.json",
                             dirs_next::config_dir().unwrap_or_default().display()
@@ -110,7 +112,7 @@ fn main() {
 
                         logger.info("Refreshing config...");
 
-                        app_handle.emit_all("global_config_updated", format!("{:?}", reff));
+                        app_handle.emit_all("global_config_updated", format!("{:?}", reff)).ok();
                     }
                 }
                 Err(e) => println!("Config watching error: {}", e),
@@ -140,15 +142,14 @@ fn main() {
             event: WindowEvent::CloseRequested { api, .. },
             ..
         } => {
-            //if let  = event {
             if option.lock().unwrap().close_confirmation.window {
                 app.get_window(&label)
                     .unwrap()
-                    .emit("request_window_closing", "");
+                    .emit("request_window_closing", "")
+                    .ok();
 
                 api.prevent_close()
             }
-            //};
         }
         _ => (),
     })

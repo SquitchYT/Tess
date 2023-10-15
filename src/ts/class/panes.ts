@@ -16,7 +16,7 @@ export class TerminalPane {
     title: String
 
     constructor(id: string, profile: Profile) {
-        this.profile = profile
+        this.profile = profile;
         this.element = this.generateComponents();
         this.id = id;
         this.title = profile.name;
