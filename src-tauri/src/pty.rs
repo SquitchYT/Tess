@@ -153,6 +153,9 @@ impl Pty {
                 });
 
                 std::thread::spawn(move || {
+                    #[cfg(target_family = "unix")]
+                    std::thread::sleep(std::time::Duration::from_millis(20));
+
                     while *is_running_cloned.read().unwrap() {
                         if let Ok(Some(_)) = child_clone.as_ref().lock().unwrap().try_wait() {
                             *is_running_cloned.write().unwrap() = false;
@@ -205,8 +208,6 @@ impl Pty {
                             {
                                 if process_leader_pid != *current_process_leader_pid.read().unwrap()
                                 {
-                                    std::thread::sleep(std::time::Duration::from_millis(10));
-
                                     *current_process_leader_pid.write().unwrap() =
                                         process_leader_pid;
 
