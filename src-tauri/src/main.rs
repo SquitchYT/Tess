@@ -83,11 +83,16 @@ fn main() {
         _ => {}
     }
 
-    app_handle.get_window("main").unwrap().set_decorations(true).ok();
+    app_handle
+        .get_window("main")
+        .unwrap()
+        .set_decorations(true)
+        .ok();
 
     app_handle
         .fs_scope()
-        .allow_file(&option.lock().unwrap().app_theme).ok();
+        .allow_file(&option.lock().unwrap().app_theme)
+        .ok();
 
     let mut watcher =
         notify::recommended_watcher(move |res: Result<notify::Event, notify::Error>| {
@@ -112,7 +117,9 @@ fn main() {
 
                         logger.info("Refreshing config...");
 
-                        app_handle.emit_all("global_config_updated", format!("{:?}", reff)).ok();
+                        app_handle
+                            .emit_all("global_config_updated", format!("{:?}", reff))
+                            .ok();
                     }
                 }
                 Err(e) => println!("Config watching error: {}", e),
