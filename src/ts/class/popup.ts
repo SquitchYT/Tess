@@ -149,7 +149,7 @@ export class PopupBuilder {
 }
 
 export class PopupButton {
-    type: "dismiss"|"validate"|"custom" = "dismiss";
+    type: "dismiss"|"validate"|"custom";
     content: string;
     actionID: string;
 

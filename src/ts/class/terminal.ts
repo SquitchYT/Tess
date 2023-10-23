@@ -1,7 +1,6 @@
 import { FitAddon } from "xterm-addon-fit";
 import { CanvasAddon } from 'xterm-addon-canvas';
 import { Terminal as Xterm } from "xterm";
-
 import { invoke } from '@tauri-apps/api/tauri'
 import { TerminalOptions, TerminalTheme } from "ts/schema/option";
 
@@ -9,6 +8,7 @@ export class Terminal {
     id: string;
     term: Xterm;
     fitAddon: FitAddon;
+    canvasResizeObserver: ResizeObserver | undefined;
 
 
     constructor(id: string, options: TerminalOptions, theme: TerminalTheme, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean)) {
@@ -16,7 +16,7 @@ export class Terminal {
         // TODO: Load all addons
 
         theme = Object.assign({}, theme);
-        theme.background = "transparent";
+        theme.background = "rgba(0,0,0,0)";
         
         this.id = id;
         this.term = new Xterm({
@@ -41,34 +41,45 @@ export class Terminal {
             if (e.key == "F10") {
                 invoke("terminal_input", {content: "\x1b[21~", id: id});
 
-                return false
+                return false;
             } else {
-                return customKeyEventHandler(e, this.term)
+                return customKeyEventHandler(e, this.term);
             }
         })
     }
 
     async launch(target: HTMLElement, profile_id: string) {
-        target.addEventListener("resize", () => {
-            this.fitAddon.fit();
-            invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id}).catch((error) => {
-                // TODO: Send notification with error message
+        this.canvasResizeObserver = new ResizeObserver(async () => {
+            let proposedDimensions = this.fitAddon.proposeDimensions();
+            if (proposedDimensions && !isNaN(proposedDimensions.cols) && !isNaN(proposedDimensions.rows)) {
+                this.term.resize(proposedDimensions.cols + 1, proposedDimensions.rows + 1);
 
-                console.error(error);
-            });
-        })
+                await invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
+            }
+        });
 
-        await invoke("create_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id, profileUuid: profile_id})
+        this.canvasResizeObserver.observe(target);
+
+        await invoke("create_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id, profileUuid: profile_id});
 
         this.term.open(target);
+
+        this.term.element!.parentElement!.style.boxSizing = "content-box";
 
         this.term.loadAddon(new CanvasAddon());
         this.term.loadAddon(this.fitAddon);
 
-        this.term.onRender(() => {
-            this.fitAddon.fit();
-            invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
-            this.term.write("\0");
+
+        let onRenderDisposable = this.term.onRender(async () => {
+            let proposedDimensions = this.fitAddon.proposeDimensions();
+
+            if (proposedDimensions && !isNaN(proposedDimensions.cols) && !isNaN(proposedDimensions.rows)) {
+                this.term.resize(proposedDimensions.cols + 1, proposedDimensions.rows + 1);
+    
+                await invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
+
+                onRenderDisposable.dispose()
+            }
         })
     }
 
@@ -81,6 +92,7 @@ export class Terminal {
     }
 
     close() {
-        this.term.dispose()
+        this.canvasResizeObserver!.disconnect();
+        try { this.term.dispose() } catch (_) {}
     }
 }

@@ -29,7 +29,7 @@ pub struct Pty {
     leader_programm_name: Arc<Mutex<OsString>>,
     writer: Option<Box<dyn std::io::Write + Send>>,
     is_running: Arc<RwLock<bool>>,
-    title_is_running_process: Arc<RwLock<bool>>,
+    title_is_running_process: bool,
     running_process: Arc<Mutex<String>>,
 }
 
@@ -62,9 +62,7 @@ impl Pty {
                 leader_programm_name: Arc::new(Mutex::from(OsString::new())),
                 writer: None,
                 is_running: Arc::new(RwLock::new(true)),
-                title_is_running_process: Arc::new(RwLock::new(
-                    profile.terminal_options.title_is_running_process,
-                )),
+                title_is_running_process: profile.terminal_options.title_is_running_process,
                 running_process: Arc::new(Mutex::from(String::new())),
             };
 
@@ -127,7 +125,7 @@ impl Pty {
                 let is_running = self.is_running.clone();
                 let is_running_cloned = is_running.clone();
 
-                let title_is_running_process = self.title_is_running_process.clone();
+                let title_is_running_process = self.title_is_running_process;
 
                 #[cfg(target_os = "windows")]
                 let leader_programm_name = self.leader_programm_name.clone();
@@ -167,86 +165,80 @@ impl Pty {
                         }
 
                         #[cfg(target_os = "windows")]
+                        if let Some(leader_process_name) =
+                            get_leader_process_name(Process::new(tmp_pty_pid).unwrap())
                         {
-                            let leader_process_name =
-                                get_leader_process_name(Process::new(tmp_pty_pid).unwrap());
+                            let mut leader_programm_name_locked =
+                                leader_programm_name.lock().unwrap();
 
-                            if let Some(new_leader_process_name) = leader_process_name {
-                                let mut leader_programm_name_locked =
-                                    leader_programm_name.lock().unwrap();
+                            if leader_process_name != *leader_programm_name_locked {
+                                *leader_programm_name_locked = leader_process_name;
 
-                                if new_leader_process_name != *leader_programm_name_locked {
-                                    *leader_programm_name_locked = new_leader_process_name;
+                                if title_is_running_process {
+                                    cloned_app
+                                        .emit_all(
+                                            "terminalTitleChanged",
+                                            PtyTitleChanged {
+                                                id: id_cloned.clone(),
+                                                title: leader_programm_name_locked
+                                                    .clone()
+                                                    .into_string()
+                                                    .unwrap(),
+                                            },
+                                        )
+                                        .ok();
+                                }
 
-                                    if *title_is_running_process.read().unwrap() {
-                                        cloned_app
-                                            .emit_all(
-                                                "terminalTitleChanged",
-                                                PtyTitleChanged {
-                                                    id: id_cloned.clone(),
-                                                    title: leader_programm_name_locked
-                                                        .clone()
-                                                        .into_string()
-                                                        .unwrap(),
-                                                },
-                                            )
-                                            .ok();
-                                    }
-
-                                    if let Ok(mut locked_running_process_clone) =
-                                        running_process_cloned.lock()
-                                    {
-                                        *locked_running_process_clone = leader_programm_name_locked
-                                            .clone()
-                                            .into_string()
-                                            .unwrap()
-                                    }
+                                if let Ok(mut locked_running_process_clone) =
+                                    running_process_cloned.lock()
+                                {
+                                    *locked_running_process_clone =
+                                        leader_programm_name_locked.clone().into_string().unwrap()
                                 }
                             }
                         }
 
                         #[cfg(target_family = "unix")]
                         {
-                            let cloned_locked_pair = cloned_pair.lock().unwrap();
-
                             if let Some(process_leader_pid) =
-                                cloned_locked_pair.master.process_group_leader()
+                                cloned_pair.lock().unwrap().master.process_group_leader()
                             {
                                 if process_leader_pid != *current_process_leader_pid.read().unwrap()
                                 {
-                                    std::thread::sleep(std::time::Duration::from_millis(5));
-
-                                    *current_process_leader_pid.write().unwrap() =
-                                        process_leader_pid;
-
                                     if let Ok(mut process_leader_title) = std::fs::read_to_string(
                                         format!("/proc/{}/comm", process_leader_pid),
                                     ) {
                                         process_leader_title.pop();
 
-                                        if *title_is_running_process.read().unwrap() {
-                                            cloned_app
-                                                .emit_all(
-                                                    "terminalTitleChanged",
-                                                    PtyTitleChanged {
-                                                        id: id_cloned.clone(),
-                                                        title: process_leader_title.clone(),
-                                                    },
-                                                )
-                                                .ok();
-                                        }
+                                        if process_leader_title != "tokio-runtime-w" {
+                                            *current_process_leader_pid.write().unwrap() =
+                                                process_leader_pid;
 
-                                        if let Ok(mut locked_running_process_clone) =
-                                            running_process_cloned.lock()
-                                        {
-                                            *locked_running_process_clone = process_leader_title;
+                                            if title_is_running_process {
+                                                cloned_app
+                                                    .emit_all(
+                                                        "terminalTitleChanged",
+                                                        PtyTitleChanged {
+                                                            id: id_cloned.clone(),
+                                                            title: process_leader_title.clone(),
+                                                        },
+                                                    )
+                                                    .ok();
+                                            }
+
+                                            if let Ok(mut locked_running_process_clone) =
+                                                running_process_cloned.lock()
+                                            {
+                                                *locked_running_process_clone =
+                                                    process_leader_title;
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
 
-                        std::thread::sleep(std::time::Duration::from_millis(10));
+                        std::thread::sleep(std::time::Duration::from_millis(16));
                     }
                 });
             };
