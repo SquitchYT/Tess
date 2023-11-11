@@ -3,16 +3,21 @@
     windows_subsystem = "windows"
 )]
 
-use notify::Watcher;
 use tauri::{Manager, WindowEvent};
-use tess::command::{option::*, term::*, window::*};
+use tess::command::{app::*, option::*, term::*, window::*};
 use tess::configuration::deserialized::Option;
 use tess::configuration::types::BackgroundType;
 use tess::logger::Logger;
 
+#[cfg(target_family = "unix")]
+use futures::stream::StreamExt;
+#[cfg(target_family = "unix")]
+use signal_hook::consts::signal::*;
+
 use std::sync::{Arc, Mutex};
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let start = std::time::Instant::now();
     let logger = Logger {};
 
@@ -34,8 +39,7 @@ fn main() {
         Option::default()
     }));
 
-    let option_clone = option.clone();
-
+    tauri::async_runtime::set(tokio::runtime::Handle::current());
     let app = tauri::Builder::default()
         .manage(Mutex::new(tess::state::pty_manager::PtyManager::new()))
         .manage(option.clone())
@@ -45,6 +49,7 @@ fn main() {
             resize_terminal,
             close_terminal,
             close_window,
+            close_app,
             check_close_availability,
             get_pty_title,
             get_configuration
@@ -94,55 +99,39 @@ fn main() {
         .allow_file(&option.lock().unwrap().app_theme)
         .ok();
 
-    let mut watcher =
-        notify::recommended_watcher(move |res: Result<notify::Event, notify::Error>| {
-            match res {
-                Ok(event) => {
-                    if let notify::EventKind::Access(notify::event::AccessKind::Close(..)) =
-                        event.kind
-                    {
-                        let config_file = std::fs::read_to_string(format!(
-                            "{}/tess/config.json",
-                            dirs_next::config_dir().unwrap_or_default().display()
-                        ));
-                        let option = if let Ok(config_file) = config_file {
-                            serde_json::from_str(&config_file).unwrap_or_default()
-                        } else {
-                            Option::default()
-                        };
-
-                        let mut reff = option_clone.lock().unwrap();
-
-                        *reff = option;
-
-                        logger.info("Refreshing config...");
-
-                        app_handle
-                            .emit_all("global_config_updated", format!("{:?}", reff))
-                            .ok();
-                    }
-                }
-                Err(e) => println!("Config watching error: {}", e),
-            };
-        })
-        .unwrap();
-
-    if let Err(watching_error) = watcher.watch(
-        std::path::Path::new(&format!(
-            "{}/tess/config.json",
-            dirs_next::config_dir().unwrap_or_default().display()
-        )),
-        notify::RecursiveMode::Recursive,
-    ) {
-        println!("Cannot start config watching: {}", watching_error)
-    }
-
     app.unwrap().run(move |app, event| match event {
         tauri::RunEvent::Ready => {
-            logger.info(&format!("Launched in {}ms", start.elapsed().as_millis()));
-
             #[cfg(debug_assertions)]
             app.get_window("main").unwrap().open_devtools();
+
+            #[cfg(target_family = "unix")]
+            {
+                let app_cloned = app.clone();
+                tokio::spawn(async move {
+                    if let Ok(mut signals_stream) = signal_hook_tokio::Signals::new(&[SIGQUIT, SIGTERM]) {
+                        while let Some(_) = signals_stream.next().await {
+                            let windows_count = app_cloned.windows().len();
+                            if windows_count > 1 {
+                                app_cloned
+                                    .get_window("main")
+                                    .unwrap()
+                                    .emit("request_app_exit", windows_count)
+                                    .ok();
+                            } else {
+                                app_cloned
+                                    .get_window("main")
+                                    .unwrap()
+                                    .emit("request_window_closing", ())
+                                    .ok();
+                            }
+                        }
+                    } else {
+                        logger.fatal("Unable to register the signal handler")
+                    }
+                });
+            }
+
+            logger.info(&format!("Launched in {}ms", start.elapsed().as_millis()));
         }
         tauri::RunEvent::WindowEvent {
             label,

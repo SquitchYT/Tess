@@ -45,11 +45,22 @@ export class ViewsManager {
         listen<terminalTitleChangedPayload>("terminalTitleChanged", (e) => { this.onTerminalTitleChanged(e); })
         listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
 
-        listen("request_window_closing", () => { this.closeViews(); })
+        listen("request_window_closing", () => { this.closeViews(); });
+        listen<number>("request_app_exit", (e) => { this.closeAllWindows(e); });
 
         this.toaster = new Toaster(toastTarget);
 
         this.option = option;
+    }
+
+    private async closeAllWindows(e: Event<number>) {
+        let confirmButton = new PopupButton("confirm", "validate");
+        let cancelButton = new PopupButton("cancel", "dismiss");
+
+        let popupResult = await this.popupManager.sendPopup(new PopupBuilder(`Confirm close of ${e.payload} windows`).withMessage(`Are you sure to close the app?`).withButtons(confirmButton, cancelButton));
+        if (popupResult.action == "confirm") {
+            invoke("close_app");
+        }
     }
 
     private onTabFocused(id: string) {

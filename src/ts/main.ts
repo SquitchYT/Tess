@@ -1,5 +1,4 @@
 import { ViewsManager } from './manager/view';
-import { listen } from '@tauri-apps/api/event';
 import { invoke, convertFileSrc } from '@tauri-apps/api/tauri';
 import { Option } from './schema/option';
 
@@ -34,10 +33,5 @@ invoke<Option>("get_configuration").then((option) => {
     document.querySelector(".open")!.addEventListener("click", () => {
         viewsManager.openProfile(option.defaultProfile.uuid, true);
     })
-    
-
-    listen<string>("global_config_updated", (e) => {
-        console.log("Updated config:", e.payload);
-    });
 })
 
