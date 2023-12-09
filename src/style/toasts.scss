@@ -1,81 +1,104 @@
 .toasts {
-    width: calc(100% - 32px);
     position: absolute;
-    bottom: 0;
+    bottom: 18px;
+    right: 18px;
     z-index: 10;
     display: flex;
     align-items:end;
     flex-direction: column;
     row-gap: 12px;
-    padding-bottom: 16px;
     pointer-events: none;
-    margin-left: 16px;
 
     .toast {
-        padding-top: 9px;
-        padding-bottom: 9px;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding-inline: 13px;
+        padding-block: 12px;
         border-radius: 4px;
         box-shadow: rgba(0, 0, 0, 0.28) 0px 5px 10px;
-        height: fit-content;
         background: var(--toast-background);
         animation: toast-inserted 140ms forwards;
         display: flex;
         justify-content: center;
         align-items: center;
-        color: var(--text-color);
         pointer-events: all;
-        max-width: 260px;
+        max-width: 270px;
         position: relative;
 
         .icon {
             position: absolute;
-            top: 4.5px;
             left: 0;
             fill: none;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding-left: 10px;
+            padding-left: 13px;
             color: var(--icon-color);
 
             svg {
-                height: 16px;
-                width: 16px;
+                height: 20px;
+                width: 20px;
             }
         }
 
         .content {
-            padding-left: 24px;
-            display: flex;
-            justify-content: center;
-            row-gap: 2px;
-            flex-direction: column;
+            padding-left: 33px;
             overflow: hidden;
-            font-weight: 600;
 
             .title {
                 font-size: 13px;
+                font-weight: 600;
             }
 
             .message {
-                font-size: 11px;
-                text-overflow: ellipsis;
-                max-height: 14px;
-                white-space: nowrap;
-                overflow: hidden;
-                transition: max-height 200ms;
-                -webkit-line-clamp: 13;
-                -webkit-box-orient: vertical;
-                display: -webkit-box;
+                margin-top: 4px;
+                font-size: 12px;
+                display: grid;
+                grid-template-rows: 0fr;
+                transition: grid-template-rows 200ms;
+
+                span {
+                    text-align: justify;
+                    min-height: 17px;
+                }
             }
         }
 
-        &.text-expanded .content {
-            .message {
-                max-height: 182px;
-                white-space: normal;
+        &.with-text {
+            .icon {
+                top: 20.5px;
+            }
+
+            .actions {
+                top: 8px;
+
+                .close {
+                    box-shadow: unset;
+                }
+    
+                .expand {
+                    box-shadow: -9px 0 7px var(--toast-background);
+                    
+                    svg {
+                        transform: rotate(-90deg);
+                        transition: transform 140ms;
+                    }
+                }
+            }
+        }
+
+        &.text-expanded {
+            .actions .expand svg {
+                transform: rotate(0deg);
+            }
+
+            .content {
+                .message {
+                    grid-template-rows: 1fr;
+    
+                    span {
+                        transition-delay: 200ms;
+                        transition-property: white-space;
+                    }
+                }
             }
         }
 
@@ -83,25 +106,10 @@
             opacity: unset;
         }
 
-        &.with-text {
-            .actions {
-                .close {
-                    box-shadow: unset;
-                }
-    
-                .expand {
-                    box-shadow: -9px 0 7px var(--shadow-color);
-                }
-            }
-
-            .icon {
-                top: 8.5px !important;
-            }
-        }
-
         .actions {
-            right: 7px;
-            top: 7px;
+            right: 8px;
+            margin-top: auto;
+            margin-bottom: auto;
             position: absolute;
             height: 20px;
             display: flex;
@@ -121,12 +129,11 @@
                 cursor: pointer;
 
                 &:hover {
-                    background: var(--action-button-hovered-background) !important;
+                    background: var(--toast-button-hovered-background) !important;
                 }
             }
 
             .close {
-                background: var(--action-button-background);
                 height: 20px;
                 width: 20px;
                 transition: background 100ms;
@@ -139,7 +146,6 @@
             }
 
             .expand {
-                background: var(--action-button-background);
                 height: 20px;
                 width: 20px;
 

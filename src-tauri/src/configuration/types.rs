@@ -122,6 +122,7 @@ pub struct BackgroundMedia {
 }
 
 impl BackgroundMedia {
+    #[must_use]
     pub fn deserialize_from_string(value: String) -> Option<Self> {
         std::fs::read(&value).map_or(None, |file| {
             if infer::is_image(&file) {

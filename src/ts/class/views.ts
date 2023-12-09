@@ -4,6 +4,7 @@ import { Profile } from "ts/schema/option";
 import { PopupManager } from "ts/manager/popup";
 
 import { Terminal as Xterm } from "xterm";
+import { Toaster } from "ts/manager/toast";
 
 export class View {
     // TODO: Implement pane page type
@@ -22,13 +23,16 @@ export class View {
 
     closingAllRequested: boolean = false;
 
+    toaster: Toaster;
 
-    constructor (viewId: string, popupManager: PopupManager, closedEvent: ((id: string) => void), focusedPaneTitleChangedEvent: ((title: string) => void)) {
+
+    constructor (viewId: string, popupManager: PopupManager, toaster: Toaster, closedEvent: ((id: string) => void), focusedPaneTitleChangedEvent: ((title: string) => void)) {
         this.id =  viewId;
         this.element = this.generateComponents();
         this.closedEvent = closedEvent;
         this.focusedPaneTitleChangedEvent = focusedPaneTitleChangedEvent;
         this.popupManager = popupManager;
+        this.toaster = toaster;
     }
 
     async openPane(paneId: string) : Promise<void>;
@@ -36,14 +40,12 @@ export class View {
     async openPane(paneId: string, profile?: Profile, customKeyEventHandler?: ((e: KeyboardEvent, term: Xterm) => boolean)) {
         if (profile) {
             let pane = new TerminalPane(paneId, profile);
-            await pane.initializeTerm(customKeyEventHandler!);
+            await pane.initializeTerm(customKeyEventHandler!, this.toaster);
 
             this.panes.push(pane)
             this.element!.appendChild(pane.element);
 
             this.focusedPane = pane;
-        } else {
-            console.log("not yet implemented")
         }
     }
 
@@ -72,11 +74,13 @@ export class View {
         if (!this.closingAllRequested) {
             this.closingAllRequested = true;
 
-            for await (let pane of this.panes) {
-                await this.requestClosingOne(pane.id)
+            try {
+                for await (let pane of this.panes) {
+                    await this.requestClosingOne(pane.id)
+                }
+            } finally {
+                this.closingAllRequested = false;
             }
-
-            this.closingAllRequested = false;
         }
     }
 
