@@ -4,6 +4,8 @@ import { Terminal as Xterm } from "xterm";
 import { invoke } from '@tauri-apps/api/tauri'
 import { TerminalOptions, TerminalTheme } from "ts/schema/option";
 import { Toaster } from "ts/manager/toast";
+import { terminalDataPayload } from "ts/schema/term";
+import { UnlistenFn, listen } from "@tauri-apps/api/event";
 
 export class Terminal {
     id: string;
@@ -11,6 +13,7 @@ export class Terminal {
     fitAddon: FitAddon;
     canvasResizeObserver: ResizeObserver | undefined;
     toaster: Toaster;
+    unlisten: UnlistenFn | undefined = undefined;
 
 
     constructor(id: string, options: TerminalOptions, theme: TerminalTheme, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean), toaster: Toaster) {
@@ -47,6 +50,29 @@ export class Terminal {
         })
 
         this.toaster = toaster;
+
+        let bufferedBytes = 0;
+        let paused = false;
+        listen<terminalDataPayload>("js_pty_data", ((e) => {
+            if (e.payload.id == this.id) {
+                bufferedBytes += e.payload.data.length;
+
+                this.term.write(e.payload.data, () => {
+                    bufferedBytes = Math.max(bufferedBytes - e.payload.data.length, 0);
+                    if (bufferedBytes < 16384 && paused) {
+                        invoke("pty_resume", {id: id});
+                        paused = false;
+                    }
+                })
+
+                if (bufferedBytes > 131072 && !paused) {
+                    invoke("pty_pause", {id: id});
+                    paused = true;
+                  }
+            }
+        })).then((unlisten) => {
+            this.unlisten = unlisten;
+        })
     }
 
     async launch(target: HTMLElement, profile_id: string) {
@@ -101,6 +127,7 @@ export class Terminal {
     }
 
     close() {
+        this.unlisten!();
         this.canvasResizeObserver!.disconnect();
         try { this.term.dispose() } catch (_) {}
     }

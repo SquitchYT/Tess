@@ -3,7 +3,7 @@ import { listen, Event } from '@tauri-apps/api/event'
 import { v4 as uuid } from 'uuid';
 import { invoke } from '@tauri-apps/api/tauri'
 
-import { terminalDataPayload, terminalTitleChangedPayload } from "./schema/term";
+import { terminalTitleChangedPayload } from "./schema/term";
 import { View } from "./class/views";
 import { Toaster } from "./manager/toast";
 
@@ -39,7 +39,6 @@ export class App {
 
         this.shortcutsManager = new ShortcutsManager(option.shortcuts, (action) => { this.onShortcutExecuted(action) });
 
-        listen<terminalDataPayload>("js_pty_data", (e) => { this.onTerminalReceiveData(e); });
         listen<terminalTitleChangedPayload>("js_pty_title_update", (e) => { this.onTerminalTitleChanged(e); })
         listen<string>("js_pty_closed", (e) => { this.onTerminalProcessExited(e); });
 
@@ -97,15 +96,6 @@ export class App {
         }
 
         this.tabsManager.closeTab(uuid);
-    }
-
-    private onTerminalReceiveData(e: Event<terminalDataPayload>) {
-        this.views.forEach((view) => {
-            let term = view.getTerm(e.payload.id);
-            if (term) {
-                term.term.write(e.payload.data);
-            }
-        })
     }
 
     private onTerminalTitleChanged(e: Event<terminalTitleChangedPayload>) {

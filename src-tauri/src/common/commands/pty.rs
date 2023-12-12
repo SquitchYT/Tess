@@ -40,7 +40,7 @@ pub async fn pty_open(
                 app.emit_all(
                     "js_pty_data",
                     PtySendData {
-                        data: std::str::from_utf8(&readed).unwrap_or_default(),
+                        data: &readed,
                         id: &id_cloned,
                     },
                 )
@@ -145,4 +145,26 @@ pub async fn pty_get_title(ptys: tauri::State<'_, Ptys>, id: String) -> Result<S
         .lock()
         .await
         .to_string())
+}
+
+#[tauri::command]
+pub async fn pty_pause(ptys: tauri::State<'_, Ptys>, id: String) -> Result<(), PtyError> {
+    Ok(ptys
+        .0
+        .lock()
+        .await
+        .get(&id)
+        .ok_or(PtyError::UnknownPty)?
+    .pause())
+}
+
+#[tauri::command]
+pub async fn pty_resume(ptys: tauri::State<'_, Ptys>, id: String) -> Result<(), PtyError> {
+    Ok(ptys
+        .0
+        .lock()
+        .await
+        .get(&id)
+        .ok_or(PtyError::UnknownPty)?
+    .resume())
 }

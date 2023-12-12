@@ -79,10 +79,6 @@ export class TerminalPane {
         this.term!.close();
     }
 
-    write(data: string) {
-        this.term!.term.write(data);
-    }
-
     unfocus() {
         this.term?.unfocus()
     }

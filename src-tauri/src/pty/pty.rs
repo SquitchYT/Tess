@@ -14,6 +14,7 @@ pub struct Pty {
     writer: Box<dyn Write + Send>,
     child: Arc<Mutex<Box<dyn Child + Send + Sync>>>,
     master: Arc<Mutex<Box<dyn MasterPty + Send>>>,
+    paused: Arc<AtomicBool>,
 
     pub title: Arc<Mutex<String>>,
     pub closed: Arc<AtomicBool>,
@@ -25,7 +26,7 @@ unsafe impl Sync for Pty {}
 impl Pty {
     pub fn build_and_run(
         command: &str,
-        on_read: impl Fn([u8; 2048]) + std::marker::Send + 'static,
+        on_read: impl Fn(&str) + std::marker::Send + 'static,
         on_tab_title_update: impl Fn(&str) + std::marker::Send + 'static,
         once_exit: impl FnOnce() + std::marker::Send + 'static,
     ) -> Result<Self, PtyError> {
@@ -72,6 +73,7 @@ impl Pty {
                 .spawn_command(builded_command)
                 .map_err(|err| PtyError::Creation(err.to_string()))?,
         ));
+
         let cloned_child = child.clone();
         let cloned_master = master.clone();
         let title = Arc::new(Mutex::from(String::new()));
@@ -81,20 +83,40 @@ impl Pty {
         let closed_cloned = closed.clone();
 
         let (exit_sender, exit_receiver) = mpsc::channel::<()>();
+        let paused = Arc::from(AtomicBool::new(false));
+        let paused_cloned = paused.clone();
 
-        std::thread::spawn(move || loop {
-            let mut buf = [0; 2048];
-            if reader.read(&mut buf).is_ok_and(|bytes| bytes > 0) {
-                on_read(buf);
-            }
+        std::thread::spawn(move || {
+            let mut buf = [0; 4096];
+            let mut remaining = 0;
 
-            if exit_receiver.try_recv().is_ok() {
-                break;
+            loop {
+                if !paused_cloned.load(Ordering::Relaxed) {
+                    buf[remaining..].fill(0);
+
+                    if reader.read(&mut buf[remaining..]).is_ok_and(|bytes| bytes > 0) {
+                        match std::str::from_utf8(&buf) {
+                            Ok(parsed_buf) => {
+                                on_read(parsed_buf);
+                                remaining = 0;
+                            },
+                            Err(utf8) => {
+                                on_read(unsafe { std::str::from_utf8_unchecked(&buf[..utf8.valid_up_to()]) });
+                                remaining = buf[utf8.valid_up_to()..].len();
+                                buf.rotate_left(utf8.valid_up_to());
+                            }
+                        }
+                    }
+                }
+    
+                if exit_receiver.try_recv().is_ok() {
+                    break;
+                }
             }
         });
 
         tokio::spawn(async move {
-            let mut interval = tokio::time::interval(Duration::from_millis(16));
+            let mut interval = tokio::time::interval(Duration::from_millis(20));
 
             loop {
                 interval.tick().await;
@@ -136,6 +158,7 @@ impl Pty {
             writer,
             child,
             master,
+            paused,
             title,
             closed,
         })
@@ -171,5 +194,13 @@ impl Pty {
                 ..Default::default()
             })
             .map_err(|err| PtyError::Resize(err.to_string()))
+    }
+
+    pub fn pause(&self) {
+        self.paused.store(true, Ordering::Relaxed);
+    }
+
+    pub fn resume(&self) {
+        self.paused.store(false, Ordering::Relaxed);
     }
 }

@@ -60,6 +60,8 @@ async fn main() {
             commands::pty_resize,
             commands::pty_get_title,
             commands::pty_get_closable,
+            commands::pty_resume,
+            commands::pty_pause,
             commands::utils_close_app,
             commands::utils_get_configuration,
             commands::window_close

@@ -99,14 +99,6 @@ export class View {
         }
     }
 
-    writeToTerm(termId: string, data: string) {
-        let pane = this.panes.find((pane) => pane.id == termId)
-
-        if (pane && pane instanceof TerminalPane) {
-            pane.write(data)
-        }
-    }
-
     getTerm(id: string) : Terminal | undefined {
         return this.panes.find((pane) => pane.id == id && pane instanceof TerminalPane) ? (this.panes.find((pane) => pane.id == id && pane instanceof TerminalPane) as TerminalPane).term! : undefined
     }
