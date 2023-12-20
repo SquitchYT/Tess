@@ -1,8 +1,5 @@
 use crate::configuration::deserialized::TerminalTheme;
 
-#[cfg(target_os = "windows")]
-use std::ffi::OsString;
-
 #[must_use]
 pub fn parse_theme(location: &str) -> (Option<String>, Option<TerminalTheme>) {
     dirs_next::config_dir()

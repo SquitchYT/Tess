@@ -4,11 +4,16 @@ use std::sync::{mpsc, Arc};
 use std::time::Duration;
 
 use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize};
+use regex::Captures;
 use tokio::sync::Mutex;
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use crate::common::error::PtyError;
+use crate::pty::utils;
+
+#[cfg(target_os = "windows")]
+use regex::Regex;
 
 pub struct Pty {
     writer: Box<dyn Write + Send>,
@@ -24,24 +29,29 @@ unsafe impl Send for Pty {}
 unsafe impl Sync for Pty {}
 
 impl Pty {
-    pub fn build_and_run(
+    pub async fn build_and_run(
         command: &str,
         on_read: impl Fn(&str) + std::marker::Send + 'static,
         on_tab_title_update: impl Fn(&str) + std::marker::Send + 'static,
         once_exit: impl FnOnce() + std::marker::Send + 'static,
     ) -> Result<Self, PtyError> {
         #[cfg(target_os = "windows")]
-        lazy_static! {
+        lazy_static::lazy_static! {
             static ref PROGRAMM_PARSING_REGEX: Regex = Regex::new("%([[:word:]]*)%").unwrap();
         }
 
         #[cfg(target_os = "windows")]
-        let builded_command: String = PROGRAMM_PARSING_REGEX
-            .replace_all(command, |env_variable: &Captures| {
-                std::env::var(&env_variable[1]).unwrap_or_default()
-            })
-            .into();
+        let builded_command = CommandBuilder::from_argv(
+            PROGRAMM_PARSING_REGEX
+                .replace_all(command, |env_variable: &Captures| {
+                    std::env::var(&env_variable[1]).unwrap_or_default()
+                })
+                .split(' ')
+                .map(std::ffi::OsString::from)
+                .collect::<Vec<OsString>>(),
+        );
 
+        #[cfg(target_family = "unix")]
         #[allow(unused_mut)]
         let mut builded_command = CommandBuilder::from_argv(
             command
@@ -75,7 +85,6 @@ impl Pty {
         ));
 
         let cloned_child = child.clone();
-        let cloned_master = master.clone();
         let title = Arc::new(Mutex::from(String::new()));
         let cloned_title = title.clone();
 
@@ -86,6 +95,8 @@ impl Pty {
         let paused = Arc::from(AtomicBool::new(false));
         let paused_cloned = paused.clone();
 
+        let shell_pid = child.lock().await.process_id().ok_or(PtyError::Creation("PID not found".to_owned()))?;
+
         std::thread::spawn(move || {
             let mut buf = [0; 4096];
             let mut remaining = 0;
@@ -94,21 +105,26 @@ impl Pty {
                 if !paused_cloned.load(Ordering::Relaxed) {
                     buf[remaining..].fill(0);
 
-                    if reader.read(&mut buf[remaining..]).is_ok_and(|bytes| bytes > 0) {
+                    if reader
+                        .read(&mut buf[remaining..])
+                        .is_ok_and(|bytes| bytes > 0)
+                    {
                         match std::str::from_utf8(&buf) {
                             Ok(parsed_buf) => {
                                 on_read(parsed_buf);
                                 remaining = 0;
-                            },
+                            }
                             Err(utf8) => {
-                                on_read(unsafe { std::str::from_utf8_unchecked(&buf[..utf8.valid_up_to()]) });
+                                on_read(unsafe {
+                                    std::str::from_utf8_unchecked(&buf[..utf8.valid_up_to()])
+                                });
                                 remaining = buf[utf8.valid_up_to()..].len();
                                 buf.rotate_left(utf8.valid_up_to());
                             }
                         }
                     }
                 }
-    
+
                 if exit_receiver.try_recv().is_ok() {
                     break;
                 }
@@ -130,7 +146,10 @@ impl Pty {
                     break;
                 }
 
+                #[cfg(target_family = "unix")]
                 let process_leader_pid = cloned_master.lock().await.process_group_leader();
+                #[cfg(target_os = "windows")]
+                let process_leader_pid = Some(utils::get_leader_pid(shell_pid));
 
                 if let Some(fetched_leader_pid) = process_leader_pid {
                     let fetched_title = tokio::task::spawn_blocking(move || {

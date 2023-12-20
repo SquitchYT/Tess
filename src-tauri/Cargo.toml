@@ -33,7 +33,7 @@ futures = "0.3.29"
 lazy_static = "1.4.0"
 regex = "1.8.4"
 window-vibrancy = "0.3.2"
-remoteprocess = "0.4.11"
+windows = { version = "0.52.0", features = ["Win32_Foundation", "Win32_System", "Win32_System_Threading", "Win32_System_ProcessStatus", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Diagnostics"] }
 
 [features]
 default = ["custom-protocol"]
