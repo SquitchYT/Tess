@@ -11,12 +11,6 @@
 
 @font-face {
     font-family: "Inter";
-    font-weight: 400;
-    src: url(../fonts/Inter-Regular.ttf);
-}
-
-@font-face {
-    font-family: "Inter";
     font-weight: 500;
     src: url(../fonts/Inter-Medium.ttf);
 }
@@ -27,12 +21,6 @@
     src: url(../fonts/Inter-SemiBold.ttf);
 }
 
-/*@font-face {
-    font-family: "Inter";
-    font-weight: 700;
-    src: url(../fonts/Inter-Bold.ttf);
-}*/
-
 
 body {
     margin: 0;
@@ -41,10 +29,13 @@ body {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    font-family: "Inter";
-    letter-spacing: 0.6px;
-    word-spacing: 0.66px;
+    font-family: Inter;
+    letter-spacing: 0.8px;
+    word-spacing: 0.8px;
+    line-height: 16px;
     background: var(--app-background);
+    font-weight: 500;
+    color: var(--text-color);
 }
 
 
@@ -54,7 +45,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background:rgba(212, 212, 212, 0.14);
+    background:rgba(212, 212, 212, 0.15);
     border-radius: 6px;
 }
 

@@ -102,11 +102,10 @@ where
         Complex(BackgroundMedia),
     }
 
-    Ok(Representation::deserialize(data).map_or(
-        None,
-        |todo_name_to_find| match todo_name_to_find {
+    Ok(
+        Representation::deserialize(data).map_or(None, |representation| match representation {
             Representation::Simple(path) => BackgroundMedia::deserialize_from_string(path),
             Representation::Complex(background) => Some(background),
-        },
-    ))
+        }),
+    )
 }

@@ -5,6 +5,7 @@ import { PopupManager } from 'ts/manager/popup';
 import { PopupBuilder, PopupButton } from './popup';
 
 import { Terminal as Xterm } from "xterm";
+import { Toaster } from 'ts/manager/toast';
 
 export class TerminalPane {
     element: Element;
@@ -46,8 +47,8 @@ export class TerminalPane {
         return element
     }
 
-    async initializeTerm(customKeyEventHanlder: ((e: KeyboardEvent, term: Xterm) => boolean)) {
-        let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme, customKeyEventHanlder);
+    async initializeTerm(customKeyEventHanlder: ((e: KeyboardEvent, term: Xterm) => boolean), toaster: Toaster) {
+        let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme, customKeyEventHanlder, toaster);
 
         await terminal.launch(this.element.querySelector(".internal-term")!, this.profile.uuid);
 
@@ -55,31 +56,27 @@ export class TerminalPane {
     }
 
     async requestClosing(popupManager: PopupManager, viewElement: HTMLElement) : Promise<boolean> {
-        if (!await invoke("check_close_availability", {id: this.id})) {
+        if (!await invoke("pty_get_closable", {id: this.id})) {
             let cancelButton = new PopupButton("cancel", "dismiss");
             let confirmButton = new PopupButton("confirm", "validate");
     
-            let closeAuthorized = (await popupManager.sendPopup(new PopupBuilder(`Confirm close of ${await invoke("get_pty_title", {id: this.id})}`).withMessage("Are you sure to close this tab?").withButtons(cancelButton, confirmButton), viewElement)).action == "confirm";
+            let closeAuthorized = (await popupManager.sendPopup(new PopupBuilder(`Confirm close of ${await invoke("pty_get_title", {id: this.id})}`).withMessage("Are you sure to close this tab?").withButtons(cancelButton, confirmButton), viewElement)).action == "confirm";
     
             if (closeAuthorized) {
-                await invoke("close_terminal", {id: this.id});
+                await invoke("pty_close", {id: this.id});
                 this.term!.close();
             }
             return closeAuthorized;
         } else {
-            await invoke("close_terminal", {id: this.id});
+            await invoke("pty_close", {id: this.id});
             this.term!.close();
             return true;
         }
     }
 
     async forceClosing() {
-        await invoke("close_terminal", {id: this.id});
+        await invoke("pty_close", {id: this.id});
         this.term!.close();
-    }
-
-    write(data: string) {
-        this.term!.term.write(data);
     }
 
     unfocus() {

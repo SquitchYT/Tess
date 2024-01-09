@@ -53,7 +53,7 @@ impl<'de> serde::Deserialize<'de> for Option {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
         let partial_option = PartialOption::deserialize(deserializer).unwrap_or_default();
 
-        let (app_theme, terminal_theme) = parse_theme(partial_option.theme.clone());
+        let (app_theme, terminal_theme) = parse_theme(&partial_option.theme);
         let app_theme = app_theme.unwrap_or_default();
         let terminal_theme = terminal_theme.unwrap_or_default();
 
@@ -122,7 +122,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 let profile_theme = partial_profile.theme.map_or_else(
                     || terminal_theme.clone(),
                     |partial_profile_theme| {
-                        parse_theme(partial_profile_theme)
+                        parse_theme(&partial_profile_theme)
                             .1
                             .unwrap_or_else(|| terminal_theme.clone())
                     },
@@ -135,7 +135,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                     background_transparency: partial_profile
                         .background_transparency
                         .unwrap_or(partial_option.background_transparency),
-                    uuid: uuid::Uuid::parse_str(partial_profile.uuid.unwrap_or_default().as_str())
+                    uuid: uuid::Uuid::parse_str(&partial_profile.uuid.unwrap_or_default())
                         .unwrap_or_else(|_| uuid::Uuid::new_v4())
                         .to_string(),
                     command: partial_profile.command,
@@ -199,7 +199,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 });
 
         Ok(Self {
-            theme: partial_option.theme.clone(),
+            theme: partial_option.theme,
 
             terminal_theme,
             app_theme,

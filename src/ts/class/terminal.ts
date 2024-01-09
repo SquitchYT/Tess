@@ -3,18 +3,20 @@ import { CanvasAddon } from 'xterm-addon-canvas';
 import { Terminal as Xterm } from "xterm";
 import { invoke } from '@tauri-apps/api/tauri'
 import { TerminalOptions, TerminalTheme } from "ts/schema/option";
+import { Toaster } from "ts/manager/toast";
+import { terminalDataPayload } from "ts/schema/term";
+import { UnlistenFn, listen } from "@tauri-apps/api/event";
 
 export class Terminal {
     id: string;
     term: Xterm;
     fitAddon: FitAddon;
     canvasResizeObserver: ResizeObserver | undefined;
+    toaster: Toaster;
+    unlisten: UnlistenFn | undefined = undefined;
 
 
-    constructor(id: string, options: TerminalOptions, theme: TerminalTheme, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean)) {
-        // TODO: Finish
-        // TODO: Load all addons
-
+    constructor(id: string, options: TerminalOptions, theme: TerminalTheme, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean), toaster: Toaster) {
         theme = Object.assign({}, theme);
         theme.background = "rgba(0,0,0,0)";
         
@@ -39,12 +41,37 @@ export class Terminal {
 
         this.term.attachCustomKeyEventHandler((e) => {
             if (e.key == "F10") {
-                invoke("terminal_input", {content: "\x1b[21~", id: id});
+                invoke("pty_write", {content: "\x1b[21~", id: id});
 
                 return false;
             } else {
                 return customKeyEventHandler(e, this.term);
             }
+        })
+
+        this.toaster = toaster;
+
+        let bufferedBytes = 0;
+        let paused = false;
+        listen<terminalDataPayload>("js_pty_data", ((e) => {
+            if (e.payload.id == this.id) {
+                bufferedBytes += e.payload.data.length;
+
+                this.term.write(e.payload.data, () => {
+                    bufferedBytes = Math.max(bufferedBytes - e.payload.data.length, 0);
+                    if (bufferedBytes < 16384 && paused) {
+                        invoke("pty_resume", {id: id});
+                        paused = false;
+                    }
+                })
+
+                if (bufferedBytes > 131072 && !paused) {
+                    invoke("pty_pause", {id: id});
+                    paused = true;
+                  }
+            }
+        })).then((unlisten) => {
+            this.unlisten = unlisten;
         })
     }
 
@@ -54,13 +81,15 @@ export class Terminal {
             if (proposedDimensions && !isNaN(proposedDimensions.cols) && !isNaN(proposedDimensions.rows)) {
                 this.term.resize(proposedDimensions.cols + 1, proposedDimensions.rows + 1);
 
-                await invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
+                invoke("pty_resize", {cols: this.term.cols, rows: this.term.rows, id: this.id}).catch((err) => {
+                    this.toaster.toast("Terminal error", err, "error");
+                });
             }
         });
 
         this.canvasResizeObserver.observe(target);
 
-        await invoke("create_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id, profileUuid: profile_id});
+        await invoke("pty_open", {id: this.id, profileUuid: profile_id});
 
         this.term.open(target);
 
@@ -76,11 +105,17 @@ export class Terminal {
             if (proposedDimensions && !isNaN(proposedDimensions.cols) && !isNaN(proposedDimensions.rows)) {
                 this.term.resize(proposedDimensions.cols + 1, proposedDimensions.rows + 1);
     
-                await invoke("resize_terminal", {cols: this.term.cols, rows: this.term.rows, id: this.id});
-
-                onRenderDisposable.dispose()
+                invoke("pty_resize", {cols: this.term.cols, rows: this.term.rows, id: this.id}).then(() => {
+                    onRenderDisposable.dispose()
+                }).catch((err) => {
+                    this.toaster.toast("Terminal error", err, "error");
+                })
             }
         })
+
+        setTimeout(() => {
+            this.term.clearTextureAtlas()
+        }, 50)
     }
 
     focus() {
@@ -92,6 +127,7 @@ export class Terminal {
     }
 
     close() {
+        this.unlisten!();
         this.canvasResizeObserver!.disconnect();
         try { this.term.dispose() } catch (_) {}
     }

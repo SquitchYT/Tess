@@ -1,23 +1,21 @@
-import { TabsManager } from "./tabs";
+import { TabsManager } from "./manager/tabs";
 import { listen, Event } from '@tauri-apps/api/event'
 import { v4 as uuid } from 'uuid';
 import { invoke } from '@tauri-apps/api/tauri'
 
-import { terminalDataPayload, terminalTitleChangedPayload } from "../schema/term";
-import { View } from "../class/views";
-import { Toaster } from "./toast";
+import { terminalTitleChangedPayload } from "./schema/term";
+import { View } from "./class/views";
+import { Toaster } from "./manager/toast";
 
 import { Option, ShortcutAction } from "ts/schema/option";
-import { PopupManager } from "./popup";
+import { PopupManager } from "./manager/popup";
 import { TerminalPane } from "ts/class/panes";
-import { ShortcutsManager } from "./shortcuts";
+import { ShortcutsManager } from "./manager/shortcuts";
 import { clipboard } from "@tauri-apps/api";
-import { PopupBuilder, PopupButton } from "../class/popup";
+import { PopupBuilder, PopupButton } from "./class/popup";
 
 
-export class ViewsManager {
-    // TODO: Finish
-
+export class App {
     private target: Element;
 
     private tabsManager: TabsManager;
@@ -41,12 +39,11 @@ export class ViewsManager {
 
         this.shortcutsManager = new ShortcutsManager(option.shortcuts, (action) => { this.onShortcutExecuted(action) });
 
-        listen<terminalDataPayload>("terminalData", (e) => { this.onTerminalReceiveData(e); });
-        listen<terminalTitleChangedPayload>("terminalTitleChanged", (e) => { this.onTerminalTitleChanged(e); })
-        listen<string>("terminal_closed", (e) => { this.onTerminalProcessExited(e); });
+        listen<terminalTitleChangedPayload>("js_pty_title_update", (e) => { this.onTerminalTitleChanged(e); })
+        listen<string>("js_pty_closed", (e) => { this.onTerminalProcessExited(e); });
 
-        listen("request_window_closing", () => { this.closeViews(); });
-        listen<number>("request_app_exit", (e) => { this.closeAllWindows(e); });
+        listen("js_window_request_closing", () => { this.closeViews(); });
+        listen<number>("js_app_request_exit", (e) => { this.closeAllWindows(e); });
 
         this.toaster = new Toaster(toastTarget);
 
@@ -59,34 +56,32 @@ export class ViewsManager {
 
         let popupResult = await this.popupManager.sendPopup(new PopupBuilder(`Confirm close of ${e.payload} windows`).withMessage(`Are you sure to close the app?`).withButtons(confirmButton, cancelButton));
         if (popupResult.action == "confirm") {
-            invoke("close_app");
+            invoke("utils_close_app");
         }
     }
 
     private onTabFocused(id: string) {
-        let viewToFocus = this.views.find((view) => view.id! == id);
+        let view = this.views.find((view) => view.id! == id);
 
-        if (viewToFocus) {
-            this.focusedView = viewToFocus;
-
-            viewToFocus.focus();
+        if (view) {
+            this.focusedView = view;
+            view.focus();
 
             this.views.forEach((view) => {
                 if (view.id != id) {
                     view.unfocus();
                 }
             })
-        } else {
-            // TODO: Handle unknown view and close the tab
         }
     }
 
-    private onTabRequestClose(id: string) {
+    private async onTabRequestClose(id: string) {
         let view = this.views.find((view) => view.id == id);
         if (view) {
-            view.requestClosingAll()
-        } else {
-            this.toaster.toast("Orphaned tab", "It looks like this tab is orphaned.")
+            view.requestClosingAll().catch((err) => {
+                this.toaster.toast("Interaction error", err, "error");
+                throw err;
+            })
         }
     }
 
@@ -96,20 +91,11 @@ export class ViewsManager {
             view.element!.remove();
             this.views.splice(this.views.indexOf(view), 1);
             if (this.views.length == 0) {
-                invoke("close_window")
+                invoke("window_close")
             }
         }
 
         this.tabsManager.closeTab(uuid);
-    }
-
-    private onTerminalReceiveData(e: Event<terminalDataPayload>) {
-        this.views.forEach((view) => {
-            let term = view.getTerm(e.payload.id);
-            if (term) {
-                term.term.write(e.payload.data);
-            }
-        })
     }
 
     private onTerminalTitleChanged(e: Event<terminalTitleChangedPayload>) {
@@ -121,7 +107,9 @@ export class ViewsManager {
     }
 
     private onTerminalPaneInput(id: string, data: string) {
-        invoke("terminal_input", {content: data, id: id});
+        invoke("pty_write", {content: data, id: id}).catch((err) => {
+            this.toaster.toast("Interaction error", err, "error")
+        });
     }
 
     private onTerminalProcessExited(e: Event<String>) {
@@ -146,11 +134,13 @@ export class ViewsManager {
                 case "executeMacro":
                     let macro = this.option.macros.find(macro => macro.uuid == action[1]);
                     if (macro) {
-                        invoke("terminal_input", {content: macro.content, id: this.focusedView!.focusedPane!.id});
+                        invoke("pty_write", {content: macro.content, id: this.focusedView!.focusedPane!.id}).catch((err) => {
+                            this.toaster.toast("Macro error", err, "error");
+                        });
                     }
                     break;
                 default:
-                    this.toaster.toast("Shortcut error", action[0] + " is not yet implemented");
+                    this.toaster.toast("Unknown shortcut", action[0] + " is not yet implemented");
             }
         } else {
             switch (action) {
@@ -160,7 +150,9 @@ export class ViewsManager {
                 case "paste":
                     let clipboardContent = await clipboard.readText();
                     if (clipboardContent) {
-                        invoke("terminal_input", {content: clipboardContent, id: this.focusedView!.focusedPane!.id});
+                        invoke("pty_write", {content: clipboardContent, id: this.focusedView!.focusedPane!.id}).catch((err) => {
+                            this.toaster.toast("Interaction error", err, "error");
+                        });
                     }
                     break;
                 case "openDefaultProfile":
@@ -185,7 +177,7 @@ export class ViewsManager {
                     this.closeViews()
                     break;
                 default:
-                    this.toaster.toast("Shortcut error", action + " is not yet implemented");
+                    this.toaster.toast("Unknown shortcut", action + " is not yet implemented");
             }
         }
     }
@@ -203,7 +195,7 @@ export class ViewsManager {
                     await view.closeAll()
                 }
 
-                invoke("close_window");
+                invoke("window_close");
             }
         }
     }
@@ -214,7 +206,7 @@ export class ViewsManager {
 
         let profile = this.option.profiles.find(profile => profile.uuid == profileId);
         if (profile) {
-            let view = new View(viewId, this.popupManager, (id) => { this.onViewsClosed(id); }, (title) => { this.tabsManager.setTitle(viewId, title); })
+            let view = new View(viewId, this.popupManager, this.toaster, (id) => { this.onViewsClosed(id); }, (title) => { this.tabsManager.setTitle(viewId, title); })
             
             view.openPane(paneId, profile, (e, term) => { return this.shortcutsManager.onKeyPress(e, term); }).then(() => {
                 this.views.push(view);
@@ -228,10 +220,10 @@ export class ViewsManager {
     
                 if (focus) { this.tabsManager.select(viewId); }
             }).catch((err) => {
-                this.toaster.toast("Unable to create view",  err);
+                this.toaster.toast("Unable to create a view",  err, "error");
             })
         } else {
-            this.toaster.toast("Unable to create view", `An error occur while opening a view. Reason: no profile corresponding to id ${profileId}`);
+            this.toaster.toast("Unable to create a view", `There is no profile corresponding to ID: '${profileId}'`, "error");
         }
     }
 
@@ -240,10 +232,8 @@ export class ViewsManager {
 
         if (view) {
             view.requestClosingOne(paneId).catch((err) => {
-                this.toaster.toast("Unable to close a view's pane",  err);
+                this.toaster.toast("Unable to close a view's pane",  err, "error");
             })
-        } else {
-            // TODO: Handle error
         }
     }
 

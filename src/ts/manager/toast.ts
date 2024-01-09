@@ -6,7 +6,7 @@ export class Toaster {
         this.target = target;
     }
 
-    toast(title: string, message: string) {
+    toast(title: string, message?: string, type: "info" | "warning" | "error" = "info") {
         let toast = document.createElement("div");
         toast.classList.add("toast");
 
@@ -18,14 +18,24 @@ export class Toaster {
         toastTitle.innerText = title;
 
         let toastIcon = document.createElement("div");
-        toastIcon.classList.add("icon")
-        toastIcon.innerHTML = `
-            <svg class="icon" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                <path d="M14.235 19c.865 0 1.322 1.024 .745 1.668a3.992 3.992 0 0 1 -2.98 1.332a3.992 3.992 0 0 1 -2.98 -1.332c-.552 -.616 -.158 -1.579 .634 -1.661l.11 -.006h4.471z" stroke-width="0" fill="currentColor"></path>
-                <path d="M12 2c1.358 0 2.506 .903 2.875 2.141l.046 .171l.008 .043a8.013 8.013 0 0 1 4.024 6.069l.028 .287l.019 .289v2.931l.021 .136a3 3 0 0 0 1.143 1.847l.167 .117l.162 .099c.86 .487 .56 1.766 -.377 1.864l-.116 .006h-16c-1.028 0 -1.387 -1.364 -.493 -1.87a3 3 0 0 0 1.472 -2.063l.021 -.143l.001 -2.97a8 8 0 0 1 3.821 -6.454l.248 -.146l.01 -.043a3.003 3.003 0 0 1 2.562 -2.29l.182 -.017l.176 -.004z" stroke-width="0" fill="currentColor"></path>
-            </svg>
-        `;
+        toastIcon.classList.add("icon");
+
+        switch (type) {
+            case "error":
+                toastIcon.innerHTML = `<svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+              </svg>
+              `;
+                break
+            case "warning":
+                toastIcon.innerHTML = `<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" /></svg>`;
+                break
+            default:
+                toastIcon.innerHTML = `<svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+              </svg>
+              `;
+        }
 
         toastContent.appendChild(toastTitle);
 
@@ -34,23 +44,28 @@ export class Toaster {
 
         let dismissToastButton = document.createElement("div");
         dismissToastButton.classList.add("close");
+
         dismissToastButton.innerHTML = `
-        <svg viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-        </svg>
+            <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+            </svg>
         `;
 
         toastActions.appendChild(dismissToastButton);
 
         let toastMessage;
-
-        if (message != "") {
+        if (message) {
             toast.classList.add("with-text");
 
+            let toastMessageWrapper = document.createElement("div");
+
             toastMessage = document.createElement("span");
-            toastMessage.classList.add("message");
+            toastMessageWrapper.classList.add("message");
             toastMessage.innerText = message;
-            toastContent.appendChild(toastMessage);
+
+            toastMessageWrapper.appendChild(toastMessage)
+
+            toastContent.appendChild(toastMessageWrapper);
         }
 
         toast.appendChild(toastIcon);
@@ -67,7 +82,7 @@ export class Toaster {
 
         this.toasts.push(toast);
 
-        if (toastMessage && toastMessage.scrollWidth > toastMessage.clientWidth) {
+        if (toastMessage && toastMessage.scrollHeight > toastMessage.clientHeight) {
             let expandToastButton = document.createElement("div");
             expandToastButton.classList.add("expand");
             expandToastButton.innerHTML = `

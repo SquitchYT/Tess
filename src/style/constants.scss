@@ -14,7 +14,8 @@
     --tab-progressbar-background: #050a19;
     --tab-action-button-background: var(--tab-focused-background);
 
-    --toast-background: #192033;
+    --toast-background: #050a19;
+    --toast-button-hovered-background: #192033;
 
     --popup-background: #050a19;
     --popup-button-background: #161e32;
@@ -25,7 +26,5 @@
     --popup-do-not-show-again-checkbox-checked-background: #156ce6;
 
     --action-button-background: transparent;
-    --action-button-hovered-background: #050a19; 
-
-    --shadow-color: #192033; // Delete this ??
+    --action-button-hovered-background: #050a19;
 }

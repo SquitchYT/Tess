@@ -4,7 +4,6 @@
     width: 16rem;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
-    color: var(--text-color);
     font-weight: 500;
     justify-content: center;
     align-items: center;
@@ -12,10 +11,8 @@
     -webkit-user-select: none;
     transition: transform 200ms, background 140ms;
     font-size: 12px;
-    letter-spacing: 1px;
     text-transform: capitalize;
     position: relative;
-    min-width: 0;
     overflow: hidden;
     background: var(--tabs-background);
 
@@ -59,7 +56,7 @@
         position: absolute;
         justify-content: center;
         align-items: center;
-        transition: background 100ms;
+        transition: background 140ms;
         opacity: 0;
         display: flex;
         color: var(--icon-color);

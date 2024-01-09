@@ -4,17 +4,21 @@
 )]
 
 use tauri::{Manager, WindowEvent};
-use tess::command::{app::*, option::*, term::*, window::*};
 use tess::configuration::deserialized::Option;
 use tess::configuration::types::BackgroundType;
 use tess::logger::Logger;
+
+use tess::common::commands;
 
 #[cfg(target_family = "unix")]
 use futures::stream::StreamExt;
 #[cfg(target_family = "unix")]
 use signal_hook::consts::signal::*;
 
-use std::sync::{Arc, Mutex};
+use tess::common::states::Ptys;
+
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() {
@@ -33,34 +37,41 @@ async fn main() {
     ));
 
     let option = Arc::from(Mutex::from(if let Ok(config_file) = config_file {
-        // TODO: Log error
-        serde_json::from_str(&config_file).unwrap_or_default()
+        let parsed_option = serde_json::from_str(&config_file);
+        if parsed_option.is_err() {
+            logger.warn(&format!(
+                "Malformed configuration file: {}.",
+                parsed_option.as_ref().err().unwrap()
+            ));
+        }
+        parsed_option.unwrap_or_default()
     } else {
         Option::default()
     }));
 
     tauri::async_runtime::set(tokio::runtime::Handle::current());
     let app = tauri::Builder::default()
-        .manage(Mutex::new(tess::state::pty_manager::PtyManager::new()))
         .manage(option.clone())
+        .manage(Ptys::default())
         .invoke_handler(tauri::generate_handler![
-            create_terminal,
-            terminal_input,
-            resize_terminal,
-            close_terminal,
-            close_window,
-            close_app,
-            check_close_availability,
-            get_pty_title,
-            get_configuration
+            commands::pty_open,
+            commands::pty_close,
+            commands::pty_write,
+            commands::pty_resize,
+            commands::pty_get_title,
+            commands::pty_get_closable,
+            commands::pty_resume,
+            commands::pty_pause,
+            commands::utils_close_app,
+            commands::utils_get_configuration,
+            commands::window_close
         ])
-        .build(tauri::generate_context!());
+        .build(tauri::generate_context!())
+        .unwrap();
 
-    let app_handle = app.as_ref().unwrap().app_handle();
-
-    match &option.lock().unwrap().background {
+    match &option.lock().await.background {
         BackgroundType::Media(media) => {
-            app_handle.fs_scope().allow_file(&media.location).ok();
+            app.fs_scope().allow_file(&media.location).ok();
         }
         #[cfg(target_family = "unix")]
         BackgroundType::Blurred => {
@@ -68,7 +79,7 @@ async fn main() {
         }
         #[cfg(target_os = "windows")]
         BackgroundType::Mica => {
-            if window_vibrancy::apply_mica(app_handle.get_window("main").unwrap()).is_err() {
+            if window_vibrancy::apply_mica(app.get_window("main").unwrap()).is_err() {
                 logger.warn(
                     "Cannot apply mica background effect. Switching back to transparent background",
                 );
@@ -76,8 +87,7 @@ async fn main() {
         }
         #[cfg(target_os = "windows")]
         BackgroundType::Acrylic => {
-            if window_vibrancy::apply_acrylic(app_handle.get_window("main").unwrap(), None).is_err()
-            {
+            if window_vibrancy::apply_acrylic(app.get_window("main").unwrap(), None).is_err() {
                 logger.warn("Cannot apply acrylic background effect. Switching back to transparent background");
             }
         }
@@ -88,18 +98,13 @@ async fn main() {
         _ => {}
     }
 
-    app_handle
-        .get_window("main")
-        .unwrap()
-        .set_decorations(true)
+    app.get_window("main").unwrap().set_decorations(true).ok();
+
+    app.fs_scope()
+        .allow_file(&option.lock().await.app_theme)
         .ok();
 
-    app_handle
-        .fs_scope()
-        .allow_file(&option.lock().unwrap().app_theme)
-        .ok();
-
-    app.unwrap().run(move |app, event| match event {
+    app.run(move |app, event| match event {
         tauri::RunEvent::Ready => {
             #[cfg(debug_assertions)]
             app.get_window("main").unwrap().open_devtools();
@@ -108,20 +113,22 @@ async fn main() {
             {
                 let app_cloned = app.clone();
                 tokio::spawn(async move {
-                    if let Ok(mut signals_stream) = signal_hook_tokio::Signals::new(&[SIGQUIT, SIGTERM]) {
-                        while let Some(_) = signals_stream.next().await {
+                    if let Ok(mut signals_stream) =
+                        signal_hook_tokio::Signals::new([SIGQUIT, SIGTERM])
+                    {
+                        while signals_stream.next().await.is_some() {
                             let windows_count = app_cloned.windows().len();
                             if windows_count > 1 {
                                 app_cloned
                                     .get_window("main")
                                     .unwrap()
-                                    .emit("request_app_exit", windows_count)
+                                    .emit("js_app_request_exit", windows_count)
                                     .ok();
                             } else {
                                 app_cloned
                                     .get_window("main")
                                     .unwrap()
-                                    .emit("request_window_closing", ())
+                                    .emit("js_window_request_closing", ())
                                     .ok();
                             }
                         }
@@ -131,21 +138,26 @@ async fn main() {
                 });
             }
 
-            logger.info(&format!("Launched in {}ms", start.elapsed().as_millis()));
+            logger.info(&format!("Launched in {}ms.", start.elapsed().as_millis()));
         }
         tauri::RunEvent::WindowEvent {
             label,
             event: WindowEvent::CloseRequested { api, .. },
             ..
         } => {
-            if option.lock().unwrap().close_confirmation.window {
-                app.get_window(&label)
-                    .unwrap()
-                    .emit("request_window_closing", "")
-                    .ok();
+            let option_cloned = option.clone();
+            tokio::task::block_in_place(move || {
+                tokio::runtime::Handle::current().block_on(async {
+                    if option_cloned.lock().await.close_confirmation.window {
+                        app.get_window(&label)
+                            .unwrap()
+                            .emit("js_window_request_closing", "")
+                            .ok();
 
-                api.prevent_close()
-            }
+                        api.prevent_close()
+                    }
+                })
+            })
         }
         _ => (),
     })
