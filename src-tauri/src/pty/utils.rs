@@ -1,5 +1,3 @@
-use std::{ffi::OsString, os::windows::ffi::OsStringExt};
-
 #[cfg(target_os = "windows")]
 pub fn get_leader_pid(shell_pid: u32) -> u32 {
     use std::mem::size_of;
@@ -30,35 +28,37 @@ pub fn get_leader_pid(shell_pid: u32) -> u32 {
     leader_pid
 }
 
+#[cfg(target_os = "windows")]
 pub fn get_process_title(pid: u32) -> Option<String> {
-    #[cfg(target_os = "windows")]
-    {
-        use windows::Win32::{
-            Foundation::CloseHandle,
-            System::Threading::{PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
+    use std::{ffi::OsString, os::windows::ffi::OsStringExt};
+    use windows::Win32::{
+        Foundation::CloseHandle,
+        System::Threading::{PROCESS_QUERY_INFORMATION, PROCESS_VM_READ},
+    };
+
+    unsafe {
+        windows::Win32::System::Threading::OpenProcess(
+            PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+            false,
+            pid,
+        )
+    }
+    .map_or(None, |handle| {
+        let mut path = [0; 4096];
+        let path_len = unsafe {
+            windows::Win32::System::ProcessStatus::GetModuleFileNameExW(handle, None, &mut path)
         };
 
-        unsafe {
-            windows::Win32::System::Threading::OpenProcess(
-                PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
-                false,
-                pid,
-            )
-        }
-        .map_or(None, |handle| {
-            let mut path = [0; 4096];
-            let path_len = unsafe {
-                windows::Win32::System::ProcessStatus::GetModuleFileNameExW(handle, None, &mut path)
-            };
+        unsafe { CloseHandle(handle).ok() };
 
-            unsafe { CloseHandle(handle).ok() };
+        std::path::PathBuf::from(OsString::from_wide(&path[..path_len as usize]))
+            .file_name()
+            .and_then(|filename| filename.to_os_string().into_string().ok())
+    })
+}
 
-            std::path::PathBuf::from(OsString::from_wide(&path[..path_len as usize]))
-                .file_name()
-                .and_then(|filename| filename.to_os_string().into_string().ok())
-        })
-    }
-
+#[cfg(target_family = "unix")]
+pub fn get_process_title(pid: i32) -> Option<String> {
     #[cfg(target_family = "unix")]
     {
         std::fs::read_to_string(format!("/proc/{pid}/comm")).map_or(

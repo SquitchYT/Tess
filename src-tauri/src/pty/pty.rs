@@ -4,16 +4,19 @@ use std::sync::{mpsc, Arc};
 use std::time::Duration;
 
 use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize};
-use regex::Captures;
 use tokio::sync::Mutex;
 
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use crate::common::error::PtyError;
-use crate::pty::utils;
+
 
 #[cfg(target_os = "windows")]
 use regex::Regex;
+#[cfg(target_os = "windows")]
+use crate::pty::utils;
+#[cfg(target_os = "windows")]
+use regex::Captures;
 
 pub struct Pty {
     writer: Box<dyn Write + Send>,
@@ -95,6 +98,9 @@ impl Pty {
         let paused = Arc::from(AtomicBool::new(false));
         let paused_cloned = paused.clone();
 
+        #[cfg(target_family = "unix")]
+        let cloned_master = master.clone();
+        #[cfg(target_os = "windows")]
         let shell_pid = child.lock().await.process_id().ok_or(PtyError::Creation("PID not found".to_owned()))?;
 
         std::thread::spawn(move || {
