@@ -1,4 +1,4 @@
-use crate::common::payloads::{PtySendData, PtyTitleChanged};
+use crate::common::payloads::{PtyProgressUpdated, PtySendData, PtyTitleChanged};
 use crate::common::states::Ptys;
 use crate::configuration::deserialized::Option;
 use std::sync::Arc;
@@ -17,11 +17,14 @@ pub async fn pty_open(
     option: tauri::State<'_, Arc<Mutex<Option>>>,
     ptys: tauri::State<'_, Ptys>,
 ) -> Result<(), PtyError> {
-    let id_cloned = id.clone();
-    let id_cloned_twice = id.clone();
-    let id_cloned_thrice = id.clone();
-    let app_cloned = app.clone();
-    let app_cloned_twice = app.clone();
+    let id_title_update = id.clone();
+    let id_progress_update = id.clone();
+    let id_displayed_content_update = id.clone();
+    let id_pty_closed = id.clone();
+    let app_title_update = app.clone();
+    let app_progress_update = app.clone();
+    let app_displayed_content_update = app.clone();
+    let app_pty_closed = app.clone();
 
     let locked_option = option.lock().await;
     let opening_profile = locked_option
@@ -30,42 +33,55 @@ pub async fn pty_open(
         .find(|profile| profile.uuid == profile_uuid)
         .ok_or(PtyError::UnknownPty)?;
 
-    let should_update_title = opening_profile.terminal_options.title_is_running_process;
-
     ptys.0.lock().await.insert(
         id.clone(),
         Pty::build_and_run(
             &opening_profile.command,
+            opening_profile.title_format.clone(),
+            opening_profile.terminal_options.progress_tracking,
             move |readed| {
                 app.emit_all(
                     "js_pty_data",
                     PtySendData {
                         data: readed,
-                        id: &id_cloned,
+                        id: &id,
                     },
                 )
                 .ok();
             },
             move |tab_title| {
-                if should_update_title {
-                    app_cloned
-                        .emit_all(
-                            "js_pty_title_update",
-                            PtyTitleChanged {
-                                id: &id_cloned_twice,
-                                title: tab_title,
-                            },
-                        )
-                        .ok();
-                }
-            },
-            move || {
-                app_cloned_twice
-                    .emit_all("js_pty_closed", id_cloned_thrice)
+                app_title_update
+                    .emit_all(
+                        "js_pty_title_update",
+                        PtyTitleChanged {
+                            id: &id_title_update,
+                            title: tab_title,
+                        },
+                    )
                     .ok();
             },
-        )
-        .await?,
+            move |progress| {
+                app_progress_update
+                    .emit_all(
+                        "js_pty_progress_update",
+                        PtyProgressUpdated {
+                            id: &id_progress_update,
+                            progress,
+                        },
+                    )
+                    .ok();
+            },
+            move || {
+                app_displayed_content_update
+                    .emit_all("js_pty_display_content_update", &id_pty_closed)
+                    .ok();
+            },
+            move || {
+                app_pty_closed
+                    .emit_all("js_pty_closed", id_displayed_content_update)
+                    .ok();
+            },
+        )?,
     );
 
     Ok(())
@@ -128,7 +144,7 @@ pub async fn pty_get_closable(
             || app_config
                 .close_confirmation
                 .excluded_process
-                .contains(&*pty.title.lock().await))
+                .contains(&*pty.leader_name.lock().await))
     } else {
         Ok(true)
     }
@@ -142,7 +158,7 @@ pub async fn pty_get_title(ptys: tauri::State<'_, Ptys>, id: String) -> Result<S
         .await
         .get_mut(&id)
         .ok_or(PtyError::UnknownPty)?
-        .title
+        .leader_name
         .lock()
         .await
         .to_string())

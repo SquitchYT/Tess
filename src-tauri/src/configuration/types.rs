@@ -44,7 +44,7 @@ impl<const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize for Ranged
 }
 
 #[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all(serialize = "camelCase"))]
 pub enum BackgroundType {
     Opaque,
     Media(BackgroundMedia),

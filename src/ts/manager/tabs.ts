@@ -72,6 +72,24 @@ export class TabsManager {
         }   
     }
 
+    setprogress(uuid: string, progress: number) {
+        let tmp = this.tabs.find(tab => tab.id === uuid);
+        if (tmp) {
+            tmp.setProgress(progress);
+        }  
+    }
+
+    setHightlight(uuid: string, visible: boolean) {
+        let tmp = this.tabs.find(tab => tab.id === uuid);
+        if (tmp) {
+            if (visible && this.selectedTab != tmp) {
+                tmp.setHighlight(true);
+            } else {
+                tmp.setHighlight(false);
+            }
+        }  
+    }
+
     requestTabClosing(uuid: string) {
         let tab = this.tabs.find(tab => tab.id === uuid);
         
@@ -175,6 +193,7 @@ export class TabsManager {
         }
 
         this.selectedTab = target;
+        this.selectedTab.setHighlight(false);
         this.selectedTab.element.classList.add("selected");
 
         this.tabs.forEach((el) => {

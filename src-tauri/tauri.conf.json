@@ -60,11 +60,13 @@
     },
     "windows": [
       {
-        "fullscreen": false,
-        "height": 720,
-        "resizable": true,
         "title": "Tess",
-        "width": 1280,
+        "width": 1440,
+        "height": 810,
+        "minWidth": 640,
+        "minHeight": 360,
+        "fullscreen": false,
+        "resizable": true,
         "transparent": true,
         "decorations": false
       }

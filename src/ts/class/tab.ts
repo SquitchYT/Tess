@@ -47,6 +47,10 @@ export class Tab {
         }
     }
 
+    setHighlight(visible: boolean) {
+        (this.element.querySelector(".ping")! as HTMLElement).classList.toggle("hidden", !visible);
+    }
+
     private generateComponents() : HTMLElement {
         let tab = document.createElement("div");
 
@@ -81,10 +85,14 @@ export class Tab {
         progress.classList.add("progress");
         progress.appendChild(progressValue)
 
+        let pingMark = document.createElement("div");
+        pingMark.classList.add("ping", "hidden");
+
         tab.appendChild(icon);
         tab.appendChild(title);
         tab.appendChild(closeButton);
         tab.appendChild(progress);
+        tab.appendChild(pingMark);
 
         return tab;
     }

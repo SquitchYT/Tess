@@ -11,7 +11,6 @@
     -webkit-user-select: none;
     transition: transform 200ms, background 140ms;
     font-size: 12px;
-    text-transform: capitalize;
     position: relative;
     overflow: hidden;
     background: var(--tabs-background);
@@ -115,12 +114,28 @@
         height: 20px;
         width: 20px;
         border-radius: 3px;
-        left: 5px;
-        position: absolute;
+        left: 6px;
+        position: absolute;                      
 
         img {
             max-height: 100%;
             max-width: 100%;
+        }
+    }
+
+    .ping {
+        position: absolute;
+        color: var(--tab-highlight-color);
+        background: currentColor;
+        border-radius: 100%;
+        top: 4px;
+        left: 21px;
+        height: 7px;
+        width: 7px;
+        animation: pulse 4s infinite;
+
+        &.hidden {
+            display: none;
         }
     }
 }

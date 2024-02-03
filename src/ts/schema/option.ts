@@ -45,8 +45,7 @@ export type TerminalOptions = {
     letterSpacing: number,
     lineHeight: number,
     showPicture: boolean,
-    showUnreadDataIndicator: boolean,
-    titleIsRunningProcess: boolean
+    showUnreadDataMark: boolean
 }
 
 export type Profile = {

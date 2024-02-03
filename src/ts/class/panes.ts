@@ -47,8 +47,8 @@ export class TerminalPane {
         return element
     }
 
-    async initializeTerm(customKeyEventHanlder: ((e: KeyboardEvent, term: Xterm) => boolean), toaster: Toaster) {
-        let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme, customKeyEventHanlder, toaster);
+    async initializeTerm(customKeyEventHanlder: ((e: KeyboardEvent, term: Xterm) => boolean), toaster: Toaster, onUnreadData: (() => void), onProgressUpdate: ((progress: number) => void)) {
+        let terminal = new Terminal(this.id, this.profile.terminalOptions, this.profile.theme, customKeyEventHanlder, toaster, onUnreadData, onProgressUpdate);
 
         await terminal.launch(this.element.querySelector(".internal-term")!, this.profile.uuid);
 

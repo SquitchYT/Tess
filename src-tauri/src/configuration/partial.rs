@@ -1,3 +1,4 @@
+use crate::common::consts;
 use crate::configuration::deserialized::CloseConfirmation;
 use crate::configuration::deserialized::ShortcutAction;
 use crate::configuration::deserialized::TerminalOption;
@@ -32,6 +33,9 @@ pub struct PartialOption {
 
     #[serde(default)]
     pub default_profile: String,
+
+    #[serde(default = "default_title_format")]
+    pub title_format: String,
 }
 
 impl Default for PartialOption {
@@ -47,6 +51,7 @@ impl Default for PartialOption {
             macros: Some(Vec::default()),
             default_profile: String::new(),
             close_confirmation: CloseConfirmation::default(),
+            title_format: default_title_format(),
         }
     }
 }
@@ -66,12 +71,13 @@ pub struct PartialProfile {
     pub background_transparency: std::option::Option<RangedInt<0, 100, 100>>,
     pub cursor_blink: std::option::Option<bool>,
     pub draw_bold_in_bright: std::option::Option<bool>,
-    pub show_unread_data_indicator: std::option::Option<bool>,
+    pub show_unread_data_mark: std::option::Option<bool>,
     pub line_height: std::option::Option<RangedInt<100, 200, 100>>,
     pub letter_spacing: std::option::Option<RangedInt<0, 8, 0>>,
     pub font_weight: std::option::Option<RangedInt<1, 9, 4>>,
     pub font_weight_bold: std::option::Option<RangedInt<1, 9, 6>>,
-    pub title_is_running_process: std::option::Option<bool>,
+    pub title_format: std::option::Option<String>,
+    pub progress_tracking: std::option::Option<bool>,
     #[serde(deserialize_with = "deserialize_profile_background")]
     #[serde(default)]
     pub background: std::option::Option<BackgroundMedia>,
@@ -108,4 +114,9 @@ where
             Representation::Complex(background) => Some(background),
         }),
     )
+}
+
+#[must_use]
+pub fn default_title_format() -> String {
+    String::from(consts::DEFAULT_PROFILE_TITLE)
 }

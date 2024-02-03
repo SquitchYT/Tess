@@ -38,14 +38,12 @@ async fn main() {
 
     let option = Arc::from(Mutex::from(if let Ok(config_file) = config_file {
         let parsed_option = serde_json::from_str(&config_file);
-        if parsed_option.is_err() {
-            logger.warn(&format!(
-                "Malformed configuration file: {}.",
-                parsed_option.as_ref().err().unwrap()
-            ));
+        if let Err(err) = &parsed_option {
+            logger.warn(&format!("Malformed configuration file: {err}."));
         }
         parsed_option.unwrap_or_default()
     } else {
+        logger.warn("Cannot read configuration file.");
         Option::default()
     }));
 
@@ -144,21 +142,18 @@ async fn main() {
             label,
             event: WindowEvent::CloseRequested { api, .. },
             ..
-        } => {
-            let option_cloned = option.clone();
-            tokio::task::block_in_place(move || {
-                tokio::runtime::Handle::current().block_on(async {
-                    if option_cloned.lock().await.close_confirmation.window {
-                        app.get_window(&label)
-                            .unwrap()
-                            .emit("js_window_request_closing", "")
-                            .ok();
+        } => tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current().block_on(async {
+                if option.lock().await.close_confirmation.window {
+                    app.get_window(&label)
+                        .unwrap()
+                        .emit("js_window_request_closing", ())
+                        .ok();
 
-                        api.prevent_close()
-                    }
-                })
+                    api.prevent_close()
+                }
             })
-        }
+        }),
         _ => (),
     })
 }

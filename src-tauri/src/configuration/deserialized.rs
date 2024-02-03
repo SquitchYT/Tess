@@ -1,3 +1,4 @@
+use crate::common::title_formatter::Formatter;
 use crate::configuration::partial::PartialOption;
 use crate::configuration::types::CursorType;
 use crate::configuration::types::RangedInt;
@@ -7,8 +8,10 @@ use serde::{ser::SerializeSeq, Serialize, Serializer};
 
 use crate::common::utils::parse_theme;
 
+use super::partial::default_title_format;
+
 #[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all(serialize = "camelCase"))]
 pub struct Option {
     pub app_theme: String,
     pub terminal_theme: TerminalTheme,
@@ -35,12 +38,12 @@ impl Default for Option {
             terminal_theme: TerminalTheme::default(),
             background: BackgroundType::default(),
             custom_titlebar: true, // TODO: Set false on linux
-            profiles: vec![default_profile(uuid.clone())],
+            profiles: vec![default_profile(uuid.clone(), &default_title_format())],
             terminal: TerminalOption::default(),
             background_transparency: RangedInt::default(),
             shortcuts: default_shortcuts(),
             macros: Vec::default(),
-            default_profile: default_profile(uuid),
+            default_profile: default_profile(uuid, &default_title_format()),
 
             close_confirmation: CloseConfirmation::default(),
 
@@ -51,7 +54,7 @@ impl Default for Option {
 
 impl<'de> serde::Deserialize<'de> for Option {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let partial_option = PartialOption::deserialize(deserializer).unwrap_or_default();
+        let partial_option = PartialOption::deserialize(deserializer)?;
 
         let (app_theme, terminal_theme) = parse_theme(&partial_option.theme);
         let app_theme = app_theme.unwrap_or_default();
@@ -60,20 +63,10 @@ impl<'de> serde::Deserialize<'de> for Option {
         let mut profiles = vec![];
 
         if partial_option.profiles.is_empty() {
-            profiles.push(Profile {
-                name: String::from("Default profile"),
-                terminal_options: partial_option.terminal.clone(),
-                theme: terminal_theme.clone(),
-                background_transparency: partial_option.background_transparency,
-                uuid: uuid::Uuid::new_v4().to_string(),
-                #[cfg(target_family = "unix")]
-                command: String::from("sh -c $SHELL"),
-                #[cfg(target_os = "windows")]
-                command: String::from(
-                    "%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
-                ),
-                background: None,
-            });
+            profiles.push(default_profile(
+                uuid::Uuid::new_v4().to_string(),
+                &partial_option.title_format,
+            ));
         } else {
             for partial_profile in partial_option.profiles {
                 let profile_option = TerminalOption {
@@ -99,9 +92,9 @@ impl<'de> serde::Deserialize<'de> for Option {
                     draw_bold_in_bright: partial_profile
                         .draw_bold_in_bright
                         .unwrap_or(partial_option.terminal.draw_bold_in_bright),
-                    show_unread_data_indicator: partial_profile
-                        .show_unread_data_indicator
-                        .unwrap_or(partial_option.terminal.show_unread_data_indicator),
+                    show_unread_data_mark: partial_profile
+                        .show_unread_data_mark
+                        .unwrap_or(partial_option.terminal.show_unread_data_mark),
                     line_height: partial_profile
                         .line_height
                         .unwrap_or(partial_option.terminal.line_height),
@@ -114,9 +107,9 @@ impl<'de> serde::Deserialize<'de> for Option {
                     font_weight_bold: partial_profile
                         .font_weight_bold
                         .unwrap_or(partial_option.terminal.font_weight_bold),
-                    title_is_running_process: partial_profile
-                        .title_is_running_process
-                        .unwrap_or(partial_option.terminal.title_is_running_process),
+                    progress_tracking: partial_profile
+                        .progress_tracking
+                        .unwrap_or(partial_option.terminal.progress_tracking),
                 };
 
                 let profile_theme = partial_profile.theme.map_or_else(
@@ -129,6 +122,12 @@ impl<'de> serde::Deserialize<'de> for Option {
                 );
 
                 profiles.push(Profile {
+                    title_format: Formatter::new(
+                        &partial_profile
+                            .title_format
+                            .unwrap_or_else(|| partial_option.title_format.clone()),
+                        &partial_profile.name,
+                    ),
                     name: partial_profile.name,
                     terminal_options: profile_option,
                     theme: profile_theme,
@@ -221,7 +220,7 @@ impl<'de> serde::Deserialize<'de> for Option {
 }
 
 #[derive(Deserialize, Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all(serialize = "camelCase"))]
 pub struct TerminalOption {
     #[serde(default)]
     buffer_size: RangedInt<500, 5000, 3000>,
@@ -240,7 +239,7 @@ pub struct TerminalOption {
     #[serde(default)]
     draw_bold_in_bright: bool,
     #[serde(default = "default_to_true")]
-    show_unread_data_indicator: bool,
+    pub show_unread_data_mark: bool,
     #[serde(default)]
     line_height: RangedInt<100, 200, 100>,
     #[serde(default)]
@@ -249,8 +248,8 @@ pub struct TerminalOption {
     font_weight: RangedInt<1, 9, 4>,
     #[serde(default)]
     font_weight_bold: RangedInt<1, 9, 6>,
-    #[serde(default = "default_to_true")]
-    pub title_is_running_process: bool,
+    #[serde(default)]
+    pub progress_tracking: bool,
 }
 
 impl Default for TerminalOption {
@@ -264,12 +263,12 @@ impl Default for TerminalOption {
             bell: false,
             cursor_blink: false,
             draw_bold_in_bright: false,
-            show_unread_data_indicator: true,
+            show_unread_data_mark: true,
             line_height: RangedInt::default(),
             letter_spacing: RangedInt::default(),
             font_weight: RangedInt::default(),
             font_weight_bold: RangedInt::default(),
-            title_is_running_process: true,
+            progress_tracking: false,
         }
     }
 }
@@ -340,16 +339,18 @@ impl Serialize for ShortcutAction {
 }
 
 #[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all(serialize = "camelCase"))]
 pub struct Profile {
     // TODO: Add Icon
-    name: String,
+    pub name: String,
     pub terminal_options: TerminalOption,
     theme: TerminalTheme,
     background_transparency: RangedInt<0, 100, 100>,
     background: std::option::Option<BackgroundMedia>,
     pub uuid: String,
     pub command: String,
+    #[serde(skip_serializing)]
+    pub title_format: Formatter,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -619,7 +620,7 @@ const fn default_to_true() -> bool {
     true
 }
 
-fn default_profile(uuid: String) -> Profile {
+fn default_profile(uuid: String, title_format: &str) -> Profile {
     Profile {
         name: String::from("Default profile"),
         terminal_options: TerminalOption::default(),
@@ -631,6 +632,7 @@ fn default_profile(uuid: String) -> Profile {
         #[cfg(target_os = "windows")]
         command: String::from("%SystemRoot%\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"),
         background: None,
+        title_format: Formatter::new(title_format, "Default profile"),
     }
 }
 

@@ -3,7 +3,7 @@ import { listen, Event } from '@tauri-apps/api/event'
 import { v4 as uuid } from 'uuid';
 import { invoke } from '@tauri-apps/api/tauri'
 
-import { terminalTitleChangedPayload } from "./schema/term";
+import {terminalTitleChangedPayload } from "./schema/term";
 import { View } from "./class/views";
 import { Toaster } from "./manager/toast";
 
@@ -39,7 +39,7 @@ export class App {
 
         this.shortcutsManager = new ShortcutsManager(option.shortcuts, (action) => { this.onShortcutExecuted(action) });
 
-        listen<terminalTitleChangedPayload>("js_pty_title_update", (e) => { this.onTerminalTitleChanged(e); })
+        listen<terminalTitleChangedPayload>("js_pty_title_update", (e) => { this.onTerminalTitleUpdated(e); })
         listen<string>("js_pty_closed", (e) => { this.onTerminalProcessExited(e); });
 
         listen("js_window_request_closing", () => { this.closeViews(); });
@@ -98,7 +98,7 @@ export class App {
         this.tabsManager.closeTab(uuid);
     }
 
-    private onTerminalTitleChanged(e: Event<terminalTitleChangedPayload>) {
+    private onTerminalTitleUpdated(e: Event<terminalTitleChangedPayload>) {
         this.views.forEach((view) => {
             if (view.getTerm(e.payload.id)) {
                 view.updatePaneTitle(e.payload.id, e.payload.title)
@@ -206,7 +206,7 @@ export class App {
 
         let profile = this.option.profiles.find(profile => profile.uuid == profileId);
         if (profile) {
-            let view = new View(viewId, this.popupManager, this.toaster, (id) => { this.onViewsClosed(id); }, (title) => { this.tabsManager.setTitle(viewId, title); })
+            let view = new View(viewId, this.popupManager, this.toaster, (id) => { this.onViewsClosed(id); }, (title) => { this.tabsManager.setTitle(viewId, title); }, (viewId) => { this.onViewGotUnreadData(viewId) }, (viewId, progress) => { this.onViewGotProgressUpdate(viewId, progress) })
             
             view.openPane(paneId, profile, (e, term) => { return this.shortcutsManager.onKeyPress(e, term); }).then(() => {
                 this.views.push(view);
@@ -235,6 +235,14 @@ export class App {
                 this.toaster.toast("Unable to close a view's pane",  err, "error");
             })
         }
+    }
+
+    private onViewGotUnreadData(viewId: string) {
+        this.tabsManager.setHightlight(viewId, true);
+    }
+
+    private onViewGotProgressUpdate(viewId: string, progress: number) {
+       this.tabsManager.setprogress(viewId, progress);
     }
 
 
