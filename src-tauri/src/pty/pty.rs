@@ -89,10 +89,29 @@ impl Pty {
             .map_err(|err| PtyError::Creation(err.to_string()))?;
         let master = Arc::new(Mutex::from(pty_pair.master));
 
+        #[cfg(target_family = "unix")]
+        let cloned_master = master.clone();
+        #[cfg(target_family = "unix")]
         let child = Arc::from(Mutex::new(
             pty_pair
                 .slave
                 .spawn_command(builded_command)
+                .map_err(|err| PtyError::Creation(err.to_string()))?,
+        ));
+
+        #[cfg(target_os = "windows")]
+        let mut shell_pid = 0;
+        #[cfg(target_os = "windows")]
+        let child = Arc::from(Mutex::new(
+            pty_pair
+                .slave
+                .spawn_command(builded_command)
+                .and_then(|child| {
+                    shell_pid = child
+                        .process_id()
+                        .ok_or(PtyError::Creation("PID not found".to_owned()))?;
+                    Ok(child)
+                })
                 .map_err(|err| PtyError::Creation(err.to_string()))?,
         ));
 
@@ -106,15 +125,6 @@ impl Pty {
         let (exit_sender, exit_receiver) = mpsc::channel::<()>();
         let paused = Arc::from(AtomicBool::new(false));
         let paused_cloned = paused.clone();
-
-        #[cfg(target_family = "unix")]
-        let cloned_master = master.clone();
-        #[cfg(target_os = "windows")]
-        let shell_pid = child
-            .lock()
-            .await
-            .process_id()
-            .ok_or(PtyError::Creation("PID not found".to_owned()))?;
 
         let progress_tracking = progress_report | title_formatter.options.action_progress;
         let current_progress = Arc::new(AtomicU8::new(0));
@@ -281,7 +291,11 @@ impl Pty {
                     let fetched_data_count = fetchers.len();
                     join_all(fetchers).await;
 
-                    if fetched_data_count > 1 || title_formatter.options.action_progress || title_formatter.options.shell_title {
+                    if fetched_data_count > 1
+                        || title_formatter.options.action_progress
+                        || title_formatter.options.shell_title
+                        || title_formatter.options.leader_process
+                    {
                         let generated_title = title_formatter.format(&FormatterParams {
                             pwd: fetched_pwd,
                             leader_process: fetched_leader_process.clone(),

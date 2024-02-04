@@ -28,7 +28,6 @@ pub fn get_leader_pid(shell_pid: u32) -> u32 {
     leader_pid
 }
 
-
 #[cfg(target_os = "windows")]
 pub async fn get_process_title(pid: u32, fetched_title: &mut Option<String>) {
     use std::{ffi::OsString, os::windows::ffi::OsStringExt};
@@ -59,9 +58,8 @@ pub async fn get_process_title(pid: u32, fetched_title: &mut Option<String>) {
         })
     })
     .await
-    .unwrap();
+    .unwrap_or(None);
 }
-
 
 #[cfg(target_family = "unix")]
 pub async fn get_process_title(pid: i32, fetched_title: &mut Option<String>) {
@@ -82,7 +80,6 @@ pub async fn get_process_title(pid: i32, fetched_title: &mut Option<String>) {
     .await
     .unwrap();
 }
-
 
 #[cfg(target_family = "unix")]
 pub async fn get_process_working_dir(pid: i32, fetched_pwd: &mut Option<String>) {

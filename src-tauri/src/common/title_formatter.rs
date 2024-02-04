@@ -62,7 +62,8 @@ impl Formatter {
 
                                     current_placeholder_parts = Default::default();
                                 }
-                                placeholder @ ("pwd" | "leader_process" | "action_progress" | "shell_title") => {
+                                placeholder @ ("pwd" | "leader_process" | "action_progress"
+                                | "shell_title") => {
                                     parts.push(TitlePart::Static(std::mem::take(
                                         &mut current_static_part,
                                     )));
