@@ -18,6 +18,7 @@ export class TabsManager {
 
     private tabFocusedListener: ((id: string) => void)[] = [];
     private tabAddedListener: ((id: string) => void)[] = [];
+    private titleUpdatedListener: ((id: string) => void)[] = [];
     private requestedTabClosingListener: (id: string) => void;
 
     // Max Index is tabs.lenght
@@ -69,6 +70,9 @@ export class TabsManager {
         let tmp = this.tabs.find(tab => tab.id === uuid);
         if (tmp) {
             tmp.setTitle(title);
+            this.titleUpdatedListener.forEach((listener) => {
+                listener(uuid);
+            })
         }   
     }
 
@@ -176,13 +180,16 @@ export class TabsManager {
         return this.tabs.find(tab => tab.id === uuid)
     }
 
-    addEventListener(event: "tabFocused" | "tabAdded", listener: ((id: string) => void)) {
+    addEventListener(event: "tabFocused" | "tabAdded" | "titleUpdated", listener: ((id: string) => void)) {
         switch (event) {
             case "tabFocused":
                 this.tabFocusedListener.push(listener);
                 break;
             case "tabAdded":
                 this.tabAddedListener.push(listener);
+                break;
+            case "titleUpdated":
+                this.titleUpdatedListener.push(listener);
                 break;
         }
     }

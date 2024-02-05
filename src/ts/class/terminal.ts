@@ -80,8 +80,8 @@ export class Terminal {
             if (e.payload == this.id && options.showUnreadDataMark) {
                 onNewDisplayedDataReceived();
             }
-        })).then((disposeTodo) => {
-            this.disposeContentUpdate = disposeTodo;
+        })).then((disposeContentUpdate) => {
+            this.disposeContentUpdate = disposeContentUpdate;
         })
 
         listen<terminalProgressUpdatedPayload>("js_pty_progress_update", ((e) => {

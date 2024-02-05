@@ -62,7 +62,8 @@ async fn main() {
             commands::pty_pause,
             commands::utils_close_app,
             commands::utils_get_configuration,
-            commands::window_close
+            commands::window_close,
+            commands::window_set_title
         ])
         .build(tauri::generate_context!())
         .unwrap();

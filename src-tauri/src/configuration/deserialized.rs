@@ -17,13 +17,13 @@ pub struct Option {
     pub terminal_theme: TerminalTheme,
     pub background: BackgroundType,
     pub background_transparency: RangedInt<0, 100, 100>,
-    pub custom_titlebar: bool,
     pub profiles: Vec<Profile>,
     pub terminal: TerminalOption,
     pub shortcuts: Vec<Shortcut>,
     pub macros: Vec<Macro>,
     pub default_profile: Profile,
     pub close_confirmation: CloseConfirmation,
+    pub desktop_integration: DesktopIntegration,
 
     #[serde(skip_serializing)]
     theme: String,
@@ -37,7 +37,6 @@ impl Default for Option {
             app_theme: String::default(),
             terminal_theme: TerminalTheme::default(),
             background: BackgroundType::default(),
-            custom_titlebar: true, // TODO: Set false on linux
             profiles: vec![default_profile(uuid.clone(), &default_title_format())],
             terminal: TerminalOption::default(),
             background_transparency: RangedInt::default(),
@@ -46,6 +45,7 @@ impl Default for Option {
             default_profile: default_profile(uuid, &default_title_format()),
 
             close_confirmation: CloseConfirmation::default(),
+            desktop_integration: DesktopIntegration::default(),
 
             theme: String::default(),
         }
@@ -203,7 +203,6 @@ impl<'de> serde::Deserialize<'de> for Option {
             terminal_theme,
             app_theme,
             background: partial_option.background,
-            custom_titlebar: partial_option.custom_titlebar,
             terminal: partial_option.terminal,
             profiles: profiles.clone(),
             background_transparency: partial_option.background_transparency,
@@ -215,6 +214,7 @@ impl<'de> serde::Deserialize<'de> for Option {
                 .unwrap_or(&profiles[0])
                 .clone(),
             close_confirmation: partial_option.close_confirmation,
+            desktop_integration: partial_option.desktop_integration,
         })
     }
 }
@@ -545,10 +545,10 @@ impl<'de> Deserialize<'de> for CloseConfirmation {
         }
 
         match Representation::deserialize(deserializer)? {
-            Representation::Simple(close_confirmation_toggled) => Ok(Self {
-                tab: close_confirmation_toggled,
-                window: close_confirmation_toggled,
-                app: close_confirmation_toggled,
+            Representation::Simple(enable) => Ok(Self {
+                tab: enable,
+                window: enable,
+                app: enable,
                 #[cfg(target_family = "unix")]
                 excluded_process: vec![
                     "sh".to_owned(),
@@ -613,6 +613,60 @@ impl Default for CloseConfirmation {
                 "pwsh.exe".to_owned(),
             ],
         }
+    }
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct DesktopIntegration {
+    pub custom_titlebar: bool,
+    pub dynamic_title: bool,
+}
+
+impl Default for DesktopIntegration {
+    fn default() -> Self {
+        Self {
+            #[cfg(target_family = "unix")]
+            custom_titlebar: false,
+            #[cfg(target_os = "windows")]
+            custom_titlebar: true,
+            dynamic_title: true,
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for DesktopIntegration {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        #[derive(Deserialize)]
+        struct PartialDesktopIntegration {
+            custom_titlebar: std::option::Option<bool>,
+            dynamic_title: std::option::Option<bool>,
+        }
+
+        #[derive(Deserialize)]
+        #[serde(untagged)]
+        enum Representation {
+            Simple(bool),
+            Complex(PartialDesktopIntegration),
+        }
+
+        let representation = Representation::deserialize(deserializer)?;
+
+        Ok(match representation {
+            Representation::Simple(enable) => Self {
+                custom_titlebar: enable,
+                dynamic_title: enable,
+            },
+            Representation::Complex(partial_desktop_integration) => Self {
+                dynamic_title: partial_desktop_integration.dynamic_title.unwrap_or(true),
+                #[cfg(target_family = "unix")]
+                custom_titlebar: partial_desktop_integration.custom_titlebar.unwrap_or(false),
+                #[cfg(target_os = "windows")]
+                custom_titlebar: partial_desktop_integration.custom_titlebar.unwrap_or(true),
+            },
+        })
     }
 }
 

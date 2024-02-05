@@ -9,11 +9,15 @@ export class Tab {
 
     removedProgressTimeout1: number = 0;
 
+    title: string;
+
 
     constructor(index: number, id: string, onClose:((id: string) => void)) {
         this.id = id;
         this.index = index;
         this.element = this.generateComponents();
+
+        this.title = "";
 
         new ResizeObserver(() => {
             if (this.element.clientWidth <= 34) {
@@ -27,6 +31,7 @@ export class Tab {
     }
 
     setTitle(title: string) {
+        this.title = title;
         (this.element.querySelector(".title")! as HTMLSpanElement).innerText = title;
     }
 

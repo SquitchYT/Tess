@@ -8,14 +8,14 @@ use crate::configuration::types::{BackgroundMedia, BackgroundType};
 use serde::Deserialize;
 use serde::Deserializer;
 
+use super::deserialized::DesktopIntegration;
+
 #[derive(Deserialize, Debug)]
 pub struct PartialOption {
     #[serde(default)]
     pub theme: String,
     #[serde(default)]
     pub background: BackgroundType,
-    #[serde(default)]
-    pub custom_titlebar: bool, // TODO: Set correct default value
     #[serde(default)]
     pub profiles: Vec<PartialProfile>,
     #[serde(default, flatten)]
@@ -30,6 +30,8 @@ pub struct PartialOption {
 
     #[serde(default)]
     pub close_confirmation: CloseConfirmation,
+    #[serde(default)]
+    pub desktop_integration: DesktopIntegration,
 
     #[serde(default)]
     pub default_profile: String,
@@ -43,7 +45,6 @@ impl Default for PartialOption {
         Self {
             theme: String::default(),
             background: BackgroundType::default(),
-            custom_titlebar: true, // TODO: Set false on linux
             profiles: Vec::default(),
             terminal: TerminalOption::default(),
             background_transparency: RangedInt::default(),
@@ -51,6 +52,7 @@ impl Default for PartialOption {
             macros: Some(Vec::default()),
             default_profile: String::new(),
             close_confirmation: CloseConfirmation::default(),
+            desktop_integration: DesktopIntegration::default(),
             title_format: default_title_format(),
         }
     }

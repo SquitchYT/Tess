@@ -35,6 +35,7 @@ export class App {
 
         this.tabsManager = new TabsManager(tabsTarget, (id) => { this.onTabRequestClose(id); });
         this.tabsManager.addEventListener("tabFocused", (id) => { this.onTabFocused(id); });
+        this.tabsManager.addEventListener("titleUpdated", (id) => { this.onTabTitleUpdated(id); });
         this.popupManager = new PopupManager();
 
         this.shortcutsManager = new ShortcutsManager(option.shortcuts, (action) => { this.onShortcutExecuted(action) });
@@ -62,16 +63,27 @@ export class App {
 
     private onTabFocused(id: string) {
         let view = this.views.find((view) => view.id! == id);
+        let tab = this.tabsManager.getTab(id);
 
-        if (view) {
+        if (view && tab) {
             this.focusedView = view;
             view.focus();
+            invoke("window_set_title", {title: tab.title});
 
             this.views.forEach((view) => {
                 if (view.id != id) {
                     view.unfocus();
                 }
             })
+        }
+    }
+
+
+    private onTabTitleUpdated(id: string) {
+        let tab = this.tabsManager.getTab(id);
+
+        if (this.focusedView?.id == id && this.option.desktopIntegration.dynamic_title && tab) {
+            invoke("window_set_title", {title: tab.title});
         }
     }
 
@@ -91,7 +103,7 @@ export class App {
             view.element!.remove();
             this.views.splice(this.views.indexOf(view), 1);
             if (this.views.length == 0) {
-                invoke("window_close")
+                invoke("window_close");
             }
         }
 
@@ -108,7 +120,7 @@ export class App {
 
     private onTerminalPaneInput(id: string, data: string) {
         invoke("pty_write", {content: data, id: id}).catch((err) => {
-            this.toaster.toast("Interaction error", err, "error")
+            this.toaster.toast("Interaction error", err, "error");
         });
     }
 
