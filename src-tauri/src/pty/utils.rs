@@ -93,5 +93,88 @@ pub async fn get_process_working_dir(pid: i32, fetched_pwd: &mut Option<String>)
 
 #[cfg(target_os = "windows")]
 pub async fn get_process_working_dir(pid: u32, fetched_pwd: &mut Option<String>) {
-    todo!()
+    use std::mem::size_of;
+    use std::{os::raw::c_void, ptr};
+
+    use windows::Win32::System::Diagnostics::Debug::ReadProcessMemory;
+    use windows::Win32::System::Threading::PEB;
+    use windows::{
+        Wdk::System::Threading::{NtQueryInformationProcess, ProcessBasicInformation},
+        Win32::{
+            Foundation::CloseHandle,
+            System::Threading::{
+                PROCESS_BASIC_INFORMATION, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ,
+            },
+        },
+    };
+    use windows_native::ntrtl::RTL_USER_PROCESS_PARAMETERS;
+
+    if let Ok(handle) = unsafe {
+        windows::Win32::System::Threading::OpenProcess(
+            PROCESS_QUERY_INFORMATION | PROCESS_VM_READ,
+            false,
+            pid,
+        )
+    } {
+        let pbi = PROCESS_BASIC_INFORMATION::default();
+
+        *fetched_pwd = unsafe {
+            NtQueryInformationProcess(
+                handle,
+                ProcessBasicInformation,
+                &pbi as *const _ as *mut c_void,
+                size_of::<PROCESS_BASIC_INFORMATION>() as u32,
+                ptr::null_mut(),
+            )
+            .map(|()| (handle, pbi))
+        }
+        .and_then(|(handle, pbi)| {
+            let peb = PEB::default();
+
+            unsafe {
+                ReadProcessMemory(
+                    handle,
+                    pbi.PebBaseAddress as *const c_void,
+                    &peb as *const _ as *mut c_void,
+                    size_of::<PEB>(),
+                    None,
+                )
+                .map(|()| (handle, peb))
+            }
+        })
+        .and_then(|(handle, peb)| {
+            let upp = RTL_USER_PROCESS_PARAMETERS::default();
+
+            unsafe {
+                ReadProcessMemory(
+                    handle,
+                    peb.ProcessParameters as *const c_void,
+                    &upp as *const _ as *mut c_void,
+                    size_of::<RTL_USER_PROCESS_PARAMETERS>(),
+                    None,
+                )
+                .map(|()| (handle, upp))
+            }
+        })
+        .and_then(|(handle, upp)| {
+            let mut path: Vec<u16> = vec![0; (upp.CurrentDirectory.DosPath.Length / 2) as usize];
+            let mut path_len = 0;
+
+            unsafe {
+                ReadProcessMemory(
+                    handle,
+                    upp.CurrentDirectory.DosPath.Buffer.as_ptr() as *mut c_void,
+                    path.as_mut_ptr() as *mut c_void,
+                    upp.CurrentDirectory.DosPath.Length as usize,
+                    Some(&mut path_len),
+                )
+                .map(|()| {
+                    String::from_utf16_lossy(&path)
+                })
+            }
+        })
+        .ok();
+
+        unsafe { CloseHandle(handle).ok() };
+    }
 }
