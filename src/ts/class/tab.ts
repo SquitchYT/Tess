@@ -7,7 +7,7 @@ export class Tab {
 
     onClose: ((id: string) => void) | null = null;
 
-    removedProgressTimeout1: number = 0;
+    removedProgressTimeout: number = 0;
 
     title: string;
 
@@ -37,14 +37,14 @@ export class Tab {
 
     setProgress(value: number) {
         if (value > 0 && value < 100) {
-            clearTimeout(this.removedProgressTimeout1);
+            clearTimeout(this.removedProgressTimeout);
 
             (this.element.querySelector(".progress")! as HTMLElement).style.animation = "tab-with-progress-added-progress-bar 100ms forwards";
             (this.element.querySelector(".progress")! as HTMLElement).style.animationDelay = "70ms";
             (this.element.querySelector(".title")! as HTMLElement).style.animation = "tab-with-progress-added-title 120ms forwards";
             (this.element.querySelector(".value")! as HTMLElement).style.width =  `${value}%`;
         } else {
-            this.removedProgressTimeout1 = setTimeout(() => {
+            this.removedProgressTimeout = setTimeout(() => {
                 (this.element.querySelector(".title")! as HTMLElement).style.animation = "tab-with-progress-removed-title 120ms forwards";
             }, 70);
             (this.element.querySelector(".progress")! as HTMLElement).style.animationDelay = "0ms";
