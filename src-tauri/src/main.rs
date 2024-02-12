@@ -110,22 +110,20 @@ async fn main() {
 
             #[cfg(target_family = "unix")]
             {
-                let app_cloned = app.clone();
+                let app = app.clone();
                 tokio::spawn(async move {
                     if let Ok(mut signals_stream) =
                         signal_hook_tokio::Signals::new([SIGQUIT, SIGTERM])
                     {
                         while signals_stream.next().await.is_some() {
-                            let windows_count = app_cloned.windows().len();
+                            let windows_count = app.windows().len();
                             if windows_count > 1 {
-                                app_cloned
-                                    .get_window("main")
+                                app.get_window("main")
                                     .unwrap()
                                     .emit("js_app_request_exit", windows_count)
                                     .ok();
                             } else {
-                                app_cloned
-                                    .get_window("main")
+                                app.get_window("main")
                                     .unwrap()
                                     .emit("js_window_request_closing", ())
                                     .ok();

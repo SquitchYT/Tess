@@ -1,18 +1,20 @@
-#[derive(Debug, Clone)]
+#[derive(Clone, Debug)]
 enum TitlePart {
     Static(String),
     Dynamic([String; 3]),
 }
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Debug)]
 pub struct FormatterOptions {
     pub pwd: bool,
+    pub short_pwd: bool,
     pub leader_process: bool,
     pub action_progress: bool,
     pub shell_title: bool,
 }
-#[derive(Debug, Default, Clone)]
+#[derive(Default)]
 pub struct FormatterParams {
     pub pwd: Option<String>,
+    pub short_pwd: Option<String>,
     pub leader_process: Option<String>,
     pub progress: Option<u8>,
     pub shell_title: Option<String>,
@@ -62,8 +64,8 @@ impl Formatter {
 
                                     current_placeholder_parts = Default::default();
                                 }
-                                placeholder @ ("pwd" | "leader_process" | "action_progress"
-                                | "shell_title") => {
+                                placeholder @ ("pwd" | "short_pwd" | "leader_process"
+                                | "action_progress" | "shell_title") => {
                                     parts.push(TitlePart::Static(std::mem::take(
                                         &mut current_static_part,
                                     )));
@@ -73,6 +75,7 @@ impl Formatter {
 
                                     match placeholder {
                                         "pwd" => format_option.pwd = true,
+                                        "short_pwd" => format_option.short_pwd = true,
                                         "leader_process" => format_option.leader_process = true,
                                         "action_progress" => format_option.action_progress = true,
                                         "shell_title" => format_option.shell_title = true,
@@ -144,6 +147,13 @@ impl Formatter {
                             },
                         )
                         | (
+                            "short_pwd",
+                            FormatterParams {
+                                short_pwd: Some(value),
+                                ..
+                            },
+                        )
+                        | (
                             "leader_process",
                             FormatterParams {
                                 leader_process: Some(value),
@@ -158,7 +168,7 @@ impl Formatter {
                             },
                         ) => {
                             output.push_str(&content[0]);
-                            output.push_str(&value);
+                            output.push_str(value);
                             output.push_str(&content[2]);
 
                             output

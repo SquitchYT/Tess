@@ -54,7 +54,11 @@ impl Default for Option {
 
 impl<'de> serde::Deserialize<'de> for Option {
     fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
-        let partial_option = PartialOption::deserialize(deserializer)?;
+        let mut partial_option = PartialOption::deserialize(deserializer)?;
+
+        if matches!(partial_option.background, BackgroundType::Opaque) {
+            partial_option.background_transparency = RangedInt(100);
+        }
 
         let (app_theme, terminal_theme) = parse_theme(&partial_option.theme);
         let app_theme = app_theme.unwrap_or_default();

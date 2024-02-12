@@ -18,15 +18,18 @@ export class Terminal {
     disposeProgressTracker: UnlistenFn | undefined = undefined;
 
 
-    constructor(id: string, options: TerminalOptions, theme: TerminalTheme, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean), toaster: Toaster, onNewDisplayedDataReceived: (() => void), onProgressUpdate: ((progress: number) => void)) {
+    constructor(id: string, options: TerminalOptions, theme: TerminalTheme, transparency: boolean, customKeyEventHandler: ((e: KeyboardEvent, term: Xterm) => boolean), toaster: Toaster, onNewDisplayedDataReceived: (() => void), onProgressUpdate: ((progress: number) => void)) {
         theme = Object.assign({}, theme);
-        theme.background = "rgba(0,0,0,0)";
+
+        if (transparency) {
+            theme.background = "rgba(0,0,0,0)";
+        }
         
         this.id = id;
         this.term = new Xterm({
             allowProposedApi: true,
             fontFamily: "Fira Code, monospace",
-            allowTransparency: true,
+            allowTransparency: transparency,
             fontSize: options.fontSize,
             drawBoldTextInBrightColors: options.drawBoldInBright,
             cursorBlink: options.cursorBlink,

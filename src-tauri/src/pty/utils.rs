@@ -71,6 +71,13 @@ pub async fn get_process_title(pid: i32, fetched_title: &mut Option<String>) {
 
                 if process_leader_title == "tokio-runtime-w" {
                     None
+                } else if process_leader_title == "sudo" {
+                    std::fs::read_to_string(format!("/proc/{pid}/cmdline")).map_or(
+                        Some(process_leader_title),
+                        |cmdline| {
+                            Some(cmdline.split('\0').take(2).collect::<Vec<&str>>().join(" "))
+                        },
+                    )
                 } else {
                     Some(process_leader_title)
                 }
@@ -168,13 +175,40 @@ pub async fn get_process_working_dir(pid: u32, fetched_pwd: &mut Option<String>)
                     upp.CurrentDirectory.DosPath.Length as usize,
                     Some(&mut path_len),
                 )
-                .map(|()| {
-                    String::from_utf16_lossy(&path)
-                })
+                .map(|()| String::from_utf16_lossy(&path))
             }
         })
         .ok();
 
         unsafe { CloseHandle(handle).ok() };
     }
+}
+
+#[cfg(target_family = "unix")]
+pub async fn get_process_short_working_dir(pid: i32, fetched_short_pwd: &mut Option<String>) {
+    use std::env;
+
+    *fetched_short_pwd = tokio::task::spawn_blocking(move || {
+        std::fs::read_link(format!("/proc/{pid}/cwd")).map_or(None, |path| {
+            Some(
+                if env::var_os("HOME").is_some_and(|home| home == path.as_os_str()) {
+                    String::from("~")
+                } else {
+                    path.file_name().map_or_else(
+                        || String::from("/"),
+                        |dir| {
+                            dir.to_os_string().to_string_lossy().to_string()
+                        },
+                    )
+                },
+            )
+        })
+    })
+    .await
+    .unwrap();
+}
+
+#[cfg(target_os = "windows")]
+pub async fn get_process_short_working_dir(pid: u32, fetched_pwd: &mut Option<String>) {
+    todo!()
 }
