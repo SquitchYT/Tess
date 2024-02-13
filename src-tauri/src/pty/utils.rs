@@ -165,7 +165,6 @@ pub async fn get_process_working_dir(pid: u32, fetched_pwd: &mut Option<String>)
         })
         .and_then(|(handle, upp)| {
             let mut path: Vec<u16> = vec![0; (upp.CurrentDirectory.DosPath.Length / 2) as usize];
-            let mut path_len = 0;
 
             unsafe {
                 ReadProcessMemory(
@@ -173,9 +172,9 @@ pub async fn get_process_working_dir(pid: u32, fetched_pwd: &mut Option<String>)
                     upp.CurrentDirectory.DosPath.Buffer.as_ptr() as *mut c_void,
                     path.as_mut_ptr() as *mut c_void,
                     upp.CurrentDirectory.DosPath.Length as usize,
-                    Some(&mut path_len),
+                    None,
                 )
-                .map(|()| String::from_utf16_lossy(&path))
+                .map(|()| String::from_utf16_lossy(&path[..path.len() - 1]))
             }
         })
         .ok();
@@ -196,9 +195,7 @@ pub async fn get_process_short_working_dir(pid: i32, fetched_short_pwd: &mut Opt
                 } else {
                     path.file_name().map_or_else(
                         || String::from("/"),
-                        |dir| {
-                            dir.to_os_string().to_string_lossy().to_string()
-                        },
+                        |dir| dir.to_os_string().to_string_lossy().to_string(),
                     )
                 },
             )
@@ -209,6 +206,19 @@ pub async fn get_process_short_working_dir(pid: i32, fetched_short_pwd: &mut Opt
 }
 
 #[cfg(target_os = "windows")]
-pub async fn get_process_short_working_dir(pid: u32, fetched_pwd: &mut Option<String>) {
-    todo!()
+pub async fn get_process_short_working_dir(pid: u32, fetched_short_pwd: &mut Option<String>) {
+    let mut fetched_pwd = None;
+    get_process_working_dir(pid, &mut fetched_pwd).await;
+
+    *fetched_short_pwd = fetched_pwd.map(|path| {
+        let path = std::path::PathBuf::from(&path);
+        if dirs_next::home_dir().is_some_and(|home| path == home) {
+            String::from("~")
+        } else {
+            path.file_name().map_or_else(
+                || path.to_str().unwrap_or("\\").to_owned(),
+                |dir| dir.to_os_string().to_string_lossy().to_string(),
+            )
+        }
+    });
 }
