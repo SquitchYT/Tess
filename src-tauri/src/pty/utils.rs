@@ -185,20 +185,16 @@ pub async fn get_process_working_dir(pid: u32, fetched_pwd: &mut Option<String>)
 
 #[cfg(target_family = "unix")]
 pub async fn get_process_short_working_dir(pid: i32, fetched_short_pwd: &mut Option<String>) {
-    use std::env;
-
     *fetched_short_pwd = tokio::task::spawn_blocking(move || {
         std::fs::read_link(format!("/proc/{pid}/cwd")).map_or(None, |path| {
-            Some(
-                if env::var_os("HOME").is_some_and(|home| home == path.as_os_str()) {
-                    String::from("~")
-                } else {
-                    path.file_name().map_or_else(
-                        || String::from("/"),
-                        |dir| dir.to_os_string().to_string_lossy().to_string(),
-                    )
-                },
-            )
+            Some(if dirs_next::home_dir().is_some_and(|home| home == path) {
+                String::from("~")
+            } else {
+                path.file_name().map_or_else(
+                    || String::from("/"),
+                    |dir| dir.to_os_string().to_string_lossy().to_string(),
+                )
+            })
         })
     })
     .await

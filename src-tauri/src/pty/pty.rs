@@ -23,8 +23,6 @@ use crate::pty::utils;
 #[cfg(target_os = "windows")]
 use regex_lite::Captures;
 
-const PTY_BUFFER_SIZE: usize = 4096;
-
 pub struct Pty {
     writer: Box<dyn Write + Send>,
     child: Arc<Mutex<Box<dyn Child + Send + Sync>>>,
@@ -136,7 +134,7 @@ impl Pty {
             let paused = paused.clone();
 
             std::thread::spawn(move || {
-                let mut buf = [0; PTY_BUFFER_SIZE];
+                let mut buf = [0; 4096];
                 let mut remaining = 0;
 
                 lazy_static::lazy_static! {
@@ -166,11 +164,11 @@ impl Pty {
                                         std::str::from_utf8_unchecked(&buf[..utf8.valid_up_to()])
                                     });
                                     remaining = buf[utf8.valid_up_to()..].len()
-                                        - (PTY_BUFFER_SIZE
+                                        - (buf.len()
                                             - utf8.valid_up_to()
                                             - utf8
                                                 .error_len()
-                                                .unwrap_or(PTY_BUFFER_SIZE - utf8.valid_up_to()));
+                                                .unwrap_or(buf.len() - utf8.valid_up_to()));
                                     buf.rotate_left(utf8.valid_up_to());
                                 }
                             }
@@ -186,7 +184,9 @@ impl Pty {
                                                 .split_once('%')
                                                 .and_then(|(number, _)| number.parse::<f64>().ok())
                                                 .map(|progress| {
-                                                    (progress.ceil() as u64 % 100) as u8
+                                                    (progress.ceil() as u64 % 100)
+                                                        .try_into()
+                                                        .unwrap_or_default()
                                                 })
                                                 .unwrap_or_default()
                                         })
