@@ -228,7 +228,7 @@ export class App {
                     this.onTerminalPaneInput(paneId, content);
                 });
     
-                this.tabsManager.openNewTab(profile!.name, viewId);
+                this.tabsManager.openNewTab(viewId);
     
                 if (focus) { this.tabsManager.select(viewId); }
             }).catch((err) => {

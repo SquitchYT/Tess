@@ -32,7 +32,7 @@ export class TabsManager {
         document.addEventListener("mouseup", (_) => this.stopDragging());
     }
 
-    openNewTab(title: string, id: string) : string {
+    openNewTab(id: string) : string {
         let tab = new Tab(this.tabs.length + 1, id, (id) => this.requestTabClosing(id))
 
         tab.element.addEventListener("mousedown", (e) => {this.focusAndStartDragging(e, tab)});
@@ -49,7 +49,6 @@ export class TabsManager {
         }
 
         tab.element.style.order = String(this.tabs.length + 1);
-        tab.setTitle(title);
 
         this.tabs.push(tab);
         this.target.appendChild(tab.element);
@@ -67,9 +66,9 @@ export class TabsManager {
 
 
     setTitle(uuid: string, title: string) {
-        let tmp = this.tabs.find(tab => tab.id === uuid);
-        if (tmp) {
-            tmp.setTitle(title);
+        let tab = this.tabs.find(tab => tab.id === uuid);
+        if (tab) {
+            tab.setTitle(title);
             this.titleUpdatedListener.forEach((listener) => {
                 listener(uuid);
             })
@@ -77,19 +76,19 @@ export class TabsManager {
     }
 
     setprogress(uuid: string, progress: number) {
-        let tmp = this.tabs.find(tab => tab.id === uuid);
-        if (tmp) {
-            tmp.setProgress(progress);
+        let tab = this.tabs.find(tab => tab.id === uuid);
+        if (tab) {
+            tab.setProgress(progress);
         }  
     }
 
     setHightlight(uuid: string, visible: boolean) {
-        let tmp = this.tabs.find(tab => tab.id === uuid);
-        if (tmp) {
-            if (visible && this.selectedTab != tmp) {
-                tmp.setHighlight(true);
+        let tab = this.tabs.find(tab => tab.id === uuid);
+        if (tab) {
+            if (visible && this.selectedTab != tab) {
+                tab.setHighlight(true);
             } else {
-                tmp.setHighlight(false);
+                tab.setHighlight(false);
             }
         }  
     }
@@ -149,25 +148,16 @@ export class TabsManager {
 
     select(uuid: string) : void;
     select(index: number) : void;
-    select(tab: unknown) {
-        let tabToFocus: Tab | undefined = undefined;
+    select(selector: string | number) {
+        let tab = this.tabs.find(tab => tab.id === selector || tab.index == selector);
 
-        if (typeof tab === "string") {
-            let uuid = tab;
-            tabToFocus = this.tabs.find(tab => tab.id === uuid);
-            
-        } else {
-            let index = tab;
-            tabToFocus = this.tabs.find(tab => tab.index === index);
-        }
-
-        if (tabToFocus) {
+        if (tab) {
             this.selectedTab?.element.classList.remove("selected");
-            this.selectedTab = tabToFocus;
-            tabToFocus.element.classList.add("selected");
+            this.selectedTab = tab;
+            tab.element.classList.add("selected");
 
             this.tabFocusedListener.forEach((listener) => {
-                listener(tabToFocus!.id);
+                listener(tab!.id);
             })
         }
     }

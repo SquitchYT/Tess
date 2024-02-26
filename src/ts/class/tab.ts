@@ -1,4 +1,5 @@
 import tabIcon from "../../assets/default-tab.png";
+import "xterm/css/xterm.css";
 
 export class Tab {
     element: HTMLElement;
@@ -9,7 +10,7 @@ export class Tab {
 
     removedProgressTimeout: number = 0;
 
-    title: string;
+    title: string = "";
 
 
     constructor(index: number, id: string, onClose:((id: string) => void)) {
@@ -17,7 +18,7 @@ export class Tab {
         this.index = index;
         this.element = this.generateComponents();
 
-        this.title = "";
+        this.setTitle("");
 
         new ResizeObserver(() => {
             if (this.element.clientWidth <= 34) {
@@ -32,7 +33,7 @@ export class Tab {
 
     setTitle(title: string) {
         this.title = title;
-        (this.element.querySelector(".title")! as HTMLSpanElement).innerText = title;
+        (this.element.querySelector(".title")! as HTMLSpanElement).innerText = title != "" ? title : "Untitled tab";
     }
 
     setProgress(value: number) {

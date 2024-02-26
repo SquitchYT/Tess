@@ -290,6 +290,7 @@ pub struct Shortcut {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+#[serde(rename_all(deserialize = "snake_case"))]
 pub enum ShortcutAction {
     CloseFocusedTab,
     CloseAllTabs,
