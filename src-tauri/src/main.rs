@@ -38,14 +38,12 @@ async fn main() {
 
     let option = Arc::from(Mutex::from(if let Ok(config_file) = config_file {
         let parsed_option = serde_json::from_str(&config_file);
-        if parsed_option.is_err() {
-            logger.warn(&format!(
-                "Malformed configuration file: {}.",
-                parsed_option.as_ref().err().unwrap()
-            ));
+        if let Err(err) = &parsed_option {
+            logger.warn(&format!("Malformed configuration file: {err}."));
         }
         parsed_option.unwrap_or_default()
     } else {
+        logger.warn("Cannot read configuration file.");
         Option::default()
     }));
 
@@ -64,7 +62,8 @@ async fn main() {
             commands::pty_pause,
             commands::utils_close_app,
             commands::utils_get_configuration,
-            commands::window_close
+            commands::window_close,
+            commands::window_set_title
         ])
         .build(tauri::generate_context!())
         .unwrap();
@@ -111,22 +110,20 @@ async fn main() {
 
             #[cfg(target_family = "unix")]
             {
-                let app_cloned = app.clone();
+                let app = app.clone();
                 tokio::spawn(async move {
                     if let Ok(mut signals_stream) =
                         signal_hook_tokio::Signals::new([SIGQUIT, SIGTERM])
                     {
                         while signals_stream.next().await.is_some() {
-                            let windows_count = app_cloned.windows().len();
+                            let windows_count = app.windows().len();
                             if windows_count > 1 {
-                                app_cloned
-                                    .get_window("main")
+                                app.get_window("main")
                                     .unwrap()
                                     .emit("js_app_request_exit", windows_count)
                                     .ok();
                             } else {
-                                app_cloned
-                                    .get_window("main")
+                                app.get_window("main")
                                     .unwrap()
                                     .emit("js_window_request_closing", ())
                                     .ok();
@@ -144,21 +141,18 @@ async fn main() {
             label,
             event: WindowEvent::CloseRequested { api, .. },
             ..
-        } => {
-            let option_cloned = option.clone();
-            tokio::task::block_in_place(move || {
-                tokio::runtime::Handle::current().block_on(async {
-                    if option_cloned.lock().await.close_confirmation.window {
-                        app.get_window(&label)
-                            .unwrap()
-                            .emit("js_window_request_closing", "")
-                            .ok();
+        } => tokio::task::block_in_place(|| {
+            tokio::runtime::Handle::current().block_on(async {
+                if option.lock().await.close_confirmation.window {
+                    app.get_window(&label)
+                        .unwrap()
+                        .emit("js_window_request_closing", ())
+                        .ok();
 
-                        api.prevent_close()
-                    }
-                })
+                    api.prevent_close()
+                }
             })
-        }
+        }),
         _ => (),
     })
 }

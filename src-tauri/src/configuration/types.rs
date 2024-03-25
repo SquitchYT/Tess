@@ -3,13 +3,11 @@ use serde::Deserialize;
 use serde::{Serialize, Serializer};
 
 #[derive(Debug, Clone, Copy)]
-pub struct RangedInt<const MIN: u32, const MAX: u32, const DEF: u32> {
-    value: u32,
-}
+pub struct RangedInt<const MIN: u32, const MAX: u32, const DEF: u32>(pub u32);
 
 impl<const MIN: u32, const MAX: u32, const DEF: u32> Default for RangedInt<MIN, MAX, DEF> {
     fn default() -> Self {
-        Self { value: DEF }
+        Self(DEF)
     }
 }
 
@@ -21,13 +19,11 @@ impl<'de, const MIN: u32, const MAX: u32, const DEF: u32> serde::Deserialize<'de
             |_| Self::default(),
             |deserialized_value| {
                 if deserialized_value < MIN {
-                    Self { value: MIN }
+                    Self(MIN)
                 } else if deserialized_value > MAX {
-                    Self { value: MAX }
+                    Self(MAX)
                 } else {
-                    Self {
-                        value: deserialized_value,
-                    }
+                    Self(deserialized_value)
                 }
             },
         ))
@@ -39,12 +35,12 @@ impl<const MIN: u32, const MAX: u32, const DEF: u32> serde::Serialize for Ranged
     where
         S: Serializer,
     {
-        serializer.serialize_u32(self.value)
+        serializer.serialize_u32(self.0)
     }
 }
 
 #[derive(Debug, Serialize, Clone)]
-#[serde(rename_all = "camelCase")]
+#[serde(rename_all(serialize = "camelCase"))]
 pub enum BackgroundType {
     Opaque,
     Media(BackgroundMedia),

@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build --emptyOutDir",
-    "preview": "vite preview"
+    "build": "vite build --emptyOutDir"
   },
   "devDependencies": {
     "@types/node": "^18.11.9",

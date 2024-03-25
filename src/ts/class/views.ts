@@ -9,28 +9,34 @@ import { Toaster } from "ts/manager/toast";
 export class View {
     // TODO: Implement pane page type
 
-    id: string | undefined;
-    element: HTMLElement | undefined;
+    id: string;
+    element: HTMLElement;
 
     panes: (TerminalPane|PagePane)[] = [];
 
-    closedEvent: ((id: string) => void) | undefined;
-    focusedPaneTitleChangedEvent: ((title: string) => void) | undefined;
+    closedEvent: ((id: string) => void);
+    focusedPaneTitleChangedEvent: ((title: string) => void);
+    gotUnreadDataEvent: ((viewId: string) => void);
+    gotProgressChangeEvent: ((viewId: string, progress: number) => void);
 
     focusedPane: TerminalPane | PagePane | undefined = undefined;
 
-    popupManager: PopupManager | undefined;
+    popupManager: PopupManager;
 
     closingAllRequested: boolean = false;
 
     toaster: Toaster;
 
 
-    constructor (viewId: string, popupManager: PopupManager, toaster: Toaster, closedEvent: ((id: string) => void), focusedPaneTitleChangedEvent: ((title: string) => void)) {
+    constructor(viewId: string, popupManager: PopupManager, toaster: Toaster, closedEvent: ((id: string) => void), focusedPaneTitleChangedEvent: ((title: string) => void), gotUnreadDataEvent: ((viewId: string) => void), gotProgressChange: ((viewid: string, progress: number) => void)) {
         this.id =  viewId;
         this.element = this.generateComponents();
+
         this.closedEvent = closedEvent;
         this.focusedPaneTitleChangedEvent = focusedPaneTitleChangedEvent;
+        this.gotUnreadDataEvent = gotUnreadDataEvent;
+        this.gotProgressChangeEvent = gotProgressChange;
+
         this.popupManager = popupManager;
         this.toaster = toaster;
     }
@@ -40,10 +46,10 @@ export class View {
     async openPane(paneId: string, profile?: Profile, customKeyEventHandler?: ((e: KeyboardEvent, term: Xterm) => boolean)) {
         if (profile) {
             let pane = new TerminalPane(paneId, profile);
-            await pane.initializeTerm(customKeyEventHandler!, this.toaster);
+            await pane.initializeTerm(customKeyEventHandler!, this.toaster, (() => { this.gotUnreadDataEvent(this.id) }), ((progress) => { this.gotProgressChangeEvent(this.id, progress) }));
 
             this.panes.push(pane)
-            this.element!.appendChild(pane.element);
+            this.element.appendChild(pane.element);
 
             this.focusedPane = pane;
         }
@@ -129,7 +135,7 @@ export class View {
         let pane = this.panes.find((pane) => pane.id == id);
         if (pane) {
             pane.title = title;
-            this.focusedPaneTitleChangedEvent!(title)
+            this.focusedPaneTitleChangedEvent(title)
         }
     }
 }

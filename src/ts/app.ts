@@ -3,7 +3,7 @@ import { listen, Event } from '@tauri-apps/api/event'
 import { v4 as uuid } from 'uuid';
 import { invoke } from '@tauri-apps/api/tauri'
 
-import { terminalTitleChangedPayload } from "./schema/term";
+import {terminalTitleChangedPayload } from "./schema/term";
 import { View } from "./class/views";
 import { Toaster } from "./manager/toast";
 
@@ -35,11 +35,12 @@ export class App {
 
         this.tabsManager = new TabsManager(tabsTarget, (id) => { this.onTabRequestClose(id); });
         this.tabsManager.addEventListener("tabFocused", (id) => { this.onTabFocused(id); });
+        this.tabsManager.addEventListener("titleUpdated", (id) => { this.onTabTitleUpdated(id); });
         this.popupManager = new PopupManager();
 
         this.shortcutsManager = new ShortcutsManager(option.shortcuts, (action) => { this.onShortcutExecuted(action) });
 
-        listen<terminalTitleChangedPayload>("js_pty_title_update", (e) => { this.onTerminalTitleChanged(e); })
+        listen<terminalTitleChangedPayload>("js_pty_title_update", (e) => { this.onTerminalTitleUpdated(e); })
         listen<string>("js_pty_closed", (e) => { this.onTerminalProcessExited(e); });
 
         listen("js_window_request_closing", () => { this.closeViews(); });
@@ -62,16 +63,27 @@ export class App {
 
     private onTabFocused(id: string) {
         let view = this.views.find((view) => view.id! == id);
+        let tab = this.tabsManager.getTab(id);
 
-        if (view) {
+        if (view && tab) {
             this.focusedView = view;
             view.focus();
+            invoke("window_set_title", {title: tab.title});
 
             this.views.forEach((view) => {
                 if (view.id != id) {
                     view.unfocus();
                 }
             })
+        }
+    }
+
+
+    private onTabTitleUpdated(id: string) {
+        let tab = this.tabsManager.getTab(id);
+
+        if (this.focusedView?.id == id && this.option.desktopIntegration.dynamic_title && tab) {
+            invoke("window_set_title", {title: tab.title});
         }
     }
 
@@ -91,14 +103,14 @@ export class App {
             view.element!.remove();
             this.views.splice(this.views.indexOf(view), 1);
             if (this.views.length == 0) {
-                invoke("window_close")
+                invoke("window_close");
             }
         }
 
         this.tabsManager.closeTab(uuid);
     }
 
-    private onTerminalTitleChanged(e: Event<terminalTitleChangedPayload>) {
+    private onTerminalTitleUpdated(e: Event<terminalTitleChangedPayload>) {
         this.views.forEach((view) => {
             if (view.getTerm(e.payload.id)) {
                 view.updatePaneTitle(e.payload.id, e.payload.title)
@@ -108,7 +120,7 @@ export class App {
 
     private onTerminalPaneInput(id: string, data: string) {
         invoke("pty_write", {content: data, id: id}).catch((err) => {
-            this.toaster.toast("Interaction error", err, "error")
+            this.toaster.toast("Interaction error", err, "error");
         });
     }
 
@@ -206,7 +218,7 @@ export class App {
 
         let profile = this.option.profiles.find(profile => profile.uuid == profileId);
         if (profile) {
-            let view = new View(viewId, this.popupManager, this.toaster, (id) => { this.onViewsClosed(id); }, (title) => { this.tabsManager.setTitle(viewId, title); })
+            let view = new View(viewId, this.popupManager, this.toaster, (id) => { this.onViewsClosed(id); }, (title) => { this.tabsManager.setTitle(viewId, title); }, (viewId) => { this.onViewGotUnreadData(viewId) }, (viewId, progress) => { this.onViewGotProgressUpdate(viewId, progress) })
             
             view.openPane(paneId, profile, (e, term) => { return this.shortcutsManager.onKeyPress(e, term); }).then(() => {
                 this.views.push(view);
@@ -216,7 +228,7 @@ export class App {
                     this.onTerminalPaneInput(paneId, content);
                 });
     
-                this.tabsManager.openNewTab(profile!.name, viewId);
+                this.tabsManager.openNewTab(viewId);
     
                 if (focus) { this.tabsManager.select(viewId); }
             }).catch((err) => {
@@ -235,6 +247,14 @@ export class App {
                 this.toaster.toast("Unable to close a view's pane",  err, "error");
             })
         }
+    }
+
+    private onViewGotUnreadData(viewId: string) {
+        this.tabsManager.setHightlight(viewId, true);
+    }
+
+    private onViewGotProgressUpdate(viewId: string, progress: number) {
+       this.tabsManager.setprogress(viewId, progress);
     }
 
 

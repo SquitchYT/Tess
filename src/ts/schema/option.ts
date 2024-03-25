@@ -1,6 +1,7 @@
 export type Option = {
     appTheme : string,
-    closeConfirmation: boolean,
+    closeConfirmation: CloseConfirmation,
+    desktopIntegration: DesktopInetgration,
     customTitlebar: boolean,
     profiles: Profile[],
     macros: Macro[],
@@ -45,8 +46,7 @@ export type TerminalOptions = {
     letterSpacing: number,
     lineHeight: number,
     showPicture: boolean,
-    showUnreadDataIndicator: boolean,
-    titleIsRunningProcess: boolean
+    showUnreadDataMark: boolean
 }
 
 export type Profile = {
@@ -92,4 +92,8 @@ export type CloseConfirmation = {
     window: boolean,
     app: boolean,
     excludedProcess: string[]
+}
+
+export type DesktopInetgration = {
+    dynamic_title: boolean
 }

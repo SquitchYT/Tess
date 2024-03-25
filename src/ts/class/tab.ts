@@ -1,4 +1,5 @@
 import tabIcon from "../../assets/default-tab.png";
+import "xterm/css/xterm.css";
 
 export class Tab {
     element: HTMLElement;
@@ -7,13 +8,17 @@ export class Tab {
 
     onClose: ((id: string) => void) | null = null;
 
-    removedProgressTimeout1: number = 0;
+    removedProgressTimeout: number = 0;
+
+    title: string = "";
 
 
     constructor(index: number, id: string, onClose:((id: string) => void)) {
         this.id = id;
         this.index = index;
         this.element = this.generateComponents();
+
+        this.setTitle("");
 
         new ResizeObserver(() => {
             if (this.element.clientWidth <= 34) {
@@ -27,24 +32,29 @@ export class Tab {
     }
 
     setTitle(title: string) {
-        (this.element.querySelector(".title")! as HTMLSpanElement).innerText = title;
+        this.title = title;
+        (this.element.querySelector(".title")! as HTMLSpanElement).innerText = title != "" ? title : "Untitled tab";
     }
 
     setProgress(value: number) {
         if (value > 0 && value < 100) {
-            clearTimeout(this.removedProgressTimeout1);
+            clearTimeout(this.removedProgressTimeout);
 
             (this.element.querySelector(".progress")! as HTMLElement).style.animation = "tab-with-progress-added-progress-bar 100ms forwards";
             (this.element.querySelector(".progress")! as HTMLElement).style.animationDelay = "70ms";
             (this.element.querySelector(".title")! as HTMLElement).style.animation = "tab-with-progress-added-title 120ms forwards";
             (this.element.querySelector(".value")! as HTMLElement).style.width =  `${value}%`;
         } else {
-            this.removedProgressTimeout1 = setTimeout(() => {
+            this.removedProgressTimeout = setTimeout(() => {
                 (this.element.querySelector(".title")! as HTMLElement).style.animation = "tab-with-progress-removed-title 120ms forwards";
             }, 70);
             (this.element.querySelector(".progress")! as HTMLElement).style.animationDelay = "0ms";
             (this.element.querySelector(".progress")! as HTMLElement).style.animation = "tab-with-progress-removed-progress-bar 100ms forwards";
         }
+    }
+
+    setHighlight(visible: boolean) {
+        (this.element.querySelector(".ping")! as HTMLElement).classList.toggle("hidden", !visible);
     }
 
     private generateComponents() : HTMLElement {
@@ -81,10 +91,14 @@ export class Tab {
         progress.classList.add("progress");
         progress.appendChild(progressValue)
 
+        let pingMark = document.createElement("div");
+        pingMark.classList.add("ping", "hidden");
+
         tab.appendChild(icon);
         tab.appendChild(title);
         tab.appendChild(closeButton);
         tab.appendChild(progress);
+        tab.appendChild(pingMark);
 
         return tab;
     }
